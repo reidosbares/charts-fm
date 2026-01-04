@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
-// POST - Add a member to a group
+// POST - Invite a member to a group
 export async function POST(
   request: Request,
   { params }: { params: { id: string } }
@@ -43,7 +43,7 @@ export async function POST(
 
   if (group.creatorId !== user.id) {
     return NextResponse.json(
-      { error: 'Only the group creator can add members' },
+      { error: 'Only the group creator can invite members' },
       { status: 403 }
     )
   }
@@ -77,11 +77,38 @@ export async function POST(
     )
   }
 
-  // Add member
-  await prisma.groupMember.create({
-    data: {
+  // Check if there's already a pending invite
+  const existingInvite = await prisma.groupInvite.findUnique({
+    where: {
+      groupId_userId: {
+        groupId,
+        userId: memberUser.id,
+      },
+    },
+  })
+
+  if (existingInvite && existingInvite.status === 'pending') {
+    return NextResponse.json(
+      { error: 'User has already been invited to this group' },
+      { status: 400 }
+    )
+  }
+
+  // Create invite
+  await prisma.groupInvite.upsert({
+    where: {
+      groupId_userId: {
+        groupId,
+        userId: memberUser.id,
+      },
+    },
+    update: {
+      status: 'pending',
+    },
+    create: {
       groupId,
       userId: memberUser.id,
+      status: 'pending',
     },
   })
 

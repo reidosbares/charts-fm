@@ -29,6 +29,7 @@ model User {
   groupsCreated       Group[] @relation("GroupCreator")
   groupMemberships    GroupMember[]
   groupJoinRequests   GroupJoinRequest[]
+  groupInvites         GroupInvite[]
   weeklyStats         UserWeeklyStats[]
   
   @@map("users")
@@ -83,6 +84,7 @@ model Group {
   creator     User            @relation("GroupCreator", fields: [creatorId], references: [id], onDelete: Cascade)
   members     GroupMember[]
   joinRequests GroupJoinRequest[]
+  invites     GroupInvite[]
   weeklyStats GroupWeeklyStats[]
   chartEntries GroupChartEntry[]
   allTimeStats GroupAllTimeStats?
@@ -183,7 +185,7 @@ model GroupJoinRequest {
   id        String   @id @default(cuid())
   groupId   String
   userId    String
-  status    String   @default("pending") // pending, accepted
+  status    String   @default("pending") // pending, accepted, rejected
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
@@ -193,5 +195,22 @@ model GroupJoinRequest {
   @@unique([groupId, userId])
   @@index([groupId, status])
   @@map("group_join_requests")
+}
+
+model GroupInvite {
+  id        String   @id @default(cuid())
+  groupId   String
+  userId    String
+  status    String   @default("pending") // pending, accepted, rejected
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([groupId, userId])
+  @@index([groupId, status])
+  @@index([userId, status])
+  @@map("group_invites")
 }
 

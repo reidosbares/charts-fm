@@ -176,3 +176,38 @@ export async function getGroupAllTimeStats(groupId: string) {
   })
 }
 
+/**
+ * Get pending group invites for a user
+ */
+export async function getUserGroupInvites(userId: string) {
+  const invites = await prisma.groupInvite.findMany({
+    where: {
+      userId,
+      status: 'pending',
+    },
+    include: {
+      group: {
+        include: {
+          creator: {
+            select: {
+              id: true,
+              name: true,
+              lastfmUsername: true,
+            },
+          },
+          _count: {
+            select: {
+              members: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  })
+
+  return invites
+}
+

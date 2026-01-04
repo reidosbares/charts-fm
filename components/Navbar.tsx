@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
@@ -13,6 +13,8 @@ export default function Navbar() {
   const pathname = usePathname()
   const { isLoading } = useNavigation()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 })
+  const buttonRef = useRef<HTMLButtonElement>(null)
   const [userData, setUserData] = useState<{
     name: string | null
     lastfmUsername: string
@@ -36,6 +38,16 @@ export default function Navbar() {
         .catch(console.error)
     }
   }, [session])
+
+  useEffect(() => {
+    if (isDropdownOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      setDropdownPosition({
+        top: rect.bottom + 8,
+        right: window.innerWidth - rect.right,
+      })
+    }
+  }, [isDropdownOpen])
 
   const handleLogout = async () => {
     await signOut({ redirect: false })
@@ -70,7 +82,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-black border-b border-gray-800 relative overflow-hidden">
+    <nav className="sticky top-0 z-50 bg-black border-b border-gray-800 relative overflow-x-hidden">
       {isLoading && (
         <div className="absolute bottom-0 left-0 h-1 bg-yellow-500 w-1/4 shadow-lg shadow-yellow-500/50 animate-race-bar" />
       )}
@@ -109,6 +121,7 @@ export default function Navbar() {
 
           <div className="relative">
             <button
+              ref={buttonRef}
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
             >
@@ -140,10 +153,16 @@ export default function Navbar() {
             {isDropdownOpen && (
               <>
                 <div
-                  className="fixed inset-0 z-10"
+                  className="fixed inset-0 z-[45]"
                   onClick={() => setIsDropdownOpen(false)}
                 />
-                <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-gray-900 ring-1 ring-gray-700 z-20">
+                <div 
+                  className="fixed w-56 rounded-md shadow-lg bg-gray-900 ring-1 ring-gray-700 z-[60]" 
+                  style={{ 
+                    top: `${dropdownPosition.top}px`,
+                    right: `${dropdownPosition.right}px`
+                  }}
+                >
                   <div className="py-1">
                     <div className="px-4 py-2 border-b border-gray-700">
                       <p className="text-sm font-medium text-white">

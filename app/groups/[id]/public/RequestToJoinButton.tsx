@@ -6,12 +6,14 @@ import { useRouter } from 'next/navigation'
 interface RequestToJoinButtonProps {
   groupId: string
   hasPendingRequest: boolean
+  hasPendingInvite?: boolean
   allowFreeJoin?: boolean
 }
 
 export default function RequestToJoinButton({
   groupId,
   hasPendingRequest,
+  hasPendingInvite = false,
   allowFreeJoin = false,
 }: RequestToJoinButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
@@ -21,7 +23,7 @@ export default function RequestToJoinButton({
   const router = useRouter()
 
   const handleRequest = async () => {
-    if (hasRequested || hasJoined) return
+    if (hasRequested || hasJoined || hasPendingInvite) return
 
     setError(null)
     setIsLoading(true)
@@ -68,20 +70,23 @@ export default function RequestToJoinButton({
       )}
       <button
         onClick={handleRequest}
-        disabled={hasRequested || hasJoined || isLoading}
+        disabled={hasRequested || hasJoined || hasPendingInvite || isLoading}
         className={`
           px-4 py-2 rounded-lg font-semibold transition-colors
           ${
-            hasRequested || hasJoined || isLoading
+            hasRequested || hasJoined || hasPendingInvite || isLoading
               ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
               : 'bg-yellow-500 text-black hover:bg-yellow-400'
           }
         `}
+        title={hasPendingInvite ? 'You have been invited to join this group' : undefined}
       >
         {isLoading
           ? (allowFreeJoin ? 'Joining...' : 'Sending...')
           : hasJoined
           ? 'Joined!'
+          : hasPendingInvite
+          ? 'Invited'
           : hasRequested
           ? 'Request Sent'
           : allowFreeJoin

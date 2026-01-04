@@ -42,11 +42,27 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json()
-  const { name, description } = body
+  const { name, description, image, chartSize, trackingDayOfWeek, isPrivate, allowFreeJoin } = body
 
   if (!name || typeof name !== 'string' || name.trim().length === 0) {
     return NextResponse.json(
       { error: 'Group name is required' },
+      { status: 400 }
+    )
+  }
+
+  // Validate chartSize if provided
+  if (chartSize !== undefined && ![10, 20, 50, 100].includes(Number(chartSize))) {
+    return NextResponse.json(
+      { error: 'Chart size must be 10, 20, 50, or 100' },
+      { status: 400 }
+    )
+  }
+
+  // Validate trackingDayOfWeek if provided
+  if (trackingDayOfWeek !== undefined && (Number(trackingDayOfWeek) < 0 || Number(trackingDayOfWeek) > 6)) {
+    return NextResponse.json(
+      { error: 'Tracking day of week must be between 0 (Sunday) and 6 (Saturday)' },
       { status: 400 }
     )
   }
@@ -56,7 +72,11 @@ export async function POST(request: Request) {
     data: {
       name: name.trim(),
       description: description?.trim() || null,
-      image: body.image?.trim() || null,
+      image: image?.trim() || null,
+      chartSize: chartSize !== undefined ? Number(chartSize) : 10,
+      trackingDayOfWeek: trackingDayOfWeek !== undefined ? Number(trackingDayOfWeek) : 0,
+      isPrivate: isPrivate === true,
+      allowFreeJoin: isPrivate === true ? false : (allowFreeJoin === true), // Only allow free join for public groups
       creatorId: user.id,
       members: {
         create: {

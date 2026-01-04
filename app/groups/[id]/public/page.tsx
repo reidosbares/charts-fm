@@ -5,6 +5,7 @@ import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import RequestToJoinButton from './RequestToJoinButton'
+import InviteNotification from './InviteNotification'
 
 export default async function PublicGroupPage({ params }: { params: { id: string } }) {
   const group = await getPublicGroupById(params.id)
@@ -28,6 +29,8 @@ export default async function PublicGroupPage({ params }: { params: { id: string
   const session = await getSession()
   let isMember = false
   let hasPendingRequest = false
+  let hasPendingInvite = false
+  let pendingInviteId: string | null = null
   if (session?.user?.email) {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
@@ -43,7 +46,7 @@ export default async function PublicGroupPage({ params }: { params: { id: string
       })
       isMember = !!membership || user.id === group.creatorId
 
-      // Check if user has a pending request
+      // Check if user has a pending request or invite
       if (!isMember) {
         const pendingRequest = await prisma.groupJoinRequest.findUnique({
           where: {
@@ -54,6 +57,17 @@ export default async function PublicGroupPage({ params }: { params: { id: string
           },
         })
         hasPendingRequest = pendingRequest?.status === 'pending'
+
+        const pendingInvite = await prisma.groupInvite.findUnique({
+          where: {
+            groupId_userId: {
+              groupId: group.id,
+              userId: user.id,
+            },
+          },
+        })
+        hasPendingInvite = pendingInvite?.status === 'pending'
+        pendingInviteId = pendingInvite?.id || null
       }
     }
   }
@@ -66,6 +80,9 @@ export default async function PublicGroupPage({ params }: { params: { id: string
             <Link href={`/groups/${group.id}`} className="text-yellow-600 hover:underline mb-4 inline-block">
               ← View as Member
             </Link>
+          )}
+          {hasPendingInvite && pendingInviteId && (
+            <InviteNotification groupId={group.id} inviteId={pendingInviteId} />
           )}
           <div className="flex justify-between items-start">
             <div className="flex items-start gap-4">
@@ -82,7 +99,7 @@ export default async function PublicGroupPage({ params }: { params: { id: string
                   <p className="text-gray-600 mb-4">{group.description}</p>
                 )}
                 <div className="text-sm text-gray-500">
-                  <p>Creator: {group.creator.name || group.creator.lastfmUsername}</p>
+                  <p>Owner: {group.creator.name || group.creator.lastfmUsername}</p>
                   <p>Members: {group._count.members}</p>
                 </div>
               </div>
@@ -91,6 +108,7 @@ export default async function PublicGroupPage({ params }: { params: { id: string
               <RequestToJoinButton
                 groupId={group.id}
                 hasPendingRequest={hasPendingRequest}
+                hasPendingInvite={hasPendingInvite}
                 allowFreeJoin={group.allowFreeJoin ?? false}
               />
             )}

@@ -81,6 +81,23 @@ export async function POST(
     )
   }
 
+  // Check if user has an active invite (pending invite from owner)
+  const existingInvite = await prisma.groupInvite.findUnique({
+    where: {
+      groupId_userId: {
+        groupId,
+        userId: user.id,
+      },
+    },
+  })
+
+  if (existingInvite && existingInvite.status === 'pending') {
+    return NextResponse.json(
+      { error: 'You have already been invited to join this group. Please check your invites.' },
+      { status: 400 }
+    )
+  }
+
   // If group allows free join, add user directly as a member
   if (group.allowFreeJoin) {
     // Delete any existing request first (in case there was a rejected one)

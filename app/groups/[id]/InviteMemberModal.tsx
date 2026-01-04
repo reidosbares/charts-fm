@@ -1,24 +1,34 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-interface AddMemberModalProps {
+interface InviteMemberModalProps {
   isOpen: boolean
   onClose: () => void
   groupId: string
 }
 
-export default function AddMemberModal({
+export default function InviteMemberModal({
   isOpen,
   onClose,
   groupId,
-}: AddMemberModalProps) {
+}: InviteMemberModalProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [lastfmUsername, setLastfmUsername] = useState('')
+
+  // Reset state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setIsLoading(false)
+      setError(null)
+      setSuccess(false)
+      setLastfmUsername('')
+    }
+  }, [isOpen])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,11 +48,12 @@ export default function AddMemberModal({
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to add member')
+        throw new Error(data.error || 'Failed to send invite')
       }
 
       setSuccess(true)
       setLastfmUsername('')
+      setIsLoading(false)
       
       // Refresh the members list
       router.refresh()
@@ -53,7 +64,7 @@ export default function AddMemberModal({
         setSuccess(false)
       }, 1000)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add member')
+      setError(err instanceof Error ? err.message : 'Failed to send invite')
       setIsLoading(false)
     }
   }
@@ -78,7 +89,7 @@ export default function AddMemberModal({
       <div className="fixed inset-0 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Add Member</h2>
+            <h2 className="text-2xl font-bold">Invite Member</h2>
             <button
               onClick={handleClose}
               className="text-gray-500 hover:text-gray-700 text-2xl leading-none w-8 h-8 flex items-center justify-center"
@@ -91,7 +102,7 @@ export default function AddMemberModal({
 
           {success && (
             <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded text-sm">
-              Member added successfully!
+              Invite sent successfully!
             </div>
           )}
 
@@ -117,7 +128,7 @@ export default function AddMemberModal({
                 disabled={isLoading}
               />
               <p className="text-xs text-gray-500 mt-1">
-                Enter the Last.fm username of the user you want to add
+                Enter the Last.fm username of the user you want to invite
               </p>
             </div>
 
@@ -135,7 +146,7 @@ export default function AddMemberModal({
                 disabled={isLoading}
                 className="px-6 py-2 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? 'Adding...' : 'Add Member'}
+                {isLoading ? 'Inviting...' : 'Invite Member'}
               </button>
             </div>
           </form>

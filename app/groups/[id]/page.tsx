@@ -7,7 +7,8 @@ import { formatWeekDate, getWeekStartForDay, getWeekEndForDay, formatWeekLabel }
 import LeaveGroupButton from './LeaveGroupButton'
 import EditGroupIconButton from './EditGroupIconButton'
 import RemoveMemberButton from './RemoveMemberButton'
-import AddMemberButton from './AddMemberButton'
+import InviteMemberButton from './InviteMemberButton'
+import RevokeInviteButton from './RevokeInviteButton'
 import SafeImage from '@/components/SafeImage'
 import GroupTabs from './GroupTabs'
 import { recalculateAllTimeStats } from '@/lib/group-alltime-stats'
@@ -30,12 +31,32 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
   }
 
   const weeklyStats = await getGroupWeeklyStats(group.id)
-  const isCreator = user.id === group.creatorId
+  const isOwner = user.id === group.creatorId
   const isMember = group.members.some((m: any) => m.userId === user.id)
 
-  // Get pending request count for group owner
+  // Get pending invites for the group (owner only)
+  let pendingInvites: any[] = []
+  if (isOwner) {
+    pendingInvites = await prisma.groupInvite.findMany({
+      where: {
+        groupId: group.id,
+        status: 'pending',
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            lastfmUsername: true,
+          },
+        },
+      },
+    })
+  }
+
+  // Get pending request count for group owner (for join requests, not invites)
   let requestCount = 0
-  if (isCreator) {
+  if (isOwner) {
     requestCount = await prisma.groupJoinRequest.count({
       where: {
         groupId: group.id,
@@ -84,14 +105,14 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                   <p className="text-gray-600 mb-4">{group.description}</p>
                 )}
                 <div className="text-sm text-gray-500">
-                  <p>Creator: {group.creator.name || group.creator.lastfmUsername}</p>
+                  <p>Owner: {group.creator.name || group.creator.lastfmUsername}</p>
                   <p>Members: {group._count.members}</p>
                   <p className="mt-2">Tracking day: {trackingDayName} • Next charts: {nextChartDateFormatted}</p>
                 </div>
               </div>
             </div>
             <div className="flex gap-2">
-              {isCreator && (
+              {isOwner && (
                 <>
                   <EditGroupIconButton groupId={group.id} currentImage={group.image} />
                   <Link
@@ -103,7 +124,7 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                 </>
               )}
               {isMember && (
-                <LeaveGroupButton groupId={group.id} isCreator={isCreator} />
+                <LeaveGroupButton groupId={group.id} isOwner={isOwner} />
               )}
             </div>
           </div>
@@ -127,7 +148,7 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
               {!allTimeStats || (allTimeStats.topArtists as any[]).length === 0 ? (
                 <div className="bg-white rounded-lg shadow-lg p-8 text-center">
                   <p className="text-gray-600 mb-4">No all-time stats available yet.</p>
-                  {weeklyStats.length === 0 && isCreator && (
+                  {weeklyStats.length === 0 && isOwner && (
                     <Link
                       href={`/groups/${group.id}/generate`}
                       className="text-yellow-600 hover:underline"
@@ -197,15 +218,16 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold">Members</h2>
-                {isCreator && (
+                {isOwner && (
                   <div className="flex gap-2">
-                    <AddMemberButton groupId={group.id} />
+                    <InviteMemberButton groupId={group.id} />
                     <RequestsButton groupId={group.id} requestCount={requestCount} />
                   </div>
                 )}
               </div>
               <div className="bg-white rounded-lg shadow-lg p-6">
                 <div className="space-y-2">
+                  {/* Display actual members */}
                   {group.members.map((member: any) => (
                     <div key={member.id} className="flex justify-between items-center py-2 border-b last:border-0">
                       <div>
@@ -215,16 +237,37 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                       <div className="flex items-center gap-2">
                         {member.user.id === group.creatorId && (
                           <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-                            Creator
+                            Owner
                           </span>
                         )}
-                        {isCreator && member.user.id !== group.creatorId && (
+                        {isOwner && member.user.id !== group.creatorId && (
                           <RemoveMemberButton
                             groupId={group.id}
                             userId={member.user.id}
                             memberName={member.user.name || member.user.lastfmUsername}
                           />
                         )}
+                      </div>
+                    </div>
+                  ))}
+                  {/* Display invited users */}
+                  {isOwner && pendingInvites.map((invite: any) => (
+                    <div key={invite.id} className="flex justify-between items-center py-2 border-b last:border-0">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium">{invite.user.name || invite.user.lastfmUsername}</p>
+                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                            Invited
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-500">@{invite.user.lastfmUsername}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <RevokeInviteButton
+                          groupId={group.id}
+                          inviteId={invite.id}
+                          userName={invite.user.name || invite.user.lastfmUsername}
+                        />
                       </div>
                     </div>
                   ))}
@@ -248,7 +291,7 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
               {weeklyStats.length === 0 ? (
                 <div className="bg-white rounded-lg shadow-lg p-8 text-center">
                   <p className="text-gray-600 mb-4">No charts available yet.</p>
-                  {isCreator && (
+                  {isOwner && (
                     <Link
                       href={`/groups/${group.id}/generate`}
                       className="text-yellow-600 hover:underline"

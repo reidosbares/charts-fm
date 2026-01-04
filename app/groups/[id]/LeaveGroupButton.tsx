@@ -6,15 +6,15 @@ import Tooltip from '@/components/Tooltip'
 
 interface LeaveGroupButtonProps {
   groupId: string
-  isCreator?: boolean
+  isOwner?: boolean
 }
 
-export default function LeaveGroupButton({ groupId, isCreator = false }: LeaveGroupButtonProps) {
+export default function LeaveGroupButton({ groupId, isOwner = false }: LeaveGroupButtonProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
   const handleLeave = async () => {
-    if (isCreator) {
+    if (isOwner) {
       return
     }
 
@@ -41,7 +41,7 @@ export default function LeaveGroupButton({ groupId, isCreator = false }: LeaveGr
     }
   }
 
-  const isDisabled = isLoading || isCreator
+  const isDisabled = isLoading || isOwner
 
   const button = (
     <button
@@ -50,7 +50,7 @@ export default function LeaveGroupButton({ groupId, isCreator = false }: LeaveGr
       className={`
         px-4 py-2 rounded-lg transition-colors
         ${
-          isCreator
+          isOwner
             ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
             : 'bg-red-600 text-white hover:bg-red-700 disabled:opacity-50'
         }
@@ -60,7 +60,7 @@ export default function LeaveGroupButton({ groupId, isCreator = false }: LeaveGr
     </button>
   )
 
-  if (isCreator) {
+  if (isOwner) {
     return (
       <Tooltip content="You can't leave a group that you're the owner of">
         {button}
