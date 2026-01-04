@@ -2,12 +2,21 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 export default function SignUpPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { data: session, status } = useSession()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Redirect to dashboard if already logged in
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user) {
+      router.push('/dashboard')
+    }
+  }, [status, session, router])
 
   useEffect(() => {
     // Check for error in query params
@@ -43,6 +52,11 @@ export default function SignUpPage() {
       setError(err instanceof Error ? err.message : 'An error occurred')
       setIsLoading(false)
     }
+  }
+
+  // Don't render if already authenticated (will redirect)
+  if (status === 'authenticated') {
+    return null
   }
 
   return (

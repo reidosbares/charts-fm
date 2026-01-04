@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { useState, useEffect } from 'react'
+import { signIn, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function SignInPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { data: session, status } = useSession()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
@@ -15,6 +16,13 @@ export default function SignInPage() {
   })
 
   const success = searchParams.get('success')
+
+  // Redirect to dashboard if already logged in
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user) {
+      router.push('/dashboard')
+    }
+  }, [status, session, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,6 +48,11 @@ export default function SignInPage() {
       setError('An error occurred. Please try again.')
       setIsLoading(false)
     }
+  }
+
+  // Don't render if already authenticated (will redirect)
+  if (status === 'authenticated') {
+    return null
   }
 
   return (
