@@ -5,13 +5,14 @@ import { useSession, signOut } from 'next-auth/react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import SafeImage from '@/components/SafeImage'
+import { useNavigation } from '@/contexts/NavigationContext'
 
 export default function Navbar() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const pathname = usePathname()
+  const { isLoading } = useNavigation()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [userData, setUserData] = useState<{
     name: string | null
     lastfmUsername: string
@@ -35,19 +36,6 @@ export default function Navbar() {
         .catch(console.error)
     }
   }, [session])
-
-  // Handle navigation loading state - pulse on every page load/navigation
-  useEffect(() => {
-    // Show loading when pathname changes (navigation started)
-    setIsLoading(true)
-    
-    // Hide loading after a brief delay (simulates page load)
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 300)
-
-    return () => clearTimeout(timer)
-  }, [pathname])
 
   const handleLogout = async () => {
     await signOut({ redirect: false })
@@ -88,7 +76,7 @@ export default function Navbar() {
           <div className="flex items-center space-x-8">
             <Link 
               href="/" 
-              className={`text-xl font-bold text-blue-600 ${isLoading ? 'animate-pulse' : ''}`}
+              className={`text-xl font-bold text-blue-600 transition-all ${isLoading ? 'animate-pulse-scale' : ''}`}
             >
               ChartsFM
             </Link>
