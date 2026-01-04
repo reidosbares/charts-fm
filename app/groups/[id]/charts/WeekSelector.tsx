@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { formatWeekDate } from '@/lib/weekly-utils'
 import { useNavigation } from '@/contexts/NavigationContext'
+import WeekCalendar from './WeekCalendar'
 
 interface WeekSelectorProps {
   weeks: { weekStart: Date }[]
@@ -30,11 +31,14 @@ export default function WeekSelector({ weeks, currentWeek }: WeekSelectorProps) 
     })
   }
 
+  // Limit to first 5 weeks (most recent)
+  const displayedWeeks = weeks.slice(0, 5)
+
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4">
+    <div className="bg-white rounded-lg shadow-lg p-4 overflow-hidden">
       <h3 className="text-lg font-semibold mb-4 text-gray-800">Select Week</h3>
       <div className="space-y-2 max-h-96 overflow-y-auto">
-        {weeks.map((week) => {
+        {displayedWeeks.map((week) => {
           const isSelected = week.weekStart.getTime() === currentWeek.getTime()
           return (
             <button
@@ -54,6 +58,7 @@ export default function WeekSelector({ weeks, currentWeek }: WeekSelectorProps) 
           )
         })}
       </div>
+      <WeekCalendar availableWeeks={weeks} currentWeek={currentWeek} />
     </div>
   )
 }

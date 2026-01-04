@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "react-day-picker/dist/style.css";
 import "./globals.css";
 import SessionProvider from "@/components/SessionProvider";
 import { NavigationProvider } from "@/contexts/NavigationContext";

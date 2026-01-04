@@ -26,18 +26,38 @@ body {
   }
 }
 
-@keyframes pulse-scale {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.8;
-  }
+/* Yellow background for clickable calendar dates */
+.rdp-day_available {
+  background-color: rgb(254 249 195);
+  border-radius: 50%;
 }
 
-.animate-pulse-scale {
-  animation: pulse-scale 1s ease-in-out infinite;
+.rdp-day_available:hover {
+  background-color: rgb(254 240 138);
+}
+
+.rdp-day_current-week {
+  background-color: rgb(234 179 8);
+  border-radius: 50%;
+}
+
+/* Dark yellow for navigation arrows and selected date */
+.rdp-root,
+.rdp,
+div.rdp-root {
+  --rdp-accent-color: rgb(234 179 8);
+}
+
+svg.rdp-chevron {
+  fill: rgb(234 179 8);
+}
+
+.rdp-nav_button:hover svg.rdp-chevron {
+  fill: rgb(202 138 4);
+}
+
+.rdp-day_selected {
+  border: 2px solid rgb(234 179 8);
+  color: rgb(234 179 8);
 }
 
