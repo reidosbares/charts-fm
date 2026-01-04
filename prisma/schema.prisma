@@ -27,6 +27,7 @@ model User {
   listeningStats      ListeningStat[]
   groupsCreated       Group[] @relation("GroupCreator")
   groupMemberships    GroupMember[]
+  groupJoinRequests   GroupJoinRequest[]
   weeklyStats         UserWeeklyStats[]
   
   @@map("users")
@@ -77,6 +78,7 @@ model Group {
   
   creator     User            @relation("GroupCreator", fields: [creatorId], references: [id], onDelete: Cascade)
   members     GroupMember[]
+  joinRequests GroupJoinRequest[]
   weeklyStats GroupWeeklyStats[]
   chartEntries GroupChartEntry[]
   allTimeStats GroupAllTimeStats?
@@ -171,5 +173,21 @@ model GroupAllTimeStats {
   group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
   
   @@map("group_all_time_stats")
+}
+
+model GroupJoinRequest {
+  id        String   @id @default(cuid())
+  groupId   String
+  userId    String
+  status    String   @default("pending") // pending, accepted
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([groupId, userId])
+  @@index([groupId, status])
+  @@map("group_join_requests")
 }
 

@@ -4,6 +4,7 @@ import SafeImage from '@/components/SafeImage'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import RequestToJoinButton from './RequestToJoinButton'
 
 export default async function PublicGroupPage({ params }: { params: { id: string } }) {
   const group = await getPublicGroupById(params.id)
@@ -26,6 +27,7 @@ export default async function PublicGroupPage({ params }: { params: { id: string
   // Check if user is logged in and is a member (for optional "View as Member" link)
   const session = await getSession()
   let isMember = false
+  let hasPendingRequest = false
   if (session?.user?.email) {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
@@ -40,6 +42,19 @@ export default async function PublicGroupPage({ params }: { params: { id: string
         },
       })
       isMember = !!membership || user.id === group.creatorId
+
+      // Check if user has a pending request
+      if (!isMember) {
+        const pendingRequest = await prisma.groupJoinRequest.findUnique({
+          where: {
+            groupId_userId: {
+              groupId: group.id,
+              userId: user.id,
+            },
+          },
+        })
+        hasPendingRequest = pendingRequest?.status === 'pending'
+      }
     }
   }
 
@@ -72,6 +87,12 @@ export default async function PublicGroupPage({ params }: { params: { id: string
                 </div>
               </div>
             </div>
+            {session?.user?.email && !isMember && (
+              <RequestToJoinButton
+                groupId={group.id}
+                hasPendingRequest={hasPendingRequest}
+              />
+            )}
           </div>
         </div>
 

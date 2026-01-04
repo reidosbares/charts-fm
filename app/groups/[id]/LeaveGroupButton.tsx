@@ -2,12 +2,22 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Tooltip from '@/components/Tooltip'
 
-export default function LeaveGroupButton({ groupId }: { groupId: string }) {
+interface LeaveGroupButtonProps {
+  groupId: string
+  isCreator?: boolean
+}
+
+export default function LeaveGroupButton({ groupId, isCreator = false }: LeaveGroupButtonProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
   const handleLeave = async () => {
+    if (isCreator) {
+      return
+    }
+
     if (!confirm('Are you sure you want to leave this group?')) {
       return
     }
@@ -31,14 +41,33 @@ export default function LeaveGroupButton({ groupId }: { groupId: string }) {
     }
   }
 
-  return (
+  const isDisabled = isLoading || isCreator
+
+  const button = (
     <button
       onClick={handleLeave}
-      disabled={isLoading}
-      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+      disabled={isDisabled}
+      className={`
+        px-4 py-2 rounded-lg transition-colors
+        ${
+          isCreator
+            ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+            : 'bg-red-600 text-white hover:bg-red-700 disabled:opacity-50'
+        }
+      `}
     >
       {isLoading ? 'Leaving...' : 'Leave Group'}
     </button>
   )
+
+  if (isCreator) {
+    return (
+      <Tooltip content="You can't leave a group that you're the owner of">
+        {button}
+      </Tooltip>
+    )
+  }
+
+  return button
 }
 

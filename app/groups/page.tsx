@@ -22,6 +22,10 @@ export default async function GroupsPage() {
 
   const groups = await getUserGroups(user.id)
 
+  // Separate groups into admin groups (where user is creator) and member groups
+  const adminGroups = groups.filter((group: any) => group.creatorId === user.id)
+  const memberGroups = groups.filter((group: any) => group.creatorId !== user.id)
+
   return (
     <main className="flex min-h-screen flex-col p-24">
       <div className="max-w-6xl w-full mx-auto">
@@ -46,33 +50,80 @@ export default async function GroupsPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {groups.map((group: any) => (
-              <Link
-                key={group.id}
-                href={`/groups/${group.id}`}
-                className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow"
-              >
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="relative w-16 h-16 flex-shrink-0">
-                    <SafeImage
-                      src={group.image}
-                      alt={group.name}
-                      className="rounded-lg object-cover w-16 h-16"
-                    />
-                  </div>
-                  <h2 className="text-2xl font-semibold">{group.name}</h2>
+          <div className="space-y-12">
+            {/* Admin Groups Section */}
+            {adminGroups.length > 0 && (
+              <div>
+                <h2 className="text-2xl font-semibold mb-6">Owned Groups</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {adminGroups.map((group: any) => (
+                    <Link
+                      key={group.id}
+                      href={`/groups/${group.id}`}
+                      className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow"
+                    >
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="relative w-16 h-16 flex-shrink-0">
+                          <SafeImage
+                            src={group.image}
+                            alt={group.name}
+                            className="rounded-lg object-cover w-16 h-16"
+                          />
+                        </div>
+                        <h3 className="text-2xl font-semibold">{group.name}</h3>
+                      </div>
+                      {group.description && (
+                        <p className="text-gray-600 mb-4">{group.description}</p>
+                      )}
+                      <div className="text-sm text-gray-500">
+                        <p>Creator: {group.creator.name || group.creator.lastfmUsername}</p>
+                        <p>Members: {group._count.members}</p>
+                        <p>Created: {new Date(group.createdAt).toLocaleDateString()}</p>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
-                  {group.description && (
-                    <p className="text-gray-600 mb-4">{group.description}</p>
-                  )}
-                <div className="text-sm text-gray-500">
-                  <p>Creator: {group.creator.name || group.creator.lastfmUsername}</p>
-                  <p>Members: {group._count.members}</p>
-                  <p>Created: {new Date(group.createdAt).toLocaleDateString()}</p>
+              </div>
+            )}
+
+            {/* Member Groups Section */}
+            <div>
+              <h2 className="text-2xl font-semibold mb-6">Groups you're in</h2>
+              {memberGroups.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {memberGroups.map((group: any) => (
+                    <Link
+                      key={group.id}
+                      href={`/groups/${group.id}`}
+                      className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow"
+                    >
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="relative w-16 h-16 flex-shrink-0">
+                          <SafeImage
+                            src={group.image}
+                            alt={group.name}
+                            className="rounded-lg object-cover w-16 h-16"
+                          />
+                        </div>
+                        <h3 className="text-2xl font-semibold">{group.name}</h3>
+                      </div>
+                      {group.description && (
+                        <p className="text-gray-600 mb-4">{group.description}</p>
+                      )}
+                      <div className="text-sm text-gray-500">
+                        <p>Creator: {group.creator.name || group.creator.lastfmUsername}</p>
+                        <p>Members: {group._count.members}</p>
+                        <p>Created: {new Date(group.createdAt).toLocaleDateString()}</p>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
-              </Link>
-            ))}
+              ) : (
+                <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+                  <p className="text-gray-600">You're not a member of any groups yet.</p>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

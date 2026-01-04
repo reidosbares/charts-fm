@@ -9,6 +9,7 @@ import EditGroupIconButton from './EditGroupIconButton'
 import SafeImage from '@/components/SafeImage'
 import GroupTabs from './GroupTabs'
 import { recalculateAllTimeStats } from '@/lib/group-alltime-stats'
+import RequestsButton from './RequestsButton'
 
 export default async function GroupPage({ params }: { params: { id: string } }) {
   const session = await getSession()
@@ -43,6 +44,17 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
   const weeklyStats = await getGroupWeeklyStats(group.id)
   const isCreator = user.id === group.creatorId
   const isMember = group.members.some((m: any) => m.userId === user.id)
+
+  // Get pending request count for group owner
+  let requestCount = 0
+  if (isCreator) {
+    requestCount = await prisma.groupJoinRequest.count({
+      where: {
+        groupId: group.id,
+        status: 'pending',
+      },
+    })
+  }
 
   // Get all-time stats, recalculate if missing
   let allTimeStats = await getGroupAllTimeStats(group.id)
@@ -84,12 +96,6 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                 <>
                   <EditGroupIconButton groupId={group.id} currentImage={group.image} />
                   <Link
-                    href={`/groups/${group.id}/add-member`}
-                    className="px-4 py-2 bg-yellow-500 text-black rounded-lg hover:bg-yellow-400 transition-colors font-semibold"
-                  >
-                    Add Member
-                  </Link>
-                  <Link
                     href={`/groups/${group.id}/generate`}
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                   >
@@ -97,8 +103,8 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                   </Link>
                 </>
               )}
-              {isMember && !isCreator && (
-                <LeaveGroupButton groupId={group.id} />
+              {isMember && (
+                <LeaveGroupButton groupId={group.id} isCreator={isCreator} />
               )}
             </div>
           </div>
@@ -190,7 +196,20 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
           }
           membersContent={
             <div>
-              <h2 className="text-2xl font-semibold mb-4">Members</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-semibold">Members</h2>
+                {isCreator && (
+                  <div className="flex gap-2">
+                    <Link
+                      href={`/groups/${group.id}/add-member`}
+                      className="px-4 py-2 bg-yellow-500 text-black rounded-lg hover:bg-yellow-400 transition-colors font-semibold"
+                    >
+                      Add Member
+                    </Link>
+                    <RequestsButton groupId={group.id} requestCount={requestCount} />
+                  </div>
+                )}
+              </div>
               <div className="bg-white rounded-lg shadow-lg p-6">
                 <div className="space-y-2">
                   {group.members.map((member: any) => (
