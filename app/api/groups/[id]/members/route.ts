@@ -48,9 +48,15 @@ export async function POST(
     )
   }
 
-  // Find user by Last.fm username
-  const memberUser = await prisma.user.findUnique({
-    where: { lastfmUsername: lastfmUsername.trim() },
+  // Find user by Last.fm username (case-insensitive)
+  // Use findFirst with case-insensitive comparison since findUnique requires exact match
+  const memberUser = await prisma.user.findFirst({
+    where: {
+      lastfmUsername: {
+        equals: lastfmUsername.trim(),
+        mode: 'insensitive',
+      },
+    },
   })
 
   if (!memberUser) {

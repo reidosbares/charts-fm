@@ -78,7 +78,7 @@ model Group {
   isPrivate        Boolean  @default(false) // If true, group is private and not viewable publicly
   allowFreeJoin    Boolean  @default(false) // If true, users can join freely without approval (only for public groups)
   chartSize        Int      @default(10) // Chart size: 10, 20, 50, or 100
-  chartMode        String   @default("plays_only") // Chart mode: "vs", "vs_weighted", or "plays_only"
+  chartMode        String   @default("vs") // Chart mode: "vs", "vs_weighted", or "plays_only"
   trackingDayOfWeek Int    @default(0) // Day of week for tracking (0=Sunday, 1=Monday, ..., 6=Saturday)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt

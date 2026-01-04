@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getUserGroups } from '@/lib/group-queries'
-import { initializeGroupWithHistory } from '@/lib/group-service'
 
 // GET - List user's groups
 export async function GET() {
@@ -42,7 +41,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json()
-  const { name, description, image, chartSize, trackingDayOfWeek, isPrivate, allowFreeJoin } = body
+  const { name, description, image, chartSize, trackingDayOfWeek, chartMode, isPrivate, allowFreeJoin } = body
 
   if (!name || typeof name !== 'string' || name.trim().length === 0) {
     return NextResponse.json(
@@ -67,6 +66,14 @@ export async function POST(request: Request) {
     )
   }
 
+  // Validate chartMode if provided
+  if (chartMode !== undefined && !['vs', 'vs_weighted', 'plays_only'].includes(chartMode)) {
+    return NextResponse.json(
+      { error: 'chartMode must be "vs", "vs_weighted", or "plays_only"' },
+      { status: 400 }
+    )
+  }
+
   // Create group
   const group = await prisma.group.create({
     data: {
@@ -75,6 +82,7 @@ export async function POST(request: Request) {
       image: image?.trim() || null,
       chartSize: chartSize !== undefined ? Number(chartSize) : 10,
       trackingDayOfWeek: trackingDayOfWeek !== undefined ? Number(trackingDayOfWeek) : 0,
+      chartMode: chartMode !== undefined ? chartMode : 'vs', // Default to 'vs' instead of schema default
       isPrivate: isPrivate === true,
       allowFreeJoin: isPrivate === true ? false : (allowFreeJoin === true), // Only allow free join for public groups
       creatorId: user.id,
@@ -106,8 +114,8 @@ export async function POST(request: Request) {
     },
   })
 
-  // Initialize with historical data (async, don't wait)
-  initializeGroupWithHistory(group.id).catch(console.error)
+  // Note: Do not initialize with historical data or connect to Last.fm
+  // Charts will be generated later when the user explicitly requests it
 
   return NextResponse.json({ group }, { status: 201 })
 }

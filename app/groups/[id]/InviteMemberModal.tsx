@@ -19,6 +19,8 @@ export default function InviteMemberModal({
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [lastfmUsername, setLastfmUsername] = useState('')
+  const [isValidatingUsername, setIsValidatingUsername] = useState(false)
+  const [validatedUsername, setValidatedUsername] = useState<string | null>(null)
 
   // Reset state when modal opens
   useEffect(() => {
@@ -27,13 +29,80 @@ export default function InviteMemberModal({
       setError(null)
       setSuccess(false)
       setLastfmUsername('')
+      setIsValidatingUsername(false)
+      setValidatedUsername(null)
     }
   }, [isOpen])
+
+  // Validate username when it changes (debounced)
+  useEffect(() => {
+    if (!lastfmUsername.trim() || lastfmUsername.trim().length < 2) {
+      setValidatedUsername(null)
+      return
+    }
+
+    const timeoutId = setTimeout(async () => {
+      setIsValidatingUsername(true)
+      try {
+        const response = await fetch(`/api/user/check-username?lastfmUsername=${encodeURIComponent(lastfmUsername.trim())}`)
+        const data = await response.json()
+
+        if (response.ok && data.exists) {
+          setValidatedUsername(data.user.lastfmUsername)
+          setError(null)
+        } else {
+          setValidatedUsername(null)
+          // Don't show error while typing, only on submit
+        }
+      } catch (err) {
+        setValidatedUsername(null)
+      } finally {
+        setIsValidatingUsername(false)
+      }
+    }, 500) // Debounce for 500ms
+
+    return () => clearTimeout(timeoutId)
+  }, [lastfmUsername])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setSuccess(false)
+
+    // Use validated username if available, otherwise use input
+    const usernameToUse = validatedUsername || lastfmUsername.trim()
+
+    if (!usernameToUse) {
+      setError('Please enter a Last.fm username')
+      return
+    }
+
+    // If we haven't validated yet, validate now
+    if (!validatedUsername) {
+      setIsLoading(true)
+      try {
+        const checkResponse = await fetch(`/api/user/check-username?lastfmUsername=${encodeURIComponent(usernameToUse)}`)
+        const checkData = await checkResponse.json()
+
+        if (!checkResponse.ok || !checkData.exists) {
+          setError(checkData.error || 'User with this Last.fm username not found')
+          setIsLoading(false)
+          return
+        }
+
+        // Use the validated username with correct casing
+        const actualUsername = checkData.user.lastfmUsername
+        await sendInvite(actualUsername)
+      } catch (err) {
+        setError('Failed to validate username. Please try again.')
+        setIsLoading(false)
+      }
+    } else {
+      await sendInvite(validatedUsername)
+    }
+  }
+
+  const sendInvite = async (username: string) => {
     setIsLoading(true)
 
     try {
@@ -42,7 +111,7 @@ export default function InviteMemberModal({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ lastfmUsername }),
+        body: JSON.stringify({ lastfmUsername: username }),
       })
 
       const data = await response.json()
@@ -53,6 +122,7 @@ export default function InviteMemberModal({
 
       setSuccess(true)
       setLastfmUsername('')
+      setValidatedUsername(null)
       setIsLoading(false)
       
       // Refresh the members list
@@ -117,18 +187,28 @@ export default function InviteMemberModal({
               <label htmlFor="lastfmUsername" className="block text-sm font-medium text-gray-700 mb-2">
                 Last.fm Username *
               </label>
-              <input
-                type="text"
-                id="lastfmUsername"
-                required
-                value={lastfmUsername}
-                onChange={(e) => setLastfmUsername(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                placeholder="username"
-                disabled={isLoading}
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  id="lastfmUsername"
+                  required
+                  value={validatedUsername || lastfmUsername}
+                  onChange={(e) => setLastfmUsername(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  placeholder="username"
+                  disabled={isLoading}
+                />
+                {isValidatingUsername && (
+                  <div className="absolute right-3 top-2.5">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-500"></div>
+                  </div>
+                )}
+              </div>
               <p className="text-xs text-gray-500 mt-1">
                 Enter the Last.fm username of the user you want to invite
+                {validatedUsername && validatedUsername !== lastfmUsername && (
+                  <span className="text-green-600 ml-1">✓ Valid</span>
+                )}
               </p>
             </div>
 
