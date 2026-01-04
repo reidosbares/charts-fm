@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { DayPicker } from 'react-day-picker'
-import { getWeekStart, formatWeekDate } from '@/lib/weekly-utils'
+import { getWeekStart, formatWeekDate, utcToLocalDate } from '@/lib/weekly-utils'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useNavigation } from '@/contexts/NavigationContext'
 
@@ -15,7 +15,15 @@ export default function WeekCalendar({ availableWeeks, currentWeek }: WeekCalend
   const [isOpen, setIsOpen] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { triggerPulse } = useNavigation()
+  const { triggerPulse, stopPulse } = useNavigation()
+
+  // Stop pulse after searchParams change (navigation complete)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      stopPulse()
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [searchParams, stopPulse])
 
   // Create a Set of week start dates for quick lookup
   const availableWeekStarts = new Set(
@@ -106,7 +114,7 @@ export default function WeekCalendar({ availableWeeks, currentWeek }: WeekCalend
             
             <DayPicker
               mode="single"
-              selected={currentWeek}
+              selected={utcToLocalDate(currentWeek)}
               onSelect={handleDateSelect}
               disabled={disabled}
               modifiers={{

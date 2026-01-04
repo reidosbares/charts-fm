@@ -67,3 +67,26 @@ export function formatWeekDate(date: Date): string {
   return date.toISOString().split('T')[0]
 }
 
+/**
+ * Convert a UTC date to a local date representing the same calendar day
+ * This is useful for calendar components that expect local dates
+ */
+export function utcToLocalDate(utcDate: Date): Date {
+  const year = utcDate.getUTCFullYear()
+  const month = utcDate.getUTCMonth()
+  const day = utcDate.getUTCDate()
+  return new Date(year, month, day)
+}
+
+/**
+ * Format a date as "Month Day, Year" (e.g., "Dec 30, 2025")
+ * Uses UTC date components to avoid timezone issues
+ */
+export function formatWeekLabel(date: Date): string {
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const month = monthNames[date.getUTCMonth()]
+  const day = date.getUTCDate()
+  const year = date.getUTCFullYear()
+  return `${month} ${day}, ${year}`
+}
+

@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getGroupById, getGroupChartEntries, getGroupAvailableWeeks } from '@/lib/group-queries'
-import { formatWeekDate } from '@/lib/weekly-utils'
+import { formatWeekDate, formatWeekLabel } from '@/lib/weekly-utils'
 import Link from 'next/link'
 import SafeImage from '@/components/SafeImage'
 import WeekSelector from './WeekSelector'
@@ -95,7 +95,7 @@ export default async function ChartsPage({
             </div>
             <div>
               <h1 className="text-3xl font-bold mb-2">{group.name}</h1>
-              <p className="text-gray-600">Week of {formatWeekDate(selectedWeek)}</p>
+              <p className="text-gray-600">Week of {formatWeekLabel(selectedWeek)}</p>
             </div>
           </div>
         </div>

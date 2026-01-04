@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { formatWeekDate } from '@/lib/weekly-utils'
+import { formatWeekDate, formatWeekLabel } from '@/lib/weekly-utils'
 import { useNavigation } from '@/contexts/NavigationContext'
 import WeekCalendar from './WeekCalendar'
 
@@ -22,14 +22,6 @@ export default function WeekSelector({ weeks, currentWeek }: WeekSelectorProps) 
     router.push(`?${params.toString()}`)
   }
 
-  const formatWeekLabel = (weekStart: Date): string => {
-    const date = new Date(weekStart)
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  }
 
   // Limit to first 5 weeks (most recent)
   const displayedWeeks = weeks.slice(0, 5)
