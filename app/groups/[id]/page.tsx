@@ -28,6 +28,7 @@ import SafeImage from '@/components/SafeImage'
 import GroupTabs from './GroupTabs'
 import { recalculateAllTimeStats } from '@/lib/group-alltime-stats'
 import RequestsButton from './RequestsButton'
+import PositionMovementIcon from '@/components/PositionMovementIcon'
 
 // Helper function to get entry key for matching
 function getEntryKey(item: { name: string; artist?: string }, chartType: string): string {
@@ -97,9 +98,10 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
   const chartMode = (group.chartMode || 'plays_only') as string
   const showVS = chartMode === 'vs' || chartMode === 'vs_weighted'
 
-  // Get VS data for latest week if we have stats
+  // Get VS data and position changes for latest week if we have stats
   let vsMap: Map<string, number> = new Map()
-  if (weeklyStats.length > 0 && showVS) {
+  let positionChangeMap: Map<string, number | null> = new Map()
+  if (weeklyStats.length > 0) {
     const latestWeek = weeklyStats[0]
     // Normalize weekStart to start of day in UTC for comparison
     const normalizedWeekStart = new Date(latestWeek.weekStart)
@@ -114,14 +116,17 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
         chartType: true,
         entryKey: true,
         vibeScore: true,
+        positionChange: true,
       },
     })
     
-    // Create map: "chartType|entryKey" -> vibeScore
+    // Create maps: "chartType|entryKey" -> vibeScore and positionChange
     chartEntries.forEach((entry) => {
+      const key = `${entry.chartType}|${entry.entryKey}`
       if (entry.vibeScore !== null && entry.vibeScore !== undefined) {
-        vsMap.set(`${entry.chartType}|${entry.entryKey}`, entry.vibeScore)
+        vsMap.set(key, entry.vibeScore)
       }
+      positionChangeMap.set(key, entry.positionChange)
     })
   }
 
@@ -594,6 +599,8 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                             <div className="space-y-3">
                               {topArtists.slice(0, 3).map((artist: any, idx: number) => {
                                 const displayValue = formatDisplayValue(artist, 'artists', showVS, vsMap)
+                                const entryKey = getEntryKey(artist, 'artists')
+                                const positionChange = positionChangeMap.get(`artists|${entryKey}`)
                                 return (
                                   <div
                                     key={idx}
@@ -603,7 +610,10 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                                       {idx + 1}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      <div className="font-semibold text-gray-900 truncate">{artist.name}</div>
+                                      <div className="font-semibold text-gray-900 truncate flex items-center gap-2">
+                                        {artist.name}
+                                        <PositionMovementIcon positionChange={positionChange} className="text-sm" />
+                                      </div>
                                       <div className="text-sm text-yellow-600 font-medium">{displayValue}</div>
                                     </div>
                                   </div>
@@ -612,11 +622,15 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                               {topArtists.length > 3 && (
                                 <div className="pt-2 border-t border-yellow-100">
                                   <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
-                                    {topArtists.slice(3, 10).map((artist: any, idx: number) => (
-                                      <li key={idx + 3} className="truncate">
-                                        {artist.name} <span className="text-yellow-600">({formatDisplayValue(artist, 'artists', showVS, vsMap)})</span>
-                                      </li>
-                                    ))}
+                                    {topArtists.slice(3, 10).map((artist: any, idx: number) => {
+                                      const entryKey = getEntryKey(artist, 'artists')
+                                      const positionChange = positionChangeMap.get(`artists|${entryKey}`)
+                                      return (
+                                        <li key={idx + 3} className="truncate flex items-center gap-1">
+                                          {artist.name} <PositionMovementIcon positionChange={positionChange} className="text-xs" /> <span className="text-yellow-600">({formatDisplayValue(artist, 'artists', showVS, vsMap)})</span>
+                                        </li>
+                                      )
+                                    })}
                                   </ol>
                                   {topArtists.length > 10 && (
                                     <p className="text-xs text-gray-500 mt-2">
@@ -637,6 +651,8 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                             <div className="space-y-3">
                               {topTracks.slice(0, 3).map((track: any, idx: number) => {
                                 const displayValue = formatDisplayValue(track, 'tracks', showVS, vsMap)
+                                const entryKey = getEntryKey(track, 'tracks')
+                                const positionChange = positionChangeMap.get(`tracks|${entryKey}`)
                                 return (
                                   <div
                                     key={idx}
@@ -646,7 +662,10 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                                       {idx + 1}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      <div className="font-semibold text-gray-900 truncate">{track.name}</div>
+                                      <div className="font-semibold text-gray-900 truncate flex items-center gap-2">
+                                        {track.name}
+                                        <PositionMovementIcon positionChange={positionChange} className="text-sm" />
+                                      </div>
                                       <div className="text-xs text-gray-600 truncate">by {track.artist}</div>
                                       <div className="text-sm text-yellow-600 font-medium mt-1">{displayValue}</div>
                                     </div>
@@ -656,11 +675,15 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                               {topTracks.length > 3 && (
                                 <div className="pt-2 border-t border-yellow-100">
                                   <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
-                                    {topTracks.slice(3, 10).map((track: any, idx: number) => (
-                                      <li key={idx + 3} className="truncate">
-                                        {track.name} by {track.artist} <span className="text-yellow-600">({formatDisplayValue(track, 'tracks', showVS, vsMap)})</span>
-                                      </li>
-                                    ))}
+                                    {topTracks.slice(3, 10).map((track: any, idx: number) => {
+                                      const entryKey = getEntryKey(track, 'tracks')
+                                      const positionChange = positionChangeMap.get(`tracks|${entryKey}`)
+                                      return (
+                                        <li key={idx + 3} className="truncate flex items-center gap-1">
+                                          {track.name} by {track.artist} <PositionMovementIcon positionChange={positionChange} className="text-xs" /> <span className="text-yellow-600">({formatDisplayValue(track, 'tracks', showVS, vsMap)})</span>
+                                        </li>
+                                      )
+                                    })}
                                   </ol>
                                   {topTracks.length > 10 && (
                                     <p className="text-xs text-gray-500 mt-2">
@@ -681,6 +704,8 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                             <div className="space-y-3">
                               {topAlbums.slice(0, 3).map((album: any, idx: number) => {
                                 const displayValue = formatDisplayValue(album, 'albums', showVS, vsMap)
+                                const entryKey = getEntryKey(album, 'albums')
+                                const positionChange = positionChangeMap.get(`albums|${entryKey}`)
                                 return (
                                   <div
                                     key={idx}
@@ -690,7 +715,10 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                                       {idx + 1}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      <div className="font-semibold text-gray-900 truncate">{album.name}</div>
+                                      <div className="font-semibold text-gray-900 truncate flex items-center gap-2">
+                                        {album.name}
+                                        <PositionMovementIcon positionChange={positionChange} className="text-sm" />
+                                      </div>
                                       <div className="text-xs text-gray-600 truncate">by {album.artist}</div>
                                       <div className="text-sm text-yellow-600 font-medium mt-1">{displayValue}</div>
                                     </div>
@@ -700,11 +728,15 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                               {topAlbums.length > 3 && (
                                 <div className="pt-2 border-t border-yellow-100">
                                   <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
-                                    {topAlbums.slice(3, 10).map((album: any, idx: number) => (
-                                      <li key={idx + 3} className="truncate">
-                                        {album.name} by {album.artist} <span className="text-yellow-600">({formatDisplayValue(album, 'albums', showVS, vsMap)})</span>
-                                      </li>
-                                    ))}
+                                    {topAlbums.slice(3, 10).map((album: any, idx: number) => {
+                                      const entryKey = getEntryKey(album, 'albums')
+                                      const positionChange = positionChangeMap.get(`albums|${entryKey}`)
+                                      return (
+                                        <li key={idx + 3} className="truncate flex items-center gap-1">
+                                          {album.name} by {album.artist} <PositionMovementIcon positionChange={positionChange} className="text-xs" /> <span className="text-yellow-600">({formatDisplayValue(album, 'albums', showVS, vsMap)})</span>
+                                        </li>
+                                      )
+                                    })}
                                   </ol>
                                   {topAlbums.length > 10 && (
                                     <p className="text-xs text-gray-500 mt-2">
