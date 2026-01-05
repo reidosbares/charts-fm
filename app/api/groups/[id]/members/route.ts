@@ -1,182 +1,105 @@
 import { NextResponse } from 'next/server'
-import { getSession } from '@/lib/auth'
+import { requireGroupMembership } from '@/lib/group-auth'
 import { prisma } from '@/lib/prisma'
 
-// POST - Invite a member to a group
-export async function POST(
+export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const session = await getSession()
+  try {
+    const { user, group } = await requireGroupMembership(params.id)
 
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+    if (!group) {
+      return NextResponse.json({ error: 'Group not found' }, { status: 404 })
+    }
 
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-  })
+    const isOwner = user.id === group.creatorId
 
-  if (!user) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 })
-  }
-
-  const groupId = params.id
-  const body = await request.json()
-  const { lastfmUsername } = body
-
-  if (!lastfmUsername || typeof lastfmUsername !== 'string') {
-    return NextResponse.json(
-      { error: 'Last.fm username is required' },
-      { status: 400 }
-    )
-  }
-
-  // Check if user is the creator
-  const group = await prisma.group.findUnique({
-    where: { id: groupId },
-  })
-
-  if (!group) {
-    return NextResponse.json({ error: 'Group not found' }, { status: 404 })
-  }
-
-  if (group.creatorId !== user.id) {
-    return NextResponse.json(
-      { error: 'Only the group creator can invite members' },
-      { status: 403 }
-    )
-  }
-
-  // Find user by Last.fm username (case-insensitive)
-  // Use findFirst with case-insensitive comparison since findUnique requires exact match
-  const memberUser = await prisma.user.findFirst({
-    where: {
-      lastfmUsername: {
-        equals: lastfmUsername.trim(),
-        mode: 'insensitive',
+    // Fetch members with images
+    const membersWithImages = await prisma.groupMember.findMany({
+      where: { groupId: group.id },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            lastfmUsername: true,
+            image: true,
+          },
+        },
       },
-    },
-  })
+      orderBy: {
+        joinedAt: 'asc',
+      },
+    })
 
-  if (!memberUser) {
+    // Get pending invites for the group (owner only)
+    let pendingInvites: any[] = []
+    if (isOwner) {
+      pendingInvites = await prisma.groupInvite.findMany({
+        where: {
+          groupId: group.id,
+          status: 'pending',
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              lastfmUsername: true,
+              image: true,
+            },
+          },
+        },
+      })
+    }
+
+    // Get pending request count for group owner
+    let requestCount = 0
+    if (isOwner) {
+      requestCount = await prisma.groupJoinRequest.count({
+        where: {
+          groupId: group.id,
+          status: 'pending',
+        },
+      })
+    }
+
+    return NextResponse.json({
+      members: membersWithImages.map((m) => ({
+        id: m.id,
+        userId: m.userId,
+        joinedAt: m.joinedAt.toISOString(),
+        user: {
+          id: m.user.id,
+          name: m.user.name,
+          lastfmUsername: m.user.lastfmUsername,
+          image: m.user.image,
+        },
+      })),
+      pendingInvites: pendingInvites.map((invite) => ({
+        id: invite.id,
+        userId: invite.userId,
+        createdAt: invite.createdAt.toISOString(),
+        user: {
+          id: invite.user.id,
+          name: invite.user.name,
+          lastfmUsername: invite.user.lastfmUsername,
+          image: invite.user.image,
+        },
+      })),
+      isOwner,
+      requestCount,
+      creatorId: group.creatorId,
+    })
+  } catch (error: any) {
+    if (error.status === 401 || error.status === 403 || error.status === 404) {
+      return NextResponse.json({ error: error.message }, { status: error.status })
+    }
+    console.error('Error fetching members:', error)
     return NextResponse.json(
-      { error: 'User with this Last.fm username not found' },
-      { status: 404 }
+      { error: 'Failed to fetch members' },
+      { status: 500 }
     )
   }
-
-  // Check if already a member
-  const existingMember = await prisma.groupMember.findUnique({
-    where: {
-      groupId_userId: {
-        groupId,
-        userId: memberUser.id,
-      },
-    },
-  })
-
-  if (existingMember) {
-    return NextResponse.json(
-      { error: 'User is already a member of this group' },
-      { status: 400 }
-    )
-  }
-
-  // Check if there's already a pending invite
-  const existingInvite = await prisma.groupInvite.findUnique({
-    where: {
-      groupId_userId: {
-        groupId,
-        userId: memberUser.id,
-      },
-    },
-  })
-
-  if (existingInvite && existingInvite.status === 'pending') {
-    return NextResponse.json(
-      { error: 'User has already been invited to this group' },
-      { status: 400 }
-    )
-  }
-
-  // Create invite
-  await prisma.groupInvite.upsert({
-    where: {
-      groupId_userId: {
-        groupId,
-        userId: memberUser.id,
-      },
-    },
-    update: {
-      status: 'pending',
-    },
-    create: {
-      groupId,
-      userId: memberUser.id,
-      status: 'pending',
-    },
-  })
-
-  return NextResponse.json({ success: true })
 }
-
-// DELETE - Remove a member from a group (or leave)
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const session = await getSession()
-
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-  })
-
-  if (!user) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 })
-  }
-
-  const groupId = params.id
-  const { searchParams } = new URL(request.url)
-  const userIdToRemove = searchParams.get('userId') || user.id
-
-  // Check if user is removing themselves or is the creator
-  const group = await prisma.group.findUnique({
-    where: { id: groupId },
-  })
-
-  if (!group) {
-    return NextResponse.json({ error: 'Group not found' }, { status: 404 })
-  }
-
-  // Users can always leave, but only creator can remove others
-  if (userIdToRemove !== user.id && group.creatorId !== user.id) {
-    return NextResponse.json(
-      { error: 'Only the group creator can remove other members' },
-      { status: 403 }
-    )
-  }
-
-  // Can't remove the creator
-  if (userIdToRemove === group.creatorId) {
-    return NextResponse.json(
-      { error: 'Cannot remove the group creator' },
-      { status: 400 }
-    )
-  }
-
-  // Remove member
-  await prisma.groupMember.deleteMany({
-    where: {
-      groupId,
-      userId: userIdToRemove,
-    },
-  })
-
-  return NextResponse.json({ success: true })
-}
-

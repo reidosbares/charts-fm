@@ -1,9 +1,11 @@
 import { redirect } from 'next/navigation'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { getDefaultGroupImage } from '@/lib/default-images'
-import Link from 'next/link'
 import SafeImage from '@/components/SafeImage'
+import PersonalListeningOverview from '@/components/dashboard/PersonalListeningOverview'
+import GroupQuickViewCards from '@/components/dashboard/GroupQuickViewCards'
+import ActivityFeed from '@/components/dashboard/ActivityFeed'
+import QuickActionsPanel from '@/components/dashboard/QuickActionsPanel'
 
 export default async function DashboardPage() {
   const session = await getSession()
@@ -12,12 +14,11 @@ export default async function DashboardPage() {
     redirect('/auth/signin')
   }
 
-  // Get full user data including lastfmUsername
+  // Get minimal user data for header only
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
     select: {
       name: true,
-      email: true,
       lastfmUsername: true,
       image: true,
     },
@@ -25,53 +26,52 @@ export default async function DashboardPage() {
 
   // If user doesn't exist (e.g., after database wipe), clear session and redirect
   if (!user) {
-    // Clear the session by redirecting to signout
     redirect('/api/auth/signout')
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <div className="z-10 max-w-4xl w-full">
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <div className="flex items-center gap-6 mb-6">
-            <div className="relative w-24 h-24 flex-shrink-0">
+    <main className="flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 bg-gray-50">
+      <div className="max-w-7xl w-full mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-6 mb-2">
+            <div className="relative w-16 h-16 flex-shrink-0">
               <SafeImage
                 src={user.image}
                 alt={user.name || 'Profile'}
-                className="rounded-full object-cover w-24 h-24"
+                className="rounded-full object-cover w-16 h-16 ring-2 ring-yellow-500"
               />
             </div>
             <div>
-              <h1 className="text-4xl font-bold mb-2">Welcome to ChartsFM</h1>
-              <Link
-                href="/profile"
-                className="text-yellow-600 hover:underline text-sm"
-              >
-                Edit Profile
-              </Link>
+              <h1 className="text-4xl font-bold text-gray-900">
+                Welcome back{user.name ? `, ${user.name.split(' ')[0]}` : ''}!
+              </h1>
+              <p className="text-gray-600 mt-1">@{user.lastfmUsername}</p>
             </div>
           </div>
-          
-          <div className="space-y-4 mb-6">
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">Your Name</p>
-              <p className="text-xl font-semibold">{user.name || 'Not set'}</p>
-            </div>
-            
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">Last.fm Username</p>
-              <p className="text-xl font-semibold">{user.lastfmUsername}</p>
-            </div>
+        </div>
+
+        {/* Quick Actions Panel - loads its own data */}
+        <div className="mb-8">
+          <QuickActionsPanel />
+        </div>
+
+        {/* Main Content Grid - components load their own data */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Left Column - Personal Listening Overview */}
+          <div className="lg:col-span-2">
+            <PersonalListeningOverview />
           </div>
 
-          <div className="pt-6 border-t">
-            <Link
-              href="/groups"
-              className="inline-block px-6 py-3 bg-yellow-500 text-black rounded-lg hover:bg-yellow-400 transition-colors font-semibold"
-            >
-              View My Groups
-            </Link>
+          {/* Right Column - Activity Feed */}
+          <div>
+            <ActivityFeed />
           </div>
+        </div>
+
+        {/* Group Quick View Cards - loads its own data */}
+        <div className="mb-8">
+          <GroupQuickViewCards />
         </div>
       </div>
     </main>

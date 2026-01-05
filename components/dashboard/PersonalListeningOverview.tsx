@@ -1,0 +1,218 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMusic, faMicrophone, faCompactDisc, faArrowUp, faArrowDown, faMinus, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import Link from 'next/link'
+import { formatWeekLabel } from '@/lib/weekly-utils'
+
+interface PersonalListeningStats {
+  currentWeek: {
+    topArtists: Array<{ name: string; playcount: number }>
+    topTracks: Array<{ name: string; artist: string; playcount: number }>
+    topAlbums: Array<{ name: string; artist: string; playcount: number }>
+    totalPlays: number
+    uniqueArtists: number
+    uniqueTracks: number
+  } | null
+  previousWeek: {
+    totalPlays: number
+  } | null
+  weekStart: string
+}
+
+export default function PersonalListeningOverview() {
+  const [stats, setStats] = useState<PersonalListeningStats | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch('/api/dashboard/personal-stats')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          setError(data.error)
+        } else {
+          setStats(data)
+        }
+        setIsLoading(false)
+      })
+      .catch((err) => {
+        setError('Failed to load stats')
+        setIsLoading(false)
+        console.error('Error fetching personal stats:', err)
+      })
+  }, [])
+
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <h2 className="text-2xl font-bold mb-4 text-gray-900">Your Listening This Week</h2>
+        <div className="flex items-center justify-center py-12">
+          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !stats) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <h2 className="text-2xl font-bold mb-4 text-gray-900">Your Listening This Week</h2>
+        <div className="text-center py-8 text-gray-500">
+          <p className="mb-2">No listening data available yet.</p>
+          <p className="text-sm">Your weekly stats will appear here once your groups generate charts.</p>
+        </div>
+      </div>
+    )
+  }
+
+  const { currentWeek, previousWeek } = stats
+  const weekStartDate = new Date(stats.weekStart)
+
+  if (!currentWeek) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <h2 className="text-2xl font-bold mb-4 text-gray-900">Your Listening This Week</h2>
+        <div className="text-center py-8 text-gray-500">
+          <p className="mb-2">No listening data available yet.</p>
+          <p className="text-sm">Your weekly stats will appear here once your groups generate charts.</p>
+        </div>
+      </div>
+    )
+  }
+
+  const playsChange = previousWeek
+    ? currentWeek.totalPlays - previousWeek.totalPlays
+    : null
+  const playsChangePercent = previousWeek && previousWeek.totalPlays > 0
+    ? ((playsChange! / previousWeek.totalPlays) * 100).toFixed(1)
+    : null
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">Your Listening This Week</h2>
+        {currentWeek && (
+          <span className="text-sm text-gray-500">
+            Week of {formatWeekLabel(weekStartDate)}
+        </span>
+        )}
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
+          <div className="text-sm text-blue-600 font-medium mb-1">Total Plays</div>
+          <div className="text-2xl font-bold text-blue-900">{currentWeek.totalPlays.toLocaleString()}</div>
+          {playsChange !== null && (
+            <div className="flex items-center gap-1 mt-1 text-xs">
+              {playsChange > 0 ? (
+                <>
+                  <FontAwesomeIcon icon={faArrowUp} className="text-green-600" />
+                  <span className="text-green-600">+{playsChange.toLocaleString()}</span>
+                  {playsChangePercent && <span className="text-gray-500">({playsChangePercent}%)</span>}
+                </>
+              ) : playsChange < 0 ? (
+                <>
+                  <FontAwesomeIcon icon={faArrowDown} className="text-red-600" />
+                  <span className="text-red-600">{playsChange.toLocaleString()}</span>
+                  {playsChangePercent && <span className="text-gray-500">({playsChangePercent}%)</span>}
+                </>
+              ) : (
+                <>
+                  <FontAwesomeIcon icon={faMinus} className="text-gray-500" />
+                  <span className="text-gray-500">No change</span>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
+          <div className="text-sm text-purple-600 font-medium mb-1">Unique Artists</div>
+          <div className="text-2xl font-bold text-purple-900">{currentWeek.uniqueArtists}</div>
+        </div>
+
+        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
+          <div className="text-sm text-green-600 font-medium mb-1">Unique Tracks</div>
+          <div className="text-2xl font-bold text-green-900">{currentWeek.uniqueTracks}</div>
+        </div>
+
+        <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4 border border-yellow-200">
+          <div className="text-sm text-yellow-600 font-medium mb-1">Top Items</div>
+          <div className="text-2xl font-bold text-yellow-900">
+            {currentWeek.topArtists.length + currentWeek.topTracks.length + currentWeek.topAlbums.length}
+          </div>
+        </div>
+      </div>
+
+      {/* Top Items Preview */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Top Artists */}
+        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="flex items-center gap-2 mb-3">
+            <FontAwesomeIcon icon={faMicrophone} className="text-gray-600" />
+            <h3 className="font-semibold text-gray-900">Top Artists</h3>
+          </div>
+          <ol className="space-y-2">
+            {currentWeek.topArtists.slice(0, 5).map((artist, idx) => (
+              <li key={idx} className="flex items-center gap-2 text-sm">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-700">
+                  {idx + 1}
+                </span>
+                <span className="font-medium text-gray-900 truncate">{artist.name}</span>
+                <span className="ml-auto text-gray-500 text-xs">{artist.playcount} plays</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        {/* Top Tracks */}
+        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="flex items-center gap-2 mb-3">
+            <FontAwesomeIcon icon={faMusic} className="text-gray-600" />
+            <h3 className="font-semibold text-gray-900">Top Tracks</h3>
+          </div>
+          <ol className="space-y-2">
+            {currentWeek.topTracks.slice(0, 5).map((track, idx) => (
+              <li key={idx} className="flex items-start gap-2 text-sm">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-700 mt-0.5">
+                  {idx + 1}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-gray-900 truncate">{track.name}</div>
+                  <div className="text-xs text-gray-500 truncate">by {track.artist}</div>
+                </div>
+                <span className="ml-auto text-gray-500 text-xs flex-shrink-0">{track.playcount}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        {/* Top Albums */}
+        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="flex items-center gap-2 mb-3">
+            <FontAwesomeIcon icon={faCompactDisc} className="text-gray-600" />
+            <h3 className="font-semibold text-gray-900">Top Albums</h3>
+          </div>
+          <ol className="space-y-2">
+            {currentWeek.topAlbums.slice(0, 5).map((album, idx) => (
+              <li key={idx} className="flex items-start gap-2 text-sm">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-700 mt-0.5">
+                  {idx + 1}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-gray-900 truncate">{album.name}</div>
+                  <div className="text-xs text-gray-500 truncate">by {album.artist}</div>
+                </div>
+                <span className="ml-auto text-gray-500 text-xs flex-shrink-0">{album.playcount}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </div>
+  )
+}
+
