@@ -10,29 +10,24 @@ interface WeekCalendarProps {
   availableWeeks: { weekStart: Date }[]
   currentWeek: Date
   trackingDayOfWeek: number
+  onWeekChange?: () => void
 }
 
-export default function WeekCalendar({ availableWeeks, currentWeek, trackingDayOfWeek }: WeekCalendarProps) {
+export default function WeekCalendar({ availableWeeks, currentWeek, trackingDayOfWeek, onWeekChange }: WeekCalendarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
   const { triggerPulse, stopPulse } = useNavigation()
 
-  // Stop pulse after searchParams change (navigation complete)
   useEffect(() => {
-    const timer = setTimeout(() => {
-      stopPulse()
-    }, 500)
+    const timer = setTimeout(() => stopPulse(), 500)
     return () => clearTimeout(timer)
   }, [searchParams, stopPulse])
 
-  // Create a Set of week start dates for quick lookup
   const availableWeekStarts = new Set(
     availableWeeks.map(week => formatWeekDate(week.weekStart))
   )
 
-  // Create a Set of all dates that belong to available weeks
-  // Each week spans 7 days based on the group's tracking day
   const availableDates = new Set<string>()
   availableWeeks.forEach(week => {
     const weekStart = new Date(week.weekStart)
@@ -46,38 +41,31 @@ export default function WeekCalendar({ availableWeeks, currentWeek, trackingDayO
   const handleDateSelect = (date: Date | undefined) => {
     if (!date) return
 
-    // Calculate the week start for the selected date using the group's tracking day
     const weekStart = getWeekStartForDay(date, trackingDayOfWeek)
     const weekStartStr = formatWeekDate(weekStart)
 
-    // Check if this week has chart data
     if (!availableWeekStarts.has(weekStartStr)) {
       return
     }
 
-    // Update the URL params
+    onWeekChange?.()
     triggerPulse()
     const params = new URLSearchParams(searchParams.toString())
     params.set('week', weekStartStr)
     router.push(`?${params.toString()}`)
-    
-    // Close the modal after selection
     setIsOpen(false)
   }
 
-  // Check if a date is available (belongs to a week with charts)
   const isDateAvailable = (date: Date): boolean => {
     return availableDates.has(formatWeekDate(date))
   }
 
-  // Check if a date is in the current selected week
   const isDateInCurrentWeek = (date: Date): boolean => {
     const dateWeekStart = getWeekStartForDay(date, trackingDayOfWeek)
     const currentWeekStart = getWeekStartForDay(currentWeek, trackingDayOfWeek)
     return formatWeekDate(dateWeekStart) === formatWeekDate(currentWeekStart)
   }
 
-  // Disable dates that don't have charts
   const disabled = (date: Date) => !isDateAvailable(date)
 
   return (

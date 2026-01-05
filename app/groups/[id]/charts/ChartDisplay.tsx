@@ -13,16 +13,40 @@ interface ChartDisplayProps {
   artists: EnrichedChartItem[]
   tracks: EnrichedChartItem[]
   albums: EnrichedChartItem[]
+  isLoading?: boolean
+  onLoadingChange?: (loading: boolean) => void
 }
 
-export default function ChartDisplay({ initialType, artists, tracks, albums }: ChartDisplayProps) {
+export default function ChartDisplay({ initialType, artists, tracks, albums, isLoading = false, onLoadingChange }: ChartDisplayProps) {
   const [currentType, setCurrentType] = useState<ChartType>(initialType)
   const searchParams = useSearchParams()
   const isInternalChange = useRef(false)
+  const previousItemsRef = useRef<EnrichedChartItem[] | null>(null)
 
-  // Sync state with URL if it changes externally (e.g., back button)
+  const currentItems = useMemo(() => {
+    switch (currentType) {
+      case 'artists':
+        return artists
+      case 'tracks':
+        return tracks
+      case 'albums':
+        return albums
+    }
+  }, [currentType, artists, tracks, albums])
+
+  // Clear loading when table items change (new data rendered)
   useEffect(() => {
-    // Skip if this was an internal change
+    if (isLoading && previousItemsRef.current && currentItems !== previousItemsRef.current) {
+      previousItemsRef.current = currentItems
+      const timer = setTimeout(() => onLoadingChange?.(false), 150)
+      return () => clearTimeout(timer)
+    } else if (!previousItemsRef.current && currentItems.length > 0) {
+      previousItemsRef.current = currentItems
+    }
+  }, [currentItems, isLoading, onLoadingChange])
+
+  // Sync chart type with URL (e.g., back button navigation)
+  useEffect(() => {
     if (isInternalChange.current) {
       isInternalChange.current = false
       return
@@ -35,38 +59,33 @@ export default function ChartDisplay({ initialType, artists, tracks, albums }: C
   }, [searchParams, currentType])
 
   const handleTypeChange = (type: ChartType) => {
-    // Update state immediately for instant UI update
     setCurrentType(type)
-    
-    // Update URL asynchronously using native history API to avoid Next.js router side effects
     isInternalChange.current = true
     requestAnimationFrame(() => {
       const params = new URLSearchParams(window.location.search)
       params.set('type', type)
-      const newUrl = `${window.location.pathname}?${params.toString()}`
-      window.history.replaceState(null, '', newUrl)
+      window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`)
     })
   }
 
-  // Memoize current items to avoid unnecessary re-renders
-  const currentItems = useMemo(() => {
-    switch (currentType) {
-      case 'artists':
-        return artists
-      case 'tracks':
-        return tracks
-      case 'albums':
-        return albums
-    }
-  }, [currentType, artists, tracks, albums])
-
   return (
-    <>
+    <div className="relative">
       <div className="mb-4">
         <ChartTypeSelector currentType={currentType} onTypeChange={handleTypeChange} />
       </div>
-      <ChartTable items={currentItems} chartType={currentType} />
-    </>
+      <div className={`transition-opacity duration-300 ${isLoading ? 'opacity-30' : 'opacity-100'}`}>
+        <ChartTable items={currentItems} chartType={currentType} />
+      </div>
+      
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-lg z-10">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-12 h-12 border-4 border-yellow-200 border-t-yellow-600 rounded-full animate-spin"></div>
+            <p className="text-sm text-gray-600 font-medium">Loading chart data...</p>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
 

@@ -12,7 +12,6 @@ interface ChartTableProps {
 export default function ChartTable({ items, chartType }: ChartTableProps) {
   const { stopPulse } = useNavigation()
 
-  // Stop pulse when table data changes (new items loaded)
   useEffect(() => {
     if (items.length > 0) {
       stopPulse()

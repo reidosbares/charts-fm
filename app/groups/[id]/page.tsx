@@ -4,6 +4,22 @@ import { getGroupWeeklyStats, getGroupAllTimeStats } from '@/lib/group-queries'
 import { requireGroupMembership } from '@/lib/group-auth'
 import Link from 'next/link'
 import { formatWeekDate, getWeekStartForDay, getWeekEndForDay, formatWeekLabel } from '@/lib/weekly-utils'
+
+// Helper function to format date as "Dec. 28, 2025"
+function formatDateWritten(date: Date): string {
+  const monthNames = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.']
+  const month = monthNames[date.getUTCMonth()]
+  const day = date.getUTCDate()
+  const year = date.getUTCFullYear()
+  return `${month} ${day}, ${year}`
+}
+
+// Helper function to get week end date (6 days after week start)
+function getWeekEndDate(weekStart: Date): Date {
+  const weekEnd = new Date(weekStart)
+  weekEnd.setUTCDate(weekEnd.getUTCDate() + 6)
+  return weekEnd
+}
 import LeaveGroupButton from './LeaveGroupButton'
 import RemoveMemberButton from './RemoveMemberButton'
 import InviteMemberButton from './InviteMemberButton'
@@ -209,7 +225,7 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                 
                 {/* Group Info */}
                 <div className="flex-1">
-                  <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
+                  <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent leading-[1.1] pb-2 overflow-visible">
                     {group.name}
                   </h1>
                   <div className="flex flex-wrap items-center gap-4 mb-4">
@@ -552,11 +568,19 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
                     const topTracks = (latestWeek.topTracks as any[]) || []
                     const topAlbums = (latestWeek.topAlbums as any[]) || []
                     
+                    const weekStartDate = new Date(latestWeek.weekStart)
+                    const weekEndDate = getWeekEndDate(weekStartDate)
+                    const weekStartFormatted = formatDateWritten(weekStartDate)
+                    const weekEndFormatted = formatDateWritten(weekEndDate)
+                    
                     return (
                       <div className="bg-gradient-to-br from-white to-yellow-50/30 rounded-xl shadow-lg p-6 border border-yellow-200/50">
                         <div className="flex items-center justify-between mb-6">
                           <h3 className="text-2xl font-bold text-gray-900">
-                            Week of {formatWeekDate(latestWeek.weekStart)}
+                            Week of {weekStartFormatted}
+                            <span className="text-sm font-normal italic text-gray-500 ml-2">
+                              (from {weekStartFormatted} to {weekEndFormatted})
+                            </span>
                           </h3>
                         </div>
                         

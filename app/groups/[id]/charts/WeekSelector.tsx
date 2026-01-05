@@ -9,22 +9,22 @@ interface WeekSelectorProps {
   weeks: { weekStart: Date }[]
   currentWeek: Date
   trackingDayOfWeek: number
+  onWeekChange?: () => void
 }
 
-export default function WeekSelector({ weeks, currentWeek, trackingDayOfWeek }: WeekSelectorProps) {
+export default function WeekSelector({ weeks, currentWeek, trackingDayOfWeek, onWeekChange }: WeekSelectorProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { triggerPulse } = useNavigation()
 
   const handleWeekChange = (weekStart: Date) => {
+    onWeekChange?.()
     triggerPulse()
     const params = new URLSearchParams(searchParams.toString())
     params.set('week', formatWeekDate(weekStart))
     router.push(`?${params.toString()}`)
   }
 
-
-  // Limit to first 5 weeks (most recent)
   const displayedWeeks = weeks.slice(0, 5)
 
   return (
@@ -55,6 +55,7 @@ export default function WeekSelector({ weeks, currentWeek, trackingDayOfWeek }: 
         availableWeeks={weeks} 
         currentWeek={currentWeek}
         trackingDayOfWeek={trackingDayOfWeek}
+        onWeekChange={onWeekChange}
       />
     </div>
   )
