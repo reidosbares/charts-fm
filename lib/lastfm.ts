@@ -105,3 +105,137 @@ export async function getTopArtists(
   return data.topartists?.artist || []
 }
 
+/**
+ * Get artist image from Last.fm API
+ * Returns the largest available image URL, or null if not available
+ */
+export async function getArtistImage(
+  artist: string,
+  apiKey: string
+): Promise<string | null> {
+  try {
+    const queryParams = new URLSearchParams({
+      method: 'artist.getInfo',
+      artist,
+      api_key: apiKey,
+      format: 'json',
+    })
+
+    const response = await fetch(`${LASTFM_API_BASE}?${queryParams}`)
+    
+    if (!response.ok) {
+      return null
+    }
+
+    const data = await response.json()
+    
+    if (data.error) {
+      return null
+    }
+
+    const artistInfo = data.artist
+    if (!artistInfo || !artistInfo.image) {
+      return null
+    }
+
+    // Last.fm returns an array of images with different sizes
+    // Order: small, medium, large, extralarge, mega
+    const images = Array.isArray(artistInfo.image) ? artistInfo.image : []
+    
+    // Prefer mega, then extralarge, then large
+    const megaImage = images.find((img: any) => img.size === 'mega' || img.size === 'extralarge')
+    if (megaImage?.['#text']) {
+      return megaImage['#text']
+    }
+
+    const extralargeImage = images.find((img: any) => img.size === 'extralarge')
+    if (extralargeImage?.['#text']) {
+      return extralargeImage['#text']
+    }
+
+    const largeImage = images.find((img: any) => img.size === 'large')
+    if (largeImage?.['#text']) {
+      return largeImage['#text']
+    }
+
+    // Fallback to any image with text
+    const anyImage = images.find((img: any) => img['#text'] && img['#text'].trim() !== '')
+    if (anyImage?.['#text']) {
+      return anyImage['#text']
+    }
+
+    return null
+  } catch (error) {
+    console.error('Error fetching artist image from Last.fm:', error)
+    return null
+  }
+}
+
+/**
+ * Get album image from Last.fm API
+ * Returns the largest available image URL, or null if not available
+ */
+export async function getAlbumImage(
+  artist: string,
+  album: string,
+  apiKey: string
+): Promise<string | null> {
+  try {
+    const queryParams = new URLSearchParams({
+      method: 'album.getInfo',
+      artist,
+      album,
+      api_key: apiKey,
+      format: 'json',
+    })
+
+    const response = await fetch(`${LASTFM_API_BASE}?${queryParams}`)
+    
+    if (!response.ok) {
+      return null
+    }
+
+    const data = await response.json()
+    
+    if (data.error) {
+      return null
+    }
+
+    const albumInfo = data.album
+    if (!albumInfo || !albumInfo.image) {
+      return null
+    }
+
+    // Last.fm returns an array of images with different sizes
+    // Order: small, medium, large, extralarge, mega
+    const images = Array.isArray(albumInfo.image) ? albumInfo.image : []
+    
+    // Prefer mega, then extralarge, then large
+    const megaImage = images.find((img: any) => img.size === 'mega' || img.size === 'extralarge')
+    if (megaImage?.['#text']) {
+      return megaImage['#text']
+    }
+
+    const extralargeImage = images.find((img: any) => img.size === 'extralarge')
+    if (extralargeImage?.['#text']) {
+      return extralargeImage['#text']
+    }
+
+    const largeImage = images.find((img: any) => img.size === 'large')
+    if (largeImage?.['#text']) {
+      return largeImage['#text']
+    }
+
+    // Fallback to any image with text
+    const anyImage = images.find((img: any) => img['#text'] && img['#text'].trim() !== '')
+    if (anyImage?.['#text']) {
+      return anyImage['#text']
+    }
+
+    return null
+  } catch (error) {
+    console.error('Error fetching album image from Last.fm:', error)
+    return null
+  }
+}
+

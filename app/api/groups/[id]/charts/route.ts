@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { calculateGroupWeeklyStats, deleteOverlappingCharts } from '@/lib/group-service'
+import { calculateGroupWeeklyStats, deleteOverlappingCharts, updateGroupIconFromChart } from '@/lib/group-service'
 import { getLastNFinishedWeeks, getLastNFinishedWeeksForDay, getWeekEndForDay } from '@/lib/weekly-utils'
 import { recalculateAllTimeStats } from '@/lib/group-alltime-stats'
 import { ChartGenerationLogger } from '@/lib/chart-generation-logger'
@@ -158,6 +158,12 @@ export async function POST(
 
   // Recalculate all-time stats once after all weeks are processed
   await recalculateAllTimeStats(groupId, logger)
+
+  // Update group icon if dynamic icon is enabled
+  // Don't await - let it run in background to avoid blocking the response
+  updateGroupIconFromChart(groupId).catch((error) => {
+    console.error('Error updating group icon after chart generation:', error)
+  })
 
   // Get updated stats
   const weeklyStats = await prisma.groupWeeklyStats.findMany({

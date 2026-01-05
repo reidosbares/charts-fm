@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import CustomSelect from '@/components/CustomSelect'
 
 const DAYS_OF_WEEK = [
   { value: 0, label: 'Sunday' },
@@ -319,19 +320,13 @@ export default function CreateGroupPage() {
         <p className="text-sm text-gray-500 mb-4">
           The day of the week when charts are calculated and when the week starts. For example, if set to Wednesday, weeks will run from Wednesday to Wednesday and charts will be calculated on Wednesdays.
         </p>
-        <select
+        <CustomSelect
           id="trackingDayOfWeek"
+          options={DAYS_OF_WEEK.map(day => ({ value: day.value, label: day.label }))}
           value={formData.trackingDayOfWeek}
-          onChange={(e) => setFormData({ ...formData, trackingDayOfWeek: Number(e.target.value) })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+          onChange={(value) => setFormData({ ...formData, trackingDayOfWeek: Number(value) })}
           disabled={isLoading}
-        >
-          {DAYS_OF_WEEK.map((day) => (
-            <option key={day.value} value={day.value}>
-              {day.label}
-            </option>
-          ))}
-        </select>
+        />
       </div>
 
       <div>

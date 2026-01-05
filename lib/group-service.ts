@@ -9,6 +9,7 @@ import { cacheChartMetrics } from './group-chart-metrics'
 import { recalculateAllTimeStats } from './group-alltime-stats'
 import { ChartMode } from './vibe-score'
 import { ChartGenerationLogger } from './chart-generation-logger'
+import { getArtistImage, getAlbumImage } from './lastfm'
 
 const API_KEY = process.env.LASTFM_API_KEY!
 const API_SECRET = process.env.LASTFM_API_SECRET!
@@ -153,7 +154,6 @@ export async function deleteOverlappingCharts(
         },
       }),
       // Delete associated per-user VS entries
-      // @ts-ignore - Prisma client will be regenerated after migration
       prisma.userChartEntryVS.deleteMany({
         where: {
           groupId,
@@ -184,7 +184,6 @@ async function storeUserChartEntryVS(
   normalizedWeekStart.setUTCHours(0, 0, 0, 0)
 
   // Delete existing per-user VS entries for this week (for regeneration)
-  // @ts-ignore - Prisma client will be regenerated after migration
   await prisma.userChartEntryVS.deleteMany({
     where: {
       groupId,
@@ -244,7 +243,6 @@ async function storeUserChartEntryVS(
 
   // Insert all entries in batches
   if (entriesToCreate.length > 0) {
-    // @ts-ignore - Prisma client will be regenerated after migration
     await prisma.userChartEntryVS.createMany({
       data: entriesToCreate,
       skipDuplicates: true,
@@ -390,7 +388,6 @@ export async function initializeGroupWithHistory(groupId: string): Promise<void>
     select: { 
       chartSize: true, 
       trackingDayOfWeek: true,
-      // @ts-ignore - Prisma client will be regenerated after migration
       chartMode: true,
     },
   })
@@ -401,7 +398,6 @@ export async function initializeGroupWithHistory(groupId: string): Promise<void>
 
   const chartSize = group.chartSize || 10
   const trackingDayOfWeek = group.trackingDayOfWeek ?? 0
-  // @ts-ignore - Prisma client will be regenerated after migration
   const chartMode = (group.chartMode || 'plays_only') as ChartMode
 
   // Use the group's tracking day to calculate weeks
@@ -433,5 +429,86 @@ export async function initializeGroupWithHistory(groupId: string): Promise<void>
 
   // Recalculate all-time stats once after all weeks are processed
   await recalculateAllTimeStats(groupId)
+}
+
+/**
+ * Update group icon based on the latest weekly chart
+ * Fetches image from Last.fm API based on the group's dynamicIconSource setting
+ */
+export async function updateGroupIconFromChart(groupId: string): Promise<void> {
+  // Get group settings
+  const group = await prisma.group.findUnique({
+    where: { id: groupId },
+    select: {
+      id: true,
+      dynamicIconEnabled: true,
+      dynamicIconSource: true,
+      image: true,
+    },
+  })
+
+  if (!group) {
+    return
+  }
+
+  // Check if dynamic icon is enabled
+  if (!group.dynamicIconEnabled || !group.dynamicIconSource) {
+    return
+  }
+
+  // Get the latest weekly stats
+  const latestStats = await prisma.groupWeeklyStats.findFirst({
+    where: { groupId },
+    orderBy: { weekStart: 'desc' },
+  })
+
+  if (!latestStats) {
+    // No charts yet, keep existing icon
+    return
+  }
+
+  let imageUrl: string | null = null
+
+    try {
+    // Extract the appropriate item based on source type
+    if (group.dynamicIconSource === 'top_artist') {
+      const topArtists = latestStats.topArtists as unknown as TopItem[]
+      if (topArtists && topArtists.length > 0) {
+        const topArtist = topArtists[0]
+        if (topArtist.name) {
+          imageUrl = await getArtistImage(topArtist.name, API_KEY)
+        }
+      }
+    } else if (group.dynamicIconSource === 'top_album') {
+      const topAlbums = latestStats.topAlbums as unknown as TopItem[]
+      if (topAlbums && topAlbums.length > 0) {
+        const topAlbum = topAlbums[0]
+        if (topAlbum.name && topAlbum.artist) {
+          imageUrl = await getAlbumImage(topAlbum.artist, topAlbum.name, API_KEY)
+        }
+      }
+    } else if (group.dynamicIconSource === 'top_track_artist') {
+      const topTracks = latestStats.topTracks as unknown as TopItem[]
+      if (topTracks && topTracks.length > 0) {
+        const topTrack = topTracks[0]
+        if (topTrack.artist) {
+          imageUrl = await getArtistImage(topTrack.artist, API_KEY)
+        }
+      }
+    }
+  } catch (error) {
+    console.error(`Error updating group icon for group ${groupId}:`, error)
+    // Keep existing icon on error
+    return
+  }
+
+  // Only update if we got a valid image URL
+  if (imageUrl) {
+    await prisma.group.update({
+      where: { id: groupId },
+      data: { image: imageUrl },
+    })
+  }
+  // If imageUrl is null, keep the existing icon (don't update)
 }
 

@@ -6,6 +6,9 @@ import GroupSettingsForm from './GroupSettingsForm'
 import GroupDetailsTab from './GroupDetailsTab'
 import DeleteGroupTab from './DeleteGroupTab'
 
+// Force dynamic rendering to prevent caching
+export const dynamic = 'force-dynamic'
+
 export default async function GroupSettingsPage({ params }: { params: { id: string } }) {
   const { user, group } = await requireGroupCreator(params.id)
 
@@ -50,6 +53,8 @@ export default async function GroupSettingsPage({ params }: { params: { id: stri
               initialImage={group.image}
               initialIsPrivate={group.isPrivate}
               initialAllowFreeJoin={group.allowFreeJoin ?? false}
+              initialDynamicIconEnabled={(group as any).dynamicIconEnabled ?? false}
+              initialDynamicIconSource={(group as any).dynamicIconSource}
             />
           }
           deleteGroupContent={

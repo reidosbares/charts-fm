@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getLastChartWeek, deleteOverlappingCharts } from '@/lib/group-service'
@@ -195,6 +196,10 @@ export async function PATCH(
       trackingDayOfWeek: true,
     },
   })
+
+  // Revalidate the cache for the group page and settings page
+  revalidatePath(`/groups/${groupId}`)
+  revalidatePath(`/groups/${groupId}/settings`)
 
   return NextResponse.json({
     chartSize: updatedGroup.chartSize || 10,

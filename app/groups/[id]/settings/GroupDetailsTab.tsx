@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import SafeImage from '@/components/SafeImage'
 import { getDefaultGroupImage } from '@/lib/default-images'
+import CustomSelect from '@/components/CustomSelect'
+import Toggle from '@/components/Toggle'
 
 interface GroupDetailsTabProps {
   groupId: string
@@ -11,7 +13,15 @@ interface GroupDetailsTabProps {
   initialImage: string | null
   initialIsPrivate: boolean
   initialAllowFreeJoin: boolean
+  initialDynamicIconEnabled: boolean
+  initialDynamicIconSource: string | null
 }
+
+const ICON_SOURCES = [
+  { value: 'top_artist', label: 'Top Artist' },
+  { value: 'top_album', label: 'Top Album' },
+  { value: 'top_track_artist', label: 'Artist of Top Track' },
+]
 
 export default function GroupDetailsTab({
   groupId,
@@ -19,12 +29,16 @@ export default function GroupDetailsTab({
   initialImage,
   initialIsPrivate,
   initialAllowFreeJoin,
+  initialDynamicIconEnabled,
+  initialDynamicIconSource,
 }: GroupDetailsTabProps) {
   const router = useRouter()
   const [name, setName] = useState(initialName)
   const [imageUrl, setImageUrl] = useState(initialImage || '')
   const [isPrivate, setIsPrivate] = useState(initialIsPrivate)
   const [allowFreeJoin, setAllowFreeJoin] = useState(initialAllowFreeJoin)
+  const [dynamicIconEnabled, setDynamicIconEnabled] = useState(initialDynamicIconEnabled)
+  const [dynamicIconSource, setDynamicIconSource] = useState(initialDynamicIconSource || 'top_artist')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -41,7 +55,9 @@ export default function GroupDetailsTab({
     name !== initialName ||
     imageUrl !== (initialImage || '') ||
     isPrivate !== initialIsPrivate ||
-    allowFreeJoin !== initialAllowFreeJoin
+    allowFreeJoin !== initialAllowFreeJoin ||
+    dynamicIconEnabled !== initialDynamicIconEnabled ||
+    (dynamicIconEnabled && dynamicIconSource !== initialDynamicIconSource)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -60,6 +76,8 @@ export default function GroupDetailsTab({
           name: name.trim(),
           isPrivate,
           allowFreeJoin: isPrivate ? false : allowFreeJoin, // Only allow free join for public groups
+          dynamicIconEnabled,
+          dynamicIconSource: dynamicIconEnabled ? dynamicIconSource : null,
         }),
       })
 
@@ -86,6 +104,9 @@ export default function GroupDetailsTab({
       }
 
       setSuccess(true)
+      
+      // Refresh the router cache to ensure fresh data
+      router.refresh()
       
       // Redirect after a short delay
       setTimeout(() => {
@@ -161,19 +182,13 @@ export default function GroupDetailsTab({
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Privacy Settings
           </label>
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              id="isPrivate"
-              checked={isPrivate}
-              onChange={(e) => handlePrivateChange(e.target.checked)}
-              className="w-4 h-4 text-yellow-500 border-gray-300 rounded focus:ring-yellow-500"
-              disabled={isLoading}
-            />
-            <label htmlFor="isPrivate" className="text-sm text-gray-700">
-              Private Group
-            </label>
-          </div>
+          <Toggle
+            id="isPrivate"
+            checked={isPrivate}
+            onChange={handlePrivateChange}
+            disabled={isLoading}
+            label="Private Group"
+          />
           <p className="text-xs text-gray-500 mt-1">
             Private groups are not viewable publicly and require approval to join
           </p>
@@ -184,24 +199,54 @@ export default function GroupDetailsTab({
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Join Settings
             </label>
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                id="allowFreeJoin"
-                checked={allowFreeJoin}
-                onChange={(e) => setAllowFreeJoin(e.target.checked)}
-                className="w-4 h-4 text-yellow-500 border-gray-300 rounded focus:ring-yellow-500"
-                disabled={isLoading}
-              />
-              <label htmlFor="allowFreeJoin" className="text-sm text-gray-700">
-                Users can join freely
-              </label>
-            </div>
+            <Toggle
+              id="allowFreeJoin"
+              checked={allowFreeJoin}
+              onChange={setAllowFreeJoin}
+              disabled={isLoading}
+              label="Users can join freely"
+            />
             <p className="text-xs text-gray-500 mt-1">
               When enabled, users can join this group directly from the public page without requiring approval
             </p>
           </div>
         )}
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Dynamic Icon
+          </label>
+          <p className="text-xs text-gray-500 mb-3">
+            Automatically update the group icon based on the latest weekly chart. The icon will update whenever new charts are generated.
+          </p>
+          
+          <div className="mb-4">
+            <Toggle
+              id="dynamicIconEnabled"
+              checked={dynamicIconEnabled}
+              onChange={setDynamicIconEnabled}
+              disabled={isLoading}
+              label="Enable Dynamic Icon"
+            />
+          </div>
+
+          {dynamicIconEnabled && (
+            <div>
+              <label htmlFor="dynamicIconSource" className="block text-sm font-medium text-gray-700 mb-2">
+                Icon Source
+              </label>
+              <CustomSelect
+                id="dynamicIconSource"
+                options={ICON_SOURCES.map(source => ({ value: source.value, label: source.label }))}
+                value={dynamicIconSource}
+                onChange={(value) => setDynamicIconSource(String(value))}
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Choose what the group icon should display from the latest weekly chart
+              </p>
+            </div>
+          )}
+        </div>
 
         <div className="flex gap-4 pt-4">
           <button

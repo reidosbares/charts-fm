@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
@@ -47,6 +48,10 @@ export async function PATCH(
       image: image?.trim() || null,
     },
   })
+
+  // Revalidate the cache for the group page and settings page
+  revalidatePath(`/groups/${groupId}`)
+  revalidatePath(`/groups/${groupId}/settings`)
 
   return NextResponse.json({ group: updatedGroup })
 }

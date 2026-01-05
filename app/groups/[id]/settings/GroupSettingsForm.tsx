@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import CustomSelect, { SelectOption } from '@/components/CustomSelect'
 
 interface GroupSettingsFormProps {
   groupId: string
@@ -92,6 +93,9 @@ export default function GroupSettingsForm({
       }
 
       setSuccess(true)
+      
+      // Refresh the router cache to ensure fresh data
+      router.refresh()
       
       // Redirect after a short delay
       setTimeout(() => {
@@ -258,18 +262,12 @@ export default function GroupSettingsForm({
           <p className="text-sm text-gray-500 mb-4">
             The day of the week when charts are calculated and when the week starts. For example, if set to Wednesday, weeks will run from Wednesday to Wednesday and charts will be calculated on Wednesdays.
           </p>
-          <select
+          <CustomSelect
             id="trackingDayOfWeek"
+            options={DAYS_OF_WEEK.map(day => ({ value: day.value, label: day.label }))}
             value={trackingDayOfWeek}
-            onChange={(e) => setTrackingDayOfWeek(Number(e.target.value))}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-          >
-            {DAYS_OF_WEEK.map((day) => (
-              <option key={day.value} value={day.value}>
-                {day.label}
-              </option>
-            ))}
-          </select>
+            onChange={(value) => setTrackingDayOfWeek(Number(value))}
+          />
         </div>
 
         <div className="flex gap-4 pt-4">
