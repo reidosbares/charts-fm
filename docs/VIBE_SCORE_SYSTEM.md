@@ -20,26 +20,30 @@ VS is a score calculated for each item (track, artist, or album) based on its po
 
 ### Calculation Formula
 
-For each user's top N items (where N = `group.chartSize`):
+VS is now **standardized to always use top 100 entries** per user, regardless of group chart size. This makes VS user-specific and reusable across all groups.
+
+For each user's top 100 items:
 
 ```
-VS = 1.00 - (1.00 × (position - 1) / chartSize)
+VS = 1.00 - (1.00 × (position - 1) / 100)
 ```
 
 **Examples:**
-- Position 1: `1.00 - (1.00 × 0 / 20) = 1.00`
-- Position 2: `1.00 - (1.00 × 1 / 20) = 0.95`
-- Position 10: `1.00 - (1.00 × 9 / 20) = 0.55`
-- Position 20: `1.00 - (1.00 × 19 / 20) = 0.05`
-- Position 21+: `0.00` (items beyond chartSize receive no VS)
+- Position 1: `1.00 - (1.00 × 0 / 100) = 1.00`
+- Position 2: `1.00 - (1.00 × 1 / 100) = 0.99`
+- Position 10: `1.00 - (1.00 × 9 / 100) = 0.91`
+- Position 50: `1.00 - (1.00 × 49 / 100) = 0.51`
+- Position 100: `1.00 - (1.00 × 99 / 100) = 0.01`
+- Position 101+: `0.00` (items beyond top 100 receive no VS)
 
-### Chart Size Relationship
+### Standardization Benefits
 
-The number of positions considered per user is tied to the group's chart size:
-- Chart size 10 → Top 10 per user considered
-- Chart size 20 → Top 20 per user considered
-- Chart size 50 → Top 50 per user considered
-- Chart size 100 → Top 100 per user considered
+- **Consistency**: Same VS value for a user's item across all groups
+- **Reusability**: VS calculated once per user/week, reused across all groups
+- **Performance**: VS calculated once during weekly stats sync, not per-group
+- **Simplicity**: Removes dependency on group chart size for VS calculation
+
+**Note:** Group chart size (`chartSize`) still determines how many items appear in the final group chart, but VS calculation always uses top 100 per user.
 
 ## Chart Modes
 
@@ -51,8 +55,8 @@ Group owners can choose from three calculation modes:
 
 **Example:**
 - User A's #1 track gets 1.00 VS
-- User B's #5 track gets 0.80 VS (if chartSize=10)
-- If both users listened to the same track, total VS = 1.80
+- User B's #5 track gets 0.96 VS (position 5 in top 100)
+- If both users listened to the same track, total VS = 1.96
 
 **Best for:** Groups with diverse listening habits where you want to emphasize what's important to each member equally.
 
@@ -94,42 +98,43 @@ Group owners can choose from three calculation modes:
   - Used for ranking and display
   - Nullable to support existing entries before migration
 
-#### New Model: UserChartEntryVS
+#### Model: UserChartEntryVS
 
-Stores per-user VS contributions to enable future "individual contributions" features.
+Stores per-user VS contributions calculated from top 100 entries. VS is now user-specific (no groupId), making it reusable across all groups.
 
 ```prisma
 model UserChartEntryVS {
   id        String   @id @default(cuid())
   userId    String
-  groupId   String
   weekStart DateTime
   chartType String   // "artists" | "tracks" | "albums"
   entryKey  String   // Normalized key for matching
-  vibeScore Float    // User's VS contribution
+  vibeScore Float    // User's VS contribution (calculated from top 100)
   playcount Int      // User's playcount for reference
   createdAt DateTime
   updatedAt DateTime
   
   user  User  @relation(...)
-  group Group @relation(...)
   
-  @@unique([userId, groupId, weekStart, chartType, entryKey])
-  @@index([groupId, weekStart])
-  @@index([userId, groupId, weekStart])
-  @@index([groupId, weekStart, chartType])
+  @@unique([userId, weekStart, chartType, entryKey])
+  @@index([userId, weekStart])
+  @@index([userId, weekStart, chartType])
 }
 ```
 
-**Purpose:** Enables querying which users contributed to each chart entry and their individual VS scores.
+**Purpose:** 
+- Stores VS calculated from user's top 100 entries (standardized across all groups)
+- Enables querying which users contributed to each chart entry and their individual VS scores
+- VS is automatically calculated and stored when user weekly stats are fetched/stored
 
 ## Key Files
 
 ### Core Logic
 - **`lib/vibe-score.ts`**
-  - `calculateUserVS()`: Calculates VS for each item in a user's top N
-  - `aggregateGroupStatsVS()`: Aggregates VS across users based on mode
-  - Type definitions: `ChartMode`, `UserVSContribution`, `PerUserVSData`
+  - `calculateUserVS()`: Calculates VS for each item in a user's top 100 (standardized)
+  - `getUserVSForWeek()`: Fetches pre-calculated VS from UserChartEntryVS
+  - `aggregateGroupStatsVS()`: Aggregates pre-calculated VS across users based on mode
+  - Type definitions: `ChartMode`, `UserVSContribution`
 
 ### Integration
 - **`lib/group-stats.ts`**
@@ -137,8 +142,8 @@ model UserChartEntryVS {
   - Maintains backward compatibility with legacy `aggregateGroupStats()`
 
 - **`lib/group-service.ts`**
-  - `calculateGroupWeeklyStats()`: Main function that orchestrates VS calculation
-  - `storeUserChartEntryVS()`: Stores per-user VS contributions
+  - `fetchOrGetUserWeeklyStats()`: Automatically calculates and stores VS when weekly stats are fetched/stored
+  - `calculateGroupWeeklyStats()`: Fetches pre-calculated VS and aggregates for group charts
   - Fetches `chartMode` from group settings
 
 - **`lib/group-chart-metrics.ts`**
@@ -164,28 +169,30 @@ model UserChartEntryVS {
 ```
 1. User Weekly Stats (from Last.fm)
    ↓
-2. Calculate VS per User
-   - Take top N items (N = group.chartSize)
-   - Calculate VS based on position
-   - Items beyond N get 0.00 VS
+2. Calculate VS per User (Automatic)
+   - Take top 100 items (standardized, not based on group chartSize)
+   - Calculate VS based on position (1.00 - (position - 1) / 100)
+   - Items beyond position 100 get 0.00 VS
+   - Store in UserChartEntryVS (user-specific, no groupId)
    ↓
-3. Store Per-User VS
-   - Save to UserChartEntryVS table
-   - Enables future individual contribution views
+3. Group Chart Generation
+   - Fetch pre-calculated VS from UserChartEntryVS for all group members
+   - Aggregate by Mode:
+     * VS mode: Sum VS across users
+     * VS weighted: Sum (VS × playcount)
+     * Plays-only: Sum playcount (stored as VS)
    ↓
-4. Aggregate by Mode
-   - VS mode: Sum VS across users
-   - VS weighted: Sum (VS × playcount)
-   - Plays-only: Sum playcount (stored as VS)
-   ↓
-5. Store Aggregated Results
+4. Store Aggregated Results
    - Save to GroupChartEntry.vibeScore
    - Save to GroupWeeklyStats (JSON, without VS)
+   - Slice to group.chartSize for final chart display
    ↓
-6. Rank Charts
+5. Rank Charts
    - Sort by vibeScore (descending)
    - Tiebreaker: playcount (descending)
 ```
+
+**Key Change:** VS is now calculated once per user/week when weekly stats are stored, and reused across all groups. This eliminates redundant calculations and ensures consistency.
 
 ## API Endpoints
 
@@ -270,35 +277,37 @@ npx prisma generate
 
 ### Data Population
 
-- VS is calculated and stored when charts are generated
+- VS is calculated and stored automatically when user weekly stats are fetched/stored
+- VS is calculated from top 100 entries (standardized across all groups)
 - Existing charts will have `null` vibeScore until regenerated
-- Per-user VS is stored automatically during chart generation
+- Per-user VS is stored in UserChartEntryVS (user-specific, no groupId)
+- VS is reused across all groups for the same user/week
 
 ## Examples
 
 ### Example 1: VS Mode Calculation
 
 **Group Settings:**
-- Chart size: 20
+- Chart size: 20 (determines how many items appear in final chart)
 - Mode: `vs`
 
-**User A's Top Tracks:**
-1. "Carnaval" - 28 plays → 1.00 VS
-2. "Bad Romance" - 19 plays → 0.95 VS
-3. "Alejandro" - 18 plays → 0.90 VS
+**User A's Top Tracks (VS calculated from top 100):**
+1. "Carnaval" - 28 plays → 1.00 VS (position 1 in top 100)
+2. "Bad Romance" - 19 plays → 0.99 VS (position 2 in top 100)
+3. "Alejandro" - 18 plays → 0.98 VS (position 3 in top 100)
 ...
-20. "Berghain" - 4 plays → 0.05 VS
+100. "Berghain" - 4 plays → 0.01 VS (position 100 in top 100)
 
-**User B's Top Tracks:**
-1. "Bad Romance" - 15 plays → 1.00 VS
-2. "Carnaval" - 12 plays → 0.95 VS
+**User B's Top Tracks (VS calculated from top 100):**
+1. "Bad Romance" - 15 plays → 1.00 VS (position 1 in top 100)
+2. "Carnaval" - 12 plays → 0.99 VS (position 2 in top 100)
 
 **Result:**
-- "Carnaval": 1.00 (User A) + 0.95 (User B) = **1.95 VS**
-- "Bad Romance": 0.95 (User A) + 1.00 (User B) = **1.95 VS**
-- "Alejandro": 0.90 (User A) = **0.90 VS**
+- "Carnaval": 1.00 (User A) + 0.99 (User B) = **1.99 VS**
+- "Bad Romance": 0.99 (User A) + 1.00 (User B) = **1.99 VS**
+- "Alejandro": 0.98 (User A) = **0.98 VS**
 
-Both "Carnaval" and "Bad Romance" tie at 1.95 VS, ranked by playcount as tiebreaker.
+Both "Carnaval" and "Bad Romance" tie at 1.99 VS, ranked by playcount as tiebreaker. The top 20 items (based on group chartSize) appear in the final chart.
 
 ### Example 2: VS Weighted Mode
 
@@ -314,9 +323,10 @@ Both "Carnaval" and "Bad Romance" tie at 1.95 VS, ranked by playcount as tiebrea
 
 When testing the VS system:
 
-1. **Test with different chart sizes** (10, 20, 50, 100)
-   - Verify VS calculation formula works correctly
-   - Ensure items beyond chartSize get 0.00 VS
+1. **Test VS calculation**
+   - Verify VS is always calculated from top 100 entries
+   - Ensure items beyond position 100 get 0.00 VS
+   - Verify VS is the same for a user across different groups
 
 2. **Test all three modes**
    - VS mode: Verify simple summation
@@ -329,9 +339,10 @@ When testing the VS system:
    - Check historical charts (if not regenerated) keep old mode
 
 4. **Test per-user VS storage**
-   - Verify UserChartEntryVS records are created
-   - Check unique constraints work
-   - Verify cleanup on regeneration
+   - Verify UserChartEntryVS records are created automatically when weekly stats are stored
+   - Verify VS is user-specific (no groupId)
+   - Check unique constraints work (userId, weekStart, chartType, entryKey)
+   - Verify VS is reused across groups for the same user/week
 
 5. **Test edge cases**
    - Single user groups
@@ -346,13 +357,14 @@ When testing the VS system:
 
 ### VS doesn't match expected values
 - Check group's `chartMode` setting
-- Verify `chartSize` matches expected number of positions
-- Check that user's top items include the item in question
+- Verify VS is calculated from top 100 entries (standardized)
+- Check that user's top 100 items include the item in question
+- Note: Group `chartSize` only affects how many items appear in final chart, not VS calculation
 
 ### Per-user VS not stored
-- Verify migration was run successfully
-- Check that `storeUserChartEntryVS()` is being called
-- Review database for UserChartEntryVS records
+- Verify migration was run successfully (removed groupId from UserChartEntryVS)
+- Check that VS is calculated automatically in `fetchOrGetUserWeeklyStats()`
+- Review database for UserChartEntryVS records (should have userId, weekStart, chartType, entryKey - no groupId)
 
 ## Related Documentation
 

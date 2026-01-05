@@ -7,7 +7,7 @@ import { aggregateGroupStats, aggregateGroupStatsWithVS } from './group-stats'
 import { TopItem } from './lastfm-weekly'
 import { cacheChartMetrics } from './group-chart-metrics'
 import { recalculateAllTimeStats } from './group-alltime-stats'
-import { ChartMode } from './vibe-score'
+import { ChartMode, calculateUserVS, getUserVSForWeek, aggregateGroupStatsVS } from './vibe-score'
 import { ChartGenerationLogger } from './chart-generation-logger'
 import { getArtistImage, getAlbumImage } from './lastfm'
 
@@ -15,8 +15,104 @@ const API_KEY = process.env.LASTFM_API_KEY!
 const API_SECRET = process.env.LASTFM_API_SECRET!
 
 /**
+ * Get entry key for an item (same format as GroupChartEntry)
+ */
+function getEntryKey(item: { name: string; artist?: string }, chartType: 'artists' | 'tracks' | 'albums'): string {
+  if (chartType === 'artists') {
+    return item.name.toLowerCase()
+  }
+  return `${item.name}|${item.artist || ''}`.toLowerCase()
+}
+
+/**
+ * Calculate and store VS for a user's weekly stats
+ * VS is calculated using top 100 entries and stored in UserChartEntryVS
+ */
+async function calculateAndStoreUserVS(
+  userId: string,
+  weekStart: Date,
+  topTracks: TopItem[],
+  topArtists: TopItem[],
+  topAlbums: TopItem[]
+): Promise<void> {
+  const normalizedWeekStart = new Date(weekStart)
+  normalizedWeekStart.setUTCHours(0, 0, 0, 0)
+
+  // Calculate VS for top 100 entries
+  const tracksVS = calculateUserVS(topTracks)
+  const artistsVS = calculateUserVS(topArtists)
+  const albumsVS = calculateUserVS(topAlbums)
+
+  // Prepare entries to upsert
+  const entriesToUpsert: Array<{
+    userId: string
+    weekStart: Date
+    chartType: string
+    entryKey: string
+    vibeScore: number
+    playcount: number
+  }> = []
+
+  // Add tracks
+  for (const { item, vibeScore } of tracksVS) {
+    if (vibeScore === 0) continue // Skip items beyond top 100
+    entriesToUpsert.push({
+      userId,
+      weekStart: normalizedWeekStart,
+      chartType: 'tracks',
+      entryKey: getEntryKey(item, 'tracks'),
+      vibeScore,
+      playcount: item.playcount,
+    })
+  }
+
+  // Add artists
+  for (const { item, vibeScore } of artistsVS) {
+    if (vibeScore === 0) continue // Skip items beyond top 100
+    entriesToUpsert.push({
+      userId,
+      weekStart: normalizedWeekStart,
+      chartType: 'artists',
+      entryKey: getEntryKey(item, 'artists'),
+      vibeScore,
+      playcount: item.playcount,
+    })
+  }
+
+  // Add albums
+  for (const { item, vibeScore } of albumsVS) {
+    if (vibeScore === 0) continue // Skip items beyond top 100
+    entriesToUpsert.push({
+      userId,
+      weekStart: normalizedWeekStart,
+      chartType: 'albums',
+      entryKey: getEntryKey(item, 'albums'),
+      vibeScore,
+      playcount: item.playcount,
+    })
+  }
+
+  // Delete existing entries for this user/week (for regeneration)
+  await prisma.userChartEntryVS.deleteMany({
+    where: {
+      userId,
+      weekStart: normalizedWeekStart,
+    },
+  })
+
+  // Insert all entries
+  if (entriesToUpsert.length > 0) {
+    await prisma.userChartEntryVS.createMany({
+      data: entriesToUpsert,
+      skipDuplicates: true,
+    })
+  }
+}
+
+/**
  * Fetch and store weekly stats for a user
  * Returns existing stats if they already exist, otherwise fetches from Last.fm
+ * Automatically calculates and stores VS for top 100 entries
  */
 export async function fetchOrGetUserWeeklyStats(
   userId: string,
@@ -39,34 +135,36 @@ export async function fetchOrGetUserWeeklyStats(
     },
   })
 
-  if (existing) {
-    return {
-      topTracks: (existing.topTracks as unknown as TopItem[]) || [],
-      topArtists: (existing.topArtists as unknown as TopItem[]) || [],
-      topAlbums: (existing.topAlbums as unknown as TopItem[]) || [],
-    }
+  const stats = existing
+    ? {
+        topTracks: (existing.topTracks as unknown as TopItem[]) || [],
+        topArtists: (existing.topArtists as unknown as TopItem[]) || [],
+        topAlbums: (existing.topAlbums as unknown as TopItem[]) || [],
+      }
+    : await getWeeklyStats(
+        lastfmUsername,
+        weekStart,
+        API_KEY,
+        API_SECRET,
+        sessionKey || undefined
+      )
+
+  // If stats were just fetched, store them
+  if (!existing) {
+    await prisma.userWeeklyStats.create({
+      data: {
+        userId,
+        weekStart,
+        weekEnd: getWeekStart(new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000)),
+        topTracks: stats.topTracks as any,
+        topArtists: stats.topArtists as any,
+        topAlbums: stats.topAlbums as any,
+      },
+    })
   }
 
-  // Fetch from Last.fm
-  const stats = await getWeeklyStats(
-    lastfmUsername,
-    weekStart,
-    API_KEY,
-    API_SECRET,
-    sessionKey || undefined
-  )
-
-  // Store in database
-  await prisma.userWeeklyStats.create({
-    data: {
-      userId,
-      weekStart,
-      weekEnd: getWeekStart(new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000)),
-      topTracks: stats.topTracks as any,
-      topArtists: stats.topArtists as any,
-      topAlbums: stats.topAlbums as any,
-    },
-  })
+  // Calculate and store VS for top 100 entries (always recalculate to ensure consistency)
+  await calculateAndStoreUserVS(userId, weekStart, stats.topTracks, stats.topArtists, stats.topAlbums)
 
   return stats
 }
@@ -153,102 +251,12 @@ export async function deleteOverlappingCharts(
           },
         },
       }),
-      // Delete associated per-user VS entries
-      prisma.userChartEntryVS.deleteMany({
-        where: {
-          groupId,
-          weekStart: {
-            in: weekStarts,
-          },
-        },
-      }),
+      // Note: UserChartEntryVS is now user-specific (no groupId), so we don't delete it here
+      // VS entries are shared across all groups and will be recalculated when needed
     ])
   }
 }
 
-/**
- * Store per-user VS contributions for a week
- */
-async function storeUserChartEntryVS(
-  groupId: string,
-  weekStart: Date,
-  perUserVS: {
-    topTracks: Array<{ userId: string; entryKey: string; vibeScore: number; playcount: number }>
-    topArtists: Array<{ userId: string; entryKey: string; vibeScore: number; playcount: number }>
-    topAlbums: Array<{ userId: string; entryKey: string; vibeScore: number; playcount: number }>
-  },
-  logger?: ChartGenerationLogger
-): Promise<void> {
-  // Normalize weekStart to start of day in UTC
-  const normalizedWeekStart = new Date(weekStart)
-  normalizedWeekStart.setUTCHours(0, 0, 0, 0)
-
-  // Delete existing per-user VS entries for this week (for regeneration)
-  await prisma.userChartEntryVS.deleteMany({
-    where: {
-      groupId,
-      weekStart: normalizedWeekStart,
-    },
-  })
-
-  // Prepare all entries to insert
-  const entriesToCreate: Array<{
-    userId: string
-    groupId: string
-    weekStart: Date
-    chartType: string
-    entryKey: string
-    vibeScore: number
-    playcount: number
-  }> = []
-
-  // Add tracks
-  for (const entry of perUserVS.topTracks) {
-    entriesToCreate.push({
-      userId: entry.userId,
-      groupId,
-      weekStart: normalizedWeekStart,
-      chartType: 'tracks',
-      entryKey: entry.entryKey,
-      vibeScore: entry.vibeScore,
-      playcount: entry.playcount,
-    })
-  }
-
-  // Add artists
-  for (const entry of perUserVS.topArtists) {
-    entriesToCreate.push({
-      userId: entry.userId,
-      groupId,
-      weekStart: normalizedWeekStart,
-      chartType: 'artists',
-      entryKey: entry.entryKey,
-      vibeScore: entry.vibeScore,
-      playcount: entry.playcount,
-    })
-  }
-
-  // Add albums
-  for (const entry of perUserVS.topAlbums) {
-    entriesToCreate.push({
-      userId: entry.userId,
-      groupId,
-      weekStart: normalizedWeekStart,
-      chartType: 'albums',
-      entryKey: entry.entryKey,
-      vibeScore: entry.vibeScore,
-      playcount: entry.playcount,
-    })
-  }
-
-  // Insert all entries in batches
-  if (entriesToCreate.length > 0) {
-    await prisma.userChartEntryVS.createMany({
-      data: entriesToCreate,
-      skipDuplicates: true,
-    })
-  }
-}
 
 /**
  * Calculate and store group weekly stats
@@ -296,30 +304,35 @@ export async function calculateGroupWeeklyStats(
     return
   }
 
-  // Fetch or get stats for all members
-  const userStatsPromises = membersToUse.map((member) =>
-    fetchOrGetUserWeeklyStats(
-      member.user.id,
-      member.user.lastfmUsername,
-      member.user.lastfmSessionKey,
-      weekStart,
-      logger
+  // Fetch or get stats for all members (this also calculates and stores VS automatically)
+  const userStatsArray = await Promise.all(
+    membersToUse.map((member) =>
+      fetchOrGetUserWeeklyStats(
+        member.user.id,
+        member.user.lastfmUsername,
+        member.user.lastfmSessionKey,
+        weekStart,
+        logger
+      )
     )
   )
 
-  const userStatsData = await Promise.all(userStatsPromises)
+  // Fetch pre-calculated VS data for all members
+  const userVSDataPromises = membersToUse.map((member) =>
+    getUserVSForWeek(member.user.id, weekStart, prisma)
+  )
 
-  // Prepare user stats with userId for VS calculation
-  const userStats = userStatsData.map((stats, index) => ({
+  const userVSDataArray = await Promise.all(userVSDataPromises)
+
+  // Prepare VS data with userId and original stats for aggregation
+  const userVSData = userVSDataArray.map((vsData: { topTracks: any[]; topArtists: any[]; topAlbums: any[] }, index: number) => ({
     userId: membersToUse[index].user.id,
-    ...stats,
+    ...vsData,
+    originalStats: userStatsArray[index], // Include original stats for name lookup
   }))
 
-  // Aggregate stats using VS calculation
-  const aggregated = aggregateGroupStatsWithVS(userStats, chartSize, chartMode)
-
-  // Store per-user VS contributions
-  await storeUserChartEntryVS(groupId, weekStart, aggregated.perUserVS, logger)
+  // Aggregate stats using pre-calculated VS
+  const aggregated = aggregateGroupStatsVS(userVSData, chartSize, chartMode)
 
   // Calculate week end based on tracking day
   const weekEnd = getWeekEndForDay(weekStart, trackingDayOfWeek)

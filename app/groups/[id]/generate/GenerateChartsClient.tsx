@@ -35,9 +35,16 @@ export default function GenerateChartsClient({ groupId }: { groupId: string }) {
       setShowFirstMessage(false)
     }, 10000)
 
-    // Rotate messages every 10 seconds (starting after first message)
+    // Rotate messages every 10 seconds (starting after first message) with random selection
     const rotationTimer = setInterval(() => {
-      setCurrentMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length)
+      setCurrentMessageIndex((prev) => {
+        // Pick a random index, but avoid showing the same message twice in a row
+        let newIndex
+        do {
+          newIndex = Math.floor(Math.random() * LOADING_MESSAGES.length)
+        } while (newIndex === prev && LOADING_MESSAGES.length > 1)
+        return newIndex
+      })
     }, 10000)
 
     return () => {

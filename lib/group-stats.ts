@@ -1,7 +1,7 @@
 // Functions to aggregate group statistics from user statistics
 
 import { TopItem } from './lastfm-weekly'
-import { aggregateGroupStatsVS, ChartMode, PerUserVSData } from './vibe-score'
+import { aggregateGroupStatsVS, ChartMode } from './vibe-score'
 
 export interface AggregatedStats {
   topTracks: TopItem[]
@@ -13,7 +13,6 @@ export interface AggregatedStatsWithVS {
   topTracks: Array<TopItem & { vibeScore: number }>
   topArtists: Array<TopItem & { vibeScore: number }>
   topAlbums: Array<TopItem & { vibeScore: number }>
-  perUserVS: PerUserVSData
 }
 
 /**
@@ -139,9 +138,11 @@ export function aggregateGroupStats(
 
 /**
  * Aggregate all stats from multiple users using VS calculation
- * @param userStats - Array of user stats with userId
+ * NOTE: This function is deprecated. Use aggregateGroupStatsVS directly with pre-calculated VS data.
+ * @param userStats - Array of user stats with userId (legacy - not used in new implementation)
  * @param chartSize - Number of items to return for each category
  * @param mode - Chart mode: 'vs', 'vs_weighted', or 'plays_only'
+ * @deprecated Use aggregateGroupStatsVS directly with pre-calculated VS data from UserChartEntryVS
  */
 export function aggregateGroupStatsWithVS(
   userStats: Array<{
@@ -153,6 +154,8 @@ export function aggregateGroupStatsWithVS(
   chartSize: number,
   mode: ChartMode
 ): AggregatedStatsWithVS {
-  return aggregateGroupStatsVS(userStats, chartSize, mode)
+  // This function is kept for backward compatibility but should not be used
+  // The new implementation uses pre-calculated VS from UserChartEntryVS
+  throw new Error('aggregateGroupStatsWithVS is deprecated. Use aggregateGroupStatsVS with pre-calculated VS data.')
 }
 

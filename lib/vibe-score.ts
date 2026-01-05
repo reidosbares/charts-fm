@@ -1,6 +1,7 @@
 // Vibe Score calculation functions
 
 import { TopItem } from './lastfm-weekly'
+import type { PrismaClient } from '@prisma/client'
 
 export type ChartMode = 'vs' | 'vs_weighted' | 'plays_only'
 
@@ -18,26 +19,44 @@ export interface PerUserVSData {
 }
 
 /**
- * Calculate VS for each item in a user's top N list
- * Formula: 1.00 - (1.00 × (position - 1) / chartSize)
- * Position 1 gets 1.00, position N gets 1.00 - (1.00 × (N-1) / chartSize)
- * Items beyond position chartSize get 0.00
+ * Calculate VS for each item in a user's top 100 list
+ * Special weighting until VS reaches 1.00:
+ * - Position 1: 2.00 VS
+ * - Positions 2-21: Reduce by 0.05 per position (position 21 = 1.00 VS)
+ * - Positions 22-100: Linear reduction from 1.00 to 0.00 (position 101 = 0.00 VS)
+ * Items beyond position 100 get 0.00 VS
+ * VS is now standardized to always use top 100, making it reusable across all groups
  */
 export function calculateUserVS(
-  items: TopItem[],
-  chartSize: number
+  items: TopItem[]
 ): Array<{ item: TopItem; position: number; vibeScore: number }> {
+  const CHART_SIZE = 100 // Always use top 100 for VS calculation
+  const VS_1_THRESHOLD = 21 // Position where VS becomes 1.00
+  const TOP_POSITION_VS = 2.0 // Position 1 gets 2.00 VS
+  const TOP_REDUCTION = 0.05 // Reduction per position until VS reaches 1.00
   const result: Array<{ item: TopItem; position: number; vibeScore: number }> = []
 
   for (let i = 0; i < items.length; i++) {
     const position = i + 1
     let vibeScore = 0
 
-    if (position <= chartSize) {
-      // Calculate VS based on position
-      vibeScore = 1.0 - (1.0 * (position - 1) / chartSize)
+    if (position <= CHART_SIZE) {
+      if (position === 1) {
+        // Top position gets special weight
+        vibeScore = TOP_POSITION_VS
+      } else if (position <= VS_1_THRESHOLD) {
+        // Positions 2-21: Reduce by 0.05 per position until VS reaches 1.00
+        vibeScore = TOP_POSITION_VS - (TOP_REDUCTION * (position - 1))
+      } else {
+        // Positions 22-100: Linear reduction from 1.00 to 0.00 at position 101
+        const position21VS = 1.0 // VS at position 21 (the threshold)
+        const positionsFrom21 = position - VS_1_THRESHOLD // 1 to 79 for positions 22-100
+        const totalPositionsToZero = CHART_SIZE - VS_1_THRESHOLD + 1 // 80 positions (21 to 100)
+        // Linear interpolation: start at 1.00, end at 0.00 at position 101
+        vibeScore = position21VS * (1 - (positionsFrom21 / totalPositionsToZero))
+      }
     }
-    // Items beyond chartSize get 0.00 VS
+    // Items beyond position 100 get 0.00 VS
 
     result.push({
       item: items[i],
@@ -61,6 +80,7 @@ function getEntryKey(item: { name: string; artist?: string }, chartType: 'artist
 
 /**
  * Aggregate VS contributions from multiple users for tracks
+ * Uses pre-calculated VS data from UserChartEntryVS
  * 
  * In VS weighted mode:
  * - Each user's contribution = VS × playcount
@@ -76,60 +96,54 @@ function getEntryKey(item: { name: string; artist?: string }, chartType: 'artist
  * - Final VS = sum of playcount (stored as VS for consistency)
  */
 function aggregateTopTracksVS(
-  userStats: Array<{ userId: string; topTracks: TopItem[] }>,
-  chartSize: number,
+  userVSData: Array<{ userId: string; vsData: UserVSContribution[]; originalStats: { topTracks: TopItem[] } }>,
   mode: ChartMode
-): { items: Array<TopItem & { vibeScore: number }>; perUserData: UserVSContribution[] } {
+): Array<TopItem & { vibeScore: number }> {
   const itemMap = new Map<string, { name: string; artist: string; totalVS: number; totalPlays: number }>()
-  const perUserData: UserVSContribution[] = []
 
-  for (const userStat of userStats) {
-    const userVS = calculateUserVS(userStat.topTracks, chartSize)
+  for (const userData of userVSData) {
+    // Create a map of entryKey -> original item for name lookup
+    const originalItemsMap = new Map<string, TopItem>()
+    for (const item of userData.originalStats.topTracks) {
+      const key = getEntryKey(item, 'tracks')
+      originalItemsMap.set(key, item)
+    }
 
-    for (const { item, vibeScore } of userVS) {
-      if (vibeScore === 0) continue // Skip items beyond chartSize
-
-      const entryKey = getEntryKey(item, 'tracks')
-      const key = entryKey
-
-      // Store per-user contribution (pure VS, not weighted)
-      // This is stored for future "individual contributions" feature
-      perUserData.push({
-        userId: userStat.userId,
-        entryKey,
-        vibeScore, // Pure VS (0.00-1.00), not weighted
-        playcount: item.playcount,
-      })
+    for (const entry of userData.vsData) {
+      // Look up original item to get proper capitalization
+      const originalItem = originalItemsMap.get(entry.entryKey)
+      const name = originalItem?.name || entry.entryKey.split('|')[0]
+      const artist = originalItem?.artist || (entry.entryKey.split('|')[1] || '')
 
       // Aggregate based on mode
       // In VS weighted mode: contributionVS = VS × plays (this IS the VS for weighted mode)
       // In VS mode: contributionVS = VS (pure VS)
       // In plays-only mode: contributionVS = plays (stored as VS for consistency)
-      const existing = itemMap.get(key)
-      let contributionVS = vibeScore
+      const existing = itemMap.get(entry.entryKey)
+      let contributionVS = entry.vibeScore
 
       if (mode === 'vs_weighted') {
         // In weighted mode, VS × plays IS the VS value
-        contributionVS = vibeScore * item.playcount
+        contributionVS = entry.vibeScore * entry.playcount
       } else if (mode === 'plays_only') {
-        contributionVS = item.playcount
+        contributionVS = entry.playcount
       }
 
       if (existing) {
         existing.totalVS += contributionVS
-        existing.totalPlays += item.playcount
+        existing.totalPlays += entry.playcount
       } else {
-        itemMap.set(key, {
-          name: item.name,
-          artist: item.artist || '',
+        itemMap.set(entry.entryKey, {
+          name,
+          artist,
           totalVS: contributionVS,
-          totalPlays: item.playcount,
+          totalPlays: entry.playcount,
         })
       }
     }
   }
 
-  const items = Array.from(itemMap.values())
+  return Array.from(itemMap.values())
     .map((item) => ({
       name: item.name,
       artist: item.artist,
@@ -143,67 +157,59 @@ function aggregateTopTracksVS(
       }
       return b.playcount - a.playcount
     })
-
-  return { items, perUserData }
 }
 
 /**
  * Aggregate VS contributions from multiple users for artists
+ * Uses pre-calculated VS data from UserChartEntryVS
  */
 function aggregateTopArtistsVS(
-  userStats: Array<{ userId: string; topArtists: TopItem[] }>,
-  chartSize: number,
+  userVSData: Array<{ userId: string; vsData: UserVSContribution[]; originalStats: { topArtists: TopItem[] } }>,
   mode: ChartMode
-): { items: Array<TopItem & { vibeScore: number }>; perUserData: UserVSContribution[] } {
+): Array<TopItem & { vibeScore: number }> {
   const itemMap = new Map<string, { name: string; totalVS: number; totalPlays: number }>()
-  const perUserData: UserVSContribution[] = []
 
-  for (const userStat of userStats) {
-    const userVS = calculateUserVS(userStat.topArtists, chartSize)
+  for (const userData of userVSData) {
+    // Create a map of entryKey -> original item for name lookup
+    const originalItemsMap = new Map<string, TopItem>()
+    for (const item of userData.originalStats.topArtists) {
+      const key = getEntryKey(item, 'artists')
+      originalItemsMap.set(key, item)
+    }
 
-    for (const { item, vibeScore } of userVS) {
-      if (vibeScore === 0) continue // Skip items beyond chartSize
-
-      const entryKey = getEntryKey(item, 'artists')
-      const key = entryKey
-
-      // Store per-user contribution (pure VS, not weighted)
-      // This is stored for future "individual contributions" feature
-      perUserData.push({
-        userId: userStat.userId,
-        entryKey,
-        vibeScore, // Pure VS (0.00-1.00), not weighted
-        playcount: item.playcount,
-      })
+    for (const entry of userData.vsData) {
+      // Look up original item to get proper capitalization
+      const originalItem = originalItemsMap.get(entry.entryKey)
+      const name = originalItem?.name || entry.entryKey
 
       // Aggregate based on mode
       // In VS weighted mode: contributionVS = VS × plays (this IS the VS for weighted mode)
       // In VS mode: contributionVS = VS (pure VS)
       // In plays-only mode: contributionVS = plays (stored as VS for consistency)
-      const existing = itemMap.get(key)
-      let contributionVS = vibeScore
+      const existing = itemMap.get(entry.entryKey)
+      let contributionVS = entry.vibeScore
 
       if (mode === 'vs_weighted') {
         // In weighted mode, VS × plays IS the VS value
-        contributionVS = vibeScore * item.playcount
+        contributionVS = entry.vibeScore * entry.playcount
       } else if (mode === 'plays_only') {
-        contributionVS = item.playcount
+        contributionVS = entry.playcount
       }
 
       if (existing) {
         existing.totalVS += contributionVS
-        existing.totalPlays += item.playcount
+        existing.totalPlays += entry.playcount
       } else {
-        itemMap.set(key, {
-          name: item.name,
+        itemMap.set(entry.entryKey, {
+          name,
           totalVS: contributionVS,
-          totalPlays: item.playcount,
+          totalPlays: entry.playcount,
         })
       }
     }
   }
 
-  const items = Array.from(itemMap.values())
+  return Array.from(itemMap.values())
     .map((item) => ({
       name: item.name,
       playcount: item.totalPlays,
@@ -220,68 +226,61 @@ function aggregateTopArtistsVS(
       }
       return b.playcount - a.playcount
     })
-
-  return { items, perUserData }
 }
 
 /**
  * Aggregate VS contributions from multiple users for albums
+ * Uses pre-calculated VS data from UserChartEntryVS
  */
 function aggregateTopAlbumsVS(
-  userStats: Array<{ userId: string; topAlbums: TopItem[] }>,
-  chartSize: number,
+  userVSData: Array<{ userId: string; vsData: UserVSContribution[]; originalStats: { topAlbums: TopItem[] } }>,
   mode: ChartMode
-): { items: Array<TopItem & { vibeScore: number }>; perUserData: UserVSContribution[] } {
+): Array<TopItem & { vibeScore: number }> {
   const itemMap = new Map<string, { name: string; artist: string; totalVS: number; totalPlays: number }>()
-  const perUserData: UserVSContribution[] = []
 
-  for (const userStat of userStats) {
-    const userVS = calculateUserVS(userStat.topAlbums, chartSize)
+  for (const userData of userVSData) {
+    // Create a map of entryKey -> original item for name lookup
+    const originalItemsMap = new Map<string, TopItem>()
+    for (const item of userData.originalStats.topAlbums) {
+      const key = getEntryKey(item, 'albums')
+      originalItemsMap.set(key, item)
+    }
 
-    for (const { item, vibeScore } of userVS) {
-      if (vibeScore === 0) continue // Skip items beyond chartSize
-
-      const entryKey = getEntryKey(item, 'albums')
-      const key = entryKey
-
-      // Store per-user contribution (pure VS, not weighted)
-      // This is stored for future "individual contributions" feature
-      perUserData.push({
-        userId: userStat.userId,
-        entryKey,
-        vibeScore, // Pure VS (0.00-1.00), not weighted
-        playcount: item.playcount,
-      })
+    for (const entry of userData.vsData) {
+      // Look up original item to get proper capitalization
+      const originalItem = originalItemsMap.get(entry.entryKey)
+      const name = originalItem?.name || entry.entryKey.split('|')[0]
+      const artist = originalItem?.artist || (entry.entryKey.split('|')[1] || '')
 
       // Aggregate based on mode
       // In VS weighted mode: contributionVS = VS × plays (this IS the VS for weighted mode)
       // In VS mode: contributionVS = VS (pure VS)
       // In plays-only mode: contributionVS = plays (stored as VS for consistency)
-      const existing = itemMap.get(key)
-      let contributionVS = vibeScore
+      const existing = itemMap.get(entry.entryKey)
+      let contributionVS = entry.vibeScore
 
       if (mode === 'vs_weighted') {
         // In weighted mode, VS × plays IS the VS value
-        contributionVS = vibeScore * item.playcount
+        contributionVS = entry.vibeScore * entry.playcount
       } else if (mode === 'plays_only') {
-        contributionVS = item.playcount
+        contributionVS = entry.playcount
       }
 
       if (existing) {
         existing.totalVS += contributionVS
-        existing.totalPlays += item.playcount
+        existing.totalPlays += entry.playcount
       } else {
-        itemMap.set(key, {
-          name: item.name,
-          artist: item.artist || '',
+        itemMap.set(entry.entryKey, {
+          name,
+          artist,
           totalVS: contributionVS,
-          totalPlays: item.playcount,
+          totalPlays: entry.playcount,
         })
       }
     }
   }
 
-  const items = Array.from(itemMap.values())
+  return Array.from(itemMap.values())
     .map((item) => ({
       name: item.name,
       artist: item.artist,
@@ -299,20 +298,69 @@ function aggregateTopAlbumsVS(
       }
       return b.playcount - a.playcount
     })
+}
 
-  return { items, perUserData }
+/**
+ * Get pre-calculated VS data for a user and week
+ */
+export async function getUserVSForWeek(
+  userId: string,
+  weekStart: Date,
+  prisma: PrismaClient
+): Promise<{
+  topTracks: UserVSContribution[]
+  topArtists: UserVSContribution[]
+  topAlbums: UserVSContribution[]
+}> {
+  const normalizedWeekStart = new Date(weekStart)
+  normalizedWeekStart.setUTCHours(0, 0, 0, 0)
+
+  const vsEntries = await prisma.userChartEntryVS.findMany({
+    where: {
+      userId,
+      weekStart: normalizedWeekStart,
+    },
+  })
+
+  const topTracks: UserVSContribution[] = []
+  const topArtists: UserVSContribution[] = []
+  const topAlbums: UserVSContribution[] = []
+
+  for (const entry of vsEntries) {
+    const contribution: UserVSContribution = {
+      userId: entry.userId,
+      entryKey: entry.entryKey,
+      vibeScore: entry.vibeScore,
+      playcount: entry.playcount,
+    }
+
+    if (entry.chartType === 'tracks') {
+      topTracks.push(contribution)
+    } else if (entry.chartType === 'artists') {
+      topArtists.push(contribution)
+    } else if (entry.chartType === 'albums') {
+      topAlbums.push(contribution)
+    }
+  }
+
+  return { topTracks, topArtists, topAlbums }
 }
 
 /**
  * Aggregate group stats using VS calculation
- * Returns both aggregated items and per-user VS data for storage
+ * Uses pre-calculated VS data from UserChartEntryVS
  */
 export function aggregateGroupStatsVS(
-  userStats: Array<{
+  userVSData: Array<{
     userId: string
-    topTracks: TopItem[]
-    topArtists: TopItem[]
-    topAlbums: TopItem[]
+    topTracks: UserVSContribution[]
+    topArtists: UserVSContribution[]
+    topAlbums: UserVSContribution[]
+    originalStats: {
+      topTracks: TopItem[]
+      topArtists: TopItem[]
+      topAlbums: TopItem[]
+    }
   }>,
   chartSize: number,
   mode: ChartMode
@@ -320,34 +368,25 @@ export function aggregateGroupStatsVS(
   topTracks: Array<TopItem & { vibeScore: number }>
   topArtists: Array<TopItem & { vibeScore: number }>
   topAlbums: Array<TopItem & { vibeScore: number }>
-  perUserVS: PerUserVSData
 } {
   const tracksResult = aggregateTopTracksVS(
-    userStats.map((s) => ({ userId: s.userId, topTracks: s.topTracks })),
-    chartSize,
+    userVSData.map((s) => ({ userId: s.userId, vsData: s.topTracks, originalStats: s.originalStats })),
     mode
   )
   const artistsResult = aggregateTopArtistsVS(
-    userStats.map((s) => ({ userId: s.userId, topArtists: s.topArtists })),
-    chartSize,
+    userVSData.map((s) => ({ userId: s.userId, vsData: s.topArtists, originalStats: s.originalStats })),
     mode
   )
   const albumsResult = aggregateTopAlbumsVS(
-    userStats.map((s) => ({ userId: s.userId, topAlbums: s.topAlbums })),
-    chartSize,
+    userVSData.map((s) => ({ userId: s.userId, vsData: s.topAlbums, originalStats: s.originalStats })),
     mode
   )
 
   // Slice to chartSize
   return {
-    topTracks: tracksResult.items.slice(0, chartSize),
-    topArtists: artistsResult.items.slice(0, chartSize),
-    topAlbums: albumsResult.items.slice(0, chartSize),
-    perUserVS: {
-      topTracks: tracksResult.perUserData,
-      topArtists: artistsResult.perUserData,
-      topAlbums: albumsResult.perUserData,
-    },
+    topTracks: tracksResult.slice(0, chartSize),
+    topArtists: artistsResult.slice(0, chartSize),
+    topAlbums: albumsResult.slice(0, chartSize),
   }
 }
 
