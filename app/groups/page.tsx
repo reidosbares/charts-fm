@@ -34,12 +34,20 @@ export default async function GroupsPage() {
           <h1 className="text-4xl font-bold text-gray-900">
             My Groups
           </h1>
-          <Link
-            href="/groups/create"
-            className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg transition-all font-semibold"
-          >
-            Create Group
-          </Link>
+          <div className="flex gap-3">
+            <Link
+              href="/groups/discover"
+              className="px-6 py-3 bg-gray-900 hover:bg-gray-800 text-white rounded-lg transition-all font-semibold"
+            >
+              Browse Groups
+            </Link>
+            <Link
+              href="/groups/create"
+              className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg transition-all font-semibold"
+            >
+              Create Group
+            </Link>
+          </div>
         </div>
 
         <GroupsTabs

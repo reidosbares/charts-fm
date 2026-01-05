@@ -93,12 +93,22 @@ export default function Navbar() {
                 <Link
                   href="/groups"
                   className={`px-3 py-2 rounded-md text-sm font-bold transition-colors leading-tight ${
-                    pathname?.startsWith('/groups')
+                    pathname?.startsWith('/groups') && !pathname?.startsWith('/groups/discover')
                       ? 'bg-yellow-500 text-black'
                       : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                   }`}
                 >
                   Groups
+                </Link>
+                <Link
+                  href="/groups/discover"
+                  className={`px-3 py-2 rounded-md text-sm font-bold transition-colors leading-tight ${
+                    pathname?.startsWith('/groups/discover')
+                      ? 'bg-yellow-500 text-black'
+                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                  }`}
+                >
+                  Discover
                 </Link>
               </div>
             )}
