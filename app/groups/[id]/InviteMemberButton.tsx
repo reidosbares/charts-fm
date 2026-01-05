@@ -14,7 +14,7 @@ export default function InviteMemberButton({ groupId }: InviteMemberButtonProps)
     <>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="px-4 py-2 bg-yellow-500 text-black rounded-lg hover:bg-yellow-400 transition-colors font-semibold"
+        className="px-4 py-2 bg-[var(--theme-primary)] text-[var(--theme-button-text)] rounded-lg hover:bg-[var(--theme-primary-light)] transition-colors font-semibold"
       >
         Invite Member
       </button>

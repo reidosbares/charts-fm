@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChartBar, faTrophy, faUsers } from '@fortawesome/free-solid-svg-icons'
 
 type Tab = 'charts' | 'members' | 'alltime'
 
@@ -22,7 +24,7 @@ export default function GroupTabs({
   return (
     <div>
       {/* Tab Navigation */}
-      <div className="border-b-2 border-yellow-200/50 mb-6">
+      <div className="border-b-2 mb-6" style={{ borderBottomColor: 'var(--theme-primary-dark)' }}>
         <nav className="flex space-x-1" aria-label="Tabs">
           <button
             onClick={() => setActiveTab('charts')}
@@ -31,12 +33,12 @@ export default function GroupTabs({
               flex items-center gap-2
               ${
                 activeTab === 'charts'
-                  ? 'border-yellow-500 text-yellow-700 bg-gradient-to-b from-yellow-50 to-transparent shadow-sm'
-                  : 'border-transparent text-gray-600 hover:text-yellow-600 hover:bg-yellow-50/50'
+                  ? 'border-[var(--theme-primary)] text-[var(--theme-primary-dark)] bg-[var(--theme-primary-lighter)]/30 shadow-sm'
+                  : 'border-transparent text-gray-600 hover:text-[var(--theme-text)] hover:bg-[var(--theme-primary-lighter)]/50'
               }
             `}
           >
-            <span className="text-lg">📊</span>
+            <FontAwesomeIcon icon={faChartBar} className="text-lg" />
             Weekly Charts
           </button>
           <button
@@ -46,12 +48,12 @@ export default function GroupTabs({
               flex items-center gap-2
               ${
                 activeTab === 'alltime'
-                  ? 'border-yellow-500 text-yellow-700 bg-gradient-to-b from-yellow-50 to-transparent shadow-sm'
-                  : 'border-transparent text-gray-600 hover:text-yellow-600 hover:bg-yellow-50/50'
+                  ? 'border-[var(--theme-primary)] text-[var(--theme-primary-dark)] bg-[var(--theme-primary-lighter)]/30 shadow-sm'
+                  : 'border-transparent text-gray-600 hover:text-[var(--theme-text)] hover:bg-[var(--theme-primary-lighter)]/50'
               }
             `}
           >
-            <span className="text-lg">🏆</span>
+            <FontAwesomeIcon icon={faTrophy} className="text-lg" />
             All-Time Stats
           </button>
           <button
@@ -61,12 +63,12 @@ export default function GroupTabs({
               flex items-center gap-2
               ${
                 activeTab === 'members'
-                  ? 'border-yellow-500 text-yellow-700 bg-gradient-to-b from-yellow-50 to-transparent shadow-sm'
-                  : 'border-transparent text-gray-600 hover:text-yellow-600 hover:bg-yellow-50/50'
+                  ? 'border-[var(--theme-primary)] text-[var(--theme-primary-dark)] bg-[var(--theme-primary-lighter)]/30 shadow-sm'
+                  : 'border-transparent text-gray-600 hover:text-[var(--theme-text)] hover:bg-[var(--theme-primary-lighter)]/50'
               }
             `}
           >
-            <span className="text-lg">👥</span>
+            <FontAwesomeIcon icon={faUsers} className="text-lg" />
             Members
           </button>
         </nav>

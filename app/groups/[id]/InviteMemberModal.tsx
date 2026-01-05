@@ -194,13 +194,13 @@ export default function InviteMemberModal({
                   required
                   value={validatedUsername || lastfmUsername}
                   onChange={(e) => setLastfmUsername(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--theme-primary)] focus:border-transparent"
                   placeholder="username"
                   disabled={isLoading}
                 />
                 {isValidatingUsername && (
                   <div className="absolute right-3 top-2.5">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-500"></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[var(--theme-primary)]"></div>
                   </div>
                 )}
               </div>
@@ -224,7 +224,7 @@ export default function InviteMemberModal({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-6 py-2 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-[var(--theme-primary)] hover:bg-[var(--theme-primary-light)] text-[var(--theme-button-text)] font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Inviting...' : 'Invite Member'}
               </button>

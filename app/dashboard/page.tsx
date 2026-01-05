@@ -23,8 +23,10 @@ export default async function DashboardPage() {
     },
   })
 
+  // If user doesn't exist (e.g., after database wipe), clear session and redirect
   if (!user) {
-    redirect('/auth/signin')
+    // Clear the session by redirecting to signout
+    redirect('/api/auth/signout')
   }
 
   return (

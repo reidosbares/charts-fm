@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 
-type TabId = 'regenerate' | 'chart-creation' | 'group-details' | 'delete'
+type TabId = 'regenerate' | 'chart-creation' | 'group-details' | 'styling' | 'delete'
 
 interface GroupSettingsTabsProps {
   regenerateChartsContent: React.ReactNode
   chartCreationContent: React.ReactNode
   groupDetailsContent: React.ReactNode
+  stylingContent: React.ReactNode
   deleteGroupContent: React.ReactNode
 }
 
@@ -15,6 +16,7 @@ export default function GroupSettingsTabs({
   regenerateChartsContent,
   chartCreationContent,
   groupDetailsContent,
+  stylingContent,
   deleteGroupContent,
 }: GroupSettingsTabsProps) {
   const [activeTab, setActiveTab] = useState<TabId>('regenerate')
@@ -23,6 +25,7 @@ export default function GroupSettingsTabs({
     { id: 'regenerate' as TabId, label: 'Regenerate Charts' },
     { id: 'chart-creation' as TabId, label: 'Chart Creation' },
     { id: 'group-details' as TabId, label: 'Group Details' },
+    { id: 'styling' as TabId, label: 'Styling' },
     { id: 'delete' as TabId, label: 'Delete Group' },
   ]
 
@@ -34,6 +37,8 @@ export default function GroupSettingsTabs({
         return chartCreationContent
       case 'group-details':
         return groupDetailsContent
+      case 'styling':
+        return stylingContent
       case 'delete':
         return deleteGroupContent
       default:

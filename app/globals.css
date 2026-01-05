@@ -5,6 +5,19 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* Default theme (yellow) - CSS variables */
+  --theme-primary: rgb(234 179 8);
+  --theme-primary-light: rgb(250 204 21);
+  --theme-primary-dark: rgb(202 138 4);
+  --theme-primary-lighter: rgb(254 240 138);
+  --theme-primary-darker: rgb(161 98 7);
+  --theme-background-from: rgb(254 249 195);
+  --theme-background-to: rgb(254 252 232);
+  --theme-border: rgb(254 240 138);
+  --theme-text: rgb(202 138 4);
+  --theme-ring: rgb(234 179 8);
+  --theme-button-text: black;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -111,5 +124,143 @@ svg.rdp-chevron {
 
 .animate-race-bar {
   animation: race-bar 1.5s ease-in-out infinite;
+}
+
+/* Theme classes - override CSS variables for each theme */
+.theme-yellow {
+  --theme-primary: rgb(234 179 8);
+  --theme-primary-light: rgb(250 204 21);
+  --theme-primary-dark: rgb(202 138 4);
+  --theme-primary-lighter: rgb(254 240 138);
+  --theme-primary-darker: rgb(161 98 7);
+  --theme-background-from: rgb(254 249 195);
+  --theme-background-to: rgb(254 252 232);
+  --theme-border: rgb(254 240 138);
+  --theme-text: rgb(202 138 4);
+  --theme-ring: rgb(234 179 8);
+  --theme-button-text: black;
+}
+
+.theme-royal-blue {
+  --theme-primary: rgb(37 99 235);
+  --theme-primary-light: rgb(59 130 246);
+  --theme-primary-dark: rgb(29 78 216);
+  --theme-primary-lighter: rgb(147 197 253);
+  --theme-primary-darker: rgb(30 64 175);
+  --theme-background-from: rgb(219 234 254);
+  --theme-background-to: rgb(239 246 255);
+  --theme-border: rgb(147 197 253);
+  --theme-text: rgb(29 78 216);
+  --theme-ring: rgb(37 99 235);
+  --theme-button-text: white;
+}
+
+.theme-cyan {
+  --theme-primary: rgb(6 182 212);
+  --theme-primary-light: rgb(34 211 238);
+  --theme-primary-dark: rgb(8 145 178);
+  --theme-primary-lighter: rgb(103 232 249);
+  --theme-primary-darker: rgb(14 116 144);
+  --theme-background-from: rgb(207 250 254);
+  --theme-background-to: rgb(236 254 255);
+  --theme-border: rgb(103 232 249);
+  --theme-text: rgb(8 145 178);
+  --theme-ring: rgb(6 182 212);
+  --theme-button-text: white;
+}
+
+.theme-bright-red {
+  --theme-primary: rgb(220 38 38);
+  --theme-primary-light: rgb(239 68 68);
+  --theme-primary-dark: rgb(185 28 28);
+  --theme-primary-lighter: rgb(252 165 165);
+  --theme-primary-darker: rgb(153 27 27);
+  --theme-background-from: rgb(254 226 226);
+  --theme-background-to: rgb(255 241 242);
+  --theme-border: rgb(252 165 165);
+  --theme-text: rgb(185 28 28);
+  --theme-ring: rgb(220 38 38);
+  --theme-button-text: white;
+}
+
+.theme-maroon {
+  --theme-primary: rgb(128 0 0);
+  --theme-primary-light: rgb(139 0 0);
+  --theme-primary-dark: rgb(100 0 0);
+  --theme-primary-lighter: rgb(160 82 45);
+  --theme-primary-darker: rgb(80 0 0);
+  --theme-background-from: rgb(250 235 215);
+  --theme-background-to: rgb(255 248 240);
+  --theme-border: rgb(205 133 63);
+  --theme-text: rgb(100 0 0);
+  --theme-ring: rgb(128 0 0);
+  --theme-button-text: white;
+}
+
+.theme-graphite {
+  --theme-primary: rgb(75 85 99);
+  --theme-primary-light: rgb(107 114 128);
+  --theme-primary-dark: rgb(55 65 81);
+  --theme-primary-lighter: rgb(156 163 175);
+  --theme-primary-darker: rgb(31 41 55);
+  --theme-background-from: rgb(243 244 246);
+  --theme-background-to: rgb(249 250 251);
+  --theme-border: rgb(209 213 219);
+  --theme-text: rgb(55 65 81);
+  --theme-ring: rgb(75 85 99);
+  --theme-button-text: white;
+}
+
+.theme-hot-pink {
+  --theme-primary: rgb(255 105 180);
+  --theme-primary-light: rgb(255 20 147);
+  --theme-primary-dark: rgb(219 39 119);
+  --theme-primary-lighter: rgb(251 182 206);
+  --theme-primary-darker: rgb(199 21 133);
+  --theme-background-from: rgb(253 244 255);
+  --theme-background-to: rgb(255 250 255);
+  --theme-border: rgb(251 182 206);
+  --theme-text: rgb(219 39 119);
+  --theme-ring: rgb(255 105 180);
+  --theme-button-text: white;
+}
+
+.theme-neon-green {
+  --theme-primary: rgb(22 163 74);
+  --theme-primary-light: rgb(34 197 94);
+  --theme-primary-dark: rgb(21 128 61);
+  --theme-primary-lighter: rgb(134 239 172);
+  --theme-primary-darker: rgb(20 83 45);
+  --theme-background-from: rgb(220 252 231);
+  --theme-background-to: rgb(240 253 244);
+  --theme-border: rgb(134 239 172);
+  --theme-text: rgb(21 128 61);
+  --theme-ring: rgb(22 163 74);
+  --theme-button-text: white;
+}
+
+.theme-white {
+  --theme-primary: rgb(234 179 8);
+  --theme-primary-light: rgb(250 204 21);
+  --theme-primary-dark: rgb(17 24 39);
+  --theme-primary-lighter: rgb(254 240 138);
+  --theme-primary-darker: rgb(161 98 7);
+  --theme-background-from: rgb(255 255 255);
+  --theme-background-to: rgb(249 250 251);
+  --theme-border: rgb(229 231 235);
+  --theme-text: rgb(202 138 4);
+  --theme-ring: rgb(234 179 8);
+  --theme-button-text: black;
+}
+
+/* Theme-aware ring color utility */
+.ring-theme {
+  --tw-ring-color: var(--theme-ring);
+  --tw-ring-opacity: 0.3;
+}
+
+/* Theme-aware border utility */
+.border-theme {
+  border-color: var(--theme-border);
 }
 

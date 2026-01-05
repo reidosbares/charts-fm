@@ -28,13 +28,13 @@ const CHART_MODES = [
     value: 'vs',
     label: 'Vibe Score (VS)',
     icon: '/icons/icon_vs.png',
-    description: '✨ Recommended! Every member\'s top picks get equal love. Your #1 track scores 1.00, and we sum everyone\'s scores together. Perfect for groups where everyone\'s taste matters equally!',
+    description: '✨ Recommended! Every member\'s top picks get equal love. Your #1 track scores 2.00 VS, and scores decrease gradually for lower positions. We sum everyone\'s scores together. Perfect for groups where everyone\'s taste matters equally!',
   },
   {
     value: 'vs_weighted',
     label: 'VS Weighted',
     icon: '/icons/icon_vs_weighted.png',
-    description: 'The best of both worlds! We multiply your VS by how many times you actually played it. Great for balancing what\'s important to you with how much you listened.',
+    description: 'The best of both worlds! We multiply your VS (calculated from your top 100) by how many times you actually played it, then sum across all members. Great for balancing what\'s important to you with how much you listened.',
   },
   {
     value: 'plays_only',

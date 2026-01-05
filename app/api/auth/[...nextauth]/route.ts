@@ -55,8 +55,33 @@ export const authOptions: NextAuthOptions = {
       return token
     },
     async session({ session, token }) {
-      if (session.user) {
+      if (session.user && token.id) {
         session.user.id = token.id as string
+        
+        // Validate that the user still exists in the database
+        // This prevents issues after database migrations/wipes
+        try {
+          const user = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: { id: true }
+          })
+          
+          // If user doesn't exist, clear the session by returning null user
+          if (!user) {
+            // Return session with null user - this will make useSession return unauthenticated
+            return {
+              ...session,
+              user: null as any,
+            }
+          }
+        } catch (error) {
+          // If there's an error checking the user, also invalidate the session
+          console.error('Error validating user in session:', error)
+          return {
+            ...session,
+            user: null as any,
+          }
+        }
       }
       return session
     },

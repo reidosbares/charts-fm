@@ -4,6 +4,7 @@ import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getLastChartWeek, deleteOverlappingCharts } from '@/lib/group-service'
 import { getWeekStartForDay, getWeekEndForDay, getLastNFinishedWeeksForDay } from '@/lib/weekly-utils'
+import { THEME_NAMES, type ThemeName } from '@/lib/group-themes'
 
 // GET - Get group settings
 export async function GET(
@@ -35,6 +36,7 @@ export async function GET(
       chartSize: true,
       chartMode: true,
       trackingDayOfWeek: true,
+      colorTheme: true,
     },
   })
 
@@ -54,6 +56,7 @@ export async function GET(
     chartSize: group.chartSize || 10,
     chartMode: group.chartMode || 'plays_only',
     trackingDayOfWeek: group.trackingDayOfWeek ?? 0,
+    colorTheme: (group as any).colorTheme || 'yellow',
   })
 }
 
@@ -87,6 +90,7 @@ export async function PATCH(
       chartSize: true,
       chartMode: true,
       trackingDayOfWeek: true,
+      colorTheme: true,
     },
   })
 
@@ -103,7 +107,7 @@ export async function PATCH(
   }
 
   const body = await request.json()
-  const { chartSize, chartMode, trackingDayOfWeek } = body
+  const { chartSize, chartMode, trackingDayOfWeek, colorTheme } = body
 
   // Validate chartSize
   if (chartSize !== undefined) {
@@ -130,6 +134,16 @@ export async function PATCH(
     if (typeof trackingDayOfWeek !== 'number' || trackingDayOfWeek < 0 || trackingDayOfWeek > 6) {
       return NextResponse.json(
         { error: 'trackingDayOfWeek must be a number between 0 and 6' },
+        { status: 400 }
+      )
+    }
+  }
+
+  // Validate colorTheme
+  if (colorTheme !== undefined) {
+    if (!THEME_NAMES.includes(colorTheme as ThemeName)) {
+      return NextResponse.json(
+        { error: `colorTheme must be one of: ${THEME_NAMES.join(', ')}` },
         { status: 400 }
       )
     }
@@ -189,11 +203,13 @@ export async function PATCH(
       ...(chartSize !== undefined && { chartSize }),
       ...(chartMode !== undefined && { chartMode }),
       ...(trackingDayOfWeek !== undefined && { trackingDayOfWeek: newTrackingDayOfWeek }),
+      ...(colorTheme !== undefined && { colorTheme }),
     },
     select: {
       chartSize: true,
       chartMode: true,
       trackingDayOfWeek: true,
+      colorTheme: true,
     },
   })
 
@@ -205,6 +221,7 @@ export async function PATCH(
     chartSize: updatedGroup.chartSize || 10,
     chartMode: updatedGroup.chartMode || 'plays_only',
     trackingDayOfWeek: updatedGroup.trackingDayOfWeek ?? 0,
+    colorTheme: (updatedGroup as any).colorTheme || 'yellow',
   })
 }
 

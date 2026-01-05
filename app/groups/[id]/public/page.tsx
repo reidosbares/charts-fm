@@ -2,6 +2,8 @@ import { getPublicGroupById, getGroupWeeklyStats } from '@/lib/group-queries'
 import { formatWeekDate } from '@/lib/weekly-utils'
 import SafeImage from '@/components/SafeImage'
 import PositionMovementIcon from '@/components/PositionMovementIcon'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMusic, faMicrophone, faCompactDisc } from '@fortawesome/free-solid-svg-icons'
 
 // Helper function to format date as "Dec. 28, 2025"
 function formatDateWritten(date: Date): string {
@@ -71,6 +73,11 @@ export default async function PublicGroupPage({ params }: { params: { id: string
   // @ts-ignore - Prisma client will be regenerated after migration
   const chartMode = (group.chartMode || 'plays_only') as string
   const showVS = chartMode === 'vs' || chartMode === 'vs_weighted'
+
+  // Get color theme
+  // @ts-ignore - Prisma client will be regenerated after migration
+  const colorTheme = (group.colorTheme || 'yellow') as string
+  const themeClass = `theme-${colorTheme.replace('_', '-')}`
 
   // Get VS data and position changes for all weeks if we have stats
   const vsMapsByWeek = new Map<string, Map<string, number>>()
@@ -174,16 +181,18 @@ export default async function PublicGroupPage({ params }: { params: { id: string
   }
 
   return (
-    <main className="flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-gray-50 to-white">
+    <main 
+      className={`flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}
+    >
       <div className="max-w-6xl w-full mx-auto">
         {/* Hero Section */}
         <div className="mb-8 relative">
-          <div className="bg-gradient-to-br from-yellow-50 via-yellow-100/50 to-white rounded-2xl shadow-xl p-8 border border-yellow-200/50">
+          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm p-8 border border-theme">
             {/* Breadcrumb Navigation */}
             <nav className="mb-6 flex items-center gap-2 text-sm">
               <Link 
                 href="/groups" 
-                className="text-gray-500 hover:text-yellow-600 transition-colors"
+                className="text-gray-500 hover:text-[var(--theme-text)] transition-colors"
               >
                 Groups
               </Link>
@@ -201,7 +210,7 @@ export default async function PublicGroupPage({ params }: { params: { id: string
               <div className="flex items-start gap-6">
                 {/* Large Group Icon */}
                 <div className="relative flex-shrink-0">
-                  <div className="w-32 h-32 rounded-2xl overflow-hidden shadow-lg ring-4 ring-yellow-400/30 bg-gradient-to-br from-yellow-100 to-yellow-200">
+                  <div className="w-32 h-32 rounded-2xl overflow-hidden shadow-sm ring-4 ring-theme bg-[var(--theme-primary-lighter)]">
                     <SafeImage
                       src={group.image}
                       alt={group.name}
@@ -212,7 +221,7 @@ export default async function PublicGroupPage({ params }: { params: { id: string
                 
                 {/* Group Info */}
                 <div className="flex-1">
-                  <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent leading-[1.1] pb-2 overflow-visible">
+                  <h1 className="text-5xl font-bold mb-3 text-[var(--theme-primary-dark)] leading-[1.1] pb-2 overflow-visible">
                     {group.name}
                   </h1>
                   <div className="flex flex-wrap items-center gap-4 mb-4">
@@ -236,7 +245,7 @@ export default async function PublicGroupPage({ params }: { params: { id: string
                     <div className="mb-4">
                       <Link 
                         href={`/groups/${group.id}`} 
-                        className="inline-flex items-center gap-2 text-yellow-700 hover:text-yellow-800 hover:underline font-medium text-sm transition-colors"
+                        className="inline-flex items-center gap-2 text-[var(--theme-primary-dark)] hover:text-[var(--theme-primary-darker)] hover:underline font-medium text-sm transition-colors"
                       >
                         <span>←</span>
                         <span>View as Member</span>
@@ -262,17 +271,17 @@ export default async function PublicGroupPage({ params }: { params: { id: string
             {/* Quick Stats Cards */}
             {weeklyStats.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-yellow-200/50 shadow-md">
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
                   <div className="text-sm text-gray-600 mb-1">Total Plays This Week</div>
-                  <div className="text-3xl font-bold text-yellow-600">{totalPlaysThisWeek.toLocaleString()}</div>
+                  <div className="text-3xl font-bold text-[var(--theme-text)]">{totalPlaysThisWeek.toLocaleString()}</div>
                 </div>
-                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-yellow-200/50 shadow-md">
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
                   <div className="text-sm text-gray-600 mb-1">Weeks Tracked</div>
-                  <div className="text-3xl font-bold text-yellow-600">{weeklyStats.length}</div>
+                  <div className="text-3xl font-bold text-[var(--theme-text)]">{weeklyStats.length}</div>
                 </div>
-                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-yellow-200/50 shadow-md">
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
                   <div className="text-sm text-gray-600 mb-1">Chart Mode</div>
-                  <div className="text-lg font-bold text-yellow-600 capitalize">
+                  <div className="text-lg font-bold text-[var(--theme-text)] capitalize">
                     {chartMode === 'vs' ? 'VS' : chartMode === 'vs_weighted' ? 'VS Weighted' : 'Plays Only'}
                   </div>
                 </div>
@@ -282,12 +291,14 @@ export default async function PublicGroupPage({ params }: { params: { id: string
         </div>
 
         <div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent mb-6">
+          <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)] mb-6">
             Weekly Charts
           </h2>
           {weeklyStats.length === 0 ? (
-            <div className="bg-gradient-to-br from-white to-yellow-50 rounded-xl shadow-lg p-12 text-center border border-yellow-200/50">
-              <div className="text-6xl mb-4">🎵</div>
+            <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-12 text-center border border-theme">
+              <div className="mb-4 text-[var(--theme-primary)]">
+                <FontAwesomeIcon icon={faMusic} size="3x" />
+              </div>
               <p className="text-gray-700 text-lg mb-2 font-medium">No charts available yet.</p>
               <p className="text-gray-500 text-sm">This group hasn't generated any charts yet.</p>
             </div>
@@ -307,7 +318,7 @@ export default async function PublicGroupPage({ params }: { params: { id: string
                 const weekEndFormatted = formatDateWritten(weekEndDate)
                 
                 return (
-                  <div key={week.id} className="bg-gradient-to-br from-white to-yellow-50/30 rounded-xl shadow-lg p-6 border border-yellow-200/50">
+                  <div key={week.id} className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 border border-theme">
                     <h3 className="text-2xl font-bold text-gray-900 mb-6">
                       Week of {weekStartFormatted}
                       <span className="text-sm font-normal italic text-gray-500 ml-2">
@@ -317,9 +328,9 @@ export default async function PublicGroupPage({ params }: { params: { id: string
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       {/* Top Artists */}
-                      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-yellow-200/50 shadow-md">
-                        <h4 className="font-bold text-lg mb-4 text-yellow-700 flex items-center gap-2">
-                          <span className="text-2xl">🎤</span>
+                      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-theme shadow-sm">
+                        <h4 className="font-bold text-lg mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
+                          <FontAwesomeIcon icon={faMicrophone} style={{ width: '1em', height: '1em' }} />
                           Top Artists
                         </h4>
                         <div className="space-y-3">
@@ -330,9 +341,9 @@ export default async function PublicGroupPage({ params }: { params: { id: string
                             return (
                               <div
                                 key={idx}
-                                className="flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-yellow-50 to-transparent hover:from-yellow-100 hover:to-yellow-50/50 transition-all border border-yellow-100"
+                                className="flex items-center gap-3 p-3 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
                               >
-                                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-sm shadow-sm">
                                   {idx + 1}
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -340,20 +351,20 @@ export default async function PublicGroupPage({ params }: { params: { id: string
                                     {artist.name}
                                     <PositionMovementIcon positionChange={positionChange} className="text-sm" />
                                   </div>
-                                  <div className="text-sm text-yellow-600 font-medium">{displayValue}</div>
+                                  <div className="text-sm text-[var(--theme-text)] font-medium">{displayValue}</div>
                                 </div>
                               </div>
                             )
                           })}
                           {topArtists.length > 3 && (
-                            <div className="pt-2 border-t border-yellow-100">
+                            <div className="pt-2 border-t border-[var(--theme-border)]">
                               <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
                                 {topArtists.slice(3, 10).map((artist: any, idx: number) => {
                                   const entryKey = getEntryKey(artist, 'artists')
                                   const positionChange = positionChangeMap.get(`artists|${entryKey}`)
                                   return (
                                     <li key={idx + 3} className="truncate flex items-center gap-1">
-                                      {artist.name} <PositionMovementIcon positionChange={positionChange} className="text-xs" /> <span className="text-yellow-600">({formatDisplayValue(artist, 'artists', showVS, vsMap)})</span>
+                                      {artist.name} <PositionMovementIcon positionChange={positionChange} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(artist, 'artists', showVS, vsMap)})</span>
                                     </li>
                                   )
                                 })}
@@ -369,9 +380,9 @@ export default async function PublicGroupPage({ params }: { params: { id: string
                       </div>
                       
                       {/* Top Tracks */}
-                      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-yellow-200/50 shadow-md">
-                        <h4 className="font-bold text-lg mb-4 text-yellow-700 flex items-center gap-2">
-                          <span className="text-2xl">🎵</span>
+                      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-theme shadow-sm">
+                        <h4 className="font-bold text-lg mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
+                          <FontAwesomeIcon icon={faMusic} style={{ width: '1em', height: '1em' }} />
                           Top Tracks
                         </h4>
                         <div className="space-y-3">
@@ -382,9 +393,9 @@ export default async function PublicGroupPage({ params }: { params: { id: string
                             return (
                               <div
                                 key={idx}
-                                className="flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-yellow-50 to-transparent hover:from-yellow-100 hover:to-yellow-50/50 transition-all border border-yellow-100"
+                                className="flex items-center gap-3 p-3 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
                               >
-                                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-sm shadow-sm">
                                   {idx + 1}
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -393,20 +404,20 @@ export default async function PublicGroupPage({ params }: { params: { id: string
                                     <PositionMovementIcon positionChange={positionChange} className="text-sm" />
                                   </div>
                                   <div className="text-xs text-gray-600 truncate">by {track.artist}</div>
-                                  <div className="text-sm text-yellow-600 font-medium mt-1">{displayValue}</div>
+                                  <div className="text-sm text-[var(--theme-text)] font-medium mt-1">{displayValue}</div>
                                 </div>
                               </div>
                             )
                           })}
                           {topTracks.length > 3 && (
-                            <div className="pt-2 border-t border-yellow-100">
+                            <div className="pt-2 border-t border-[var(--theme-border)]">
                               <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
                                 {topTracks.slice(3, 10).map((track: any, idx: number) => {
                                   const entryKey = getEntryKey(track, 'tracks')
                                   const positionChange = positionChangeMap.get(`tracks|${entryKey}`)
                                   return (
                                     <li key={idx + 3} className="truncate flex items-center gap-1">
-                                      {track.name} by {track.artist} <PositionMovementIcon positionChange={positionChange} className="text-xs" /> <span className="text-yellow-600">({formatDisplayValue(track, 'tracks', showVS, vsMap)})</span>
+                                      {track.name} by {track.artist} <PositionMovementIcon positionChange={positionChange} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(track, 'tracks', showVS, vsMap)})</span>
                                     </li>
                                   )
                                 })}
@@ -422,9 +433,9 @@ export default async function PublicGroupPage({ params }: { params: { id: string
                       </div>
                       
                       {/* Top Albums */}
-                      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-yellow-200/50 shadow-md">
-                        <h4 className="font-bold text-lg mb-4 text-yellow-700 flex items-center gap-2">
-                          <span className="text-2xl">💿</span>
+                      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-theme shadow-sm">
+                        <h4 className="font-bold text-lg mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
+                          <FontAwesomeIcon icon={faCompactDisc} style={{ width: '1em', height: '1em' }} />
                           Top Albums
                         </h4>
                         <div className="space-y-3">
@@ -435,9 +446,9 @@ export default async function PublicGroupPage({ params }: { params: { id: string
                             return (
                               <div
                                 key={idx}
-                                className="flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-yellow-50 to-transparent hover:from-yellow-100 hover:to-yellow-50/50 transition-all border border-yellow-100"
+                                className="flex items-center gap-3 p-3 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
                               >
-                                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-sm shadow-sm">
                                   {idx + 1}
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -446,20 +457,20 @@ export default async function PublicGroupPage({ params }: { params: { id: string
                                     <PositionMovementIcon positionChange={positionChange} className="text-sm" />
                                   </div>
                                   <div className="text-xs text-gray-600 truncate">by {album.artist}</div>
-                                  <div className="text-sm text-yellow-600 font-medium mt-1">{displayValue}</div>
+                                  <div className="text-sm text-[var(--theme-text)] font-medium mt-1">{displayValue}</div>
                                 </div>
                               </div>
                             )
                           })}
                           {topAlbums.length > 3 && (
-                            <div className="pt-2 border-t border-yellow-100">
+                            <div className="pt-2 border-t border-[var(--theme-border)]">
                               <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
                                 {topAlbums.slice(3, 10).map((album: any, idx: number) => {
                                   const entryKey = getEntryKey(album, 'albums')
                                   const positionChange = positionChangeMap.get(`albums|${entryKey}`)
                                   return (
                                     <li key={idx + 3} className="truncate flex items-center gap-1">
-                                      {album.name} by {album.artist} <PositionMovementIcon positionChange={positionChange} className="text-xs" /> <span className="text-yellow-600">({formatDisplayValue(album, 'albums', showVS, vsMap)})</span>
+                                      {album.name} by {album.artist} <PositionMovementIcon positionChange={positionChange} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(album, 'albums', showVS, vsMap)})</span>
                                     </li>
                                   )
                                 })}

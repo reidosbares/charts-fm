@@ -4,6 +4,7 @@ import GroupSettingsTabs from './GroupSettingsTabs'
 import RegenerateChartsTab from './RegenerateChartsTab'
 import GroupSettingsForm from './GroupSettingsForm'
 import GroupDetailsTab from './GroupDetailsTab'
+import StylingTab from './StylingTab'
 import DeleteGroupTab from './DeleteGroupTab'
 
 // Force dynamic rendering to prevent caching
@@ -55,6 +56,12 @@ export default async function GroupSettingsPage({ params }: { params: { id: stri
               initialAllowFreeJoin={group.allowFreeJoin ?? false}
               initialDynamicIconEnabled={(group as any).dynamicIconEnabled ?? false}
               initialDynamicIconSource={(group as any).dynamicIconSource}
+            />
+          }
+          stylingContent={
+            <StylingTab
+              groupId={group.id}
+              initialColorTheme={(group as any).colorTheme}
             />
           }
           deleteGroupContent={

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useSession } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -11,23 +11,36 @@ export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Redirect to dashboard if already logged in
+  // Redirect to dashboard if already logged in with valid user
   useEffect(() => {
-    if (status === 'authenticated' && session?.user) {
-      router.push('/dashboard')
+    if (status === 'authenticated' && session?.user?.email) {
+      router.replace('/dashboard')
     }
   }, [status, session, router])
+  
+  // If we have an authenticated status but no user, clear the session
+  useEffect(() => {
+    if (status === 'authenticated' && !session?.user) {
+      // Invalid session - sign out to clear it
+      signOut({ redirect: false })
+    }
+  }, [status, session])
 
   useEffect(() => {
     // Check for error in query params
-    const errorParam = searchParams.get('error')
-    if (errorParam) {
-      const errorMessages: Record<string, string> = {
-        no_token: 'No authentication token received from Last.fm',
-        config: 'Server configuration error. Please contact support.',
-        authentication_failed: 'Failed to authenticate with Last.fm. Please try again.',
+    try {
+      const errorParam = searchParams?.get('error')
+      if (errorParam) {
+        const errorMessages: Record<string, string> = {
+          no_token: 'No authentication token received from Last.fm',
+          config: 'Server configuration error. Please contact support.',
+          authentication_failed: 'Failed to authenticate with Last.fm. Please try again.',
+        }
+        setError(errorMessages[errorParam] || 'An error occurred during authentication')
       }
-      setError(errorMessages[errorParam] || 'An error occurred during authentication')
+    } catch (err) {
+      // Ignore searchParams errors
+      console.error('Error reading search params:', err)
     }
   }, [searchParams])
 
@@ -54,8 +67,33 @@ export default function SignUpPage() {
     }
   }
 
-  // Don't render if already authenticated (will redirect)
-  if (status === 'authenticated') {
+  // Show loading state while checking session (with timeout)
+  const [showContent, setShowContent] = useState(false)
+  
+  useEffect(() => {
+    // Show content after a short delay, even if still loading
+    // This prevents blank page if session check hangs
+    const timer = setTimeout(() => {
+      setShowContent(true)
+    }, 1000)
+    
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (status === 'loading' && !showContent) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center p-24">
+        <div className="z-10 max-w-2xl w-full text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </main>
+    )
+  }
+
+  // Only redirect if we have a valid authenticated user
+  // If status is authenticated but no user, we'll show the form (session will be cleared)
+  if (status === 'authenticated' && session?.user?.email) {
     return null
   }
 

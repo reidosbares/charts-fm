@@ -33,12 +33,17 @@ export default async function ChartsPage({
 }) {
   const { user, group } = await requireGroupMembership(params.id)
 
+  // Get color theme
+  // @ts-ignore - Prisma client will be regenerated after migration
+  const colorTheme = (group?.colorTheme || 'yellow') as string
+  const themeClass = `theme-${colorTheme.replace('_', '-')}`
+
   if (!group) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Group not found</h1>
-          <Link href="/groups" className="text-yellow-600 hover:underline">
+          <Link href="/groups" className="text-[var(--theme-text)] hover:underline">
             Back to Groups
           </Link>
         </div>
@@ -51,22 +56,22 @@ export default async function ChartsPage({
 
   if (availableWeeks.length === 0) {
     return (
-      <main className="flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-gray-50 to-white">
+      <main className={`flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}>
         <div className="max-w-7xl w-full mx-auto">
           {/* Slim Hero Section */}
           <div className="mb-6">
-            <div className="bg-gradient-to-br from-yellow-50 via-yellow-100/50 to-white rounded-xl shadow-lg p-4 border border-yellow-200/50">
+            <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-4 border border-theme">
               <nav className="mb-3 flex items-center gap-2 text-sm">
                 <Link 
                   href="/groups" 
-                  className="text-gray-500 hover:text-yellow-600 transition-colors"
+                  className="text-gray-500 hover:text-[var(--theme-text)] transition-colors"
                 >
                   Groups
                 </Link>
                 <span className="text-gray-400">/</span>
                 <Link 
                   href={`/groups/${group.id}`}
-                  className="text-gray-500 hover:text-yellow-600 transition-colors"
+                  className="text-gray-500 hover:text-[var(--theme-text)] transition-colors"
                 >
                   {group.name}
                 </Link>
@@ -75,7 +80,7 @@ export default async function ChartsPage({
               </nav>
               <div className="flex items-center gap-3">
                 <div className="relative w-12 h-12 flex-shrink-0">
-                  <div className="w-12 h-12 rounded-lg overflow-hidden shadow-md ring-2 ring-yellow-300/30 bg-gradient-to-br from-yellow-100 to-yellow-200">
+                  <div className="w-12 h-12 rounded-lg overflow-hidden shadow-sm ring-2 ring-[var(--theme-ring)]/30 bg-[var(--theme-primary-lighter)]">
                     <SafeImage
                       src={group.image}
                       alt={group.name}
@@ -84,7 +89,7 @@ export default async function ChartsPage({
                   </div>
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
+                  <h1 className="text-2xl font-bold text-[var(--theme-primary-dark)]">
                     {group.name}
                   </h1>
                   <p className="text-sm text-gray-600">Charts</p>
@@ -92,7 +97,7 @@ export default async function ChartsPage({
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+          <div className="bg-white rounded-lg shadow-sm p-8 text-center">
             <p className="text-gray-600 mb-4">No charts available yet.</p>
           </div>
         </div>
@@ -121,22 +126,22 @@ export default async function ChartsPage({
   const weekEndFormatted = formatDateWritten(weekEndDate)
 
   return (
-    <main className="flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-gray-50 to-white">
+    <main className={`flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}>
       <div className="max-w-7xl w-full mx-auto">
         {/* Slim Hero Section */}
         <div className="mb-6">
-          <div className="bg-gradient-to-br from-yellow-50 via-yellow-100/50 to-white rounded-xl shadow-lg p-4 border border-yellow-200/50">
+          <div className="bg-[var(--theme-background-from)] rounded-xl shadow-lg p-4 border border-theme">
             <nav className="mb-3 flex items-center gap-2 text-sm">
               <Link 
                 href="/groups" 
-                className="text-gray-500 hover:text-yellow-600 transition-colors"
+                className="text-gray-500 hover:text-[var(--theme-text)] transition-colors"
               >
                 Groups
               </Link>
               <span className="text-gray-400">/</span>
               <Link 
                 href={`/groups/${group.id}`}
-                className="text-gray-500 hover:text-yellow-600 transition-colors"
+                className="text-gray-500 hover:text-[var(--theme-text)] transition-colors"
               >
                 {group.name}
               </Link>
@@ -145,7 +150,7 @@ export default async function ChartsPage({
             </nav>
             <div className="flex items-center gap-3">
               <div className="relative w-12 h-12 flex-shrink-0">
-                <div className="w-12 h-12 rounded-lg overflow-hidden shadow-md ring-2 ring-yellow-300/30 bg-gradient-to-br from-yellow-100 to-yellow-200">
+                <div className="w-12 h-12 rounded-lg overflow-hidden shadow-md ring-2 ring-[var(--theme-ring)]/30 bg-[var(--theme-primary-lighter)]">
                   <SafeImage
                     src={group.image}
                     alt={group.name}
@@ -154,7 +159,7 @@ export default async function ChartsPage({
                 </div>
               </div>
               <div className="flex-1 min-w-0">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent mb-1">
+                <h1 className="text-2xl font-bold text-[var(--theme-primary-dark)] mb-1">
                   {group.name}
                 </h1>
                 <p className="text-sm text-gray-600">
