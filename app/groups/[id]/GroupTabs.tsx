@@ -22,45 +22,51 @@ export default function GroupTabs({
   return (
     <div>
       {/* Tab Navigation */}
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="flex space-x-8" aria-label="Tabs">
+      <div className="border-b-2 border-yellow-200/50 mb-6">
+        <nav className="flex space-x-1" aria-label="Tabs">
           <button
             onClick={() => setActiveTab('charts')}
             className={`
-              py-4 px-1 border-b-2 font-medium text-sm transition-colors
+              py-4 px-6 border-b-2 font-semibold text-sm transition-all rounded-t-lg
+              flex items-center gap-2
               ${
                 activeTab === 'charts'
-                  ? 'border-yellow-500 text-yellow-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-yellow-500 text-yellow-700 bg-gradient-to-b from-yellow-50 to-transparent shadow-sm'
+                  : 'border-transparent text-gray-600 hover:text-yellow-600 hover:bg-yellow-50/50'
               }
             `}
           >
+            <span className="text-lg">📊</span>
             Weekly Charts
           </button>
           <button
             onClick={() => setActiveTab('alltime')}
             className={`
-              py-4 px-1 border-b-2 font-medium text-sm transition-colors
+              py-4 px-6 border-b-2 font-semibold text-sm transition-all rounded-t-lg
+              flex items-center gap-2
               ${
                 activeTab === 'alltime'
-                  ? 'border-yellow-500 text-yellow-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-yellow-500 text-yellow-700 bg-gradient-to-b from-yellow-50 to-transparent shadow-sm'
+                  : 'border-transparent text-gray-600 hover:text-yellow-600 hover:bg-yellow-50/50'
               }
             `}
           >
+            <span className="text-lg">🏆</span>
             All-Time Stats
           </button>
           <button
             onClick={() => setActiveTab('members')}
             className={`
-              py-4 px-1 border-b-2 font-medium text-sm transition-colors
+              py-4 px-6 border-b-2 font-semibold text-sm transition-all rounded-t-lg
+              flex items-center gap-2
               ${
                 activeTab === 'members'
-                  ? 'border-yellow-500 text-yellow-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-yellow-500 text-yellow-700 bg-gradient-to-b from-yellow-50 to-transparent shadow-sm'
+                  : 'border-transparent text-gray-600 hover:text-yellow-600 hover:bg-yellow-50/50'
               }
             `}
           >
+            <span className="text-lg">👥</span>
             Members
           </button>
         </nav>

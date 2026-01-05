@@ -7,9 +7,10 @@ import Tooltip from '@/components/Tooltip'
 interface LeaveGroupButtonProps {
   groupId: string
   isOwner?: boolean
+  subtle?: boolean
 }
 
-export default function LeaveGroupButton({ groupId, isOwner = false }: LeaveGroupButtonProps) {
+export default function LeaveGroupButton({ groupId, isOwner = false, subtle = false }: LeaveGroupButtonProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -48,11 +49,15 @@ export default function LeaveGroupButton({ groupId, isOwner = false }: LeaveGrou
       onClick={handleLeave}
       disabled={isDisabled}
       className={`
-        px-4 py-2 rounded-lg transition-colors
+        transition-colors
         ${
-          isOwner
-            ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-            : 'bg-red-600 text-white hover:bg-red-700 disabled:opacity-50'
+          subtle
+            ? isOwner
+              ? 'text-gray-400 cursor-not-allowed text-sm'
+              : 'text-gray-500 hover:text-red-600 text-sm underline-offset-2 hover:underline disabled:opacity-50'
+            : isOwner
+            ? 'px-4 py-2 rounded-lg bg-gray-400 text-gray-600 cursor-not-allowed'
+            : 'px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-50'
         }
       `}
     >
