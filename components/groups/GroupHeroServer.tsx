@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { getWeekStartForDay, getWeekEndForDay, formatWeekLabel } from '@/lib/weekly-utils'
 import { getLastChartWeek } from '@/lib/group-service'
 import UpdateChartsButton from './UpdateChartsButton'
+import ShareGroupButton from '@/app/groups/[id]/ShareGroupButton'
 
 interface GroupHeroServerProps {
   groupId: string
@@ -93,7 +94,7 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme }: 
 
   return (
     <div className={`mb-8 relative ${themeClass}`}>
-      <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm p-8 border border-theme">
+      <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm p-8 border border-theme relative">
         {/* Breadcrumb Navigation */}
         <nav className="mb-6 flex items-center gap-2 text-sm">
           <Link 
@@ -188,6 +189,11 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme }: 
               </Link>
             )}
           </div>
+          
+          {/* Share Button - positioned at bottom right */}
+          {!group.isPrivate && (
+            <ShareGroupButton groupId={groupId} />
+          )}
         </div>
       </div>
     </div>

@@ -46,13 +46,9 @@ export default function StylingTab({
 
       setSuccess(true)
       
-      // Refresh the router cache to ensure fresh data
-      router.refresh()
-      
-      // Redirect after a short delay
-      setTimeout(() => {
-        router.push(`/groups/${groupId}`)
-      }, 1500)
+      // Force a full page reload to ensure fresh data is fetched
+      // This ensures the server component gets the updated colorTheme
+      window.location.href = `/groups/${groupId}`
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update styling settings')
       setIsLoading(false)
@@ -63,7 +59,7 @@ export default function StylingTab({
     <div className="bg-white rounded-lg shadow-lg p-8">
       {success && (
         <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-          Styling settings updated successfully! Redirecting...
+          Styling settings updated successfully!
         </div>
       )}
 

@@ -19,6 +19,9 @@ const config: Config = {
           800: "#854d0e", // yellow-800
         },
       },
+      fontFamily: {
+        oswald: ['var(--font-oswald)', 'sans-serif'],
+      },
     },
   },
   plugins: [],

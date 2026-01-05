@@ -4,6 +4,13 @@ import "./globals.css";
 import SessionProvider from "@/components/SessionProvider";
 import { NavigationProvider } from "@/contexts/NavigationContext";
 import Navbar from "@/components/Navbar";
+import { Oswald } from "next/font/google";
+
+const oswald = Oswald({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  variable: '--font-oswald',
+});
 
 export const metadata: Metadata = {
   title: "ChartsFM - Your Last.fm Listening Stats",
@@ -17,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">
+      <body className={`antialiased ${oswald.variable}`}>
         <SessionProvider>
           <NavigationProvider>
             <Navbar />

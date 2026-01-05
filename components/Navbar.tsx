@@ -74,15 +74,15 @@ export default function Navbar() {
           <div className="flex items-center space-x-8">
             <Link 
               href="/" 
-              className={`text-xl font-bold text-yellow-500 transition-all ${isLoading ? 'animate-pulse-scale' : ''}`}
+              className={`text-3xl font-bold text-yellow-500 transition-all font-oswald leading-none pb-1 ${isLoading ? 'animate-pulse-scale' : ''}`}
             >
-              ChartsFM
+              Charts.fm
             </Link>
             {isAuthenticated && (
               <div className="flex space-x-4">
                 <Link
                   href="/dashboard"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-3 py-2 rounded-md text-sm font-bold transition-colors leading-tight ${
                     pathname === '/dashboard'
                       ? 'bg-yellow-500 text-black'
                       : 'text-gray-300 hover:bg-gray-800 hover:text-white'
@@ -92,7 +92,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/groups"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-3 py-2 rounded-md text-sm font-bold transition-colors leading-tight ${
                     pathname?.startsWith('/groups')
                       ? 'bg-yellow-500 text-black'
                       : 'text-gray-300 hover:bg-gray-800 hover:text-white'
@@ -109,7 +109,7 @@ export default function Navbar() {
               <button
                 ref={buttonRef}
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-bold text-gray-300 hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
               >
                 <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border-2 border-yellow-500">
                   <SafeImage
@@ -151,18 +151,18 @@ export default function Navbar() {
                   >
                     <div className="py-1">
                       <div className="px-4 py-2 border-b border-gray-700">
-                        <p className="text-sm font-medium text-white">
+                        <p className="text-sm font-bold text-white">
                           {userData?.name || session?.user?.name || 'User'}
                         </p>
                         {userData?.lastfmUsername && (
-                          <p className="text-xs text-gray-400">
+                          <p className="text-xs font-bold text-gray-400">
                             @{userData.lastfmUsername}
                           </p>
                         )}
                       </div>
                       <Link
                         href="/profile"
-                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white"
+                        className="block px-4 py-2 text-sm font-bold text-gray-300 hover:bg-gray-800 hover:text-white"
                         onClick={() => setIsDropdownOpen(false)}
                       >
                         Edit Profile
@@ -170,7 +170,7 @@ export default function Navbar() {
                       {userData?.isSuperuser && (
                         <Link
                           href="/admin/users/create"
-                          className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white"
+                          className="block px-4 py-2 text-sm font-bold text-gray-300 hover:bg-gray-800 hover:text-white"
                           onClick={() => setIsDropdownOpen(false)}
                         >
                           Create User
@@ -178,7 +178,7 @@ export default function Navbar() {
                       )}
                       <button
                         onClick={handleLogout}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white"
+                        className="block w-full text-left px-4 py-2 text-sm font-bold text-gray-300 hover:bg-gray-800 hover:text-white"
                       >
                         Sign out
                       </button>
@@ -191,13 +191,13 @@ export default function Navbar() {
             <div className="flex items-center space-x-4">
               <Link
                 href="/auth/signin"
-                className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+                className="px-3 py-2 rounded-md text-sm font-bold text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
               >
                 Sign In
               </Link>
               <Link
                 href="/auth/signup"
-                className="px-3 py-2 rounded-md text-sm font-medium bg-yellow-500 text-black hover:bg-yellow-400 transition-colors"
+                className="px-3 py-2 rounded-md text-sm font-bold bg-yellow-500 text-black hover:bg-yellow-400 transition-colors"
               >
                 Sign Up
               </Link>

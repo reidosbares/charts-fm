@@ -108,10 +108,8 @@ export default function GroupDetailsTab({
       // Refresh the router cache to ensure fresh data
       router.refresh()
       
-      // Redirect after a short delay
-      setTimeout(() => {
-        router.push(`/groups/${groupId}`)
-      }, 1500)
+      // Redirect immediately
+      router.push(`/groups/${groupId}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update group details')
       setIsLoading(false)
@@ -122,7 +120,7 @@ export default function GroupDetailsTab({
     <div className="bg-white rounded-lg shadow-lg p-8">
       {success && (
         <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-          Group details updated successfully! Redirecting...
+          Group details updated successfully!
         </div>
       )}
 

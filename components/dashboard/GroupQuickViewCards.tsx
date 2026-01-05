@@ -100,7 +100,7 @@ export default function GroupQuickViewCards() {
             <Link
               key={group.id}
               href={`/groups/${group.id}`}
-              className={`block bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-primary-lighter)]/30 rounded-xl p-4 border border-[var(--theme-border)] hover:shadow-md transition-all ${themeClass}`}
+              className={`block bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-background-to)] rounded-xl p-4 border border-[var(--theme-border)] hover:shadow-md transition-all ${themeClass}`}
             >
               <div className="flex items-start gap-3 mb-3">
                 <div className="relative w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)]">

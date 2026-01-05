@@ -97,10 +97,8 @@ export default function GroupSettingsForm({
       // Refresh the router cache to ensure fresh data
       router.refresh()
       
-      // Redirect after a short delay
-      setTimeout(() => {
-        router.push(`/groups/${groupId}`)
-      }, 1500)
+      // Redirect immediately
+      router.push(`/groups/${groupId}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update settings')
       setIsLoading(false)
@@ -111,7 +109,7 @@ export default function GroupSettingsForm({
     <div className="bg-white rounded-lg shadow-lg p-8">
       {success && (
         <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-          Settings updated successfully! Redirecting...
+          Settings updated successfully!
         </div>
       )}
 

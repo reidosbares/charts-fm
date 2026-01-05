@@ -28,15 +28,15 @@ export default async function GroupsPage() {
   const memberGroups = groups.filter((group: any) => group.creatorId !== user.id)
 
   return (
-    <main className="flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 bg-white">
-      <div className="max-w-6xl w-full mx-auto">
+    <main className="flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 bg-gray-50">
+      <div className="max-w-7xl w-full mx-auto">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-          <h1 className="text-5xl font-bold text-gray-900">
+          <h1 className="text-4xl font-bold text-gray-900">
             My Groups
           </h1>
           <Link
             href="/groups/create"
-            className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg transition-all shadow-md hover:shadow-lg font-semibold"
+            className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg transition-all font-semibold"
           >
             Create Group
           </Link>

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import SafeImage from '@/components/SafeImage'
+import { getDefaultGroupImage } from '@/lib/default-images'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMusic, faUsers, faEnvelope } from '@fortawesome/free-solid-svg-icons'
 
@@ -11,6 +12,7 @@ interface Group {
   id: string
   name: string
   image: string | null
+  colorTheme: string | null
   creator: {
     id: string
     name: string | null
@@ -88,18 +90,21 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId 
 
   const renderGroupCard = (group: Group, href: string) => {
     const isOwner = group.creator.id === userId
+    const colorTheme = group.colorTheme || 'white'
+    const themeClass = `theme-${colorTheme.replace('_', '-')}`
+    const groupImage = group.image || getDefaultGroupImage()
     
     return (
       <Link
         key={group.id}
         href={href}
-        className="bg-white rounded-xl shadow-lg p-6 border border-gray-200 hover:shadow-xl hover:border-yellow-300 transition-all group"
+        className={`block bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-background-to)] rounded-xl p-6 border border-[var(--theme-border)] hover:shadow-md transition-all ${themeClass}`}
       >
         <div className="flex items-start gap-4 mb-4">
           <div className="relative w-20 h-20 flex-shrink-0">
-            <div className="w-20 h-20 rounded-xl overflow-hidden shadow-md ring-2 ring-yellow-300/30 bg-yellow-100 group-hover:ring-yellow-400/50 transition-all">
+            <div className="w-20 h-20 rounded-xl overflow-hidden ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] transition-all">
               <SafeImage
-                src={group.image}
+                src={groupImage}
                 alt={group.name}
                 className="object-cover w-full h-full"
               />
@@ -107,7 +112,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId 
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-2xl font-bold text-gray-900 group-hover:text-yellow-700 transition-colors truncate">
+              <h3 className="text-2xl font-bold text-[var(--theme-text)] transition-colors truncate">
                 {group.name}
               </h3>
             </div>
@@ -116,13 +121,13 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId 
                 <span>Owner:</span>
                 <span className="font-semibold text-gray-900">{group.creator.name || group.creator.lastfmUsername}</span>
                 {isOwner && (
-                  <span className="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full font-bold shadow-sm">
+                  <span className="text-xs bg-[var(--theme-primary)] text-[var(--theme-button-text)] px-2 py-0.5 rounded-full font-bold">
                     YOU
                   </span>
                 )}
               </p>
               <p className="flex items-center gap-2">
-                <FontAwesomeIcon icon={faUsers} className="text-yellow-600 font-medium" />
+                <FontAwesomeIcon icon={faUsers} className="text-[var(--theme-primary)] font-medium" />
                 <span>{group._count.members} {group._count.members === 1 ? 'member' : 'members'}</span>
               </p>
               <p className="text-xs text-gray-500">
@@ -138,12 +143,15 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId 
   const renderInviteCard = (invite: Invite) => {
     const isRejected = rejectedInviteIds.has(invite.id)
     const isProcessing = processingInviteId === invite.id
+    const colorTheme = invite.group.colorTheme || 'white'
+    const themeClass = `theme-${colorTheme.replace('_', '-')}`
+    const groupImage = invite.group.image || getDefaultGroupImage()
 
     return (
       <div
         key={invite.id}
-        className={`bg-white rounded-xl shadow-lg p-6 border border-gray-200 transition-all ${
-          isRejected ? 'opacity-50' : 'hover:shadow-xl hover:border-blue-300'
+        className={`bg-white rounded-xl shadow-sm p-6 border border-gray-200 transition-all ${
+          isRejected ? 'opacity-50' : 'hover:shadow-md'
         }`}
       >
         <Link
@@ -152,9 +160,9 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId 
         >
           <div className="flex items-start gap-4 mb-4">
             <div className="relative w-20 h-20 flex-shrink-0">
-              <div className="w-20 h-20 rounded-xl overflow-hidden shadow-md ring-2 ring-blue-300/30 bg-blue-100">
+              <div className={`w-20 h-20 rounded-xl overflow-hidden ring-2 ring-gray-300 bg-gray-100 ${themeClass}`}>
                 <SafeImage
-                  src={invite.group.image}
+                  src={groupImage}
                   alt={invite.group.name}
                   className="object-cover w-full h-full"
                 />
@@ -163,7 +171,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId 
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2">
                 <h3 className="text-2xl font-bold text-gray-900 truncate">{invite.group.name}</h3>
-                <span className="flex-shrink-0 text-xs bg-blue-500 text-white px-2 py-0.5 rounded-full font-bold shadow-sm">
+                <span className="flex-shrink-0 text-xs bg-gray-900 text-white px-2 py-0.5 rounded-full font-bold">
                   Invited
                 </span>
               </div>
@@ -173,7 +181,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId 
                   <span className="font-semibold text-gray-900 ml-1">{invite.group.creator.name || invite.group.creator.lastfmUsername}</span>
                 </p>
                 <p className="flex items-center gap-2">
-                  <FontAwesomeIcon icon={faUsers} className="text-blue-600 font-medium" />
+                  <FontAwesomeIcon icon={faUsers} className="text-gray-500 font-medium" />
                   <span>{invite.group._count.members} {invite.group._count.members === 1 ? 'member' : 'members'}</span>
                 </p>
                 <p className="text-xs text-gray-500">
@@ -190,7 +198,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId 
               handleAcceptInvite(invite.id, invite.groupId)
             }}
             disabled={isProcessing || isRejected}
-            className="flex-1 px-4 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-400 hover:to-green-500 transition-all shadow-md hover:shadow-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md"
+            className="flex-1 px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-lg transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isProcessing ? 'Processing...' : 'Accept'}
           </button>
@@ -200,7 +208,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId 
               handleRejectInvite(invite.id, invite.groupId)
             }}
             disabled={isProcessing || isRejected}
-            className="flex-1 px-4 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-400 hover:to-red-500 transition-all shadow-md hover:shadow-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md"
+            className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isProcessing ? 'Processing...' : 'Reject'}
           </button>
@@ -212,13 +220,13 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId 
   return (
     <div>
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 border-b-2 border-gray-200">
+      <div className="flex gap-1 mb-6 border-b border-gray-300">
         <button
           onClick={() => setActiveTab('groups')}
-          className={`px-6 py-4 font-semibold text-sm transition-all rounded-t-lg flex items-center gap-2 ${
+          className={`px-6 py-4 font-semibold text-sm transition-all flex items-center gap-2 ${
             activeTab === 'groups'
-              ? 'border-b-2 border-yellow-500 text-yellow-700 bg-yellow-50/50 shadow-sm'
-              : 'border-transparent text-gray-600 hover:text-yellow-600 hover:bg-yellow-50/50'
+              ? 'border-b-2 border-gray-900 text-gray-900'
+              : 'border-transparent text-gray-600 hover:text-gray-900'
           }`}
         >
           <FontAwesomeIcon icon={faUsers} className="text-lg" />
@@ -226,15 +234,15 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId 
         </button>
         <button
           onClick={() => setActiveTab('invites')}
-          className={`px-6 py-4 font-semibold text-sm transition-all rounded-t-lg flex items-center gap-2 ${
+          className={`px-6 py-4 font-semibold text-sm transition-all flex items-center gap-2 ${
             activeTab === 'invites'
-              ? 'border-b-2 border-yellow-500 text-yellow-700 bg-yellow-50/50 shadow-sm'
-              : 'border-transparent text-gray-600 hover:text-yellow-600 hover:bg-yellow-50/50'
+              ? 'border-b-2 border-gray-900 text-gray-900'
+              : 'border-transparent text-gray-600 hover:text-gray-900'
           }`}
         >
           <FontAwesomeIcon icon={faEnvelope} className="text-lg" />
           Invites {invites.length > 0 && (
-            <span className="ml-1 px-2 py-0.5 bg-yellow-500 text-black rounded-full text-xs font-bold">
+            <span className="ml-1 px-2 py-0.5 bg-gray-900 text-white rounded-full text-xs font-bold">
               {invites.length}
             </span>
           )}
@@ -243,14 +251,14 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId 
 
       {/* Tab Content */}
       {activeTab === 'groups' && (
-        <div>
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
           {allGroups.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {allGroups.map((group) => renderGroupCard(group, `/groups/${group.id}`))}
             </div>
           ) : (
-            <div className="bg-white rounded-xl shadow-lg p-12 text-center border border-gray-200">
-              <div className="mb-4 text-yellow-600">
+            <div className="p-12 text-center">
+              <div className="mb-4 text-gray-400">
                 <FontAwesomeIcon icon={faMusic} size="3x" />
               </div>
               <p className="text-gray-700 text-lg mb-2 font-medium">You don't have any groups yet.</p>
@@ -261,14 +269,14 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId 
       )}
 
       {activeTab === 'invites' && (
-        <div>
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
           {invites.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {invites.map((invite) => renderInviteCard(invite))}
             </div>
           ) : (
-            <div className="bg-white rounded-xl shadow-lg p-12 text-center border border-gray-200">
-              <div className="mb-4 text-blue-600">
+            <div className="p-12 text-center">
+              <div className="mb-4 text-gray-400">
                 <FontAwesomeIcon icon={faEnvelope} size="3x" />
               </div>
               <p className="text-gray-700 text-lg mb-2 font-medium">You don't have any pending invites.</p>

@@ -37,6 +37,10 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  
+  .font-oswald {
+    font-family: var(--font-oswald), sans-serif !important;
+  }
 }
 
 @keyframes pulse-scale {
@@ -130,7 +134,7 @@ svg.rdp-chevron {
 .theme-yellow {
   --theme-primary: rgb(234 179 8);
   --theme-primary-light: rgb(250 204 21);
-  --theme-primary-dark: rgb(202 138 4);
+  --theme-primary-dark: rgb(113 63 18);
   --theme-primary-lighter: rgb(254 240 138);
   --theme-primary-darker: rgb(161 98 7);
   --theme-background-from: rgb(254 249 195);
@@ -142,16 +146,16 @@ svg.rdp-chevron {
 }
 
 .theme-royal-blue {
-  --theme-primary: rgb(37 99 235);
-  --theme-primary-light: rgb(59 130 246);
-  --theme-primary-dark: rgb(29 78 216);
+  --theme-primary: rgb(29 78 216);
+  --theme-primary-light: rgb(37 99 235);
+  --theme-primary-dark: rgb(30 58 138);
   --theme-primary-lighter: rgb(147 197 253);
   --theme-primary-darker: rgb(30 64 175);
   --theme-background-from: rgb(219 234 254);
   --theme-background-to: rgb(239 246 255);
   --theme-border: rgb(147 197 253);
   --theme-text: rgb(29 78 216);
-  --theme-ring: rgb(37 99 235);
+  --theme-ring: rgb(29 78 216);
   --theme-button-text: white;
 }
 
@@ -170,23 +174,23 @@ svg.rdp-chevron {
 }
 
 .theme-bright-red {
-  --theme-primary: rgb(220 38 38);
-  --theme-primary-light: rgb(239 68 68);
-  --theme-primary-dark: rgb(185 28 28);
+  --theme-primary: rgb(185 28 28);
+  --theme-primary-light: rgb(220 38 38);
+  --theme-primary-dark: rgb(127 29 29);
   --theme-primary-lighter: rgb(252 165 165);
   --theme-primary-darker: rgb(153 27 27);
   --theme-background-from: rgb(254 226 226);
   --theme-background-to: rgb(255 241 242);
   --theme-border: rgb(252 165 165);
   --theme-text: rgb(185 28 28);
-  --theme-ring: rgb(220 38 38);
+  --theme-ring: rgb(185 28 28);
   --theme-button-text: white;
 }
 
 .theme-maroon {
   --theme-primary: rgb(128 0 0);
   --theme-primary-light: rgb(139 0 0);
-  --theme-primary-dark: rgb(100 0 0);
+  --theme-primary-dark: rgb(50 0 0);
   --theme-primary-lighter: rgb(160 82 45);
   --theme-primary-darker: rgb(80 0 0);
   --theme-background-from: rgb(250 235 215);
@@ -200,7 +204,7 @@ svg.rdp-chevron {
 .theme-graphite {
   --theme-primary: rgb(75 85 99);
   --theme-primary-light: rgb(107 114 128);
-  --theme-primary-dark: rgb(55 65 81);
+  --theme-primary-dark: rgb(17 24 39);
   --theme-primary-lighter: rgb(156 163 175);
   --theme-primary-darker: rgb(31 41 55);
   --theme-background-from: rgb(243 244 246);
@@ -214,7 +218,7 @@ svg.rdp-chevron {
 .theme-hot-pink {
   --theme-primary: rgb(255 105 180);
   --theme-primary-light: rgb(255 20 147);
-  --theme-primary-dark: rgb(219 39 119);
+  --theme-primary-dark: rgb(131 24 67);
   --theme-primary-lighter: rgb(251 182 206);
   --theme-primary-darker: rgb(199 21 133);
   --theme-background-from: rgb(253 244 255);
@@ -226,9 +230,9 @@ svg.rdp-chevron {
 }
 
 .theme-neon-green {
-  --theme-primary: rgb(22 163 74);
-  --theme-primary-light: rgb(34 197 94);
-  --theme-primary-dark: rgb(21 128 61);
+  --theme-primary: rgb(21 128 61);
+  --theme-primary-light: rgb(22 163 74);
+  --theme-primary-dark: rgb(5 46 22);
   --theme-primary-lighter: rgb(134 239 172);
   --theme-primary-darker: rgb(20 83 45);
   --theme-background-from: rgb(220 252 231);

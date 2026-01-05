@@ -21,7 +21,7 @@ export const GROUP_THEMES: Record<ThemeName, ThemeColors> = {
   yellow: {
     primary: 'rgb(234 179 8)', // yellow-500
     primaryLight: 'rgb(250 204 21)', // yellow-400
-    primaryDark: 'rgb(202 138 4)', // yellow-600
+    primaryDark: 'rgb(113 63 18)', // yellow-900 (very dark for titles)
     primaryLighter: 'rgb(254 240 138)', // yellow-200
     primaryDarker: 'rgb(161 98 7)', // yellow-700
     backgroundFrom: 'rgb(254 249 195)', // yellow-100
@@ -32,16 +32,16 @@ export const GROUP_THEMES: Record<ThemeName, ThemeColors> = {
     buttonText: 'black',
   },
   royal_blue: {
-    primary: 'rgb(37 99 235)', // blue-600
-    primaryLight: 'rgb(59 130 246)', // blue-500
-    primaryDark: 'rgb(29 78 216)', // blue-700
+    primary: 'rgb(29 78 216)', // blue-700 (deeper, more vibrant for buttons)
+    primaryLight: 'rgb(37 99 235)', // blue-600 (for button hover)
+    primaryDark: 'rgb(30 58 138)', // blue-900 (very dark for titles)
     primaryLighter: 'rgb(147 197 253)', // blue-300
     primaryDarker: 'rgb(30 64 175)', // blue-800
     backgroundFrom: 'rgb(219 234 254)', // blue-100
     backgroundTo: 'rgb(239 246 255)', // blue-50 (very subtle)
     border: 'rgb(147 197 253)', // blue-300
     text: 'rgb(29 78 216)', // blue-700
-    ring: 'rgb(37 99 235)', // blue-600
+    ring: 'rgb(29 78 216)', // blue-700
     buttonText: 'white',
   },
   cyan: {
@@ -58,22 +58,22 @@ export const GROUP_THEMES: Record<ThemeName, ThemeColors> = {
     buttonText: 'white',
   },
   bright_red: {
-    primary: 'rgb(220 38 38)', // red-600
-    primaryLight: 'rgb(239 68 68)', // red-500
-    primaryDark: 'rgb(185 28 28)', // red-700
+    primary: 'rgb(185 28 28)', // red-700 (deeper, more vibrant for buttons)
+    primaryLight: 'rgb(220 38 38)', // red-600 (for button hover)
+    primaryDark: 'rgb(127 29 29)', // red-900 (very dark for titles)
     primaryLighter: 'rgb(252 165 165)', // red-300
     primaryDarker: 'rgb(153 27 27)', // red-800
     backgroundFrom: 'rgb(254 226 226)', // red-100
     backgroundTo: 'rgb(255 241 242)', // red-50 (very subtle)
     border: 'rgb(252 165 165)', // red-300
     text: 'rgb(185 28 28)', // red-700
-    ring: 'rgb(220 38 38)', // red-600
+    ring: 'rgb(185 28 28)', // red-700
     buttonText: 'white',
   },
   maroon: {
     primary: 'rgb(128 0 0)', // true maroon
     primaryLight: 'rgb(139 0 0)', // dark red (slightly lighter maroon)
-    primaryDark: 'rgb(100 0 0)', // darker maroon
+    primaryDark: 'rgb(50 0 0)', // very dark maroon for titles
     primaryLighter: 'rgb(160 82 45)', // saddle brown (brown-red)
     primaryDarker: 'rgb(80 0 0)', // very dark maroon
     backgroundFrom: 'rgb(250 235 215)', // antique white (warm light brown)
@@ -86,7 +86,7 @@ export const GROUP_THEMES: Record<ThemeName, ThemeColors> = {
   graphite: {
     primary: 'rgb(75 85 99)', // gray-600
     primaryLight: 'rgb(107 114 128)', // gray-500
-    primaryDark: 'rgb(55 65 81)', // gray-700
+    primaryDark: 'rgb(17 24 39)', // gray-900 (very dark for titles)
     primaryLighter: 'rgb(156 163 175)', // gray-400
     primaryDarker: 'rgb(31 41 55)', // gray-800
     backgroundFrom: 'rgb(243 244 246)', // gray-100
@@ -99,7 +99,7 @@ export const GROUP_THEMES: Record<ThemeName, ThemeColors> = {
   hot_pink: {
     primary: 'rgb(255 105 180)', // hot pink
     primaryLight: 'rgb(255 20 147)', // deep pink
-    primaryDark: 'rgb(219 39 119)', // pink-600
+    primaryDark: 'rgb(131 24 67)', // very dark pink/magenta for titles
     primaryLighter: 'rgb(251 182 206)', // pink-300
     primaryDarker: 'rgb(199 21 133)', // medium violet red
     backgroundFrom: 'rgb(253 244 255)', // pink-50
@@ -110,9 +110,9 @@ export const GROUP_THEMES: Record<ThemeName, ThemeColors> = {
     buttonText: 'white',
   },
   neon_green: {
-    primary: 'rgb(22 163 74)', // green-600
-    primaryLight: 'rgb(34 197 94)', // green-500
-    primaryDark: 'rgb(21 128 61)', // green-700
+    primary: 'rgb(21 128 61)', // green-700 (darker for buttons)
+    primaryLight: 'rgb(22 163 74)', // green-600 (darker for button highlights)
+    primaryDark: 'rgb(5 46 22)', // very deep green for titles
     primaryLighter: 'rgb(134 239 172)', // green-300
     primaryDarker: 'rgb(20 83 45)', // green-800
     backgroundFrom: 'rgb(220 252 231)', // green-100
@@ -140,14 +140,14 @@ export const GROUP_THEMES: Record<ThemeName, ThemeColors> = {
 export const THEME_NAMES: ThemeName[] = ['white', 'yellow', 'royal_blue', 'cyan', 'bright_red', 'graphite', 'hot_pink', 'neon_green']
 
 export const THEME_DISPLAY_NAMES: Record<ThemeName, string> = {
-  yellow: 'Yellow',
-  royal_blue: 'Royal Blue',
-  cyan: 'Sky Blue',
-  bright_red: 'Bright Red',
+  yellow: 'Banana',
+  royal_blue: 'Neptune',
+  cyan: 'Aero',
+  bright_red: 'Ruby',
   maroon: 'Maroon',
-  graphite: 'Graphite',
-  hot_pink: 'Hot Pink',
-  neon_green: 'Emerald Green',
-  white: 'White',
+  graphite: 'Smoky',
+  hot_pink: 'Flamingo',
+  neon_green: 'Kiwi',
+  white: 'Ink & Butter',
 }
 
