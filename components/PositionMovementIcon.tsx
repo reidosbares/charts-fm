@@ -1,10 +1,19 @@
 interface PositionMovementIconProps {
   positionChange: number | null | undefined
+  entryType?: string | null
   className?: string
 }
 
-export default function PositionMovementIcon({ positionChange, className = '' }: PositionMovementIconProps) {
+export default function PositionMovementIcon({ positionChange, entryType, className = '' }: PositionMovementIconProps) {
   if (positionChange === null || positionChange === undefined) {
+    // Determine if it's a new entry or re-entry
+    if (entryType === 're-entry') {
+      return (
+        <span className={`inline-flex items-center justify-center ${className}`} title="Returned to chart">
+          🔄
+        </span>
+      )
+    }
     // New entry - show star
     return (
       <span className={`inline-flex items-center justify-center ${className}`} title="New entry">

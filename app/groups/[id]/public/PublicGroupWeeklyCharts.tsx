@@ -144,6 +144,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
           {weeks.map((week: any) => {
             const vsMap = week.vsMap || {}
             const positionChangeMap = week.positionChangeMap || {}
+            const entryTypeMap = week.entryTypeMap || {}
             const topArtists = week.topArtists || []
             const topTracks = week.topTracks || []
             const topAlbums = week.topAlbums || []
@@ -169,6 +170,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                         const displayValue = formatDisplayValue(artist, 'artists', showVS, vsMap)
                         const entryKey = getEntryKey(artist, 'artists')
                         const positionChange = positionChangeMap[`artists|${entryKey}`]
+                        const entryType = entryTypeMap[`artists|${entryKey}`]
                         return (
                           <div
                             key={idx}
@@ -180,7 +182,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                             <div className="flex-1 min-w-0">
                               <div className="font-semibold text-gray-900 truncate flex items-center gap-2">
                                 {artist.name}
-                                <PositionMovementIcon positionChange={positionChange} className="text-sm" />
+                                <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-sm" />
                               </div>
                               <div className="text-sm text-[var(--theme-text)] font-medium">{displayValue}</div>
                             </div>
@@ -193,9 +195,10 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                             {topArtists.slice(3, 10).map((artist: any, idx: number) => {
                               const entryKey = getEntryKey(artist, 'artists')
                               const positionChange = positionChangeMap[`artists|${entryKey}`]
+                              const entryType = entryTypeMap[`artists|${entryKey}`]
                               return (
                                 <li key={idx + 3} className="truncate flex items-center gap-1">
-                                  {artist.name} <PositionMovementIcon positionChange={positionChange} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(artist, 'artists', showVS, vsMap)})</span>
+                                  {artist.name} <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(artist, 'artists', showVS, vsMap)})</span>
                                 </li>
                               )
                             })}
@@ -221,6 +224,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                         const displayValue = formatDisplayValue(track, 'tracks', showVS, vsMap)
                         const entryKey = getEntryKey(track, 'tracks')
                         const positionChange = positionChangeMap[`tracks|${entryKey}`]
+                        const entryType = entryTypeMap[`tracks|${entryKey}`]
                         return (
                           <div
                             key={idx}
@@ -232,7 +236,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                             <div className="flex-1 min-w-0">
                               <div className="font-semibold text-gray-900 truncate flex items-center gap-2">
                                 {track.name}
-                                <PositionMovementIcon positionChange={positionChange} className="text-sm" />
+                                <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-sm" />
                               </div>
                               <div className="text-xs text-gray-600 truncate">by {track.artist}</div>
                               <div className="text-sm text-[var(--theme-text)] font-medium mt-1">{displayValue}</div>
@@ -246,9 +250,10 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                             {topTracks.slice(3, 10).map((track: any, idx: number) => {
                               const entryKey = getEntryKey(track, 'tracks')
                               const positionChange = positionChangeMap[`tracks|${entryKey}`]
+                              const entryType = entryTypeMap[`tracks|${entryKey}`]
                               return (
                                 <li key={idx + 3} className="truncate flex items-center gap-1">
-                                  {track.name} by {track.artist} <PositionMovementIcon positionChange={positionChange} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(track, 'tracks', showVS, vsMap)})</span>
+                                  {track.name} by {track.artist} <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(track, 'tracks', showVS, vsMap)})</span>
                                 </li>
                               )
                             })}
@@ -274,6 +279,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                         const displayValue = formatDisplayValue(album, 'albums', showVS, vsMap)
                         const entryKey = getEntryKey(album, 'albums')
                         const positionChange = positionChangeMap[`albums|${entryKey}`]
+                        const entryType = entryTypeMap[`albums|${entryKey}`]
                         return (
                           <div
                             key={idx}
@@ -285,7 +291,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                             <div className="flex-1 min-w-0">
                               <div className="font-semibold text-gray-900 truncate flex items-center gap-2">
                                 {album.name}
-                                <PositionMovementIcon positionChange={positionChange} className="text-sm" />
+                                <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-sm" />
                               </div>
                               <div className="text-xs text-gray-600 truncate">by {album.artist}</div>
                               <div className="text-sm text-[var(--theme-text)] font-medium mt-1">{displayValue}</div>
@@ -299,9 +305,10 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                             {topAlbums.slice(3, 10).map((album: any, idx: number) => {
                               const entryKey = getEntryKey(album, 'albums')
                               const positionChange = positionChangeMap[`albums|${entryKey}`]
+                              const entryType = entryTypeMap[`albums|${entryKey}`]
                               return (
                                 <li key={idx + 3} className="truncate flex items-center gap-1">
-                                  {album.name} by {album.artist} <PositionMovementIcon positionChange={positionChange} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(album, 'albums', showVS, vsMap)})</span>
+                                  {album.name} by {album.artist} <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(album, 'albums', showVS, vsMap)})</span>
                                 </li>
                               )
                             })}

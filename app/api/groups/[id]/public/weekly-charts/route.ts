@@ -53,17 +53,20 @@ export async function GET(
             entryKey: true,
             vibeScore: true,
             positionChange: true,
+            entryType: true,
           },
         })
         
         const vsMap = new Map<string, number>()
         const positionChangeMap = new Map<string, number | null>()
+        const entryTypeMap = new Map<string, string | null>()
         chartEntries.forEach((entry) => {
           const key = `${entry.chartType}|${entry.entryKey}`
           if (entry.vibeScore !== null && entry.vibeScore !== undefined) {
             vsMap.set(key, entry.vibeScore)
           }
           positionChangeMap.set(key, entry.positionChange)
+          entryTypeMap.set(key, entry.entryType)
         })
 
         const weekStartDate = new Date(week.weekStart)
@@ -79,6 +82,7 @@ export async function GET(
           topAlbums: (week.topAlbums as any[]) || [],
           vsMap: Object.fromEntries(vsMap),
           positionChangeMap: Object.fromEntries(positionChangeMap),
+          entryTypeMap: Object.fromEntries(entryTypeMap),
         })
       }
     }

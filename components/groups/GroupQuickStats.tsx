@@ -45,13 +45,20 @@ export default function GroupQuickStats({ groupId }: GroupQuickStatsProps) {
     return null
   }
 
-  const { totalPlaysThisWeek, weeksTracked, chartMode } = data
+  const { totalPlaysThisWeek, weeksTracked, chartMode, obsessionArtist } = data
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
       <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-        <div className="text-sm text-gray-600 mb-1">Total Plays This Week</div>
-        <div className="text-3xl font-bold text-[var(--theme-text)]">{totalPlaysThisWeek.toLocaleString()}</div>
+        <div className="text-sm text-gray-600 mb-1">Obsession</div>
+        {obsessionArtist ? (
+          <>
+            <div className="text-xl font-bold text-[var(--theme-text)] truncate">{obsessionArtist.name}</div>
+            <div className="text-sm text-gray-500 mt-1">{obsessionArtist.weeks} weeks in top 10</div>
+          </>
+        ) : (
+          <div className="text-lg font-bold text-gray-400">No data yet</div>
+        )}
       </div>
       <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
         <div className="text-sm text-gray-600 mb-1">Weeks Tracked</div>

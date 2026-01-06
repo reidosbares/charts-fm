@@ -45,6 +45,7 @@ export async function GET(
     // Get VS data and position changes for latest week if we have stats
     let vsMap: Map<string, number> = new Map()
     let positionChangeMap: Map<string, number | null> = new Map()
+    let entryTypeMap: Map<string, string | null> = new Map()
     
     if (weeklyStats.length > 0) {
       const latestWeek = weeklyStats[0]
@@ -61,6 +62,7 @@ export async function GET(
           entryKey: true,
           vibeScore: true,
           positionChange: true,
+          entryType: true,
         },
       })
       
@@ -70,6 +72,7 @@ export async function GET(
           vsMap.set(key, entry.vibeScore)
         }
         positionChangeMap.set(key, entry.positionChange)
+        entryTypeMap.set(key, entry.entryType)
       })
     }
 
@@ -89,6 +92,7 @@ export async function GET(
         topAlbums: (latestWeek.topAlbums as any[]) || [],
         vsMap: Object.fromEntries(vsMap),
         positionChangeMap: Object.fromEntries(positionChangeMap),
+        entryTypeMap: Object.fromEntries(entryTypeMap),
       }
     }
 

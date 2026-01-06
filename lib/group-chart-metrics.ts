@@ -17,6 +17,7 @@ export interface EnrichedChartItem {
   vibeScoreChange: number | null
   totalWeeksAppeared: number
   highestPosition: number
+  entryType?: string | null // "new" | "re-entry" | null (continuing entry)
 }
 
 /**
@@ -24,9 +25,11 @@ export interface EnrichedChartItem {
  */
 function getEntryKey(item: { name: string; artist?: string }, chartType: ChartType): string {
   if (chartType === 'artists') {
-    return item.name.toLowerCase()
+    return (item.name || '').trim().toLowerCase()
   }
-  return `${item.name}|${item.artist || ''}`.toLowerCase()
+  const name = (item.name || '').trim()
+  const artist = (item.artist || '').trim()
+  return `${name}|${artist}`.toLowerCase()
 }
 
 /**
@@ -196,8 +199,22 @@ export async function cacheChartMetrics(
   
   for (let i = 0; i < chartData.length; i++) {
     const item = chartData[i]
+    
+    // Validate required fields
+    if (!item.name || item.name.trim() === '') {
+      console.warn(`Skipping entry with empty name in ${chartType} chart for group ${groupId}`)
+      continue
+    }
+    
     const position = i + 1
     const entryKey = getEntryKey(item, chartType)
+    
+    // Validate entryKey is not empty
+    if (!entryKey || entryKey.trim() === '') {
+      console.warn(`Skipping entry with empty entryKey in ${chartType} chart for group ${groupId}:`, item)
+      continue
+    }
+    
     const vibeScore = 'vibeScore' in item && item.vibeScore !== undefined ? item.vibeScore : null
 
     const metrics = calculateEntryMetrics(
@@ -208,13 +225,21 @@ export async function cacheChartMetrics(
       chartType
     )
 
+    // Determine entryType: "new" for first-time entries, "re-entry" for comebacks, null for continuing entries
+    const entryType =
+      metrics.positionChange === null && metrics.totalWeeksAppeared === 1
+        ? 'new'
+        : metrics.positionChange === null && metrics.totalWeeksAppeared > 1
+        ? 're-entry'
+        : null // continuing entry
+
     entriesToCreate.push({
       groupId,
       weekStart: normalizedWeekStart,
       chartType,
       entryKey,
-      name: item.name,
-      artist: 'artist' in item ? item.artist : null,
+      name: item.name.trim(),
+      artist: 'artist' in item && item.artist ? item.artist.trim() : null,
       position,
       playcount: item.playcount,
       vibeScore: vibeScore ?? undefined,
@@ -222,6 +247,7 @@ export async function cacheChartMetrics(
       playsChange: metrics.playsChange,
       totalWeeksAppeared: metrics.totalWeeksAppeared,
       highestPosition: metrics.highestPosition,
+      entryType,
     })
   }
 
@@ -236,10 +262,38 @@ export async function cacheChartMetrics(
 
   // Batch insert all entries
   if (entriesToCreate.length > 0) {
-    await prisma.groupChartEntry.createMany({
-      data: entriesToCreate,
-      skipDuplicates: true,
-    })
+    try {
+      await prisma.groupChartEntry.createMany({
+        data: entriesToCreate,
+        skipDuplicates: true,
+      })
+    } catch (error: any) {
+      // Log detailed error information for debugging
+      console.error('Error creating chart entries:', {
+        error: error.message,
+        groupId,
+        weekStart: normalizedWeekStart,
+        chartType,
+        entriesCount: entriesToCreate.length,
+        sampleEntry: entriesToCreate[0],
+      })
+      
+      // Handle Prisma validation errors
+      if (error.message && error.message.includes('did not match the expected pattern')) {
+        // Find the problematic entry
+        const problematicEntry = entriesToCreate.find((entry) => {
+          // Check if entryKey might be invalid (empty or contains invalid characters)
+          return !entry.entryKey || entry.entryKey.trim() === '' || !entry.name || entry.name.trim() === ''
+        })
+        
+        throw new Error(
+          `Invalid chart entry data: ${problematicEntry ? JSON.stringify(problematicEntry) : 'unknown entry'}. ` +
+          `This may be caused by invalid track/artist/album names from Last.fm data.`
+        )
+      }
+      
+      throw error
+    }
   }
 }
 
@@ -300,6 +354,7 @@ export async function getCachedChartEntries(
       vibeScoreChange,
       totalWeeksAppeared: entry.totalWeeksAppeared,
       highestPosition: entry.highestPosition,
+      entryType: entry.entryType ?? null,
     }
   })
 }

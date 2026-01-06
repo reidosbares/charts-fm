@@ -10,6 +10,7 @@ import { recalculateAllTimeStats } from './group-alltime-stats'
 import { ChartMode, calculateUserVS, getUserVSForWeek, aggregateGroupStatsVS } from './vibe-score'
 import { ChartGenerationLogger } from './chart-generation-logger'
 import { getArtistImage, getAlbumImage } from './lastfm'
+import { calculateGroupTrends } from './group-trends'
 
 const API_KEY = process.env.LASTFM_API_KEY!
 const API_SECRET = process.env.LASTFM_API_SECRET!
@@ -19,9 +20,11 @@ const API_SECRET = process.env.LASTFM_API_SECRET!
  */
 function getEntryKey(item: { name: string; artist?: string }, chartType: 'artists' | 'tracks' | 'albums'): string {
   if (chartType === 'artists') {
-    return item.name.toLowerCase()
+    return (item.name || '').trim().toLowerCase()
   }
-  return `${item.name}|${item.artist || ''}`.toLowerCase()
+  const name = (item.name || '').trim()
+  const artist = (item.artist || '').trim()
+  return `${name}|${artist}`.toLowerCase()
 }
 
 /**
@@ -389,6 +392,25 @@ export async function calculateGroupWeeklyStats(
     cacheChartMetrics(groupId, weekStart, 'tracks', aggregated.topTracks, trackingDayOfWeek, logger, previousWeeksStats),
     cacheChartMetrics(groupId, weekStart, 'albums', aggregated.topAlbums, trackingDayOfWeek, logger, previousWeeksStats),
   ])
+
+  // Calculate and store trends for the latest week
+  // Only calculate trends for the most recent week (when this is the latest week)
+  const allWeeklyStats = await prisma.groupWeeklyStats.findMany({
+    where: { groupId },
+    orderBy: { weekStart: 'desc' },
+    take: 1,
+  })
+
+  if (allWeeklyStats.length > 0) {
+    const latestWeek = allWeeklyStats[0]
+    const latestWeekStart = new Date(latestWeek.weekStart)
+    latestWeekStart.setUTCHours(0, 0, 0, 0)
+    
+    // Only calculate trends if this is the latest week
+    if (latestWeekStart.getTime() === normalizedWeekStart.getTime()) {
+      await calculateGroupTrends(groupId, weekStart, trackingDayOfWeek)
+    }
+  }
 }
 
 /**

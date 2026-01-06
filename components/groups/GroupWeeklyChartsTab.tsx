@@ -97,9 +97,10 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
   }
 
   const { latestWeek, showVS } = data
-  const { topArtists, topTracks, topAlbums, vsMap, positionChangeMap } = latestWeek
+  const { topArtists, topTracks, topAlbums, vsMap, positionChangeMap, entryTypeMap } = latestWeek
   const vsMapObj = vsMap || {}
   const positionChangeMapObj = positionChangeMap || {}
+  const entryTypeMapObj = entryTypeMap || {}
 
   return (
     <div>
@@ -134,6 +135,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                 const displayValue = formatDisplayValue(artist, 'artists', showVS, vsMapObj)
                 const entryKey = getEntryKey(artist, 'artists')
                 const positionChange = positionChangeMapObj[`artists|${entryKey}`]
+                const entryType = entryTypeMapObj[`artists|${entryKey}`]
                 return (
                   <div
                     key={idx}
@@ -145,7 +147,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-gray-900 truncate flex items-center gap-2">
                         {artist.name}
-                        <PositionMovementIcon positionChange={positionChange} className="text-sm" />
+                        <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-sm" />
                       </div>
                       <div className="text-sm text-[var(--theme-text)] font-medium">{displayValue}</div>
                     </div>
@@ -158,9 +160,10 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                     {topArtists.slice(3, 10).map((artist: any, idx: number) => {
                       const entryKey = getEntryKey(artist, 'artists')
                       const positionChange = positionChangeMapObj[`artists|${entryKey}`]
+                      const entryType = entryTypeMapObj[`artists|${entryKey}`]
                       return (
                         <li key={idx + 3} className="truncate flex items-center gap-1">
-                          {artist.name} <PositionMovementIcon positionChange={positionChange} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(artist, 'artists', showVS, vsMapObj)})</span>
+                          {artist.name} <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(artist, 'artists', showVS, vsMapObj)})</span>
                         </li>
                       )
                     })}
@@ -186,6 +189,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                 const displayValue = formatDisplayValue(track, 'tracks', showVS, vsMapObj)
                 const entryKey = getEntryKey(track, 'tracks')
                 const positionChange = positionChangeMapObj[`tracks|${entryKey}`]
+                const entryType = entryTypeMapObj[`tracks|${entryKey}`]
                 return (
                   <div
                     key={idx}
@@ -197,7 +201,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-gray-900 truncate flex items-center gap-2">
                         {track.name}
-                        <PositionMovementIcon positionChange={positionChange} className="text-sm" />
+                        <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-sm" />
                       </div>
                       <div className="text-xs text-gray-600 truncate">by {track.artist}</div>
                       <div className="text-sm text-[var(--theme-text)] font-medium mt-1">{displayValue}</div>
@@ -211,9 +215,10 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                     {topTracks.slice(3, 10).map((track: any, idx: number) => {
                       const entryKey = getEntryKey(track, 'tracks')
                       const positionChange = positionChangeMapObj[`tracks|${entryKey}`]
+                      const entryType = entryTypeMapObj[`tracks|${entryKey}`]
                       return (
                         <li key={idx + 3} className="truncate flex items-center gap-1">
-                          {track.name} by {track.artist} <PositionMovementIcon positionChange={positionChange} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(track, 'tracks', showVS, vsMapObj)})</span>
+                          {track.name} by {track.artist} <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(track, 'tracks', showVS, vsMapObj)})</span>
                         </li>
                       )
                     })}
@@ -239,6 +244,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                 const displayValue = formatDisplayValue(album, 'albums', showVS, vsMapObj)
                 const entryKey = getEntryKey(album, 'albums')
                 const positionChange = positionChangeMapObj[`albums|${entryKey}`]
+                const entryType = entryTypeMapObj[`albums|${entryKey}`]
                 return (
                   <div
                     key={idx}
@@ -250,7 +256,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-gray-900 truncate flex items-center gap-2">
                         {album.name}
-                        <PositionMovementIcon positionChange={positionChange} className="text-sm" />
+                        <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-sm" />
                       </div>
                       <div className="text-xs text-gray-600 truncate">by {album.artist}</div>
                       <div className="text-sm text-[var(--theme-text)] font-medium mt-1">{displayValue}</div>
@@ -264,9 +270,10 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                     {topAlbums.slice(3, 10).map((album: any, idx: number) => {
                       const entryKey = getEntryKey(album, 'albums')
                       const positionChange = positionChangeMapObj[`albums|${entryKey}`]
+                      const entryType = entryTypeMapObj[`albums|${entryKey}`]
                       return (
                         <li key={idx + 3} className="truncate flex items-center gap-1">
-                          {album.name} by {album.artist} <PositionMovementIcon positionChange={positionChange} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(album, 'albums', showVS, vsMapObj)})</span>
+                          {album.name} by {album.artist} <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(album, 'albums', showVS, vsMapObj)})</span>
                         </li>
                       )
                     })}

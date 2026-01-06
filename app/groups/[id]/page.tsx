@@ -7,6 +7,7 @@ import GroupQuickStats from '@/components/groups/GroupQuickStats'
 import GroupWeeklyChartsTab from '@/components/groups/GroupWeeklyChartsTab'
 import GroupAllTimeTab from '@/components/groups/GroupAllTimeTab'
 import GroupMembersTab from '@/components/groups/GroupMembersTab'
+import GroupTrendsTab from '@/components/groups/GroupTrendsTab'
 import { prisma } from '@/lib/prisma'
 
 export default async function GroupPage({ params }: { params: { id: string } }) {
@@ -53,13 +54,16 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
 
         {/* Tabs with async loading content */}
         <GroupTabs
-          defaultTab="charts"
+          defaultTab="trends"
           pendingRequestsCount={pendingRequestsCount}
           chartsContent={
             <GroupWeeklyChartsTab groupId={group.id} isOwner={isOwner} />
           }
           allTimeContent={
             <GroupAllTimeTab groupId={group.id} isOwner={isOwner} />
+          }
+          trendsContent={
+            <GroupTrendsTab groupId={group.id} />
           }
           membersContent={
             <GroupMembersTab groupId={group.id} />

@@ -34,10 +34,10 @@ export default function Tooltip({
         className={`
           absolute ${positionClasses[position]}
           opacity-0 group-hover:opacity-100 transition-opacity duration-0 pointer-events-none z-50
-          whitespace-nowrap
+          w-80
         `}
       >
-        <div className="relative bg-gray-900 text-white text-xs rounded-md py-1.5 px-2.5 shadow-lg">
+        <div className="relative bg-gray-900 text-white text-xs rounded-md py-1.5 px-2.5 shadow-lg whitespace-normal break-words">
           {content}
           <div
             className={`

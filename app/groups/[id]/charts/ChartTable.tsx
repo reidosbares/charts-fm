@@ -17,8 +17,12 @@ export default function ChartTable({ items, chartType }: ChartTableProps) {
       stopPulse()
     }
   }, [items, stopPulse])
-  const formatPositionChange = (change: number | null): string => {
-    if (change === null) return 'NEW'
+  const formatPositionChange = (change: number | null, entryType?: string | null): string => {
+    if (change === null) {
+      if (entryType === 'new') return 'NEW'
+      if (entryType === 're-entry') return 'RE'
+      return 'NEW' // fallback for legacy data
+    }
     if (change === 0) return ''
     if (change < 0) return `(↑${Math.abs(change)})`
     return `(↓${change})`
@@ -38,8 +42,11 @@ export default function ChartTable({ items, chartType }: ChartTableProps) {
     return `(↓${Math.abs(change).toFixed(2)})`
   }
 
-  const getPositionChangeColor = (change: number | null): string => {
-    if (change === null) return 'text-blue-600 font-semibold'
+  const getPositionChangeColor = (change: number | null, entryType?: string | null): string => {
+    if (change === null) {
+      if (entryType === 're-entry') return 'text-blue-400 font-semibold'
+      return 'text-blue-600 font-semibold'
+    }
     if (change < 0) return 'text-green-600'
     if (change > 0) return 'text-red-600'
     return 'text-gray-600'
@@ -89,16 +96,11 @@ export default function ChartTable({ items, chartType }: ChartTableProps) {
             <tr key={item.position} className="hover:bg-gray-50 transition-colors">
               <td className="px-6 py-5 text-sm">
                 <span className="font-bold text-gray-900">{item.position}</span>
-                {item.positionChange !== null && item.positionChange !== 0 && (
-                  <span className={`ml-2 ${getPositionChangeColor(item.positionChange)}`}>
-                    {formatPositionChange(item.positionChange)}
+                {(item.positionChange !== null && item.positionChange !== 0) || item.positionChange === null ? (
+                  <span className={`ml-2 ${getPositionChangeColor(item.positionChange, item.entryType)}`}>
+                    {formatPositionChange(item.positionChange, item.entryType)}
                   </span>
-                )}
-                {item.positionChange === null && (
-                  <span className={`ml-2 ${getPositionChangeColor(item.positionChange)}`}>
-                    {formatPositionChange(item.positionChange)}
-                  </span>
-                )}
+                ) : null}
               </td>
               <td className="px-6 py-5 text-sm">
                 <div>

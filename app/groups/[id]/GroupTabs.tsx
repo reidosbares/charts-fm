@@ -2,23 +2,25 @@
 
 import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChartBar, faTrophy, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faChartBar, faTrophy, faUsers, faFire } from '@fortawesome/free-solid-svg-icons'
 
-type Tab = 'charts' | 'members' | 'alltime'
+type Tab = 'charts' | 'members' | 'alltime' | 'trends'
 
 interface GroupTabsProps {
   defaultTab?: Tab
   membersContent: React.ReactNode
   chartsContent: React.ReactNode
   allTimeContent: React.ReactNode
+  trendsContent?: React.ReactNode
   pendingRequestsCount?: number
 }
 
 export default function GroupTabs({ 
-  defaultTab = 'charts', 
+  defaultTab = 'trends', 
   membersContent, 
   chartsContent,
   allTimeContent,
+  trendsContent,
   pendingRequestsCount = 0
 }: GroupTabsProps) {
   const [activeTab, setActiveTab] = useState<Tab>(defaultTab)
@@ -28,6 +30,21 @@ export default function GroupTabs({
       {/* Tab Navigation */}
       <div className="border-b-2 mb-6" style={{ borderBottomColor: 'var(--theme-primary-dark)' }}>
         <nav className="flex space-x-1" aria-label="Tabs">
+          <button
+            onClick={() => setActiveTab('trends')}
+            className={`
+              py-4 px-6 border-b-2 font-semibold text-sm transition-all rounded-t-lg
+              flex items-center gap-2
+              ${
+                activeTab === 'trends'
+                  ? 'border-[var(--theme-primary)] text-[var(--theme-primary-dark)] bg-[var(--theme-primary-lighter)]/30 shadow-sm'
+                  : 'border-transparent text-gray-600 hover:text-[var(--theme-text)] hover:bg-[var(--theme-primary-lighter)]/50'
+              }
+            `}
+          >
+            <FontAwesomeIcon icon={faFire} className="text-lg" />
+            Trends
+          </button>
           <button
             onClick={() => setActiveTab('charts')}
             className={`
@@ -88,6 +105,9 @@ export default function GroupTabs({
         </div>
         <div style={{ display: activeTab === 'alltime' ? 'block' : 'none' }}>
           {allTimeContent}
+        </div>
+        <div style={{ display: activeTab === 'trends' ? 'block' : 'none' }}>
+          {trendsContent}
         </div>
         <div style={{ display: activeTab === 'members' ? 'block' : 'none' }}>
           {membersContent}

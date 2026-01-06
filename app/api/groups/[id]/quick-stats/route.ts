@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { requireGroupMembership } from '@/lib/group-auth'
 import { getGroupWeeklyStats } from '@/lib/group-queries'
+import { prisma } from '@/lib/prisma'
 
 export async function GET(
   request: Request,
@@ -29,10 +30,34 @@ export async function GET(
                           albums.reduce((sum, a) => sum + (a.playcount || 0), 0)
     }
 
+    // Get the longest-charting artist (Obsession)
+    let obsessionArtist: { name: string; weeks: number } | null = null
+    if (weeklyStats.length > 0) {
+      const latestWeekStart = weeklyStats[0].weekStart
+      const longestCharting = await prisma.groupChartEntry.findFirst({
+        where: {
+          groupId: group.id,
+          chartType: 'artists',
+          weekStart: latestWeekStart, // Get from most recent week to ensure latest totalWeeksAppeared
+        },
+        orderBy: {
+          totalWeeksAppeared: 'desc',
+        },
+      })
+
+      if (longestCharting) {
+        obsessionArtist = {
+          name: longestCharting.name,
+          weeks: longestCharting.totalWeeksAppeared,
+        }
+      }
+    }
+
     return NextResponse.json({
       totalPlaysThisWeek,
       weeksTracked: weeklyStats.length,
       chartMode,
+      obsessionArtist,
     })
   } catch (error: any) {
     if (error.status === 401 || error.status === 403 || error.status === 404) {

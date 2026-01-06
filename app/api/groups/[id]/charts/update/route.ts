@@ -235,29 +235,42 @@ async function generateChartsInBackground(
     weeksToGenerate.sort((a, b) => a.getTime() - b.getTime())
 
     // Process each week sequentially
-    for (const weekStart of weeksToGenerate) {
-      const weekEnd = getWeekEndForDay(weekStart, trackingDayOfWeek)
-      
-      // Delete overlapping charts (handles tracking date changes automatically)
-      await deleteOverlappingCharts(groupId, weekStart, weekEnd)
-      
-      // Generate chart for the week
-      await calculateGroupWeeklyStats(
-        groupId,
-        weekStart,
-        chartSize,
-        trackingDayOfWeek,
-        chartMode,
-        logger,
-        members
-      )
-      
-      // Small delay between weeks
-      await new Promise(resolve => setTimeout(resolve, 500))
-    }
+    try {
+      for (const weekStart of weeksToGenerate) {
+        const weekEnd = getWeekEndForDay(weekStart, trackingDayOfWeek)
+        
+        // Delete overlapping charts (handles tracking date changes automatically)
+        await deleteOverlappingCharts(groupId, weekStart, weekEnd)
+        
+        // Generate chart for the week
+        await calculateGroupWeeklyStats(
+          groupId,
+          weekStart,
+          chartSize,
+          trackingDayOfWeek,
+          chartMode,
+          logger,
+          members
+        )
+        
+        // Small delay between weeks
+        await new Promise(resolve => setTimeout(resolve, 500))
+      }
 
-    // Recalculate all-time stats once after all weeks are processed
-    await recalculateAllTimeStats(groupId, logger)
+      // Recalculate all-time stats once after all weeks are processed
+      await recalculateAllTimeStats(groupId, logger)
+    } catch (error: any) {
+      console.error('Error generating charts in background:', error)
+      
+      // Handle Prisma validation errors
+      if (error.message && error.message.includes('did not match the expected pattern')) {
+        logger?.error(`Invalid data format detected during chart generation: ${error.message}`)
+        // Don't throw - we want to release the lock even on validation errors
+      } else {
+        // Re-throw other errors
+        throw error
+      }
+    }
 
     // Update group icon if dynamic icon is enabled (don't await - let it run in background)
     updateGroupIconFromChart(groupId).catch((error) => {

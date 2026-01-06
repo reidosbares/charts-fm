@@ -148,16 +148,31 @@ export async function POST(
   const weeksInOrder = [...weeks].reverse()
   
   // Process sequentially to avoid API rate limits
-  for (let i = 0; i < weeksInOrder.length; i++) {
-    const weekStart = weeksInOrder[i]
-    await calculateGroupWeeklyStats(groupId, weekStart, chartSize, trackingDayOfWeek, chartMode, logger, members)
-    
-    // Small delay between weeks
-    await new Promise(resolve => setTimeout(resolve, 500))
-  }
+  try {
+    for (let i = 0; i < weeksInOrder.length; i++) {
+      const weekStart = weeksInOrder[i]
+      await calculateGroupWeeklyStats(groupId, weekStart, chartSize, trackingDayOfWeek, chartMode, logger, members)
+      
+      // Small delay between weeks
+      await new Promise(resolve => setTimeout(resolve, 500))
+    }
 
-  // Recalculate all-time stats once after all weeks are processed
-  await recalculateAllTimeStats(groupId, logger)
+    // Recalculate all-time stats once after all weeks are processed
+    await recalculateAllTimeStats(groupId, logger)
+  } catch (error: any) {
+    console.error('Error generating charts:', error)
+    
+    // Handle Prisma validation errors
+    if (error.message && error.message.includes('did not match the expected pattern')) {
+      return NextResponse.json(
+        { error: 'Invalid data format detected. Please check that all group members have valid Last.fm usernames and try again.' },
+        { status: 400 }
+      )
+    }
+    
+    // Re-throw other errors
+    throw error
+  }
 
   // Update group icon if dynamic icon is enabled
   // Don't await - let it run in background to avoid blocking the response

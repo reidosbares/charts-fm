@@ -97,6 +97,7 @@ model Group {
   weeklyStats GroupWeeklyStats[]
   chartEntries GroupChartEntry[]
   allTimeStats GroupAllTimeStats?
+  trends GroupTrends?
   compatibilityScores GroupCompatibilityScore[]
   recommendationRejections GroupRecommendationRejection[]
   
@@ -167,6 +168,7 @@ model GroupChartEntry {
   playsChange       Int?     // null for new entries
   totalWeeksAppeared Int     // Count of weeks this entry appears in up to this week
   highestPosition   Int      // Best position across all weeks up to this week
+  entryType         String?   // "new" | "re-entry" | null (continuing entry)
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
   
@@ -305,5 +307,38 @@ model GroupRecommendationCache {
   
   @@index([userId])
   @@map("group_recommendation_cache")
+}
+
+model GroupTrends {
+  id                String   @id @default(cuid())
+  groupId           String   @unique
+  weekStart         DateTime // Latest week's start date
+  weekEnd           DateTime // Latest week's end date
+  
+  // Entry highlights
+  newEntries        Json     // Array of {chartType, entryKey, name, artist?, position}
+  biggestClimbers   Json     // Array of {chartType, entryKey, name, artist?, positionChange, oldPosition, newPosition}
+  biggestFallers    Json     // Array of {chartType, entryKey, name, artist?, positionChange, oldPosition, newPosition}
+  exits             Json     // Array of {chartType, entryKey, name, artist?, lastPosition}
+  
+  // Member contributions (if 3+ members)
+  topContributors   Json?    // Array of {userId, name, totalPlays, totalVS, contributions}
+  memberSpotlight   Json?    // {userId, name, highlight, topContributions[]}
+  
+  // Fun stats
+  totalPlays        Int
+  totalPlaysChange   Int?     // vs previous week
+  chartTurnover     Int      // Number of new entries
+  funFacts          Json     // Array of fun fact strings
+  
+  // Week comparison
+  previousWeekStart DateTime?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  
+  @@map("group_trends")
 }
 
