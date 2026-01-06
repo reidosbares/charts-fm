@@ -6,6 +6,7 @@ import PersonalListeningOverview from '@/components/dashboard/PersonalListeningO
 import GroupQuickViewCards from '@/components/dashboard/GroupQuickViewCards'
 import ActivityFeed from '@/components/dashboard/ActivityFeed'
 import QuickActionsPanel from '@/components/dashboard/QuickActionsPanel'
+import GroupsYouMightLike from '@/components/dashboard/GroupsYouMightLike'
 
 export default async function DashboardPage() {
   const session = await getSession()
@@ -72,6 +73,11 @@ export default async function DashboardPage() {
         {/* Group Quick View Cards - loads its own data */}
         <div className="mb-8">
           <GroupQuickViewCards />
+        </div>
+
+        {/* Groups You Might Like - loads its own data */}
+        <div className="mb-8">
+          <GroupsYouMightLike />
         </div>
       </div>
     </main>

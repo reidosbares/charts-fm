@@ -1,0 +1,18 @@
+import { requireSuperuser } from '@/lib/admin'
+import BulkGenerateForm from './BulkGenerateForm'
+
+export default async function BulkGeneratePage() {
+  // Check superuser access - will redirect if not authorized
+  await requireSuperuser()
+
+  return (
+    <main className="flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 bg-gray-50">
+      <div className="max-w-7xl w-full mx-auto">
+        <h1 className="text-4xl font-bold text-gray-900 mb-8">
+          Bulk Generate Users & Groups
+        </h1>
+        <BulkGenerateForm />
+      </div>
+    </main>
+  )
+}

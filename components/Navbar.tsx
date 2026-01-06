@@ -178,13 +178,22 @@ export default function Navbar() {
                         Edit Profile
                       </Link>
                       {userData?.isSuperuser && (
-                        <Link
-                          href="/admin/users/create"
-                          className="block px-4 py-2 text-sm font-bold text-gray-300 hover:bg-gray-800 hover:text-white"
-                          onClick={() => setIsDropdownOpen(false)}
-                        >
-                          Create User
-                        </Link>
+                        <>
+                          <Link
+                            href="/admin/users/create"
+                            className="block px-4 py-2 text-sm font-bold text-gray-300 hover:bg-gray-800 hover:text-white"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            Create User
+                          </Link>
+                          <Link
+                            href="/admin/bulk-generate"
+                            className="block px-4 py-2 text-sm font-bold text-gray-300 hover:bg-gray-800 hover:text-white"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            Bulk Generate
+                          </Link>
+                        </>
                       )}
                       <button
                         onClick={handleLogout}

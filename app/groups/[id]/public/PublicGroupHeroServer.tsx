@@ -5,6 +5,7 @@ import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import RequestToJoinButton from './RequestToJoinButton'
 import InviteNotification from './InviteNotification'
+import CompatibilityScore from './CompatibilityScore'
 
 interface PublicGroupHeroServerProps {
   groupId: string
@@ -147,14 +148,17 @@ export default async function PublicGroupHeroServer({ groupId, colorTheme }: Pub
           </div>
           
           {/* Action Buttons */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             {session?.user?.email && !isMember && (
-              <RequestToJoinButton
-                groupId={group.id}
-                hasPendingRequest={hasPendingRequest}
-                hasPendingInvite={hasPendingInvite}
-                allowFreeJoin={group.allowFreeJoin ?? false}
-              />
+              <>
+                <CompatibilityScore groupId={group.id} />
+                <RequestToJoinButton
+                  groupId={group.id}
+                  hasPendingRequest={hasPendingRequest}
+                  hasPendingInvite={hasPendingInvite}
+                  allowFreeJoin={group.allowFreeJoin ?? false}
+                />
+              </>
             )}
           </div>
         </div>
