@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
 import { getLastFMAuthUrl } from '@/lib/lastfm-auth'
+import { cookies } from 'next/headers'
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const mode = searchParams.get('mode') || 'signup' // 'signin' or 'signup'
+
   const apiKey = process.env.LASTFM_API_KEY
-  const callbackUrl = process.env.NEXTAUTH_URL
-    ? `${process.env.NEXTAUTH_URL}/api/auth/lastfm/callback`
-    : 'http://localhost:3000/api/auth/lastfm/callback'
 
   if (!apiKey) {
     return NextResponse.json(
@@ -13,6 +14,17 @@ export async function GET() {
       { status: 500 }
     )
   }
+
+  // Store mode in a cookie so we can retrieve it in the callback
+  // (Last.fm callback URL is configured in app settings, so we can't pass it as a parameter)
+  const cookieStore = await cookies()
+  cookieStore.set('lastfm_auth_mode', mode, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 60 * 10, // 10 minutes
+    path: '/',
+  })
 
   // Generate Last.fm authorization URL
   const authUrl = getLastFMAuthUrl(apiKey)

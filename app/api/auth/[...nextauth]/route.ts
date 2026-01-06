@@ -42,6 +42,43 @@ export const authOptions: NextAuthOptions = {
           image: user.image,
         }
       }
+    }),
+    CredentialsProvider({
+      id: "lastfm",
+      name: "Last.fm",
+      credentials: {
+        lastfmUsername: { label: "Last.fm Username", type: "text" },
+        lastfmSessionKey: { label: "Last.fm Session Key", type: "text" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.lastfmUsername || !credentials?.lastfmSessionKey) {
+          return null
+        }
+
+        // Find user by Last.fm username
+        const user = await prisma.user.findUnique({
+          where: { lastfmUsername: credentials.lastfmUsername }
+        })
+
+        if (!user) {
+          return null
+        }
+
+        // Update the session key if it's different
+        if (user.lastfmSessionKey !== credentials.lastfmSessionKey) {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { lastfmSessionKey: credentials.lastfmSessionKey }
+          })
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.image,
+        }
+      }
     })
   ],
   session: {

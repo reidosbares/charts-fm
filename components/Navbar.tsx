@@ -25,10 +25,10 @@ export default function Navbar() {
     image: string | null
     isSuperuser: boolean
   } | null>(null)
+  const prevPathnameRef = useRef(pathname)
 
   useEffect(() => {
     if (session?.user?.email) {
-      // Fetch user data including lastfmUsername
       fetch('/api/user/me')
         .then(res => res.json())
         .then(data => {
@@ -44,6 +44,26 @@ export default function Navbar() {
         .catch(console.error)
     }
   }, [session])
+
+  // Refetch when navigating away from profile page
+  useEffect(() => {
+    if (prevPathnameRef.current === '/profile' && pathname !== '/profile' && session?.user?.email) {
+      fetch('/api/user/me')
+        .then(res => res.json())
+        .then(data => {
+          if (data.user) {
+          setUserData({
+            name: data.user.name,
+            lastfmUsername: data.user.lastfmUsername,
+            image: data.user.image,
+            isSuperuser: data.user.isSuperuser || false,
+          })
+          }
+        })
+        .catch(console.error)
+    }
+    prevPathnameRef.current = pathname
+  }, [pathname, session])
 
   // Clear sign out loading screen when user is actually logged out, but ensure it shows for at least 1 second
   useEffect(() => {
@@ -133,7 +153,7 @@ export default function Navbar() {
               href="/" 
               className={`text-3xl font-bold text-yellow-500 transition-all font-oswald leading-none pb-1 ${isLoading ? 'animate-pulse-scale' : ''}`}
             >
-              ChartsFM
+              Charts.fm
             </Link>
             {isAuthenticated && (
               <div className="flex space-x-2">
@@ -409,7 +429,7 @@ export default function Navbar() {
                   e.currentTarget.style.filter = ''
                 }}
               >
-                Sign In
+                Log In
               </button>
               <Link
                 href="/auth/signup"

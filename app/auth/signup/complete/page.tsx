@@ -225,7 +225,7 @@ export default function CompleteSignUpPage() {
                     minLength={8}
                   />
                   <p className="text-xs text-gray-600 mt-2">
-                    You'll use this password along with your email to sign in.
+                    You'll use this password along with your email to log in.
                   </p>
                 </div>
 
@@ -266,7 +266,7 @@ export default function CompleteSignUpPage() {
             <p className="text-gray-700">
               Already have an account?{' '}
               <a href="/" className="text-yellow-600 hover:text-yellow-700 font-semibold underline underline-offset-2">
-                Sign in
+                Log in
               </a>
             </p>
           </div>

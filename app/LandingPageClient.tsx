@@ -187,7 +187,7 @@ export default function LandingPageClient() {
                   size="lg"
                   className="text-lg"
                 >
-                  Sign In
+                  Log In
                 </LiquidGlassButton>
                 <LiquidGlassLink
                   href="/auth/signup"

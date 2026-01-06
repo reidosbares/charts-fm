@@ -16,24 +16,21 @@ export default function SafeImage({
   className = '', 
   defaultImage 
 }: SafeImageProps) {
-  const [imgSrc, setImgSrc] = useState(src || defaultImage || getDefaultGroupImage())
   const defaultImg = defaultImage || getDefaultGroupImage()
+  const [imgSrc, setImgSrc] = useState(src || defaultImg)
 
   const handleError = () => {
     setImgSrc(defaultImg)
   }
 
+  // Use key prop to force remount when src changes, bypassing browser cache
   return (
     <img
-      src={imgSrc}
+      key={src || 'default'}
+      src={src || defaultImg}
       alt={alt}
       className={className}
       onError={handleError}
     />
   )
 }
-
-
-
-
-

@@ -21,8 +21,9 @@ const ArtistEntriesTable = memo(function ArtistEntriesTable({ tracks, albums, gr
 
   const currentEntries = activeTab === 'tracks' ? tracks : albums
 
-  // Calculate total #1 weeks across all tracks and albums
-  const totalNumberOneWeeks = [...tracks, ...albums]
+  // Calculate total #1 weeks for the current tab only (tracks or albums)
+  // This prevents double-counting when tracks and albums share the same entryKey
+  const totalNumberOneWeeks = currentEntries
     .filter((entry) => entry.peakPosition === 1)
     .reduce((sum, entry) => sum + entry.weeksAtPeak, 0)
 

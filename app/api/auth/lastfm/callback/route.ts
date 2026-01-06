@@ -1,15 +1,27 @@
 import { NextResponse } from 'next/server'
 import { createLastFMSession } from '@/lib/lastfm-auth'
 import { cookies } from 'next/headers'
+import { prisma } from '@/lib/prisma'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const token = searchParams.get('token')
+  
+  // Get mode from cookie (set during authorization)
+  const cookieStore = await cookies()
+  const modeCookie = cookieStore.get('lastfm_auth_mode')
+  const mode = modeCookie?.value || 'signup' // 'signin' or 'signup'
+  
+  // Clear the mode cookie after reading
+  if (modeCookie) {
+    cookieStore.delete('lastfm_auth_mode')
+  }
 
   if (!token) {
-    return NextResponse.redirect(
-      new URL('/auth/signup?error=no_token', request.url)
-    )
+    const errorUrl = mode === 'signin' 
+      ? '/?error=no_token&signin=true'
+      : '/auth/signup?error=no_token'
+    return NextResponse.redirect(new URL(errorUrl, request.url))
   }
 
   const apiKey = process.env.LASTFM_API_KEY
@@ -17,9 +29,10 @@ export async function GET(request: Request) {
 
   if (!apiKey || !apiSecret) {
     console.error('Missing Last.fm API credentials')
-    return NextResponse.redirect(
-      new URL('/auth/signup?error=config', request.url)
-    )
+    const errorUrl = mode === 'signin'
+      ? '/?error=config&signin=true'
+      : '/auth/signup?error=config'
+    return NextResponse.redirect(new URL(errorUrl, request.url))
   }
 
   try {
@@ -30,8 +43,42 @@ export async function GET(request: Request) {
       apiSecret
     )
 
-    // Store session info temporarily in a cookie (will be used in account completion)
-    // In production, consider using a more secure method like Redis or database
+    // Check if user already exists (for signin flow)
+    if (mode === 'signin') {
+      const existingUser = await prisma.user.findUnique({
+        where: { lastfmUsername: username }
+      })
+
+      if (existingUser) {
+        // Update session key
+        await prisma.user.update({
+          where: { id: existingUser.id },
+          data: { lastfmSessionKey: sessionKey }
+        })
+
+        // Store credentials temporarily for client-side signin
+        const cookieStore = await cookies()
+        cookieStore.set('lastfm_signin', JSON.stringify({ sessionKey, username }), {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 60 * 5, // 5 minutes
+          path: '/',
+        })
+
+        // Redirect to a page that will handle the client-side signin
+        return NextResponse.redirect(
+          new URL('/auth/signin/lastfm', request.url)
+        )
+      } else {
+        // User doesn't exist, redirect to signup
+        return NextResponse.redirect(
+          new URL('/auth/signup?error=user_not_found&lastfm_username=' + encodeURIComponent(username), request.url)
+        )
+      }
+    }
+
+    // Signup flow - store session info temporarily in a cookie
     const cookieStore = await cookies()
     cookieStore.set('lastfm_session', JSON.stringify({ sessionKey, username }), {
       httpOnly: true,
@@ -47,14 +94,10 @@ export async function GET(request: Request) {
     )
   } catch (error) {
     console.error('Last.fm callback error:', error)
-    return NextResponse.redirect(
-      new URL(
-        `/auth/signup?error=${encodeURIComponent(
-          error instanceof Error ? error.message : 'authentication_failed'
-        )}`,
-        request.url
-      )
-    )
+    const errorUrl = mode === 'signin'
+      ? `/?error=${encodeURIComponent(error instanceof Error ? error.message : 'authentication_failed')}&signin=true`
+      : `/auth/signup?error=${encodeURIComponent(error instanceof Error ? error.message : 'authentication_failed')}`
+    return NextResponse.redirect(new URL(errorUrl, request.url))
   }
 }
 
