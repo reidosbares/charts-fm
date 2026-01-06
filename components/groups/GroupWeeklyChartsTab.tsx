@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMusic, faMicrophone, faCompactDisc, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import PositionMovementIcon from '@/components/PositionMovementIcon'
+import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 
 interface GroupWeeklyChartsTabProps {
   groupId: string
@@ -65,7 +66,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
           <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">Weekly Charts</h2>
         </div>
         <div className="flex items-center justify-center py-12">
-          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
+          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-[var(--theme-primary)]" />
         </div>
       </div>
     )
@@ -84,12 +85,13 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
           <p className="text-gray-700 text-lg mb-2 font-medium">No charts available yet.</p>
           <p className="text-gray-500 text-sm mb-6">Start tracking your group's listening habits!</p>
           {isOwner && (
-            <Link
+            <LiquidGlassLink
               href={`/groups/${groupId}/generate`}
-              className="inline-block px-6 py-3 bg-[var(--theme-primary)] text-[var(--theme-button-text)] rounded-lg hover:bg-[var(--theme-primary-light)] transition-all shadow-sm hover:shadow font-semibold"
+              variant="primary"
+              useTheme
             >
               Generate Charts
-            </Link>
+            </LiquidGlassLink>
           )}
         </div>
       </div>
@@ -106,12 +108,13 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">Weekly Charts</h2>
-        <Link
+        <LiquidGlassLink
           href={`/groups/${groupId}/charts`}
-          className="px-5 py-2.5 bg-[var(--theme-primary)] text-[var(--theme-button-text)] rounded-lg hover:bg-[var(--theme-primary-light)] transition-all shadow-sm hover:shadow font-semibold"
+          variant="primary"
+          useTheme
         >
           Explore Charts
-        </Link>
+        </LiquidGlassLink>
       </div>
       <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 border border-theme">
         <div className="flex items-center justify-between mb-6">

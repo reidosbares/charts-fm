@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faShare } from '@fortawesome/free-solid-svg-icons'
 import ShareGroupModal from './ShareGroupModal'
+import LiquidGlassButton from '@/components/LiquidGlassButton'
 
 interface ShareGroupButtonProps {
   groupId: string
@@ -15,14 +16,16 @@ export default function ShareGroupButton({ groupId }: ShareGroupButtonProps) {
 
   return (
     <>
-      <button
+      <LiquidGlassButton
         ref={buttonRef}
         onClick={() => setIsModalOpen(true)}
-        className="absolute bottom-4 right-4 w-12 h-12 rounded-full bg-[var(--theme-primary)] text-[var(--theme-button-text)] hover:bg-[var(--theme-primary-light)] transition-all shadow-lg hover:shadow-xl flex items-center justify-center z-10"
+        variant="primary"
+        size="lg"
+        useTheme
+        icon={<FontAwesomeIcon icon={faShare} className="text-lg" />}
+        className="absolute bottom-4 right-4 z-10 w-12 h-12"
         aria-label="Share group"
-      >
-        <FontAwesomeIcon icon={faShare} className="text-lg" />
-      </button>
+      />
 
       <ShareGroupModal
         isOpen={isModalOpen}

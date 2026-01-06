@@ -79,7 +79,7 @@ export default function StylingTab({
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {THEME_NAMES.filter((themeName) => themeName !== 'rainbow').map((themeName) => {
+            {THEME_NAMES.map((themeName) => {
               const theme = GROUP_THEMES[themeName]
               const isSelected = colorTheme === themeName
               

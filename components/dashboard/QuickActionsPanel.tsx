@@ -44,7 +44,14 @@ export default function QuickActionsPanel() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+      <div 
+        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        style={{
+          background: 'rgba(255, 255, 255, 0.6)',
+          backdropFilter: 'blur(12px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+        }}
+      >
         <h2 className="text-2xl font-bold mb-4 text-gray-900">Quick Actions</h2>
         <div className="flex items-center justify-center py-12">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
@@ -56,7 +63,14 @@ export default function QuickActionsPanel() {
   if (error || !data) {
     // Show basic actions even on error
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+      <div 
+        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        style={{
+          background: 'rgba(255, 255, 255, 0.6)',
+          backdropFilter: 'blur(12px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+        }}
+      >
         <h2 className="text-2xl font-bold mb-4 text-gray-900">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <Link
@@ -89,12 +103,19 @@ export default function QuickActionsPanel() {
 
   const { pendingInvitesCount, pendingRequestsCount, groupsCount } = data
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-      <h2 className="text-2xl font-bold mb-4 text-gray-900">Quick Actions</h2>
+    <div 
+      className="rounded-xl shadow-lg p-6 border border-gray-200"
+      style={{
+        background: 'rgba(255, 255, 255, 0.6)',
+        backdropFilter: 'blur(12px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+      }}
+    >
+      <h2 className="text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">Quick Actions</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <Link
           href="/groups/create"
-          className="flex items-center gap-3 p-4 bg-gradient-to-r from-yellow-500 to-yellow-400 text-black rounded-lg hover:from-yellow-600 hover:to-yellow-500 transition-all shadow-sm hover:shadow font-semibold"
+          className="flex items-center gap-3 p-4 rounded-lg transition-all shadow-sm hover:shadow font-semibold bg-yellow-500 text-black hover:bg-yellow-600"
         >
           <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
             <FontAwesomeIcon icon={faPlus} />
@@ -107,9 +128,15 @@ export default function QuickActionsPanel() {
 
         <Link
           href="/groups"
-          className="flex items-center gap-3 p-4 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+          className="flex items-center gap-3 p-4 rounded-lg transition-all hover:shadow-sm"
+          style={{
+            background: 'rgba(255, 255, 255, 0.4)',
+            backdropFilter: 'blur(8px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+          }}
         >
-          <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-700">
+          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 text-gray-700">
             <FontAwesomeIcon icon={faUsers} />
           </div>
           <div>
@@ -121,9 +148,15 @@ export default function QuickActionsPanel() {
         {pendingInvitesCount > 0 && (
           <Link
             href="/groups"
-            className="flex items-center gap-3 p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors border border-yellow-200"
+            className="flex items-center gap-3 p-4 rounded-lg transition-all hover:shadow-sm"
+            style={{
+              background: 'rgba(255, 255, 255, 0.4)',
+              backdropFilter: 'blur(8px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+            }}
           >
-            <div className="w-10 h-10 rounded-full bg-yellow-200 flex items-center justify-center text-yellow-700 relative">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-yellow-100 text-yellow-700">
               <FontAwesomeIcon icon={faEnvelope} />
               <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold">
                 {pendingInvitesCount}
@@ -139,9 +172,15 @@ export default function QuickActionsPanel() {
         {pendingRequestsCount > 0 && (
           <Link
             href="/groups"
-            className="flex items-center gap-3 p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors border border-purple-200"
+            className="flex items-center gap-3 p-4 rounded-lg transition-all hover:shadow-sm"
+            style={{
+              background: 'rgba(255, 255, 255, 0.4)',
+              backdropFilter: 'blur(8px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+            }}
           >
-            <div className="w-10 h-10 rounded-full bg-purple-200 flex items-center justify-center text-purple-700 relative">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-purple-100 text-purple-700">
               <FontAwesomeIcon icon={faHandPaper} />
               <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold">
                 {pendingRequestsCount}
@@ -156,9 +195,15 @@ export default function QuickActionsPanel() {
 
         <Link
           href="/profile"
-          className="flex items-center gap-3 p-4 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+          className="flex items-center gap-3 p-4 rounded-lg transition-all hover:shadow-sm"
+          style={{
+            background: 'rgba(255, 255, 255, 0.4)',
+            backdropFilter: 'blur(8px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+          }}
         >
-          <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-700">
+          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 text-gray-700">
             <FontAwesomeIcon icon={faCog} />
           </div>
           <div>

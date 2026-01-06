@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import LiquidGlassButton from '@/components/LiquidGlassButton'
 
 interface RequestToJoinButtonProps {
   groupId: string
@@ -68,17 +69,11 @@ export default function RequestToJoinButton({
           {error}
         </div>
       )}
-      <button
+      <LiquidGlassButton
         onClick={handleRequest}
         disabled={hasRequested || hasJoined || hasPendingInvite || isLoading}
-        className={`
-          px-4 py-2 rounded-lg font-semibold transition-colors
-          ${
-            hasRequested || hasJoined || hasPendingInvite || isLoading
-              ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-              : 'bg-yellow-500 text-black hover:bg-yellow-400'
-          }
-        `}
+        variant={hasRequested || hasJoined || hasPendingInvite || isLoading ? 'neutral' : 'primary'}
+        useTheme={false}
         title={hasPendingInvite ? 'You have been invited to join this group' : undefined}
       >
         {isLoading
@@ -92,7 +87,7 @@ export default function RequestToJoinButton({
           : allowFreeJoin
           ? 'Join'
           : 'Request to Join'}
-      </button>
+      </LiquidGlassButton>
     </div>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import LiquidGlassButton from '@/components/LiquidGlassButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import SafeImage from '@/components/SafeImage'
@@ -179,20 +180,28 @@ export default function RequestsModal({
                       </div>
                     </div>
                     <div className="flex items-center gap-2 ml-4 flex-shrink-0">
-                      <button
+                      <LiquidGlassButton
                         onClick={() => handleAccept(request.id)}
                         disabled={processingId === request.id}
-                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm shadow-sm"
+                        variant="neutral"
+                        size="sm"
+                        useTheme={false}
+                        style={{
+                          background: 'rgba(34, 197, 94, 0.8)',
+                          color: 'white',
+                        }}
                       >
                         {processingId === request.id ? 'Processing...' : 'Accept'}
-                      </button>
-                      <button
+                      </LiquidGlassButton>
+                      <LiquidGlassButton
                         onClick={() => handleReject(request.id)}
                         disabled={processingId === request.id}
-                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm shadow-sm"
+                        variant="danger"
+                        size="sm"
+                        useTheme={false}
                       >
                         {processingId === request.id ? 'Processing...' : 'Reject'}
-                      </button>
+                      </LiquidGlassButton>
                     </div>
                   </div>
                 ))}

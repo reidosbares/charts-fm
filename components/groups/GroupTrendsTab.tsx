@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFire, faSpinner, faArrowUp, faArrowDown, faMusic, faMicrophone, faCompactDisc, faTrophy } from '@fortawesome/free-solid-svg-icons'
+import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 
 interface GroupTrendsTabProps {
   groupId: string
@@ -85,12 +86,13 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">Trends</h2>
-        <Link
+        <LiquidGlassLink
           href={`/groups/${groupId}/trends`}
-          className="px-5 py-2.5 bg-[var(--theme-primary)] text-[var(--theme-button-text)] rounded-lg hover:bg-[var(--theme-primary-light)] transition-all shadow-sm hover:shadow font-semibold"
+          variant="primary"
+          useTheme
         >
           Explore Full Trends
-        </Link>
+        </LiquidGlassLink>
       </div>
 
       {/* Quick Stats Cards */}

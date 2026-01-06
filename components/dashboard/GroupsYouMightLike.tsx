@@ -253,7 +253,14 @@ export default function GroupsYouMightLike() {
   // }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 relative">
+    <div 
+        className="rounded-xl shadow-lg p-6 border border-gray-200 relative"
+      style={{
+        background: 'rgba(255, 255, 255, 0.6)',
+        backdropFilter: 'blur(12px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+      }}
+    >
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Groups You Might Like</h2>
         {/* TEMPORARY: Refresh button disabled - recommendations system hidden for launch */}

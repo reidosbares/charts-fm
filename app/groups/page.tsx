@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { getUserGroups, getUserGroupInvites } from '@/lib/group-queries'
 import Link from 'next/link'
 import GroupsTabs from './GroupsTabs'
+import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 
 export default async function GroupsPage() {
   const session = await getSession()
@@ -56,18 +57,20 @@ export default async function GroupsPage() {
             My Groups
           </h1>
           <div className="flex gap-3">
-            <Link
+            <LiquidGlassLink
               href="/groups/discover"
-              className="px-6 py-3 bg-gray-900 hover:bg-gray-800 text-white rounded-lg transition-all font-semibold"
+              variant="neutral"
+              useTheme={false}
             >
               Browse Groups
-            </Link>
-            <Link
+            </LiquidGlassLink>
+            <LiquidGlassLink
               href="/groups/create"
-              className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg transition-all font-semibold"
+              variant="primary"
+              useTheme={false}
             >
               Create Group
-            </Link>
+            </LiquidGlassLink>
           </div>
         </div>
 

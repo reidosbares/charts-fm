@@ -49,7 +49,7 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
           <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">Members</h2>
         </div>
         <div className="flex items-center justify-center py-12">
-          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
+          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-[var(--theme-primary)]" />
         </div>
       </div>
     )

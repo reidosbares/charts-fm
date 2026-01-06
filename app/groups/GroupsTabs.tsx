@@ -7,6 +7,7 @@ import SafeImage from '@/components/SafeImage'
 import { getDefaultGroupImage } from '@/lib/default-images'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMusic, faUsers, faEnvelope } from '@fortawesome/free-solid-svg-icons'
+import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
 
 interface Group {
   id: string
@@ -224,41 +225,32 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
     )
   }
 
+  const tabs: TabItem[] = [
+    { id: 'groups', label: "Groups I'm In", icon: faUsers },
+    { id: 'invites', label: 'Invites', icon: faEnvelope, badge: invites.length },
+  ]
+
   return (
     <div>
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 border-b border-gray-300">
-        <button
-          onClick={() => setActiveTab('groups')}
-          className={`px-6 py-4 font-semibold text-sm transition-all flex items-center gap-2 ${
-            activeTab === 'groups'
-              ? 'border-b-2 border-gray-900 text-gray-900'
-              : 'border-transparent text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          <FontAwesomeIcon icon={faUsers} className="text-lg" />
-          My Groups
-        </button>
-        <button
-          onClick={() => setActiveTab('invites')}
-          className={`px-6 py-4 font-semibold text-sm transition-all flex items-center gap-2 ${
-            activeTab === 'invites'
-              ? 'border-b-2 border-gray-900 text-gray-900'
-              : 'border-transparent text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          <FontAwesomeIcon icon={faEnvelope} className="text-lg" />
-          Invites {invites.length > 0 && (
-            <span className="ml-1 px-2 py-0.5 bg-gray-900 text-white rounded-full text-xs font-bold">
-              {invites.length}
-            </span>
-          )}
-        </button>
+      <div className="flex justify-center mb-6">
+        <LiquidGlassTabs
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={(tabId) => setActiveTab(tabId as 'groups' | 'invites')}
+        />
       </div>
 
       {/* Tab Content */}
       {activeTab === 'groups' && (
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div 
+          className="rounded-xl shadow-lg p-6 border border-gray-200"
+          style={{
+            background: 'rgba(255, 255, 255, 0.6)',
+            backdropFilter: 'blur(12px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+          }}
+        >
           {allGroups.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {allGroups.map((group) => renderGroupCard(group, `/groups/${group.id}`))}
@@ -276,7 +268,14 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
       )}
 
       {activeTab === 'invites' && (
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div 
+          className="rounded-xl shadow-lg p-6 border border-gray-200"
+          style={{
+            background: 'rgba(255, 255, 255, 0.6)',
+            backdropFilter: 'blur(12px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+          }}
+        >
           {invites.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {invites.map((invite) => renderInviteCard(invite))}

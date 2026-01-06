@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMusic, faMicrophone, faCompactDisc, faTrophy, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { LiquidGlassLink } from '@/components/LiquidGlassButton'
+import LiquidGlassButton from '@/components/LiquidGlassButton'
 
 interface GroupAllTimeTabProps {
   groupId: string
@@ -40,7 +42,7 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
           <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">All-Time Stats</h2>
         </div>
         <div className="flex items-center justify-center py-12">
-          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
+          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-[var(--theme-primary)]" />
         </div>
       </div>
     )
@@ -59,12 +61,13 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
           <p className="text-gray-700 text-lg mb-2 font-medium">No all-time stats available yet.</p>
           <p className="text-gray-500 text-sm mb-6">Generate charts to start building your all-time rankings!</p>
           {!data?.hasWeeklyStats && isOwner && (
-            <Link
+            <LiquidGlassLink
               href={`/groups/${groupId}/generate`}
-              className="inline-block px-6 py-3 bg-[var(--theme-primary)] text-[var(--theme-button-text)] rounded-lg hover:bg-[var(--theme-primary-light)] transition-all shadow-sm hover:shadow font-semibold"
+              variant="primary"
+              useTheme
             >
               Generate Charts
-            </Link>
+            </LiquidGlassLink>
           )}
         </div>
       </div>
@@ -80,12 +83,13 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">All-Time Stats</h2>
-        <Link
+        <LiquidGlassLink
           href={`/groups/${groupId}/alltime`}
-          className="px-5 py-2.5 bg-[var(--theme-primary)] text-[var(--theme-button-text)] rounded-lg hover:bg-[var(--theme-primary-light)] transition-all shadow-sm hover:shadow font-semibold"
+          variant="primary"
+          useTheme
         >
           View All-Time Stats
-        </Link>
+        </LiquidGlassLink>
       </div>
       <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 border border-theme">
         <h3 className="text-2xl font-bold mb-6 text-gray-900">Top 100 All-Time</h3>

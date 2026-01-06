@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import InviteMemberModal from './InviteMemberModal'
+import LiquidGlassButton from '@/components/LiquidGlassButton'
 
 interface InviteMemberButtonProps {
   groupId: string
@@ -13,12 +14,13 @@ export default function InviteMemberButton({ groupId, onInviteSent }: InviteMemb
 
   return (
     <>
-      <button
+      <LiquidGlassButton
         onClick={() => setIsModalOpen(true)}
-        className="px-4 py-2 bg-[var(--theme-primary)] text-[var(--theme-button-text)] rounded-lg hover:bg-[var(--theme-primary-light)] transition-colors font-semibold"
+        variant="primary"
+        useTheme
       >
         Invite Member
-      </button>
+      </LiquidGlassButton>
 
       <InviteMemberModal
         isOpen={isModalOpen}

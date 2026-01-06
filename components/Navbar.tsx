@@ -65,7 +65,13 @@ export default function Navbar() {
   const isAuthenticated = status === 'authenticated' && session?.user
 
   return (
-    <nav className="sticky top-0 z-50 bg-black border-b border-gray-800 relative overflow-x-hidden">
+    <nav 
+      className="sticky top-0 z-50 relative overflow-x-hidden bg-black"
+      style={{
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
+      }}
+    >
       {isLoading && (
         <div className="absolute bottom-0 left-0 h-1 bg-yellow-500 w-1/4 shadow-lg shadow-yellow-500/50 animate-race-bar" />
       )}
@@ -79,34 +85,115 @@ export default function Navbar() {
               Charts.fm
             </Link>
             {isAuthenticated && (
-              <div className="flex space-x-4">
+              <div className="flex space-x-2">
                 <Link
                   href="/dashboard"
-                  className={`px-3 py-2 rounded-md text-sm font-bold transition-colors leading-tight ${
+                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 leading-tight ${
                     pathname === '/dashboard'
-                      ? 'bg-yellow-500 text-black'
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                      ? 'text-black'
+                      : 'text-gray-200 hover:text-white'
                   }`}
+                  style={
+                    pathname === '/dashboard'
+                      ? {
+                          background: 'var(--theme-primary)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        }
+                      : {
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          backdropFilter: 'blur(12px) saturate(180%)',
+                          WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        }
+                  }
+                  onMouseEnter={(e) => {
+                    if (pathname !== '/dashboard') {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
+                      e.currentTarget.style.filter = 'brightness(1.1)'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (pathname !== '/dashboard') {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                      e.currentTarget.style.filter = ''
+                    }
+                  }}
                 >
                   Main Page
                 </Link>
                 <Link
                   href="/groups"
-                  className={`px-3 py-2 rounded-md text-sm font-bold transition-colors leading-tight ${
+                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 leading-tight ${
                     pathname?.startsWith('/groups') && !pathname?.startsWith('/groups/discover')
-                      ? 'bg-yellow-500 text-black'
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                      ? 'text-black'
+                      : 'text-gray-200 hover:text-white'
                   }`}
+                  style={
+                    pathname?.startsWith('/groups') && !pathname?.startsWith('/groups/discover')
+                      ? {
+                          background: 'var(--theme-primary)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        }
+                      : {
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          backdropFilter: 'blur(12px) saturate(180%)',
+                          WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        }
+                  }
+                  onMouseEnter={(e) => {
+                    if (!(pathname?.startsWith('/groups') && !pathname?.startsWith('/groups/discover'))) {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
+                      e.currentTarget.style.filter = 'brightness(1.1)'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!(pathname?.startsWith('/groups') && !pathname?.startsWith('/groups/discover'))) {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                      e.currentTarget.style.filter = ''
+                    }
+                  }}
                 >
                   Groups
                 </Link>
                 <Link
                   href="/groups/discover"
-                  className={`px-3 py-2 rounded-md text-sm font-bold transition-colors leading-tight ${
+                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 leading-tight ${
                     pathname?.startsWith('/groups/discover')
-                      ? 'bg-yellow-500 text-black'
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                      ? 'text-black'
+                      : 'text-gray-200 hover:text-white'
                   }`}
+                  style={
+                    pathname?.startsWith('/groups/discover')
+                      ? {
+                          background: 'var(--theme-primary)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        }
+                      : {
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          backdropFilter: 'blur(12px) saturate(180%)',
+                          WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        }
+                  }
+                  onMouseEnter={(e) => {
+                    if (!pathname?.startsWith('/groups/discover')) {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
+                      e.currentTarget.style.filter = 'brightness(1.1)'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!pathname?.startsWith('/groups/discover')) {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                      e.currentTarget.style.filter = ''
+                    }
+                  }}
                 >
                   Discover
                 </Link>
@@ -119,7 +206,22 @@ export default function Navbar() {
               <button
                 ref={buttonRef}
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-bold text-gray-300 hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold text-gray-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(12px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
+                  e.currentTarget.style.filter = 'brightness(1.1)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                  e.currentTarget.style.filter = ''
+                }}
               >
                 <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border-2 border-yellow-500">
                   <SafeImage
@@ -153,14 +255,19 @@ export default function Navbar() {
                     onClick={() => setIsDropdownOpen(false)}
                   />
                   <div 
-                    className="fixed w-56 rounded-md shadow-lg bg-gray-900 ring-1 ring-gray-700 z-[60]" 
+                    className="fixed w-56 rounded-2xl shadow-xl z-[60] overflow-hidden" 
                     style={{ 
                       top: `${dropdownPosition.top}px`,
-                      right: `${dropdownPosition.right}px`
+                      right: `${dropdownPosition.right}px`,
+                      background: 'rgba(17, 24, 39, 0.8)',
+                      backdropFilter: 'blur(20px) saturate(180%)',
+                      WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.3)',
                     }}
                   >
                     <div className="py-1">
-                      <div className="px-4 py-2 border-b border-gray-700">
+                      <div className="px-4 py-2 border-b border-gray-700/50">
                         <p className="text-sm font-bold text-white">
                           {userData?.name || session?.user?.name || 'User'}
                         </p>
@@ -172,8 +279,14 @@ export default function Navbar() {
                       </div>
                       <Link
                         href="/profile"
-                        className="block px-4 py-2 text-sm font-bold text-gray-300 hover:bg-gray-800 hover:text-white"
+                        className="block px-4 py-2 text-sm font-semibold text-gray-200 hover:text-white transition-all duration-200"
                         onClick={() => setIsDropdownOpen(false)}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'transparent'
+                        }}
                       >
                         Edit Profile
                       </Link>
@@ -181,15 +294,27 @@ export default function Navbar() {
                         <>
                           <Link
                             href="/admin/users/create"
-                            className="block px-4 py-2 text-sm font-bold text-gray-300 hover:bg-gray-800 hover:text-white"
+                            className="block px-4 py-2 text-sm font-semibold text-gray-200 hover:text-white transition-all duration-200"
                             onClick={() => setIsDropdownOpen(false)}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = 'transparent'
+                            }}
                           >
                             Create User
                           </Link>
                           <Link
                             href="/admin/bulk-generate"
-                            className="block px-4 py-2 text-sm font-bold text-gray-300 hover:bg-gray-800 hover:text-white"
+                            className="block px-4 py-2 text-sm font-semibold text-gray-200 hover:text-white transition-all duration-200"
                             onClick={() => setIsDropdownOpen(false)}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = 'transparent'
+                            }}
                           >
                             Bulk Generate
                           </Link>
@@ -197,7 +322,13 @@ export default function Navbar() {
                       )}
                       <button
                         onClick={handleLogout}
-                        className="block w-full text-left px-4 py-2 text-sm font-bold text-gray-300 hover:bg-gray-800 hover:text-white"
+                        className="block w-full text-left px-4 py-2 text-sm font-semibold text-gray-200 hover:text-white transition-all duration-200"
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'transparent'
+                        }}
                       >
                         Sign out
                       </button>
@@ -207,16 +338,42 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
               <Link
                 href="/auth/signin"
-                className="px-3 py-2 rounded-md text-sm font-bold text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+                className="px-4 py-2 rounded-full text-sm font-semibold text-gray-200 hover:text-white transition-all duration-200"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(12px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
+                  e.currentTarget.style.filter = 'brightness(1.1)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                  e.currentTarget.style.filter = ''
+                }}
               >
                 Sign In
               </Link>
               <Link
                 href="/auth/signup"
-                className="px-3 py-2 rounded-md text-sm font-bold bg-yellow-500 text-black hover:bg-yellow-400 transition-colors"
+                className="px-4 py-2 rounded-full text-sm font-semibold text-black transition-all duration-200"
+                style={{
+                  background: 'var(--theme-primary)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.filter = 'brightness(1.15)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.filter = ''
+                }}
               >
                 Sign Up
               </Link>

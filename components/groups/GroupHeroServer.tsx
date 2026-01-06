@@ -5,6 +5,7 @@ import { getWeekStartForDay, getWeekEndForDay, formatWeekLabel } from '@/lib/wee
 import { getLastChartWeek } from '@/lib/group-service'
 import UpdateChartsButton from './UpdateChartsButton'
 import ShareGroupButton from '@/app/groups/[id]/ShareGroupButton'
+import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 
 interface GroupHeroServerProps {
   groupId: string
@@ -170,8 +171,18 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme }: 
               {canUpdateCharts || chartGenerationInProgress ? (
                 <UpdateChartsButton groupId={groupId} initialInProgress={chartGenerationInProgress} />
               ) : (
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--theme-primary)] text-[var(--theme-button-text)] rounded-full font-semibold shadow-sm">
-                  <span className="text-sm">Next charts in {daysUntilNextChart} {daysUntilNextChart === 1 ? 'day' : 'days'}</span>
+                <div 
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-sm"
+                  style={{
+                    background: 'var(--theme-primary)',
+                    color: 'var(--theme-button-text)',
+                    backdropFilter: 'blur(12px) saturate(180%)',
+                    WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                  }}
+                >
+                  <span>Next charts in {daysUntilNextChart} {daysUntilNextChart === 1 ? 'day' : 'days'}</span>
                   <span className="text-xs opacity-80">({nextChartDateFormatted})</span>
                 </div>
               )}
@@ -179,14 +190,16 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme }: 
           </div>
           
           {/* Action Buttons */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 items-start">
             {isOwner && (
-              <Link
+              <LiquidGlassLink
                 href={`/groups/${groupId}/settings`}
-                className="px-5 py-2.5 bg-[var(--theme-primary)] text-[var(--theme-button-text)] rounded-lg hover:bg-[var(--theme-primary-light)] transition-all shadow-sm hover:shadow font-semibold"
+                variant="primary"
+                useTheme
+                size="md"
               >
                 Settings
-              </Link>
+              </LiquidGlassLink>
             )}
           </div>
           

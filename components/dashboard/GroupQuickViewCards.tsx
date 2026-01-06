@@ -51,9 +51,18 @@ export default function GroupQuickViewCards() {
       })
   }, [])
 
+  const glassStyle = {
+    background: 'rgba(255, 255, 255, 0.6)',
+    backdropFilter: 'blur(12px) saturate(180%)',
+    WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+  }
+
   if (isLoading) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+      <div 
+        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        style={glassStyle}
+      >
         <h2 className="text-2xl font-bold mb-4 text-gray-900">Your Groups</h2>
         <div className="flex items-center justify-center py-12">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
@@ -64,8 +73,11 @@ export default function GroupQuickViewCards() {
 
   if (error || groups.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">Your Groups</h2>
+      <div 
+        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        style={glassStyle}
+      >
+        <h2 className="text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">Your Groups</h2>
         <div className="text-center py-8 text-gray-500">
           <p className="mb-4">You're not in any groups yet.</p>
           <Link
@@ -80,12 +92,15 @@ export default function GroupQuickViewCards() {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+    <div 
+      className="rounded-xl shadow-lg p-6 border border-theme"
+      style={glassStyle}
+    >
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Your Groups</h2>
         <Link
           href="/groups"
-          className="text-sm text-yellow-600 hover:text-yellow-700 font-medium"
+          className="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
         >
           View All →
         </Link>
@@ -127,7 +142,14 @@ export default function GroupQuickViewCards() {
               {group.latestWeek ? (
                 <div className="space-y-2 mb-3">
                   {group.latestWeek.topArtist && (
-                    <div className="flex items-center gap-2 text-sm bg-white/60 rounded-lg p-2">
+                    <div 
+                      className="flex items-center gap-2 text-sm rounded-lg p-2"
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.5)',
+                        backdropFilter: 'blur(8px) saturate(180%)',
+                        WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+                      }}
+                    >
                       <FontAwesomeIcon icon={faMicrophone} className="text-[var(--theme-primary)] text-xs" />
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-gray-900 truncate">{group.latestWeek.topArtist.name}</div>
@@ -136,7 +158,14 @@ export default function GroupQuickViewCards() {
                     </div>
                   )}
                   {group.latestWeek.topTrack && (
-                    <div className="flex items-center gap-2 text-sm bg-white/60 rounded-lg p-2">
+                    <div 
+                      className="flex items-center gap-2 text-sm rounded-lg p-2"
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.5)',
+                        backdropFilter: 'blur(8px) saturate(180%)',
+                        WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+                      }}
+                    >
                       <FontAwesomeIcon icon={faMusic} className="text-[var(--theme-primary)] text-xs" />
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-gray-900 truncate">{group.latestWeek.topTrack.name}</div>

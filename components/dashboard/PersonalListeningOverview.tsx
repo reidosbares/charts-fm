@@ -44,9 +44,18 @@ export default function PersonalListeningOverview() {
       })
   }, [])
 
+  const glassStyle = {
+    background: 'rgba(255, 255, 255, 0.6)',
+    backdropFilter: 'blur(12px) saturate(180%)',
+    WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+  }
+
   if (isLoading) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+      <div 
+        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        style={glassStyle}
+      >
         <h2 className="text-2xl font-bold mb-4 text-gray-900">Your Listening This Week</h2>
         <div className="flex items-center justify-center py-12">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
@@ -57,8 +66,11 @@ export default function PersonalListeningOverview() {
 
   if (error || !stats) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">Your Listening This Week</h2>
+      <div 
+        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        style={glassStyle}
+      >
+        <h2 className="text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">Your Listening This Week</h2>
         <div className="text-center py-8 text-gray-500">
           <p className="mb-2">No listening data available yet.</p>
           <p className="text-sm">Your weekly stats will appear here once your groups generate charts.</p>
@@ -72,8 +84,11 @@ export default function PersonalListeningOverview() {
 
   if (!currentWeek) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">Your Listening This Week</h2>
+      <div 
+        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        style={glassStyle}
+      >
+        <h2 className="text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">Your Listening This Week</h2>
         <div className="text-center py-8 text-gray-500">
           <p className="mb-2">No listening data available yet.</p>
           <p className="text-sm">Your weekly stats will appear here once your groups generate charts.</p>
@@ -90,7 +105,14 @@ export default function PersonalListeningOverview() {
     : null
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+    <div 
+      className="rounded-xl shadow-lg p-6 border border-theme"
+      style={{
+        background: 'rgba(255, 255, 255, 0.6)',
+        backdropFilter: 'blur(12px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+      }}
+    >
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Your Listening This Week</h2>
         {currentWeek && (
@@ -102,9 +124,17 @@ export default function PersonalListeningOverview() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
-          <div className="text-sm text-blue-600 font-medium mb-1">Total Plays</div>
-          <div className="text-2xl font-bold text-blue-900">{currentWeek.totalPlays.toLocaleString()}</div>
+        <div 
+          className="rounded-lg p-4 border"
+          style={{
+            background: 'rgba(255, 255, 255, 0.4)',
+            backdropFilter: 'blur(8px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+            borderColor: 'rgba(255, 255, 255, 0.3)',
+          }}
+        >
+          <div className="text-sm text-gray-600 font-medium mb-1">Total Plays</div>
+          <div className="text-2xl font-bold text-gray-900">{currentWeek.totalPlays.toLocaleString()}</div>
           {playsChange !== null && (
             <div className="flex items-center gap-1 mt-1 text-xs">
               {playsChange > 0 ? (
@@ -129,19 +159,43 @@ export default function PersonalListeningOverview() {
           )}
         </div>
 
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
-          <div className="text-sm text-purple-600 font-medium mb-1">Unique Artists</div>
-          <div className="text-2xl font-bold text-purple-900">{currentWeek.uniqueArtists}</div>
+        <div 
+          className="rounded-lg p-4 border"
+          style={{
+            background: 'rgba(255, 255, 255, 0.4)',
+            backdropFilter: 'blur(8px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+            borderColor: 'rgba(255, 255, 255, 0.3)',
+          }}
+        >
+          <div className="text-sm text-gray-600 font-medium mb-1">Unique Artists</div>
+          <div className="text-2xl font-bold text-gray-900">{currentWeek.uniqueArtists}</div>
         </div>
 
-        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
-          <div className="text-sm text-green-600 font-medium mb-1">Unique Tracks</div>
-          <div className="text-2xl font-bold text-green-900">{currentWeek.uniqueTracks}</div>
+        <div 
+          className="rounded-lg p-4 border"
+          style={{
+            background: 'rgba(255, 255, 255, 0.4)',
+            backdropFilter: 'blur(8px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+            borderColor: 'rgba(255, 255, 255, 0.3)',
+          }}
+        >
+          <div className="text-sm text-gray-600 font-medium mb-1">Unique Tracks</div>
+          <div className="text-2xl font-bold text-gray-900">{currentWeek.uniqueTracks}</div>
         </div>
 
-        <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4 border border-yellow-200">
-          <div className="text-sm text-yellow-600 font-medium mb-1">Top Items</div>
-          <div className="text-2xl font-bold text-yellow-900">
+        <div 
+          className="rounded-lg p-4 border"
+          style={{
+            background: 'rgba(255, 255, 255, 0.4)',
+            backdropFilter: 'blur(8px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+            borderColor: 'rgba(255, 255, 255, 0.3)',
+          }}
+        >
+          <div className="text-sm text-gray-600 font-medium mb-1">Top Items</div>
+          <div className="text-2xl font-bold text-gray-900">
             {currentWeek.topArtists.length + currentWeek.topTracks.length + currentWeek.topAlbums.length}
           </div>
         </div>
@@ -150,7 +204,15 @@ export default function PersonalListeningOverview() {
       {/* Top Items Preview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Top Artists */}
-        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+        <div 
+          className="rounded-lg p-4 border"
+          style={{
+            background: 'rgba(255, 255, 255, 0.4)',
+            backdropFilter: 'blur(8px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+            borderColor: 'rgba(255, 255, 255, 0.3)',
+          }}
+        >
           <div className="flex items-center gap-2 mb-3">
             <FontAwesomeIcon icon={faMicrophone} className="text-gray-600" />
             <h3 className="font-semibold text-gray-900">Top Artists</h3>
@@ -169,7 +231,15 @@ export default function PersonalListeningOverview() {
         </div>
 
         {/* Top Tracks */}
-        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+        <div 
+          className="rounded-lg p-4 border"
+          style={{
+            background: 'rgba(255, 255, 255, 0.4)',
+            backdropFilter: 'blur(8px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+            borderColor: 'rgba(255, 255, 255, 0.3)',
+          }}
+        >
           <div className="flex items-center gap-2 mb-3">
             <FontAwesomeIcon icon={faMusic} className="text-gray-600" />
             <h3 className="font-semibold text-gray-900">Top Tracks</h3>
@@ -191,7 +261,15 @@ export default function PersonalListeningOverview() {
         </div>
 
         {/* Top Albums */}
-        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+        <div 
+          className="rounded-lg p-4 border"
+          style={{
+            background: 'rgba(255, 255, 255, 0.4)',
+            backdropFilter: 'blur(8px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+            borderColor: 'rgba(255, 255, 255, 0.3)',
+          }}
+        >
           <div className="flex items-center gap-2 mb-3">
             <FontAwesomeIcon icon={faCompactDisc} className="text-gray-600" />
             <h3 className="font-semibold text-gray-900">Top Albums</h3>

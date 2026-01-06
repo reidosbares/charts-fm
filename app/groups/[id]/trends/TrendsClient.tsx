@@ -22,6 +22,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import Tooltip from '@/components/Tooltip'
 import { formatWeekDate } from '@/lib/weekly-utils'
+import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
 
 type CategoryTab = 'members' | 'artists' | 'tracks' | 'albums'
@@ -697,13 +698,16 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                 Explore the complete charts with all artists, tracks, and albums ranked for this week.
               </p>
             </div>
-            <Link
+            <LiquidGlassLink
               href={`/groups/${groupId}/charts?week=${formatWeekDate(new Date(trends.weekStart))}`}
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-[var(--theme-primary)] text-white rounded-lg font-semibold hover:bg-[var(--theme-primary-dark)] transition-colors shadow-sm whitespace-nowrap"
+              variant="primary"
+              useTheme
+              size="md"
+              icon={<FontAwesomeIcon icon={faArrowRight} className="text-sm" />}
+              className="whitespace-nowrap flex-shrink-0"
             >
               View Charts
-              <FontAwesomeIcon icon={faArrowRight} className="text-sm" />
-            </Link>
+            </LiquidGlassLink>
           </div>
         </div>
       )}

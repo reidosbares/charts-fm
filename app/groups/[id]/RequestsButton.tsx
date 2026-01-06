@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import RequestsModal from './RequestsModal'
+import LiquidGlassButton from '@/components/LiquidGlassButton'
 
 interface RequestsButtonProps {
   groupId: string
@@ -43,20 +44,14 @@ export default function RequestsButton({
 
   return (
     <>
-      <button
+      <LiquidGlassButton
         onClick={handleModalOpen}
         disabled={requestCount === 0}
-        className={`
-          px-4 py-2 rounded-lg font-semibold transition-colors
-          ${
-            requestCount === 0
-              ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-              : 'bg-yellow-500 text-black hover:bg-yellow-400'
-          }
-        `}
+        variant={requestCount === 0 ? 'neutral' : 'primary'}
+        useTheme={false}
       >
         Requests ({requestCount})
-      </button>
+      </LiquidGlassButton>
 
       <RequestsModal
         groupId={groupId}

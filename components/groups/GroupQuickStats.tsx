@@ -40,7 +40,7 @@ export default function GroupQuickStats({ groupId }: GroupQuickStatsProps) {
         {[1, 2, 3].map((i) => (
           <div key={i} className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow-sm">
             <div className="flex items-center justify-center py-4">
-              <FontAwesomeIcon icon={faSpinner} className="animate-spin text-2xl text-yellow-500" />
+              <FontAwesomeIcon icon={faSpinner} className="animate-spin text-2xl text-[var(--theme-primary)]" />
             </div>
           </div>
         ))}

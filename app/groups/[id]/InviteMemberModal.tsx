@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
+import LiquidGlassButton from '@/components/LiquidGlassButton'
 
 interface InviteMemberModalProps {
   isOpen: boolean
@@ -22,6 +24,13 @@ export default function InviteMemberModal({
   const [lastfmUsername, setLastfmUsername] = useState('')
   const [isValidatingUsername, setIsValidatingUsername] = useState(false)
   const [validatedUsername, setValidatedUsername] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  // Ensure component is mounted before rendering portal
+  useEffect(() => {
+    setMounted(true)
+    return () => setMounted(false)
+  }, [])
 
   // Reset state when modal opens
   useEffect(() => {
@@ -160,16 +169,22 @@ export default function InviteMemberModal({
     }
   }
 
-  if (!isOpen) return null
+  if (!isOpen || !mounted) return null
 
-  return (
+  const modalContent = (
     <>
+      {/* Full page overlay - covers entire viewport */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+        className="fixed inset-0 bg-black bg-opacity-50 z-[9998] transition-opacity duration-200"
         onClick={handleClose}
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
       />
-      <div className="fixed inset-0 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+      {/* Modal content centered */}
+      <div className="fixed inset-0 flex items-center justify-center z-[9999] pointer-events-none">
+        <div 
+          className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4 pointer-events-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">Invite Member</h2>
             <button
@@ -225,26 +240,32 @@ export default function InviteMemberModal({
             </div>
 
             <div className="flex gap-3 justify-end">
-              <button
+              <LiquidGlassButton
                 type="button"
                 onClick={handleClose}
                 disabled={isLoading}
-                className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                variant="neutral"
+                useTheme={false}
               >
                 Cancel
-              </button>
-              <button
+              </LiquidGlassButton>
+              <LiquidGlassButton
                 type="submit"
                 disabled={isLoading}
-                className="px-6 py-2 bg-[var(--theme-primary)] hover:bg-[var(--theme-primary-light)] text-[var(--theme-button-text)] font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                variant="primary"
+                useTheme
               >
                 {isLoading ? 'Inviting...' : 'Invite Member'}
-              </button>
+              </LiquidGlassButton>
             </div>
           </form>
         </div>
       </div>
     </>
   )
+
+  // Render modal using portal to document.body to ensure it's above everything
+  if (typeof document === 'undefined') return null
+  return createPortal(modalContent, document.body)
 }
 

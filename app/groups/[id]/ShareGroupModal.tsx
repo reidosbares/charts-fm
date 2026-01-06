@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
+import LiquidGlassButton from '@/components/LiquidGlassButton'
 
 interface ShareGroupModalProps {
   isOpen: boolean
@@ -187,12 +188,15 @@ export default function ShareGroupModal({
                   value={publicUrl}
                   className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 text-gray-700"
                 />
-                <button
+                <LiquidGlassButton
                   onClick={handleCopyLink}
-                  className="px-4 py-2 text-sm bg-[var(--theme-primary)] hover:bg-[var(--theme-primary-light)] text-[var(--theme-button-text)] font-semibold rounded-lg transition-colors whitespace-nowrap"
+                  variant="primary"
+                  size="sm"
+                  useTheme
+                  className="whitespace-nowrap"
                 >
                   {linkCopied ? 'Copied!' : 'Copy Link'}
-                </button>
+                </LiquidGlassButton>
               </div>
             </div>
 
@@ -225,12 +229,15 @@ export default function ShareGroupModal({
 
             {/* Copy Invitation Button */}
             <div>
-              <button
+              <LiquidGlassButton
                 onClick={handleCopyInvitation}
-                className="w-full px-4 py-2 text-sm bg-[var(--theme-primary)] hover:bg-[var(--theme-primary-light)] text-[var(--theme-button-text)] font-semibold rounded-lg transition-colors"
+                variant="primary"
+                size="sm"
+                useTheme
+                fullWidth
               >
                 {invitationCopied ? '✓ Invitation Copied!' : 'Copy Invitation'}
-              </button>
+              </LiquidGlassButton>
               <p className="text-xs text-gray-500 mt-2 text-center">
                 Copy a ready-to-send invitation message
               </p>

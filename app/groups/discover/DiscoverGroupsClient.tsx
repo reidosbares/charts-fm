@@ -438,7 +438,7 @@ export default function DiscoverGroupsClient({
         {isLoading && (
           <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-xl">
             <div className="flex flex-col items-center gap-3">
-              <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
+              <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-[var(--theme-primary)]" />
               <span className="text-gray-600 font-medium">Loading...</span>
             </div>
           </div>
@@ -465,7 +465,7 @@ export default function DiscoverGroupsClient({
             {hasMore && (
               <div ref={observerTarget} className="h-10 flex items-center justify-center mt-4">
                 {isLoadingMore && (
-                  <FontAwesomeIcon icon={faSpinner} className="animate-spin text-2xl text-yellow-500" />
+                  <FontAwesomeIcon icon={faSpinner} className="animate-spin text-2xl text-[var(--theme-primary)]" />
                 )}
               </div>
             )}

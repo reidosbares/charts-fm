@@ -31,17 +31,19 @@ export default async function DashboardPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 bg-gray-50">
+    <main className="flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-gray-50 to-gray-100">
       <div className="max-w-7xl w-full mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-6 mb-2">
             <div className="relative w-16 h-16 flex-shrink-0">
-              <SafeImage
-                src={user.image}
-                alt={user.name || 'Profile'}
-                className="rounded-full object-cover w-16 h-16 ring-2 ring-yellow-500"
-              />
+              <div className="rounded-full ring-2 ring-gray-300">
+                <SafeImage
+                  src={user.image}
+                  alt={user.name || 'Profile'}
+                  className="rounded-full object-cover w-16 h-16"
+                />
+              </div>
             </div>
             <div>
               <h1 className="text-4xl font-bold text-gray-900">

@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart, faSpinner, faInfoCircle, faCalculator } from '@fortawesome/free-solid-svg-icons'
 import Tooltip from '@/components/Tooltip'
+import LiquidGlassButton from '@/components/LiquidGlassButton'
 
 interface CompatibilityScoreProps {
   groupId: string
@@ -126,7 +127,7 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
         content="Coming Soon!"
         position="top"
       >
-        <button
+        <LiquidGlassButton
           ref={buttonRef}
           onClick={(e) => {
             // TEMPORARY: Prevent click - recommendations system hidden for launch
@@ -134,12 +135,14 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
             e.stopPropagation()
           }}
           disabled
-          className="flex items-center gap-2 px-3 py-1.5 bg-white/50 backdrop-blur-sm rounded-lg border border-gray-200 opacity-40 cursor-not-allowed transition-colors"
+          variant="neutral"
+          size="sm"
+          useTheme={false}
+          icon={<FontAwesomeIcon icon={faHeart} className="text-red-500" />}
         >
-          <FontAwesomeIcon icon={faHeart} className="text-red-500" />
-          <span className="font-semibold text-gray-600">Check Match</span>
+          Check Match
           <FontAwesomeIcon icon={faInfoCircle} className="text-gray-400 text-xs" />
-        </button>
+        </LiquidGlassButton>
       </Tooltip>
     )
   }
@@ -152,17 +155,19 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
 
   return (
     <div className="relative">
-      <button
+      <LiquidGlassButton
         ref={buttonRef}
         onClick={handleToggleDetails}
-        className="flex items-center gap-2 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200 hover:bg-white transition-colors"
+        variant="secondary"
+        size="sm"
+        useTheme={false}
+        icon={<FontAwesomeIcon icon={faHeart} className="text-red-500" />}
       >
-        <FontAwesomeIcon icon={faHeart} className="text-red-500" />
-        <span className={`font-semibold ${scoreColor}`}>
+        <span className={scoreColor}>
           {Math.round(score.score)}% Match
         </span>
         <FontAwesomeIcon icon={faInfoCircle} className="text-gray-400 text-xs" />
-      </button>
+      </LiquidGlassButton>
 
       {showDetails && mounted && typeof window !== 'undefined' && createPortal(
         <>

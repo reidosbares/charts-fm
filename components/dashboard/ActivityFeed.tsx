@@ -65,9 +65,18 @@ export default function ActivityFeed() {
       })
   }, [])
 
+  const glassStyle = {
+    background: 'rgba(255, 255, 255, 0.6)',
+    backdropFilter: 'blur(12px) saturate(180%)',
+    WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+  }
+
   if (isLoading) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+      <div 
+        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        style={glassStyle}
+      >
         <h2 className="text-2xl font-bold mb-4 text-gray-900">Recent Activity</h2>
         <div className="flex items-center justify-center py-12">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
@@ -78,8 +87,11 @@ export default function ActivityFeed() {
 
   if (error || activities.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">Recent Activity</h2>
+      <div 
+        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        style={glassStyle}
+      >
+        <h2 className="text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">Recent Activity</h2>
         <div className="text-center py-8 text-gray-500">
           <p>No recent activity to display.</p>
         </div>
@@ -122,14 +134,27 @@ export default function ActivityFeed() {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-      <h2 className="text-2xl font-bold mb-4 text-gray-900">Recent Activity</h2>
+    <div 
+      className="rounded-xl shadow-lg p-6 border border-theme"
+      style={{
+        background: 'rgba(255, 255, 255, 0.6)',
+        backdropFilter: 'blur(12px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+      }}
+    >
+      <h2 className="text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">Recent Activity</h2>
       <div className="space-y-3">
         {activities.map((activity, idx) => (
           <Link
             key={idx}
             href={`/groups/${activity.groupId}`}
-            className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-200"
+            className="flex items-start gap-3 p-3 rounded-lg transition-all hover:shadow-sm"
+            style={{
+              background: 'rgba(255, 255, 255, 0.4)',
+              backdropFilter: 'blur(8px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+            }}
           >
             <div
               className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${getActivityColor(

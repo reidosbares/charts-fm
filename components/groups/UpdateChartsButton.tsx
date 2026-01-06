@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import LiquidGlassButton from '@/components/LiquidGlassButton'
 
 interface UpdateChartsButtonProps {
   groupId: string
@@ -88,20 +89,16 @@ export default function UpdateChartsButton({ groupId, initialInProgress = false,
   }
 
   return (
-    <button
+    <LiquidGlassButton
       onClick={handleUpdate}
       disabled={isUpdating}
-      className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--theme-primary)] text-[var(--theme-button-text)] rounded-full font-semibold shadow-sm hover:bg-[var(--theme-primary-light)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      variant="primary"
+      size="sm"
+      useTheme
+      icon={isUpdating ? <FontAwesomeIcon icon={faSpinner} className="animate-spin" /> : undefined}
     >
-      {isUpdating ? (
-        <>
-          <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
-          <span className="text-sm">Updating charts...</span>
-        </>
-      ) : (
-        <span className="text-sm">Update charts</span>
-      )}
-    </button>
+      {isUpdating ? 'Updating charts...' : 'Update charts'}
+    </LiquidGlassButton>
   )
 }
 
