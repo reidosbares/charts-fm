@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 
 interface ShareGroupModalProps {
@@ -21,6 +21,7 @@ export default function ShareGroupModal({
   const [publicUrl, setPublicUrl] = useState('')
   const [position, setPosition] = useState({ top: 0, right: 0 })
   const [mounted, setMounted] = useState(false)
+  const [isPositioned, setIsPositioned] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -34,14 +35,28 @@ export default function ShareGroupModal({
       const top = rect.bottom + scrollY + 12 // 12px gap
       const right = window.innerWidth - rect.right
       setPosition({ top, right })
+      setIsPositioned(true)
     }
   }, [buttonRef])
+
+  // Calculate position synchronously before browser paints
+  useLayoutEffect(() => {
+    if (isOpen && typeof window !== 'undefined' && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      const scrollY = window.scrollY || window.pageYOffset
+      const top = rect.bottom + scrollY + 12
+      const right = window.innerWidth - rect.right
+      setPosition({ top, right })
+      setIsPositioned(true)
+    } else if (!isOpen) {
+      setIsPositioned(false)
+    }
+  }, [isOpen, buttonRef])
 
   useEffect(() => {
     if (isOpen && typeof window !== 'undefined') {
       const fullUrl = `${window.location.origin}/groups/${groupId}/public`
       setPublicUrl(fullUrl)
-      updatePosition()
       
       // Update position on scroll
       window.addEventListener('scroll', updatePosition, true)
@@ -115,22 +130,24 @@ export default function ShareGroupModal({
     onClose()
   }
 
-  if (!isOpen || !mounted) return null
+  if (!isOpen || !mounted || !isPositioned) return null
 
   const modalContent = (
     <>
       {/* Full page overlay - covers entire viewport */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 z-[9998]"
+        className="fixed inset-0 bg-black bg-opacity-50 z-[9998] transition-opacity duration-200"
         onClick={handleClose}
         style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
       />
       {/* Speech bubble positioned below share button */}
       <div 
-        className="absolute z-[9999] max-w-md w-full mx-4"
+        className="absolute z-[9999] max-w-md w-full mx-4 transition-opacity duration-200 ease-out"
         style={{
           top: `${position.top}px`,
           right: `${position.right}px`,
+          opacity: isPositioned ? 1 : 0,
+          pointerEvents: isPositioned ? 'auto' : 'none',
         }}
         onClick={(e) => e.stopPropagation()}
       >
