@@ -47,6 +47,12 @@ export async function PATCH(request: Request) {
   const body = await request.json()
   const { name, image } = body
 
+  // Check if name is being updated and if it's different
+  // Normalize both values: trim and convert empty strings to null for comparison
+  const newNameValue = name !== undefined ? (name.trim() || null) : undefined
+  const currentNameValue = user.name || null
+  const nameChanged = name !== undefined && newNameValue !== currentNameValue
+
   const updatedUser = await prisma.user.update({
     where: { id: user.id },
     data: {
@@ -61,6 +67,90 @@ export async function PATCH(request: Request) {
       lastfmUsername: true,
     },
   })
+
+  // If name changed, invalidate caches that store user names
+  if (nameChanged) {
+    // Invalidate major driver cache for all chart entries where this user is the major driver
+    await prisma.chartEntryStats.updateMany({
+      where: {
+        majorDriverUserId: user.id,
+      },
+      data: {
+        majorDriverLastUpdated: null, // Force recalculation on next access
+      },
+    })
+
+    // Update GroupTrends cache - update user names in JSON fields (topContributors, memberSpotlight)
+    // This preserves trends data while updating names
+    const newName = updatedUser.name || updatedUser.lastfmUsername || 'Unknown'
+    
+    // Get all groups where user is a member
+    const userGroups = await prisma.groupMember.findMany({
+      where: { userId: user.id },
+      select: { groupId: true },
+    })
+
+    if (userGroups.length > 0) {
+      const groupIds = userGroups.map(g => g.groupId)
+      
+      // Get all trends for these groups
+      const trendsToUpdate = await prisma.groupTrends.findMany({
+        where: { groupId: { in: groupIds } },
+      })
+
+      // Update each trend's JSON fields
+      for (const trend of trendsToUpdate) {
+        const updates: {
+          topContributors?: any
+          memberSpotlight?: any
+        } = {}
+        let hasUpdates = false
+
+        // Update topContributors if user appears there
+        if (trend.topContributors && Array.isArray(trend.topContributors)) {
+          const topContributors = trend.topContributors as Array<{
+            userId: string
+            name: string
+            [key: string]: any
+          }>
+          
+          const userInContributors = topContributors.some(c => c.userId === user.id)
+          if (userInContributors) {
+            const updatedContributors = topContributors.map(contributor => {
+              if (contributor.userId === user.id) {
+                return { ...contributor, name: newName }
+              }
+              return contributor
+            })
+            updates.topContributors = updatedContributors
+            hasUpdates = true
+          }
+        }
+
+        // Update memberSpotlight if user is the spotlighted member
+        if (trend.memberSpotlight) {
+          const memberSpotlight = trend.memberSpotlight as {
+            userId: string
+            name: string
+            [key: string]: any
+          }
+
+          if (memberSpotlight.userId === user.id) {
+            updates.memberSpotlight = { ...memberSpotlight, name: newName }
+            hasUpdates = true
+          }
+        }
+
+        // Only update if changes were made
+        if (hasUpdates) {
+          await prisma.groupTrends.update({
+            where: { id: trend.id },
+            data: updates,
+          })
+        }
+      }
+    }
+  }
 
   return NextResponse.json({ user: updatedUser })
 }
