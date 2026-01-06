@@ -7,9 +7,18 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import SafeImage from '@/components/SafeImage'
 import { useNavigation } from '@/contexts/NavigationContext'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { GROUP_THEMES } from '@/lib/group-themes'
 
 // Lazy load SignInModal to reduce initial bundle size
 const SignInModal = dynamic(() => import('@/components/SignInModal'), {
+  ssr: false,
+  loading: () => null,
+})
+
+// Lazy load QuickAccessInfoModal
+const QuickAccessInfoModal = dynamic(() => import('@/components/QuickAccessInfoModal'), {
   ssr: false,
   loading: () => null,
 })
@@ -31,8 +40,17 @@ export default function Navbar() {
     image: string | null
     isSuperuser: boolean
   } | null>(null)
+  const [quickAccessGroup, setQuickAccessGroup] = useState<{
+    id: string
+    name: string
+    image: string | null
+    colorTheme: string
+  } | null>(null)
+  const [isQuickAccessInfoOpen, setIsQuickAccessInfoOpen] = useState(false)
+  const quickAccessButtonRef = useRef<HTMLButtonElement>(null)
   const prevPathnameRef = useRef(pathname)
 
+  // Fetch user data and quick access group
   useEffect(() => {
     if (session?.user?.email) {
       fetch('/api/user/me')
@@ -48,6 +66,43 @@ export default function Navbar() {
           }
         })
         .catch(console.error)
+      
+      // Fetch quick access group
+      fetch('/api/user/quick-access')
+        .then(res => res.json())
+        .then(data => {
+          if (data.group) {
+            setQuickAccessGroup(data.group)
+          } else {
+            setQuickAccessGroup(null)
+          }
+        })
+        .catch(console.error)
+    } else {
+      setQuickAccessGroup(null)
+    }
+  }, [session])
+
+  // Listen for quick access updates
+  useEffect(() => {
+    const handleQuickAccessUpdate = () => {
+      if (session?.user?.email) {
+        fetch('/api/user/quick-access')
+          .then(res => res.json())
+          .then(data => {
+            if (data.group) {
+              setQuickAccessGroup(data.group)
+            } else {
+              setQuickAccessGroup(null)
+            }
+          })
+          .catch(console.error)
+      }
+    }
+
+    window.addEventListener('quickAccessUpdated', handleQuickAccessUpdate)
+    return () => {
+      window.removeEventListener('quickAccessUpdated', handleQuickAccessUpdate)
     }
   }, [session])
 
@@ -64,6 +119,19 @@ export default function Navbar() {
             image: data.user.image,
             isSuperuser: data.user.isSuperuser || false,
           })
+          }
+        })
+        .catch(console.error)
+    }
+    // Refetch quick access on pathname change
+    if (session?.user?.email) {
+      fetch('/api/user/quick-access')
+        .then(res => res.json())
+        .then(data => {
+          if (data.group) {
+            setQuickAccessGroup(data.group)
+          } else {
+            setQuickAccessGroup(null)
           }
         })
         .catch(console.error)
@@ -279,51 +347,177 @@ export default function Navbar() {
           </div>
 
           {isAuthenticated ? (
-            <div className="relative">
-              <button
-                ref={buttonRef}
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold text-gray-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  backdropFilter: 'blur(12px) saturate(180%)',
-                  WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
-                  e.currentTarget.style.filter = 'brightness(1.1)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-                  e.currentTarget.style.filter = ''
-                }}
-              >
-                <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border-2 border-yellow-500">
-                  <SafeImage
-                    src={userData?.image}
-                    alt={userData?.name || 'User'}
-                    className="object-cover w-8 h-8 rounded-full"
-                  />
-                </div>
-                <span>{userData?.name || session?.user?.name || 'User'}</span>
-                <svg
-                  className={`w-4 h-4 transition-transform ${
-                    isDropdownOpen ? 'transform rotate-180' : ''
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+            <div className="flex items-center space-x-3">
+              {/* Quick Access Group or + Button */}
+              {quickAccessGroup ? (() => {
+                const theme = GROUP_THEMES[quickAccessGroup.colorTheme as keyof typeof GROUP_THEMES]
+                const isRainbow = quickAccessGroup.colorTheme === 'rainbow'
+                // Convert primaryDarker RGB to RGBA with opacity for glassmorphic effect
+                const primaryDarkerRgb = theme?.primaryDarker || 'rgb(255, 255, 255)'
+                // Extract RGB values and add opacity
+                const rgbMatch = primaryDarkerRgb.match(/rgb\((\d+)\s+(\d+)\s+(\d+)\)/)
+                const backgroundColor = rgbMatch 
+                  ? `rgba(${rgbMatch[1]}, ${rgbMatch[2]}, ${rgbMatch[3]}, 0.3)`
+                  : 'rgba(255, 255, 255, 0.1)'
+                
+                // Rainbow gradient border
+                const rainbowGradient = 'linear-gradient(135deg, rgb(239 68 68) 0%, rgb(249 115 22) 14.28%, rgb(234 179 8) 28.57%, rgb(34 197 94) 42.85%, rgb(59 130 246) 57.14%, rgb(147 51 234) 71.42%, rgb(219 39 119) 85.71%, rgb(239 68 68) 100%)'
+                
+                if (isRainbow) {
+                  // For rainbow, use a partially opaque dark background to cover the gradient
+                  const rainbowBackground = rgbMatch 
+                    ? `rgba(${rgbMatch[1]}, ${rgbMatch[2]}, ${rgbMatch[3]}, 0.4)`
+                    : 'rgba(0, 0, 0, 0.3)'
+                  
+                  return (
+                    <div
+                      className="rounded-full inline-block"
+                      style={{
+                        background: rainbowGradient,
+                        padding: '1px',
+                      }}
+                    >
+                      <div
+                        className="rounded-full"
+                        style={{
+                          background: rainbowBackground,
+                          backdropFilter: 'blur(12px) saturate(180%)',
+                          WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+                        }}
+                      >
+                        <Link
+                          href={`/groups/${quickAccessGroup.id}`}
+                          className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold focus:outline-none transition-all duration-200"
+                          style={{
+                            color: 'white',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.parentElement && (e.currentTarget.parentElement.style.filter = 'brightness(1.1)')
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.parentElement && (e.currentTarget.parentElement.style.filter = '')
+                          }}
+                        >
+                          <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0" style={{
+                            border: '1px solid transparent',
+                          }}>
+                            <SafeImage
+                              src={quickAccessGroup.image}
+                              alt={quickAccessGroup.name}
+                              className="object-cover w-8 h-8 rounded-full"
+                            />
+                          </div>
+                          <span className="max-w-[150px] truncate">{quickAccessGroup.name}</span>
+                        </Link>
+                      </div>
+                    </div>
+                  )
+                }
+                
+                return (
+                <Link
+                  href={`/groups/${quickAccessGroup.id}`}
+                  className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold focus:outline-none transition-all duration-200"
+                  style={{
+                    background: backgroundColor,
+                    color: 'white',
+                    backdropFilter: 'blur(12px) saturate(180%)',
+                    WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+                    border: `1px solid ${theme?.ring || 'rgba(255, 255, 255, 0.2)'}`,
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.filter = 'brightness(1.1)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.filter = ''
+                  }}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0" style={{
+                    border: `1px solid ${theme?.ring || 'rgba(255, 255, 255, 0.3)'}`,
+                  }}>
+                    <SafeImage
+                      src={quickAccessGroup.image}
+                      alt={quickAccessGroup.name}
+                      className="object-cover w-8 h-8 rounded-full"
+                    />
+                  </div>
+                  <span className="max-w-[150px] truncate">{quickAccessGroup.name}</span>
+                </Link>
+                )
+              })() : (
+                <button
+                  ref={quickAccessButtonRef}
+                  onClick={() => setIsQuickAccessInfoOpen(true)}
+                  className="flex items-center justify-center w-10 h-10 rounded-full text-sm font-semibold text-gray-200 hover:text-white focus:outline-none transition-all duration-200"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(12px) saturate(180%)',
+                    WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
+                    e.currentTarget.style.filter = 'brightness(1.1)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                    e.currentTarget.style.filter = ''
+                  }}
+                  aria-label="Add group to quick access"
+                >
+                  <FontAwesomeIcon icon={faPlus} className="w-4 h-4" />
+                </button>
+              )}
+              
+              {/* User Button */}
+              <div className="relative">
+                <button
+                  ref={buttonRef}
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold text-gray-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(12px) saturate(180%)',
+                    WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
+                    e.currentTarget.style.filter = 'brightness(1.1)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                    e.currentTarget.style.filter = ''
+                  }}
+                >
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border-2 border-yellow-500">
+                    <SafeImage
+                      src={userData?.image}
+                      alt={userData?.name || 'User'}
+                      className="object-cover w-8 h-8 rounded-full"
+                    />
+                  </div>
+                  <span>{userData?.name || session?.user?.name || 'User'}</span>
+                  <svg
+                    className={`w-4 h-4 transition-transform ${
+                      isDropdownOpen ? 'transform rotate-180' : ''
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
 
               {isDropdownOpen && (
                 <>
@@ -413,6 +607,7 @@ export default function Navbar() {
                   </div>
                 </>
               )}
+              </div>
             </div>
           ) : (
             <div className="flex items-center space-x-3">
@@ -463,6 +658,13 @@ export default function Navbar() {
       isOpen={isSignInModalOpen}
       onClose={() => setIsSignInModalOpen(false)}
     />
+    {isAuthenticated && (
+      <QuickAccessInfoModal
+        isOpen={isQuickAccessInfoOpen}
+        onClose={() => setIsQuickAccessInfoOpen(false)}
+        buttonRef={quickAccessButtonRef}
+      />
+    )}
     </>
   )
 }

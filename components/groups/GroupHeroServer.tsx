@@ -5,6 +5,7 @@ import { getWeekStartForDay, getWeekEndForDay, formatWeekLabel } from '@/lib/wee
 import { getLastChartWeek } from '@/lib/group-service'
 import UpdateChartsButton from './UpdateChartsButton'
 import ShareGroupButton from '@/app/groups/[id]/ShareGroupButton'
+import QuickAccessButton from '@/app/groups/[id]/QuickAccessButton'
 import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 
 interface GroupHeroServerProps {
@@ -191,6 +192,7 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme }: 
           
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-2 items-start">
+            <QuickAccessButton groupId={groupId} />
             {isOwner && (
               <LiquidGlassLink
                 href={`/groups/${groupId}/settings`}

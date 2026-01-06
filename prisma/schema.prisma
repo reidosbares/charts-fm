@@ -19,6 +19,7 @@ model User {
   lastfmUsername String   @unique // Required - same as Last.fm username
   lastfmSessionKey String? // Last.fm session key for authenticated API calls
   isSuperuser   Boolean  @default(false) // Superuser/admin access
+  quickAccessGroupId String? // Quick access group pinned to navbar
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   
@@ -36,6 +37,7 @@ model User {
   groupRecommendationRejections GroupRecommendationRejection[]
   recommendationCache GroupRecommendationCache?
   chartEntryStatsAsMajorDriver ChartEntryStats[]
+  quickAccessGroup Group? @relation("QuickAccessGroup", fields: [quickAccessGroupId], references: [id], onDelete: SetNull)
   
   @@map("users")
 }
@@ -102,6 +104,7 @@ model Group {
   compatibilityScores GroupCompatibilityScore[]
   recommendationRejections GroupRecommendationRejection[]
   chartEntryStats ChartEntryStats[]
+  quickAccessUsers User[] @relation("QuickAccessGroup")
   
   @@map("groups")
 }
