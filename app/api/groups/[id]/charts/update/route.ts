@@ -5,7 +5,8 @@ import { requireGroupMembership } from '@/lib/group-auth'
 import { calculateGroupWeeklyStats, deleteOverlappingCharts, updateGroupIconFromChart, getLastChartWeek } from '@/lib/group-service'
 import { getWeekStartForDay, getWeekEndForDay, getLastNFinishedWeeksForDay } from '@/lib/weekly-utils'
 import { recalculateAllTimeStats } from '@/lib/group-alltime-stats'
-import { ChartGenerationLogger } from '@/lib/chart-generation-logger'
+import { invalidateEntryStatsCacheBatch } from '@/lib/chart-deep-dive'
+import { calculateGroupTrends } from '@/lib/group-trends'
 
 const LOCK_TIMEOUT_MS = 30 * 60 * 1000 // 30 minutes
 
@@ -163,8 +164,6 @@ async function generateChartsInBackground(
   chartSize: number,
   chartMode: 'vs' | 'vs_weighted' | 'plays_only'
 ): Promise<void> {
-  const logger = new ChartGenerationLogger(groupId)
-
   try {
     // Get last chart week
     const lastChartWeek = await getLastChartWeek(groupId)
@@ -235,36 +234,60 @@ async function generateChartsInBackground(
     weeksToGenerate.sort((a, b) => a.getTime() - b.getTime())
 
     // Process each week sequentially
+    // Collect entries for deferred cache invalidation
+    const allEntriesForInvalidation: Array<{
+      entryKey: string
+      vibeScore: number | null
+      playcount: number
+      weekStart: Date
+      chartType: 'artists' | 'tracks' | 'albums'
+    }> = []
+    
     try {
-      for (const weekStart of weeksToGenerate) {
+      for (let weekIndex = 0; weekIndex < weeksToGenerate.length; weekIndex++) {
+        const weekStart = weeksToGenerate[weekIndex]
         const weekEnd = getWeekEndForDay(weekStart, trackingDayOfWeek)
         
         // Delete overlapping charts (handles tracking date changes automatically)
         await deleteOverlappingCharts(groupId, weekStart, weekEnd)
         
-        // Generate chart for the week
-        await calculateGroupWeeklyStats(
+        // Generate chart for the week (skip trends, collect entries for invalidation)
+        const entriesForInvalidation = await calculateGroupWeeklyStats(
           groupId,
           weekStart,
           chartSize,
           trackingDayOfWeek,
           chartMode,
-          logger,
-          members
+          undefined,
+          members,
+          true // skipTrends = true
         )
+        
+        // Collect entries for batch invalidation at the end
+        allEntriesForInvalidation.push(...entriesForInvalidation)
         
         // Small delay between weeks
         await new Promise(resolve => setTimeout(resolve, 500))
       }
 
       // Recalculate all-time stats once after all weeks are processed
-      await recalculateAllTimeStats(groupId, logger)
+      await recalculateAllTimeStats(groupId)
+
+      // Batch invalidate cache for all entries from all weeks (deferred for performance)
+      if (allEntriesForInvalidation.length > 0) {
+        await invalidateEntryStatsCacheBatch(groupId, allEntriesForInvalidation)
+      }
+
+      // Calculate trends only for the latest week (all previous calculations were wasted)
+      if (weeksToGenerate.length > 0) {
+        const latestWeek = weeksToGenerate[weeksToGenerate.length - 1] // Last week is the latest
+        await calculateGroupTrends(groupId, latestWeek, trackingDayOfWeek)
+      }
     } catch (error: any) {
       console.error('Error generating charts in background:', error)
       
       // Handle Prisma validation errors
       if (error.message && error.message.includes('did not match the expected pattern')) {
-        logger?.error(`Invalid data format detected during chart generation: ${error.message}`)
         // Don't throw - we want to release the lock even on validation errors
       } else {
         // Re-throw other errors

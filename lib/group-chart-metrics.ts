@@ -2,7 +2,6 @@
 
 import { prisma } from './prisma'
 import { TopItem } from './lastfm-weekly'
-import { ChartGenerationLogger } from './chart-generation-logger'
 import { generateSlug } from './chart-slugs'
 import { invalidateEntryStatsCache } from './chart-deep-dive'
 
@@ -131,14 +130,13 @@ export async function cacheChartMetrics(
   chartType: ChartType,
   chartData: Array<TopItem | (TopItem & { vibeScore?: number })>,
   trackingDayOfWeek: number,
-  logger?: ChartGenerationLogger,
   previousWeeksStats?: Array<{
     weekStart: Date
     topArtists: any
     topTracks: any
     topAlbums: any
   }>
-): Promise<void> {
+): Promise<Array<{ entryKey: string; vibeScore: number | null; playcount: number; weekStart: Date }>> {
   // Normalize weekStart to start of day in UTC for comparison
   const normalizedWeekStart = new Date(weekStart)
   normalizedWeekStart.setUTCHours(0, 0, 0, 0)
@@ -152,6 +150,7 @@ export async function cacheChartMetrics(
   // Use provided previousWeeksStats if available, otherwise fetch
   let statsToUse = previousWeeksStats
   if (!statsToUse) {
+    const fetchPreviousStart = Date.now()
     statsToUse = await prisma.groupWeeklyStats.findMany({
       where: {
         groupId,
@@ -199,7 +198,23 @@ export async function cacheChartMetrics(
     : null
 
   // Calculate metrics for all entries first
-  const entriesToCreate = []
+  const entriesToCreate: Array<{
+    groupId: string
+    weekStart: Date
+    chartType: string
+    entryKey: string
+    slug: string
+    name: string
+    artist: string | null
+    position: number
+    playcount: number
+    vibeScore?: number | null
+    positionChange: number | null
+    playsChange: number | null
+    totalWeeksAppeared: number
+    highestPosition: number
+    entryType: string | null
+  }> = []
   
   for (let i = 0; i < chartData.length; i++) {
     const item = chartData[i]
@@ -239,6 +254,37 @@ export async function cacheChartMetrics(
 
     // Generate slug for URL-friendly routing
     const slug = generateSlug(entryKey, chartType)
+    
+    // Validate slug is not empty
+    if (!slug || slug.trim() === '') {
+      console.warn(`Skipping entry with empty slug in ${chartType} chart for group ${groupId}:`, {
+        name: item.name,
+        artist: 'artist' in item ? item.artist : undefined,
+        entryKey,
+      })
+      continue
+    }
+    
+    // Validate name length (database constraint)
+    const trimmedName = item.name.trim()
+    if (trimmedName.length === 0 || trimmedName.length > 1000) {
+      console.warn(`Skipping entry with invalid name in ${chartType} chart for group ${groupId}:`, {
+        name: item.name,
+        length: trimmedName.length,
+      })
+      continue
+    }
+    
+    // Validate artist length if present
+    const trimmedArtist = 'artist' in item && item.artist ? item.artist.trim() : null
+    if (trimmedArtist && trimmedArtist.length > 1000) {
+      console.warn(`Skipping entry with invalid artist in ${chartType} chart for group ${groupId}:`, {
+        name: item.name,
+        artist: item.artist,
+        length: trimmedArtist.length,
+      })
+      continue
+    }
 
     entriesToCreate.push({
       groupId,
@@ -246,8 +292,8 @@ export async function cacheChartMetrics(
       chartType,
       entryKey,
       slug,
-      name: item.name.trim(),
-      artist: 'artist' in item && item.artist ? item.artist.trim() : null,
+      name: trimmedName,
+      artist: trimmedArtist,
       position,
       playcount: item.playcount,
       vibeScore: vibeScore ?? undefined,
@@ -258,11 +304,61 @@ export async function cacheChartMetrics(
       entryType,
     })
   }
+  // Metrics calculation is very fast, skip detailed logging
+
+  // Validate all entries before insertion
+  const validEntries: typeof entriesToCreate = []
+  for (let idx = 0; idx < entriesToCreate.length; idx++) {
+    const entry = entriesToCreate[idx]
+    const issues: string[] = []
+    
+    if (!entry.entryKey || entry.entryKey.trim() === '') {
+      issues.push('empty entryKey')
+    }
+    if (!entry.slug || entry.slug.trim() === '') {
+      issues.push('empty slug')
+    }
+    if (!entry.name || entry.name.trim() === '') {
+      issues.push('empty name')
+    }
+    if (entry.name && entry.name.length > 1000) {
+      issues.push(`name too long: ${entry.name.length}`)
+    }
+    if (entry.artist && entry.artist.length > 1000) {
+      issues.push(`artist too long: ${entry.artist.length}`)
+    }
+    
+    if (issues.length > 0) {
+      console.error(`Invalid entry at index ${idx}:`, {
+        issues,
+        entry: {
+          name: entry.name,
+          artist: entry.artist,
+          entryKey: entry.entryKey,
+          slug: entry.slug,
+        },
+      })
+      // Log invalid entries to console for debugging, but not to file (too verbose)
+      if (process.env.ENABLE_CHART_GENERATION_LOGS === 'true') {
+        console.warn(`Invalid chart entry skipped: ${issues.join(', ')}, name: ${entry.name}, artist: ${entry.artist || 'N/A'}`)
+      }
+    } else {
+      validEntries.push(entry)
+    }
+  }
+
+  if (validEntries.length < entriesToCreate.length) {
+    const skipped = entriesToCreate.length - validEntries.length
+    console.warn(`Skipped ${skipped} invalid entries in ${chartType} chart for group ${groupId}`)
+    entriesToCreate.length = 0
+    entriesToCreate.push(...validEntries)
+  }
 
   // Delete existing entries for this week/chartType, then batch insert
   // Use a transaction to make this atomic and prevent race conditions
   // This prevents duplicate entries when chart generation runs concurrently
   try {
+    const dbTransactionStart = Date.now()
     await prisma.$transaction(async (tx) => {
       // Delete existing entries
       await tx.groupChartEntry.deleteMany({
@@ -275,26 +371,46 @@ export async function cacheChartMetrics(
 
       // Batch insert all entries (atomic with the delete above)
       if (entriesToCreate.length > 0) {
-        await tx.groupChartEntry.createMany({
-          data: entriesToCreate,
-          skipDuplicates: true,
-        })
+        try {
+          await tx.groupChartEntry.createMany({
+            data: entriesToCreate,
+            skipDuplicates: true,
+          })
+        } catch (createError: any) {
+          // If batch insert fails, try inserting one at a time to identify the problematic entry
+          if (createError.message && createError.message.includes('did not match the expected pattern')) {
+            console.error(`Batch insert failed for ${chartType}, trying individual inserts to identify problematic entry`)
+            for (let i = 0; i < entriesToCreate.length; i++) {
+              try {
+                await tx.groupChartEntry.create({
+                  data: entriesToCreate[i],
+                })
+              } catch (individualError: any) {
+                console.error(`Failed to insert entry ${i + 1}/${entriesToCreate.length}:`, {
+                  entry: entriesToCreate[i],
+                  error: individualError.message,
+                  chartType,
+                  groupId,
+                  weekStart: normalizedWeekStart.toISOString(),
+                })
+                throw individualError
+              }
+            }
+          } else {
+            throw createError
+          }
+        }
       }
     })
 
-    // Invalidate cache for all entries in this chart (outside transaction)
-    if (entriesToCreate.length > 0) {
-      await invalidateEntryStatsCache(
-        groupId,
-        normalizedWeekStart,
-        chartType,
-        entriesToCreate.map((entry) => ({
-          entryKey: entry.entryKey,
-          vibeScore: entry.vibeScore ?? null,
-          playcount: entry.playcount,
-        }))
-      )
-    }
+    // Return entries for deferred cache invalidation (don't invalidate immediately)
+    // This allows batching invalidation at the end for better performance
+    return entriesToCreate.map((entry) => ({
+      entryKey: entry.entryKey,
+      vibeScore: entry.vibeScore ?? null,
+      playcount: entry.playcount,
+      weekStart: normalizedWeekStart,
+    }))
   } catch (error: any) {
     // Log detailed error information for debugging
     console.error('Error creating chart entries:', {
@@ -371,7 +487,7 @@ export async function getCachedChartEntries(
         : null
 
     // Generate slug if not present (for backward compatibility)
-    const slug = entry.slug || generateSlug(entry.entryKey, chartType)
+    const slug = (entry as any).slug || generateSlug(entry.entryKey, chartType)
 
     return {
       name: entry.name,

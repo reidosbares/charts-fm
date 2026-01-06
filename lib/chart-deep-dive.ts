@@ -683,6 +683,7 @@ export async function getArtistNumberOnes(
 
 /**
  * Invalidate entry stats cache (mark as stale)
+ * @deprecated Use invalidateEntryStatsCacheBatch for better performance
  */
 export async function invalidateEntryStatsCache(
   groupId: string,
@@ -690,39 +691,167 @@ export async function invalidateEntryStatsCache(
   chartType: ChartType,
   newEntries: Array<{ entryKey: string; vibeScore: number | null; playcount: number }>
 ): Promise<void> {
-  for (const entry of newEntries) {
-    const stats = await prisma.chartEntryStats.findUnique({
+  // Convert to batch format and call batch function
+  const batchEntries = newEntries.map(entry => ({
+    ...entry,
+    weekStart,
+    chartType,
+  }))
+  await invalidateEntryStatsCacheBatch(groupId, batchEntries, undefined)
+}
+
+/**
+ * Batch invalidate entry stats cache (mark as stale)
+ * Uses batch operations instead of N+1 queries for much better performance
+ */
+export async function invalidateEntryStatsCacheBatch(
+  groupId: string,
+  entries: Array<{
+    entryKey: string
+    vibeScore: number | null
+    playcount: number
+    weekStart: Date
+    chartType: ChartType
+  }>
+): Promise<void> {
+  if (entries.length === 0) {
+    return
+  }
+
+  const batchStart = Date.now()
+
+  // Group entries by chartType for efficient batching
+  const entriesByChartType = new Map<ChartType, Array<typeof entries[0]>>()
+  for (const entry of entries) {
+    if (!entriesByChartType.has(entry.chartType)) {
+      entriesByChartType.set(entry.chartType, [])
+    }
+    entriesByChartType.get(entry.chartType)!.push(entry)
+  }
+
+  // Process each chart type
+  for (const [chartType, typeEntries] of entriesByChartType) {
+    const entryKeys = typeEntries.map(e => e.entryKey)
+    
+    // Fetch all existing entries in one query
+    const existingStats = await prisma.chartEntryStats.findMany({
       where: {
-        groupId_chartType_entryKey: {
-          groupId,
-          chartType,
-          entryKey: entry.entryKey,
+        groupId,
+        chartType,
+        entryKey: {
+          in: entryKeys,
         },
       },
     })
 
-    if (stats) {
-      // Mark as stale and incrementally update totals
-      await prisma.chartEntryStats.update({
-        where: { id: stats.id },
-        data: {
-          majorDriverLastUpdated: null, // Mark major driver as stale
-          statsStale: true, // Mark stats as needing recalculation
-          totalVS: stats.totalVS ? stats.totalVS + (entry.vibeScore || 0) : entry.vibeScore,
-          totalPlays: stats.totalPlays + entry.playcount,
-          latestAppearance: weekStart,
-          lastUpdated: new Date(),
-        },
+    // Create a map for quick lookup
+    const statsMap = new Map(existingStats.map(s => [s.entryKey, s]))
+
+    // Find latest weekStart for each entry (to update latestAppearance correctly)
+    const latestWeekByEntry = new Map<string, Date>()
+    for (const entry of typeEntries) {
+      const current = latestWeekByEntry.get(entry.entryKey)
+      if (!current || entry.weekStart > current) {
+        latestWeekByEntry.set(entry.entryKey, entry.weekStart)
+      }
+    }
+
+    // Accumulate totals for each entry (entries may appear in multiple weeks)
+    const totalsByEntry = new Map<string, { totalVS: number; totalPlays: number }>()
+    for (const entry of typeEntries) {
+      const existing = totalsByEntry.get(entry.entryKey) || { totalVS: 0, totalPlays: 0 }
+      totalsByEntry.set(entry.entryKey, {
+        totalVS: existing.totalVS + (entry.vibeScore || 0),
+        totalPlays: existing.totalPlays + entry.playcount,
       })
-    } else {
-      // Create cache entry but mark everything as stale
-      const slug = generateSlug(entry.entryKey, chartType)
-      await prisma.chartEntryStats.create({
-        data: {
+    }
+
+    // Prepare updates and creates
+    const updates: Array<{ id: string; totalVS: number; totalPlays: number; latestWeek: Date }> = []
+    const creates: Array<{
+      groupId: string
+      chartType: ChartType
+      entryKey: string
+      slug: string
+      totalVS: number | null
+      totalPlays: number
+      latestAppearance: Date
+    }> = []
+
+    // Process each unique entryKey once
+    const processedEntryKeys = new Set<string>()
+    for (const entry of typeEntries) {
+      if (processedEntryKeys.has(entry.entryKey)) {
+        continue // Already processed this entryKey
+      }
+      processedEntryKeys.add(entry.entryKey)
+
+      const stats = statsMap.get(entry.entryKey)
+      const totals = totalsByEntry.get(entry.entryKey)!
+      const latestWeek = latestWeekByEntry.get(entry.entryKey)!
+
+      if (stats) {
+        // Update existing entry
+        updates.push({
+          id: stats.id,
+          totalVS: stats.totalVS ? stats.totalVS + totals.totalVS : totals.totalVS,
+          totalPlays: stats.totalPlays + totals.totalPlays,
+          latestWeek,
+        })
+      } else {
+        // Create new entry
+        const slug = generateSlug(entry.entryKey, chartType)
+        creates.push({
           groupId,
           chartType,
           entryKey: entry.entryKey,
           slug,
+          totalVS: totals.totalVS || null,
+          totalPlays: totals.totalPlays,
+          latestAppearance: latestWeek,
+        })
+      }
+    }
+
+    // Batch update existing entries
+    // Use Promise.all for parallel execution (no transaction needed for cache invalidation)
+    // Partial failures are acceptable - cache will just be stale for those entries
+    if (updates.length > 0) {
+      const updateStart = Date.now()
+      // Process in chunks to avoid overwhelming the database connection pool
+      const CHUNK_SIZE = 50
+      let updateCount = 0
+      for (let i = 0; i < updates.length; i += CHUNK_SIZE) {
+        const chunk = updates.slice(i, i + CHUNK_SIZE)
+        const results = await Promise.all(
+          chunk.map(update =>
+            prisma.chartEntryStats.update({
+              where: { id: update.id },
+              data: {
+                majorDriverLastUpdated: null, // Mark major driver as stale
+                statsStale: true, // Mark stats as needing recalculation
+                totalVS: update.totalVS || null,
+                totalPlays: update.totalPlays,
+                latestAppearance: update.latestWeek,
+                lastUpdated: new Date(),
+              },
+            }).catch((error) => {
+              // Log but don't fail - cache invalidation is best-effort
+              console.error(`Failed to invalidate cache for entry ${update.id}:`, error)
+              return null // Continue with other updates
+            })
+          )
+        )
+        updateCount += results.filter(r => r !== null).length
+      }
+    }
+
+    // Batch create new entries
+    if (creates.length > 0) {
+      const createStart = Date.now()
+      await prisma.chartEntryStats.createMany({
+        data: creates.map(create => ({
+          ...create,
           peakPosition: 0, // Will be calculated on first access
           weeksAtPeak: 0,
           debutPosition: 0,
@@ -731,13 +860,12 @@ export async function invalidateEntryStatsCache(
           longestStreak: 0,
           isStreakOngoing: false,
           majorDriverLastUpdated: null, // Will be calculated on first access
-          totalVS: entry.vibeScore || null,
-          totalPlays: entry.playcount,
-          latestAppearance: weekStart,
           statsStale: true, // Stats will be calculated on first access
-        },
+        })),
+        skipDuplicates: true,
       })
     }
   }
+  
 }
 

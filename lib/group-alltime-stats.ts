@@ -2,7 +2,6 @@
 
 import { prisma } from './prisma'
 import { TopItem } from './lastfm-weekly'
-import { ChartGenerationLogger } from './chart-generation-logger'
 
 /**
  * Normalize entry key for matching (same logic as aggregation)
@@ -18,8 +17,9 @@ function getEntryKey(item: { name: string; artist?: string }, chartType: 'artist
  * Aggregate all-time stats from all weekly stats
  * Only uses top 10 items from each week (already stored in GroupWeeklyStats)
  */
-export async function recalculateAllTimeStats(groupId: string, logger?: ChartGenerationLogger): Promise<void> {
+export async function recalculateAllTimeStats(groupId: string): Promise<void> {
   // Fetch all weekly stats for this group
+  const fetchStart = Date.now()
   const allWeeklyStats = await prisma.groupWeeklyStats.findMany({
     where: { groupId },
     orderBy: {
@@ -49,6 +49,7 @@ export async function recalculateAllTimeStats(groupId: string, logger?: ChartGen
   }
 
   // Aggregate artists
+  const aggregateArtistsStart = Date.now()
   const artistMap = new Map<string, { name: string; playcount: number }>()
   for (const weekStats of allWeeklyStats) {
     const topArtists = (weekStats.topArtists as unknown as TopItem[]) || []
@@ -67,8 +68,10 @@ export async function recalculateAllTimeStats(groupId: string, logger?: ChartGen
       }
     }
   }
+  // Aggregation is very fast, skip detailed logging
 
   // Aggregate tracks
+  const aggregateTracksStart = Date.now()
   const trackMap = new Map<string, { name: string; artist: string; playcount: number }>()
   for (const weekStats of allWeeklyStats) {
     const topTracks = (weekStats.topTracks as unknown as TopItem[]) || []
@@ -87,8 +90,10 @@ export async function recalculateAllTimeStats(groupId: string, logger?: ChartGen
       }
     }
   }
+  // Aggregation is very fast, skip detailed logging
 
   // Aggregate albums
+  const aggregateAlbumsStart = Date.now()
   const albumMap = new Map<string, { name: string; artist: string; playcount: number }>()
   for (const weekStats of allWeeklyStats) {
     const topAlbums = (weekStats.topAlbums as unknown as TopItem[]) || []
@@ -107,8 +112,10 @@ export async function recalculateAllTimeStats(groupId: string, logger?: ChartGen
       }
     }
   }
+  // Aggregation is very fast, skip detailed logging
 
   // Sort and keep top 100 for each category
+  const sortStart = Date.now()
   const topArtists = Array.from(artistMap.values())
     .sort((a, b) => b.playcount - a.playcount)
     .slice(0, 100)
@@ -120,8 +127,10 @@ export async function recalculateAllTimeStats(groupId: string, logger?: ChartGen
   const topAlbums = Array.from(albumMap.values())
     .sort((a, b) => b.playcount - a.playcount)
     .slice(0, 100)
+  // Sorting is very fast, skip detailed logging
 
   // Upsert all-time stats
+  const upsertStart = Date.now()
   await prisma.groupAllTimeStats.upsert({
     where: { groupId },
     create: {

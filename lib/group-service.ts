@@ -5,10 +5,9 @@ import { getWeeklyStats } from './lastfm-weekly'
 import { getWeekStart, getLastNFinishedWeeks, getWeekStartForDay, getWeekEndForDay, getLastNFinishedWeeksForDay } from './weekly-utils'
 import { aggregateGroupStats, aggregateGroupStatsWithVS } from './group-stats'
 import { TopItem } from './lastfm-weekly'
-import { cacheChartMetrics } from './group-chart-metrics'
+import { cacheChartMetrics, ChartType } from './group-chart-metrics'
 import { recalculateAllTimeStats } from './group-alltime-stats'
 import { ChartMode, calculateUserVS, getUserVSForWeek, aggregateGroupStatsVS } from './vibe-score'
-import { ChartGenerationLogger } from './chart-generation-logger'
 import { getArtistImage, getAlbumImage } from './lastfm'
 import { calculateGroupTrends } from './group-trends'
 
@@ -42,9 +41,11 @@ async function calculateAndStoreUserVS(
   normalizedWeekStart.setUTCHours(0, 0, 0, 0)
 
   // Calculate VS for top 100 entries
+  const vsCalcStart = Date.now()
   const tracksVS = calculateUserVS(topTracks)
   const artistsVS = calculateUserVS(topArtists)
   const albumsVS = calculateUserVS(topAlbums)
+  // VS calculation is very fast (<1ms), skip logging unless needed for debugging
 
   // Prepare entries to upsert
   const entriesToUpsert: Array<{
@@ -96,6 +97,7 @@ async function calculateAndStoreUserVS(
   }
 
   // Delete existing entries for this user/week (for regeneration)
+  const deleteStart = Date.now()
   await prisma.userChartEntryVS.deleteMany({
     where: {
       userId,
@@ -105,6 +107,7 @@ async function calculateAndStoreUserVS(
 
   // Insert all entries
   if (entriesToUpsert.length > 0) {
+    const insertStart = Date.now()
     await prisma.userChartEntryVS.createMany({
       data: entriesToUpsert,
       skipDuplicates: true,
@@ -122,13 +125,14 @@ export async function fetchOrGetUserWeeklyStats(
   lastfmUsername: string,
   sessionKey: string | null,
   weekStart: Date,
-  logger?: ChartGenerationLogger
+  
 ): Promise<{
   topTracks: TopItem[]
   topArtists: TopItem[]
   topAlbums: TopItem[]
 }> {
   // Check if stats already exist
+  const dbLookupStart = Date.now()
   const existing = await prisma.userWeeklyStats.findUnique({
     where: {
       userId_weekStart: {
@@ -144,16 +148,21 @@ export async function fetchOrGetUserWeeklyStats(
         topArtists: (existing.topArtists as unknown as TopItem[]) || [],
         topAlbums: (existing.topAlbums as unknown as TopItem[]) || [],
       }
-    : await getWeeklyStats(
-        lastfmUsername,
-        weekStart,
-        API_KEY,
-        API_SECRET,
-        sessionKey || undefined
-      )
+    : await (async () => {
+        const apiStart = Date.now()
+        const result = await getWeeklyStats(
+          lastfmUsername,
+          weekStart,
+          API_KEY,
+          API_SECRET,
+          sessionKey || undefined
+        )
+        return result
+      })()
 
   // If stats were just fetched, store them
   if (!existing) {
+    const storeStart = Date.now()
     await prisma.userWeeklyStats.create({
       data: {
         userId,
@@ -277,18 +286,19 @@ export async function calculateGroupWeeklyStats(
   chartSize: number,
   trackingDayOfWeek: number,
   chartMode: ChartMode,
-  logger?: ChartGenerationLogger,
   members?: Array<{
     user: {
       id: string
       lastfmUsername: string
       lastfmSessionKey: string | null
     }
-  }>
-): Promise<void> {
+  }>,
+  skipTrends: boolean = false
+): Promise<Array<{ entryKey: string; vibeScore: number | null; playcount: number; weekStart: Date; chartType: ChartType }>> {
   // Get all group members (use provided members if available)
   let membersToUse = members
   if (!membersToUse) {
+    const fetchMembersStart = Date.now()
     membersToUse = await prisma.groupMember.findMany({
       where: { groupId },
       include: {
@@ -304,23 +314,24 @@ export async function calculateGroupWeeklyStats(
   }
 
   if (membersToUse.length === 0) {
-    return
+    return []
   }
 
   // Fetch or get stats for all members (this also calculates and stores VS automatically)
+  const fetchStatsStart = Date.now()
   const userStatsArray = await Promise.all(
     membersToUse.map((member) =>
       fetchOrGetUserWeeklyStats(
         member.user.id,
         member.user.lastfmUsername,
         member.user.lastfmSessionKey,
-        weekStart,
-        logger
+        weekStart
       )
     )
   )
 
   // Fetch pre-calculated VS data for all members
+  const fetchVSStart = Date.now()
   const userVSDataPromises = membersToUse.map((member) =>
     getUserVSForWeek(member.user.id, weekStart, prisma)
   )
@@ -335,6 +346,7 @@ export async function calculateGroupWeeklyStats(
   }))
 
   // Aggregate stats using pre-calculated VS
+  const aggregateStart = Date.now()
   const aggregated = aggregateGroupStatsVS(userVSData, chartSize, chartMode)
 
   // Calculate week end based on tracking day
@@ -348,6 +360,7 @@ export async function calculateGroupWeeklyStats(
   }
 
   // Store or update group stats
+  const upsertStart = Date.now()
   await prisma.groupWeeklyStats.upsert({
     where: {
       groupId_weekStart: {
@@ -374,6 +387,7 @@ export async function calculateGroupWeeklyStats(
   // Fetch previous weeks stats once (to share across all chart types)
   const normalizedWeekStart = new Date(weekStart)
   normalizedWeekStart.setUTCHours(0, 0, 0, 0)
+  const fetchPreviousStart = Date.now()
   const previousWeeksStats = await prisma.groupWeeklyStats.findMany({
     where: {
       groupId,
@@ -387,30 +401,47 @@ export async function calculateGroupWeeklyStats(
   })
 
   // Cache metrics for all chart types (with vibeScore) - share previousWeeksStats
-  await Promise.all([
-    cacheChartMetrics(groupId, weekStart, 'artists', aggregated.topArtists, trackingDayOfWeek, logger, previousWeeksStats),
-    cacheChartMetrics(groupId, weekStart, 'tracks', aggregated.topTracks, trackingDayOfWeek, logger, previousWeeksStats),
-    cacheChartMetrics(groupId, weekStart, 'albums', aggregated.topAlbums, trackingDayOfWeek, logger, previousWeeksStats),
+  // Returns entries for deferred cache invalidation
+  const cacheMetricsStart = Date.now()
+  const [artistsEntries, tracksEntries, albumsEntries] = await Promise.all([
+    cacheChartMetrics(groupId, weekStart, 'artists', aggregated.topArtists, trackingDayOfWeek, previousWeeksStats),
+    cacheChartMetrics(groupId, weekStart, 'tracks', aggregated.topTracks, trackingDayOfWeek, previousWeeksStats),
+    cacheChartMetrics(groupId, weekStart, 'albums', aggregated.topAlbums, trackingDayOfWeek, previousWeeksStats),
   ])
 
-  // Calculate and store trends for the latest week
-  // Only calculate trends for the most recent week (when this is the latest week)
-  const allWeeklyStats = await prisma.groupWeeklyStats.findMany({
-    where: { groupId },
-    orderBy: { weekStart: 'desc' },
-    take: 1,
-  })
+  // Collect entries for cache invalidation (with chartType for batching)
+  const entriesForInvalidation: Array<{ entryKey: string; vibeScore: number | null; playcount: number; weekStart: Date; chartType: ChartType }> = []
+  entriesForInvalidation.push(
+    ...artistsEntries.map(e => ({ ...e, chartType: 'artists' as ChartType })),
+    ...tracksEntries.map(e => ({ ...e, chartType: 'tracks' as ChartType })),
+    ...albumsEntries.map(e => ({ ...e, chartType: 'albums' as ChartType }))
+  )
 
-  if (allWeeklyStats.length > 0) {
-    const latestWeek = allWeeklyStats[0]
-    const latestWeekStart = new Date(latestWeek.weekStart)
-    latestWeekStart.setUTCHours(0, 0, 0, 0)
-    
-    // Only calculate trends if this is the latest week
-    if (latestWeekStart.getTime() === normalizedWeekStart.getTime()) {
-      await calculateGroupTrends(groupId, weekStart, trackingDayOfWeek)
+  // Skip trends calculation during processing - will be done at the end for latest week only
+  if (!skipTrends) {
+    // Calculate and store trends for the latest week
+    // Only calculate trends for the most recent week (when this is the latest week)
+    const checkLatestStart = Date.now()
+    const allWeeklyStats = await prisma.groupWeeklyStats.findMany({
+      where: { groupId },
+      orderBy: { weekStart: 'desc' },
+      take: 1,
+    })
+
+    if (allWeeklyStats.length > 0) {
+      const latestWeek = allWeeklyStats[0]
+      const latestWeekStart = new Date(latestWeek.weekStart)
+      latestWeekStart.setUTCHours(0, 0, 0, 0)
+      
+      // Only calculate trends if this is the latest week
+      if (latestWeekStart.getTime() === normalizedWeekStart.getTime()) {
+        const trendsStart = Date.now()
+        await calculateGroupTrends(groupId, weekStart, trackingDayOfWeek)
+      }
     }
   }
+
+  return entriesForInvalidation
 }
 
 /**
@@ -456,14 +487,45 @@ export async function initializeGroupWithHistory(groupId: string): Promise<void>
   })
 
   // Process weeks sequentially to avoid overwhelming the API
+  // Collect entries for deferred cache invalidation
+  const allEntriesForInvalidation: Array<{
+    entryKey: string
+    vibeScore: number | null
+    playcount: number
+    weekStart: Date
+    chartType: ChartType
+  }> = []
+  
   for (const weekStart of weeksInOrder) {
-    await calculateGroupWeeklyStats(groupId, weekStart, chartSize, trackingDayOfWeek, chartMode, undefined, members)
+    const entriesForInvalidation = await calculateGroupWeeklyStats(
+      groupId,
+      weekStart,
+      chartSize,
+      trackingDayOfWeek,
+      chartMode,
+      members,
+      true // skipTrends = true
+    )
+    // Collect entries for batch invalidation at the end
+    allEntriesForInvalidation.push(...entriesForInvalidation)
     // Small delay between API calls
     await new Promise(resolve => setTimeout(resolve, 500))
   }
 
   // Recalculate all-time stats once after all weeks are processed
   await recalculateAllTimeStats(groupId)
+
+  // Batch invalidate cache for all entries from all weeks (deferred for performance)
+  if (allEntriesForInvalidation.length > 0) {
+    const { invalidateEntryStatsCacheBatch } = await import('./chart-deep-dive')
+    await invalidateEntryStatsCacheBatch(groupId, allEntriesForInvalidation)
+  }
+
+  // Calculate trends only for the latest week
+  if (weeksInOrder.length > 0) {
+    const latestWeek = weeksInOrder[weeksInOrder.length - 1] // Last week is the latest
+    await calculateGroupTrends(groupId, latestWeek, trackingDayOfWeek)
+  }
 }
 
 /**

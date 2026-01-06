@@ -641,7 +641,8 @@ async function generateFunFacts(
 export async function calculateGroupTrends(
   groupId: string,
   weekStart: Date,
-  trackingDayOfWeek: number
+  trackingDayOfWeek: number,
+  
 ): Promise<void> {
   const normalizedWeekStart = new Date(weekStart)
   normalizedWeekStart.setUTCHours(0, 0, 0, 0)
@@ -649,15 +650,18 @@ export async function calculateGroupTrends(
   const weekEnd = getWeekEndForDay(weekStart, trackingDayOfWeek)
 
   // Get current week's chart entries
+  const fetchCurrentStart = Date.now()
   const currentEntries = await getGroupChartEntriesForWeek(groupId, normalizedWeekStart)
 
   // Get previous week's entries
   const previousWeekStart = new Date(normalizedWeekStart)
   previousWeekStart.setUTCDate(previousWeekStart.getUTCDate() - 7)
 
+  const fetchPreviousStart = Date.now()
   const previousEntries = await getGroupChartEntriesForWeek(groupId, previousWeekStart)
 
   // Get group stats for total plays calculation
+  const fetchStatsStart = Date.now()
   const weeklyStats = await getGroupWeeklyStats(groupId)
   const currentWeekStats = weeklyStats.find(
     (s) => new Date(s.weekStart).getTime() === normalizedWeekStart.getTime()
@@ -689,6 +693,7 @@ export async function calculateGroupTrends(
   }
 
   // Identify trends
+  const identifyTrendsStart = Date.now()
   const newEntries = identifyNewEntries(
     currentEntries.map(e => ({
       chartType: e.chartType,
@@ -702,8 +707,10 @@ export async function calculateGroupTrends(
   )
   const exits = identifyExits(currentEntries, previousEntries)
   const { climbers, fallers } = identifyBiggestMovers(currentEntries, previousEntries)
+  // Trend identification is very fast, skip detailed logging
 
   // Get group to determine chart mode
+  const fetchGroupStart = Date.now()
   const group = await prisma.group.findUnique({
     where: { id: groupId },
     select: { chartMode: true },
@@ -712,6 +719,7 @@ export async function calculateGroupTrends(
   const chartMode = (group?.chartMode || 'plays_only') as string
 
   // Calculate member contributions (if 3+ members)
+  const memberContribStart = Date.now()
   const { topContributors, memberSpotlight } = await calculateMemberContributions(
     groupId,
     normalizedWeekStart,
@@ -719,6 +727,7 @@ export async function calculateGroupTrends(
   )
 
   // Generate fun facts
+  const funFactsStart = Date.now()
   const funFacts = await generateFunFacts(
     {
       newEntries,
@@ -749,6 +758,7 @@ export async function calculateGroupTrends(
   )
 
   // Store trends
+  const storeTrendsStart = Date.now()
   await prisma.groupTrends.upsert({
     where: { groupId },
     create: {

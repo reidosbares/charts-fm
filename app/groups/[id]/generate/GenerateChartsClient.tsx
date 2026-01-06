@@ -15,14 +15,61 @@ const LOADING_MESSAGES = [
   "Finding the hidden gems in your music taste...",
 ]
 
-export default function GenerateChartsClient({ groupId, isSuperuser = false }: { groupId: string; isSuperuser?: boolean }) {
+export default function GenerateChartsClient({
+  groupId,
+  isSuperuser = false,
+  initialInProgress = false,
+}: {
+  groupId: string
+  isSuperuser?: boolean
+  initialInProgress?: boolean
+}) {
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(initialInProgress)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
   const [showFirstMessage, setShowFirstMessage] = useState(true)
   const [weeks, setWeeks] = useState<number>(5)
+
+  // Poll for completion if initially in progress
+  useEffect(() => {
+    if (initialInProgress) {
+      const pollForCompletion = async () => {
+        const pollInterval = 2500 // 2.5 seconds
+
+        const poll = async () => {
+          try {
+            const response = await fetch(`/api/groups/${groupId}/charts/update`)
+            if (!response.ok) {
+              throw new Error('Failed to check generation status')
+            }
+
+            const data = await response.json()
+
+            if (!data.inProgress) {
+              // Generation complete
+              setIsLoading(false)
+              router.refresh()
+            } else {
+              // Still in progress, poll again
+              setTimeout(poll, pollInterval)
+            }
+          } catch (err) {
+            console.error('Error polling for completion:', err)
+            // Continue polling even on error (might be temporary)
+            setTimeout(poll, pollInterval)
+          }
+        }
+
+        // Start polling
+        setTimeout(poll, pollInterval)
+      }
+
+      pollForCompletion()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialInProgress])
 
   useEffect(() => {
     if (!isLoading) {
@@ -173,6 +220,12 @@ export default function GenerateChartsClient({ groupId, isSuperuser = false }: {
               <p className="mt-1 text-xs text-gray-500">
                 Enter the number of weeks in the past to generate charts for (1-52)
               </p>
+            </div>
+          )}
+
+          {isLoading && !success && (
+            <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded-lg">
+              Chart generation is already in progress. Please wait for it to complete.
             </div>
           )}
 

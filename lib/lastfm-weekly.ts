@@ -21,13 +21,15 @@ export async function getWeeklyTopTracks(
   weekStart: Date,
   apiKey: string,
   apiSecret: string,
-  sessionKey?: string
+  sessionKey?: string,
+  
 ): Promise<TopItem[]> {
   // Last.fm uses Unix timestamps for from/to parameters
   const from = Math.floor(weekStart.getTime() / 1000)
   const weekEnd = getWeekEnd(weekStart)
   const to = Math.floor(weekEnd.getTime() / 1000)
 
+  const apiStart = Date.now()
   let data
   if (sessionKey) {
     // Use authenticated call if we have session key
@@ -82,12 +84,14 @@ export async function getWeeklyTopArtists(
   weekStart: Date,
   apiKey: string,
   apiSecret: string,
-  sessionKey?: string
+  sessionKey?: string,
+  
 ): Promise<TopItem[]> {
   const from = Math.floor(weekStart.getTime() / 1000)
   const weekEnd = getWeekEnd(weekStart)
   const to = Math.floor(weekEnd.getTime() / 1000)
 
+  const apiStart = Date.now()
   let data
   if (sessionKey) {
     data = await authenticatedLastFMCall(
@@ -139,12 +143,14 @@ export async function getWeeklyTopAlbums(
   weekStart: Date,
   apiKey: string,
   apiSecret: string,
-  sessionKey?: string
+  sessionKey?: string,
+  
 ): Promise<TopItem[]> {
   const from = Math.floor(weekStart.getTime() / 1000)
   const weekEnd = getWeekEnd(weekStart)
   const to = Math.floor(weekEnd.getTime() / 1000)
 
+  const apiStart = Date.now()
   let data
   if (sessionKey) {
     data = await authenticatedLastFMCall(
@@ -197,16 +203,18 @@ export async function getWeeklyStats(
   weekStart: Date,
   apiKey: string,
   apiSecret: string,
-  sessionKey?: string
+  sessionKey?: string,
+  
 ): Promise<{
   topTracks: TopItem[]
   topArtists: TopItem[]
   topAlbums: TopItem[]
 }> {
+  const totalStart = Date.now()
   const [topTracks, topArtists, topAlbums] = await Promise.all([
-    getWeeklyTopTracks(username, weekStart, apiKey, apiSecret, sessionKey),
-    getWeeklyTopArtists(username, weekStart, apiKey, apiSecret, sessionKey),
-    getWeeklyTopAlbums(username, weekStart, apiKey, apiSecret, sessionKey),
+    getWeeklyTopTracks(username, weekStart, apiKey, apiSecret, sessionKey, logger),
+    getWeeklyTopArtists(username, weekStart, apiKey, apiSecret, sessionKey, logger),
+    getWeeklyTopAlbums(username, weekStart, apiKey, apiSecret, sessionKey, logger),
   ])
 
   return {

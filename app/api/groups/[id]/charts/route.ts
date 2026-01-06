@@ -5,7 +5,8 @@ import { getSuperuser } from '@/lib/admin'
 import { calculateGroupWeeklyStats, deleteOverlappingCharts, updateGroupIconFromChart } from '@/lib/group-service'
 import { getLastNFinishedWeeks, getLastNFinishedWeeksForDay, getWeekEndForDay } from '@/lib/weekly-utils'
 import { recalculateAllTimeStats } from '@/lib/group-alltime-stats'
-import { ChartGenerationLogger } from '@/lib/chart-generation-logger'
+
+const LOCK_TIMEOUT_MS = 30 * 60 * 1000 // 30 minutes
 
 // GET - Get group charts (weekly stats)
 export async function GET(
@@ -100,6 +101,8 @@ export async function POST(
       trackingDayOfWeek: true,
       // @ts-ignore - Prisma client will be regenerated after migration
       chartMode: true,
+      chartGenerationInProgress: true,
+      chartGenerationStartedAt: true,
     },
   })
 
@@ -111,6 +114,50 @@ export async function POST(
     return NextResponse.json(
       { error: 'Only the group creator can generate charts' },
       { status: 403 }
+    )
+  }
+
+  // Check and acquire lock
+  const now = new Date()
+  
+  // Check if lock exists and handle timeout
+  if (group.chartGenerationInProgress && group.chartGenerationStartedAt) {
+    const lockAge = now.getTime() - group.chartGenerationStartedAt.getTime()
+    if (lockAge > LOCK_TIMEOUT_MS) {
+      // Lock timed out, reset it
+      await prisma.group.update({
+        where: { id: groupId },
+        data: {
+          chartGenerationInProgress: false,
+          chartGenerationStartedAt: null,
+        },
+      })
+    } else {
+      // Lock is still valid, return error
+      return NextResponse.json(
+        { error: 'Chart generation is already in progress' },
+        { status: 409 }
+      )
+    }
+  }
+
+  // Acquire lock
+  const updatedGroup = await prisma.group.update({
+    where: {
+      id: groupId,
+      chartGenerationInProgress: false, // Optimistic locking
+    },
+    data: {
+      chartGenerationInProgress: true,
+      chartGenerationStartedAt: now,
+    },
+  })
+
+  if (!updatedGroup) {
+    // Lock acquisition failed (another process got it)
+    return NextResponse.json(
+      { error: 'Chart generation is already in progress' },
+      { status: 409 }
     )
   }
 
@@ -137,9 +184,6 @@ export async function POST(
       // If body parsing fails, use default
     }
   }
-
-  // Initialize logger (infrastructure kept for future use)
-  const logger = new ChartGenerationLogger(groupId)
 
   // Calculate stats for last N finished weeks using group's tracking day
   const weeks = getLastNFinishedWeeksForDay(numberOfWeeks, trackingDayOfWeek)
@@ -168,19 +212,64 @@ export async function POST(
   const weeksInOrder = [...weeks].reverse()
   
   // Process sequentially to avoid API rate limits
+  // Collect entries for deferred cache invalidation
+  const allEntriesForInvalidation: Array<{
+    entryKey: string
+    vibeScore: number | null
+    playcount: number
+    weekStart: Date
+    chartType: 'artists' | 'tracks' | 'albums'
+  }> = []
+  
   try {
     for (let i = 0; i < weeksInOrder.length; i++) {
       const weekStart = weeksInOrder[i]
-      await calculateGroupWeeklyStats(groupId, weekStart, chartSize, trackingDayOfWeek, chartMode, logger, members)
+      const entriesForInvalidation = await calculateGroupWeeklyStats(
+        groupId,
+        weekStart,
+        chartSize,
+        trackingDayOfWeek,
+        chartMode,
+        undefined,
+        members,
+        true // skipTrends = true
+      )
+      
+      // Collect entries for batch invalidation at the end
+      allEntriesForInvalidation.push(...entriesForInvalidation)
       
       // Small delay between weeks
       await new Promise(resolve => setTimeout(resolve, 500))
     }
 
     // Recalculate all-time stats once after all weeks are processed
-    await recalculateAllTimeStats(groupId, logger)
+    await recalculateAllTimeStats(groupId)
+
+    // Batch invalidate cache for all entries from all weeks (deferred for performance)
+    if (allEntriesForInvalidation.length > 0) {
+      const { invalidateEntryStatsCacheBatch } = await import('@/lib/chart-deep-dive')
+      await invalidateEntryStatsCacheBatch(groupId, allEntriesForInvalidation)
+    }
+
+    // Calculate trends only for the latest week
+    if (weeksInOrder.length > 0) {
+      const latestWeek = weeksInOrder[weeksInOrder.length - 1] // Last week is the latest
+      const { calculateGroupTrends } = await import('@/lib/group-trends')
+      await calculateGroupTrends(groupId, latestWeek, trackingDayOfWeek)
+    }
   } catch (error: any) {
     console.error('Error generating charts:', error)
+    
+    // Release lock on error
+    await prisma.group.update({
+      where: { id: groupId },
+      data: {
+        chartGenerationInProgress: false,
+        chartGenerationStartedAt: null,
+      },
+    }).catch((err) => {
+      console.error('Error releasing lock after error:', err)
+    })
     
     // Handle Prisma validation errors
     if (error.message && error.message.includes('did not match the expected pattern')) {
@@ -198,6 +287,15 @@ export async function POST(
   // Don't await - let it run in background to avoid blocking the response
   updateGroupIconFromChart(groupId).catch((error) => {
     console.error('Error updating group icon after chart generation:', error)
+  })
+
+  // Release lock
+  await prisma.group.update({
+    where: { id: groupId },
+    data: {
+      chartGenerationInProgress: false,
+      chartGenerationStartedAt: null,
+    },
   })
 
   // Get updated stats

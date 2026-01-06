@@ -1,5 +1,5 @@
 // Logger for chart generation performance tracking
-import { writeFile, appendFile, mkdir } from 'fs/promises'
+import { appendFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 
 interface LogEntry {
@@ -8,6 +8,9 @@ interface LogEntry {
   duration: number
   details?: string
 }
+
+// Only log to console if explicitly enabled via environment variable
+const ENABLE_CONSOLE_LOGGING = process.env.ENABLE_CHART_GENERATION_LOGS === 'true'
 
 class ChartGenerationLogger {
   private logs: LogEntry[] = []
@@ -36,16 +39,20 @@ class ChartGenerationLogger {
 
     const message = `[${entry.timestamp}] ${step} - ${this.formatDuration(duration)}${details ? ` - ${details}` : ''}`
     
-    // Console output
-    console.log(message)
+    // Console output (only if enabled)
+    if (ENABLE_CONSOLE_LOGGING) {
+      console.log(message)
+    }
 
-    // File output
+    // File output (always enabled for performance analysis)
     try {
       await mkdir(join(process.cwd(), 'logs'), { recursive: true })
       await appendFile(this.logFile!, message + '\n', 'utf-8')
     } catch (error) {
-      // Silently fail if file writing fails
-      console.error('Failed to write to log file:', error)
+      // Silently fail if file writing fails (only log if console logging is enabled)
+      if (ENABLE_CONSOLE_LOGGING) {
+        console.error('Failed to write to log file:', error)
+      }
     }
   }
 
@@ -73,14 +80,20 @@ class ChartGenerationLogger {
       '================================\n',
     ].join('\n')
 
-    console.log(summary)
+    if (ENABLE_CONSOLE_LOGGING) {
+      console.log(summary)
+    }
     
     if (this.logFile) {
       try {
         await appendFile(this.logFile!, summary, 'utf-8')
-        console.log(`\nFull log saved to: ${this.logFile}`)
+        if (ENABLE_CONSOLE_LOGGING) {
+          console.log(`\nFull log saved to: ${this.logFile}`)
+        }
       } catch (error) {
-        console.error('Failed to write summary to log file:', error)
+        if (ENABLE_CONSOLE_LOGGING) {
+          console.error('Failed to write summary to log file:', error)
+        }
       }
     }
   }

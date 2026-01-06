@@ -1,5 +1,6 @@
 import { requireGroupCreator } from '@/lib/group-auth'
 import { getSuperuser } from '@/lib/admin'
+import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import GenerateChartsClient from './GenerateChartsClient'
 
@@ -19,9 +20,24 @@ export default async function GenerateChartsPage({ params }: { params: { id: str
     )
   }
 
+  // Fetch the latest group state to check lock status
+  const latestGroup = await prisma.group.findUnique({
+    where: { id: params.id },
+    select: {
+      chartGenerationInProgress: true,
+    },
+  })
+
   const superuser = await getSuperuser()
   const isSuperuser = superuser !== null
+  const chartGenerationInProgress = latestGroup?.chartGenerationInProgress || false
 
-  return <GenerateChartsClient groupId={params.id} isSuperuser={isSuperuser} />
+  return (
+    <GenerateChartsClient
+      groupId={params.id}
+      isSuperuser={isSuperuser}
+      initialInProgress={chartGenerationInProgress}
+    />
+  )
 }
 
