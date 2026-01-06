@@ -71,10 +71,15 @@ export default function WeekCalendar({ availableWeeks, currentWeek, trackingDayO
   return (
     <>
       <div className="mt-6">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800">Other dates</h3>
+        <h3 className="text-lg font-semibold mb-4 text-[var(--theme-primary-dark)]">Other dates</h3>
         <button
           onClick={() => setIsOpen(true)}
-          className="w-full px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors text-left"
+          className="w-full px-4 py-3 rounded-lg transition-all duration-200 text-left hover:shadow-sm"
+          style={{
+            background: 'rgba(255, 255, 255, 0.4)',
+            color: 'var(--theme-text)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+          }}
         >
           Open calendar
         </button>
@@ -87,14 +92,19 @@ export default function WeekCalendar({ availableWeeks, currentWeek, trackingDayO
           onClick={() => setIsOpen(false)}
         >
           <div
-            className="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full mx-4"
+            className="rounded-lg shadow-xl p-6 max-w-lg w-full mx-4 border border-theme"
+            style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(20px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-gray-800">Select Date</h2>
+              <h2 className="text-xl font-semibold text-[var(--theme-primary-dark)]">Select Date</h2>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-gray-500 hover:text-gray-700 text-2xl leading-none w-8 h-8 flex items-center justify-center"
+                className="text-[var(--theme-text)] hover:text-[var(--theme-primary-dark)] text-2xl leading-none w-8 h-8 flex items-center justify-center transition-colors"
                 aria-label="Close"
               >
                 ×

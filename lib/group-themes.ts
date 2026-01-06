@@ -1,7 +1,7 @@
 // Color theme configurations for group pages
 // Each theme defines a color palette used throughout the group page
 
-export type ThemeName = 'yellow' | 'royal_blue' | 'cyan' | 'bright_red' | 'maroon' | 'graphite' | 'hot_pink' | 'neon_green' | 'white'
+export type ThemeName = 'yellow' | 'royal_blue' | 'cyan' | 'bright_red' | 'maroon' | 'graphite' | 'hot_pink' | 'neon_green' | 'white' | 'rainbow'
 
 export interface ThemeColors {
   primary: string // Main theme color (for buttons, badges)
@@ -135,6 +135,19 @@ export const GROUP_THEMES: Record<ThemeName, ThemeColors> = {
     ring: 'rgb(234 179 8)', // yellow-500
     buttonText: 'black',
   },
+  rainbow: {
+    primary: 'rgb(147 51 234)', // purple-600 (vibrant purple representing pride)
+    primaryLight: 'rgb(168 85 247)', // purple-500
+    primaryDark: 'rgb(88 28 135)', // purple-800 (dark for titles)
+    primaryLighter: 'rgb(196 181 253)', // purple-300
+    primaryDarker: 'rgb(126 34 206)', // purple-700
+    backgroundFrom: 'rgb(255 255 255 / 0.9)', // semi-transparent white for cards (works with rainbow background)
+    backgroundTo: 'rgb(255 255 255 / 0.95)', // slightly more opaque white
+    border: 'rgb(196 181 253)', // purple-300 (subtle rainbow tint)
+    text: 'rgb(17 24 39)', // gray-900 (dark for contrast on rainbow background)
+    ring: 'rgb(147 51 234)', // purple-600
+    buttonText: 'white',
+  },
 }
 
 export const THEME_NAMES: ThemeName[] = ['white', 'yellow', 'royal_blue', 'cyan', 'bright_red', 'graphite', 'hot_pink', 'neon_green']
@@ -149,5 +162,6 @@ export const THEME_DISPLAY_NAMES: Record<ThemeName, string> = {
   hot_pink: 'Flamingo',
   neon_green: 'Kiwi',
   white: 'Ink & Butter',
+  rainbow: 'Pride',
 }
 

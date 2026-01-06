@@ -22,6 +22,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import Tooltip from '@/components/Tooltip'
 import { formatWeekDate } from '@/lib/weekly-utils'
+import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
 
 type CategoryTab = 'members' | 'artists' | 'tracks' | 'albums'
 
@@ -646,7 +647,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
     )
   }
 
-  const tabs: Array<{ id: CategoryTab; label: string; icon: any }> = [
+  const tabs: TabItem[] = [
     { id: 'members', label: 'Member Trends', icon: faUsers },
     { id: 'artists', label: 'Artists', icon: faMicrophone },
     { id: 'tracks', label: 'Tracks', icon: faMusic },
@@ -724,36 +725,19 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
         </div>
       )}
 
-      {/* Folder-style Tabbed Interface */}
-      <div className="bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-theme">
-        {/* Tab Headers - Folder Style */}
-        <div className="flex border-b border-[var(--theme-border)] bg-white/50 overflow-hidden rounded-t-xl">
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.id
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`
-                  flex items-center gap-2 px-6 py-4 font-semibold text-sm transition-all relative
-                  ${isActive 
-                    ? 'text-[var(--theme-primary-dark)] bg-[var(--theme-background-from)] border-b-2 border-[var(--theme-primary)]' 
-                    : 'text-gray-600 hover:text-[var(--theme-primary-dark)] hover:bg-white/30'
-                  }
-                `}
-              >
-                <FontAwesomeIcon icon={tab.icon} className={isActive ? 'text-[var(--theme-primary)]' : ''} />
-                <span>{tab.label}</span>
-                {isActive && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--theme-primary)]"></div>
-                )}
-              </button>
-            )
-          })}
+      {/* Tabbed Interface */}
+      <div className="space-y-6">
+        {/* Tab Navigation */}
+        <div className="flex justify-center">
+          <LiquidGlassTabs
+            tabs={tabs}
+            activeTab={activeTab}
+            onTabChange={(tabId) => setActiveTab(tabId as CategoryTab)}
+          />
         </div>
 
         {/* Tab Content */}
-        <div className="p-6 overflow-visible">
+        <div className="bg-white/60 backdrop-blur-md rounded-xl p-6 border border-theme shadow-sm overflow-visible">
           {activeTab === 'members' && renderMembersContent()}
           {activeTab === 'artists' && renderCategoryContent('artists')}
           {activeTab === 'tracks' && renderCategoryContent('tracks')}

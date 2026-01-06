@@ -139,7 +139,9 @@ export async function PATCH(
 
   // Validate colorTheme
   if (colorTheme !== undefined) {
-    if (!THEME_NAMES.includes(colorTheme as ThemeName)) {
+    // Allow rainbow theme for existing groups, but it's hidden from UI
+    const validThemes = [...THEME_NAMES, 'rainbow' as ThemeName]
+    if (!validThemes.includes(colorTheme as ThemeName)) {
       return NextResponse.json(
         { error: `colorTheme must be one of: ${THEME_NAMES.join(', ')}` },
         { status: 400 }

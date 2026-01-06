@@ -38,6 +38,7 @@ export async function GET(
       longestStreaks = await calculateConsecutiveStreaks(group.id, normalizedWeekStart, undefined, 2)
       
       // Calculate comebacks - entries that returned after being away
+      const currentEntries = await getGroupChartEntriesForWeek(group.id, normalizedWeekStart)
       const previousWeekStart = new Date(normalizedWeekStart)
       previousWeekStart.setUTCDate(previousWeekStart.getUTCDate() - 7)
       const previousEntries = await getGroupChartEntriesForWeek(group.id, previousWeekStart)

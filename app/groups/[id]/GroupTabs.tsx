@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChartBar, faTrophy, faUsers, faFire } from '@fortawesome/free-solid-svg-icons'
+import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
 
 type Tab = 'charts' | 'members' | 'alltime' | 'trends'
 
@@ -25,81 +25,26 @@ export default function GroupTabs({
 }: GroupTabsProps) {
   const [activeTab, setActiveTab] = useState<Tab>(defaultTab)
 
+  const tabs: TabItem[] = [
+    { id: 'trends', label: 'Trends', icon: faFire },
+    { id: 'charts', label: 'Weekly Charts', icon: faChartBar },
+    { id: 'alltime', label: 'All-Time Stats', icon: faTrophy },
+    { id: 'members', label: 'Members', icon: faUsers, badge: pendingRequestsCount },
+  ]
+
   return (
-    <div>
+    <div className="mt-10">
       {/* Tab Navigation */}
-      <div className="border-b-2 mb-6" style={{ borderBottomColor: 'var(--theme-primary-dark)' }}>
-        <nav className="flex space-x-1" aria-label="Tabs">
-          <button
-            onClick={() => setActiveTab('trends')}
-            className={`
-              py-4 px-6 border-b-2 font-semibold text-sm transition-all rounded-t-lg
-              flex items-center gap-2
-              ${
-                activeTab === 'trends'
-                  ? 'border-[var(--theme-primary)] text-[var(--theme-primary-dark)] bg-[var(--theme-primary-lighter)]/30 shadow-sm'
-                  : 'border-transparent text-gray-600 hover:text-[var(--theme-text)] hover:bg-[var(--theme-primary-lighter)]/50'
-              }
-            `}
-          >
-            <FontAwesomeIcon icon={faFire} className="text-lg" />
-            Trends
-          </button>
-          <button
-            onClick={() => setActiveTab('charts')}
-            className={`
-              py-4 px-6 border-b-2 font-semibold text-sm transition-all rounded-t-lg
-              flex items-center gap-2
-              ${
-                activeTab === 'charts'
-                  ? 'border-[var(--theme-primary)] text-[var(--theme-primary-dark)] bg-[var(--theme-primary-lighter)]/30 shadow-sm'
-                  : 'border-transparent text-gray-600 hover:text-[var(--theme-text)] hover:bg-[var(--theme-primary-lighter)]/50'
-              }
-            `}
-          >
-            <FontAwesomeIcon icon={faChartBar} className="text-lg" />
-            Weekly Charts
-          </button>
-          <button
-            onClick={() => setActiveTab('alltime')}
-            className={`
-              py-4 px-6 border-b-2 font-semibold text-sm transition-all rounded-t-lg
-              flex items-center gap-2
-              ${
-                activeTab === 'alltime'
-                  ? 'border-[var(--theme-primary)] text-[var(--theme-primary-dark)] bg-[var(--theme-primary-lighter)]/30 shadow-sm'
-                  : 'border-transparent text-gray-600 hover:text-[var(--theme-text)] hover:bg-[var(--theme-primary-lighter)]/50'
-              }
-            `}
-          >
-            <FontAwesomeIcon icon={faTrophy} className="text-lg" />
-            All-Time Stats
-          </button>
-          <button
-            onClick={() => setActiveTab('members')}
-            className={`
-              py-4 px-6 border-b-2 font-semibold text-sm transition-all rounded-t-lg
-              flex items-center gap-2
-              ${
-                activeTab === 'members'
-                  ? 'border-[var(--theme-primary)] text-[var(--theme-primary-dark)] bg-[var(--theme-primary-lighter)]/30 shadow-sm'
-                  : 'border-transparent text-gray-600 hover:text-[var(--theme-text)] hover:bg-[var(--theme-primary-lighter)]/50'
-              }
-            `}
-          >
-            <FontAwesomeIcon icon={faUsers} className="text-lg" />
-            Members
-            {pendingRequestsCount > 0 && (
-              <span className="ml-1 px-2 py-0.5 bg-red-500 text-white rounded-full text-xs font-bold">
-                {pendingRequestsCount}
-              </span>
-            )}
-          </button>
-        </nav>
+      <div className="mb-6 flex justify-center">
+        <LiquidGlassTabs
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={(tabId) => setActiveTab(tabId as Tab)}
+        />
       </div>
 
       {/* Tab Content */}
-      <div>
+      <div className="bg-white/60 backdrop-blur-md rounded-xl p-6 border border-theme shadow-sm">
         <div style={{ display: activeTab === 'charts' ? 'block' : 'none' }}>
           {chartsContent}
         </div>

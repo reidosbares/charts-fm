@@ -11,6 +11,7 @@ interface GroupQuickStatsProps {
 export default function GroupQuickStats({ groupId }: GroupQuickStatsProps) {
   const [data, setData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isRainbowTheme, setIsRainbowTheme] = useState(false)
 
   useEffect(() => {
     fetch(`/api/groups/${groupId}/quick-stats`)
@@ -26,6 +27,12 @@ export default function GroupQuickStats({ groupId }: GroupQuickStatsProps) {
         console.error('Error fetching quick stats:', err)
       })
   }, [groupId])
+
+  useEffect(() => {
+    // Check if the page has the rainbow theme class
+    const mainElement = document.querySelector('main.theme-rainbow')
+    setIsRainbowTheme(!!mainElement)
+  }, [])
 
   if (isLoading) {
     return (
@@ -50,7 +57,7 @@ export default function GroupQuickStats({ groupId }: GroupQuickStatsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
       <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-        <div className="text-sm text-gray-600 mb-1">Obsession</div>
+        <div className="text-sm text-gray-600 mb-1">{isRainbowTheme ? 'Mother' : 'Obsession'}</div>
         {obsessionArtist ? (
           <>
             <div className="text-xl font-bold text-[var(--theme-text)] truncate">{obsessionArtist.name}</div>

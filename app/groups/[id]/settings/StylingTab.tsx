@@ -79,7 +79,7 @@ export default function StylingTab({
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {THEME_NAMES.map((themeName) => {
+            {THEME_NAMES.filter((themeName) => themeName !== 'rainbow').map((themeName) => {
               const theme = GROUP_THEMES[themeName]
               const isSelected = colorTheme === themeName
               
@@ -122,8 +122,14 @@ export default function StylingTab({
                         <div className="text-xs text-gray-500">Background</div>
                         <div 
                           className="h-12 rounded border border-gray-200"
-                          style={{ backgroundColor: theme.backgroundFrom }}
-                          title="Background color"
+                          style={
+                            themeName === 'rainbow'
+                              ? {
+                                  backgroundImage: 'linear-gradient(135deg, rgb(239 68 68), rgb(249 115 22), rgb(234 179 8), rgb(34 197 94), rgb(59 130 246), rgb(147 51 234), rgb(219 39 119), rgb(239 68 68))',
+                                }
+                              : { backgroundColor: theme.backgroundFrom }
+                          }
+                          title={themeName === 'rainbow' ? 'Rainbow gradient background' : 'Background color'}
                         ></div>
                       </div>
                       <div className="flex-1 space-y-1">
