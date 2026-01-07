@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart, faSpinner, faInfoCircle, faCalculator } from '@fortawesome/free-solid-svg-icons'
 import Tooltip from '@/components/Tooltip'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 interface CompatibilityScoreProps {
   groupId: string
@@ -22,6 +23,7 @@ interface CompatibilityData {
 }
 
 export default function CompatibilityScore({ groupId }: CompatibilityScoreProps) {
+  const t = useSafeTranslations('groups.public')
   const [score, setScore] = useState<CompatibilityData | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isChecking, setIsChecking] = useState(true)
@@ -53,7 +55,7 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
         setIsChecking(false)
       })
       .catch((err) => {
-        setError('Failed to check compatibility score')
+        setError(t('failedToCheckCompatibility'))
         setIsChecking(false)
         console.error('Error checking compatibility score:', err)
       })
@@ -71,7 +73,7 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to calculate compatibility score')
+        throw new Error(data.error || t('failedToCalculateCompatibility'))
       }
 
       setScore({
@@ -79,7 +81,7 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
         components: data.components,
       })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to calculate compatibility score')
+      setError(err instanceof Error ? err.message : t('failedToCalculateCompatibility'))
       console.error('Error calculating compatibility score:', err)
     } finally {
       setIsLoading(false)
@@ -124,7 +126,7 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
   if (!score) {
     return (
       <Tooltip 
-        content="Coming Soon!"
+        content={t('comingSoon')}
         position="top"
       >
         <LiquidGlassButton
@@ -140,7 +142,7 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
           useTheme={false}
           icon={<FontAwesomeIcon icon={faHeart} className="text-red-500" />}
         >
-          Check Match
+          {t('checkMatch')}
           <FontAwesomeIcon icon={faInfoCircle} className="text-gray-400 text-xs" />
         </LiquidGlassButton>
       </Tooltip>
@@ -164,7 +166,7 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
         icon={<FontAwesomeIcon icon={faHeart} className="text-red-500" />}
       >
         <span className={scoreColor}>
-          {Math.round(score.score)}% Match
+          {t('matchPercentage', { score: Math.round(score.score) })}
         </span>
         <FontAwesomeIcon icon={faInfoCircle} className="text-gray-400 text-xs" />
       </LiquidGlassButton>
@@ -185,29 +187,29 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
               left: `${popupPosition.left}px`,
             }}
           >
-            <h4 className="font-semibold text-gray-900 mb-3">Compatibility Breakdown</h4>
+            <h4 className="font-semibold text-gray-900 mb-3">{t('compatibilityBreakdown')}</h4>
             
             <div className="space-y-2 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">Artist Overlap</span>
+                <span className="text-gray-600">{t('artistOverlap')}</span>
                 <span className="font-semibold text-gray-900">
                   {score.components.artistOverlap.toFixed(1)}%
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">Track Overlap</span>
+                <span className="text-gray-600">{t('trackOverlap')}</span>
                 <span className="font-semibold text-gray-900">
                   {score.components.trackOverlap.toFixed(1)}%
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">Genre Overlap</span>
+                <span className="text-gray-600">{t('genreOverlap')}</span>
                 <span className="font-semibold text-gray-900">
                   {score.components.genreOverlap.toFixed(1)}%
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">Listening Patterns</span>
+                <span className="text-gray-600">{t('listeningPatterns')}</span>
                 <span className="font-semibold text-gray-900">
                   {score.components.patternScore.toFixed(1)}%
                 </span>
@@ -216,7 +218,7 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
 
             <div className="mt-4 pt-3 border-t border-gray-200">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-gray-900">Overall Match</span>
+                <span className="font-semibold text-gray-900">{t('overallMatch')}</span>
                 <span className={`font-bold text-lg ${scoreColor}`}>
                   {Math.round(score.score)}%
                 </span>

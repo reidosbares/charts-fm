@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { getSession } from './auth'
 import { prisma } from './prisma'
 import { getGroupById } from './group-queries'
+import { routing } from '@/i18n/routing'
 
 /**
  * Ensures the user is authenticated and is a member or creator of the group.
@@ -21,11 +22,18 @@ export async function requireGroupMembership(groupId: string) {
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
+    select: {
+      id: true,
+      locale: true,
+    },
   })
 
   if (!user) {
     redirect('/')
   }
+  
+  // Get user's locale or use default
+  const userLocale = user.locale || routing.defaultLocale
 
   // First check if the group exists (without membership restriction)
   const groupExists = await prisma.group.findUnique({
@@ -41,9 +49,9 @@ export async function requireGroupMembership(groupId: string) {
   // Check if user is a member or creator
   const group = await getGroupById(groupId, user.id)
   
-  // If group exists but user is not a member, redirect to public page
+  // If group exists but user is not a member, redirect to public page with user's locale
   if (!group) {
-    redirect(`/groups/${groupId}/public`)
+    redirect(`/${userLocale}/groups/${groupId}/public`)
   }
 
   return { user, group }

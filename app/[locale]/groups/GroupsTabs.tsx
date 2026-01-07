@@ -8,6 +8,7 @@ import { getDefaultGroupImage } from '@/lib/default-images'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMusic, faUsers, faEnvelope } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 interface Group {
   id: string
@@ -41,6 +42,8 @@ interface GroupsTabsProps {
 }
 
 export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId, pendingRequestsMap = {} }: GroupsTabsProps) {
+  const t = useSafeTranslations('groups.list')
+  const tHero = useSafeTranslations('groups.hero')
   const [activeTab, setActiveTab] = useState<'groups' | 'invites'>('groups')
   
   // Merge groups with owned groups first
@@ -58,7 +61,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || 'Failed to accept invite')
+        throw new Error(data.error || t('failedToAcceptInvite'))
       }
 
       // Refresh the page
@@ -78,7 +81,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || 'Failed to reject invite')
+        throw new Error(data.error || t('failedToRejectInvite'))
       }
 
       // Grey out the card
@@ -126,20 +129,20 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
             </div>
             <div className="text-sm text-gray-600 space-y-1">
               <p className="flex items-center gap-2 flex-wrap">
-                <span>Owner:</span>
+                <span>{tHero('owner')}</span>
                 <span className="font-semibold text-gray-900">{group.creator.name || group.creator.lastfmUsername}</span>
                 {isOwner && (
                   <span className="text-xs bg-[var(--theme-primary)] text-[var(--theme-button-text)] px-2 py-0.5 rounded-full font-bold">
-                    YOU
+                    {t('you')}
                   </span>
                 )}
               </p>
               <p className="flex items-center gap-2">
                 <FontAwesomeIcon icon={faUsers} className="text-[var(--theme-primary)] font-medium" />
-                <span>{group._count.members} {group._count.members === 1 ? 'member' : 'members'}</span>
+                <span>{t('memberCount', { count: group._count.members })}</span>
               </p>
               <p className="text-xs text-gray-500">
-                Created {new Date(group.createdAt).toLocaleDateString()}
+                {t('created', { date: new Date(group.createdAt).toLocaleDateString() })}
               </p>
             </div>
           </div>
@@ -180,20 +183,20 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
               <div className="flex items-center gap-2 mb-2">
                 <h3 className="text-2xl font-bold text-gray-900 truncate">{invite.group.name}</h3>
                 <span className="flex-shrink-0 text-xs bg-gray-900 text-white px-2 py-0.5 rounded-full font-bold">
-                  Invited
+                  {t('invited')}
                 </span>
               </div>
               <div className="text-sm text-gray-600 space-y-1">
                 <p>
-                  <span>Owner:</span>
+                  <span>{tHero('owner')}</span>
                   <span className="font-semibold text-gray-900 ml-1">{invite.group.creator.name || invite.group.creator.lastfmUsername}</span>
                 </p>
                 <p className="flex items-center gap-2">
                   <FontAwesomeIcon icon={faUsers} className="text-gray-500 font-medium" />
-                  <span>{invite.group._count.members} {invite.group._count.members === 1 ? 'member' : 'members'}</span>
+                  <span>{t('memberCount', { count: invite.group._count.members })}</span>
                 </p>
                 <p className="text-xs text-gray-500">
-                  Created {new Date(invite.group.createdAt).toLocaleDateString()}
+                  {t('created', { date: new Date(invite.group.createdAt).toLocaleDateString() })}
                 </p>
               </div>
             </div>
@@ -208,7 +211,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
             disabled={isProcessing || isRejected}
             className="flex-1 px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-lg transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isProcessing ? 'Processing...' : 'Accept'}
+            {isProcessing ? t('processing') : t('accept')}
           </button>
           <button
             onClick={(e) => {
@@ -218,7 +221,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
             disabled={isProcessing || isRejected}
             className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isProcessing ? 'Processing...' : 'Reject'}
+            {isProcessing ? t('processing') : t('reject')}
           </button>
         </div>
       </div>
@@ -226,8 +229,8 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
   }
 
   const tabs: TabItem[] = [
-    { id: 'groups', label: "Groups I'm In", icon: faUsers },
-    { id: 'invites', label: 'Invites', icon: faEnvelope, badge: invites.length },
+    { id: 'groups', label: t('groupsImIn'), icon: faUsers },
+    { id: 'invites', label: t('invites'), icon: faEnvelope, badge: invites.length },
   ]
 
   return (
@@ -260,8 +263,8 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
               <div className="mb-4 text-gray-400">
                 <FontAwesomeIcon icon={faMusic} size="3x" />
               </div>
-              <p className="text-gray-700 text-lg mb-2 font-medium">You don't have any groups yet.</p>
-              <p className="text-gray-500 text-sm mb-6">Create your first group to start tracking listening habits together!</p>
+              <p className="text-gray-700 text-lg mb-2 font-medium">{t('noGroupsYet')}</p>
+              <p className="text-gray-500 text-sm mb-6">{t('noGroupsDescription')}</p>
             </div>
           )}
         </div>
@@ -285,8 +288,8 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
               <div className="mb-4 text-gray-400">
                 <FontAwesomeIcon icon={faEnvelope} size="3x" />
               </div>
-              <p className="text-gray-700 text-lg mb-2 font-medium">You don't have any pending invites.</p>
-              <p className="text-gray-500 text-sm">When someone invites you to a group, it will appear here.</p>
+              <p className="text-gray-700 text-lg mb-2 font-medium">{t('noInvitesYet')}</p>
+              <p className="text-gray-500 text-sm">{t('noInvitesDescription')}</p>
             </div>
           )}
         </div>

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import PositionMovementIcon from '@/components/PositionMovementIcon'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMusic, faMicrophone, faCompactDisc, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 interface PublicGroupWeeklyChartsProps {
   groupId: string
@@ -23,19 +24,22 @@ function formatDisplayValue(
   item: { name: string; artist?: string; playcount: number },
   chartType: string,
   showVS: boolean,
-  vsMap: Record<string, number>
+  vsMap: Record<string, number>,
+  t: any
 ): string {
   if (showVS) {
     const entryKey = getEntryKey(item, chartType)
     const vs = vsMap[`${chartType}|${entryKey}`]
     if (vs !== undefined && vs !== null) {
-      return `${vs.toFixed(2)} VS`
+      return `${vs.toFixed(2)} ${t('vs')}`
     }
   }
-  return `${item.playcount} plays`
+  return t('plays', { count: item.playcount })
 }
 
 export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGroupWeeklyChartsProps) {
+  const t = useSafeTranslations('groups.weeklyCharts')
+  const tQuickStats = useSafeTranslations('groups.quickStats')
   const [data, setData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -52,7 +56,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
         setIsLoading(false)
       })
       .catch((err) => {
-        setError('Failed to load charts')
+        setError(t('failedToLoad'))
         setIsLoading(false)
         console.error('Error fetching public weekly charts:', err)
       })
@@ -83,31 +87,31 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
         {data && data.weeksTracked > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-              <div className="text-sm text-gray-600 mb-1">Total Plays This Week</div>
+              <div className="text-sm text-gray-600 mb-1">{t('public.totalPlaysThisWeek')}</div>
               <div className="text-3xl font-bold text-[var(--theme-text)]">{data.totalPlaysThisWeek?.toLocaleString() || 0}</div>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-              <div className="text-sm text-gray-600 mb-1">Weeks Tracked</div>
+              <div className="text-sm text-gray-600 mb-1">{tQuickStats('weeksTracked')}</div>
               <div className="text-3xl font-bold text-[var(--theme-text)]">{data.weeksTracked || 0}</div>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-              <div className="text-sm text-gray-600 mb-1">Chart Mode</div>
+              <div className="text-sm text-gray-600 mb-1">{tQuickStats('chartMode')}</div>
               <div className="text-lg font-bold text-[var(--theme-text)] capitalize">
-                {data.chartMode === 'vs' ? 'Vibe Score' : data.chartMode === 'vs_weighted' ? 'Vibe Score Weighted' : 'Plays Only'}
+                {data.chartMode === 'vs' ? tQuickStats('vibeScore') : data.chartMode === 'vs_weighted' ? tQuickStats('vibeScoreWeighted') : tQuickStats('playsOnly')}
               </div>
             </div>
           </div>
         )}
         <div>
           <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)] mb-6">
-            Weekly Charts
+            {t('title')}
           </h2>
           <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-12 text-center border border-theme">
             <div className="mb-4 text-[var(--theme-primary)]">
               <FontAwesomeIcon icon={faMusic} size="3x" />
             </div>
-            <p className="text-gray-700 text-lg mb-2 font-medium">No charts available yet.</p>
-            <p className="text-gray-500 text-sm">This group hasn't generated any charts yet.</p>
+            <p className="text-gray-700 text-lg mb-2 font-medium">{t('noChartsAvailable')}</p>
+            <p className="text-gray-500 text-sm">{t('public.noChartsDescription')}</p>
           </div>
         </div>
       </>
@@ -121,24 +125,24 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
       {/* Quick Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-          <div className="text-sm text-gray-600 mb-1">Total Plays This Week</div>
+          <div className="text-sm text-gray-600 mb-1">{t('public.totalPlaysThisWeek')}</div>
           <div className="text-3xl font-bold text-[var(--theme-text)]">{data.totalPlaysThisWeek.toLocaleString()}</div>
         </div>
         <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-          <div className="text-sm text-gray-600 mb-1">Weeks Tracked</div>
+          <div className="text-sm text-gray-600 mb-1">{tQuickStats('weeksTracked')}</div>
           <div className="text-3xl font-bold text-[var(--theme-text)]">{data.weeksTracked}</div>
         </div>
         <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-          <div className="text-sm text-gray-600 mb-1">Chart Mode</div>
+          <div className="text-sm text-gray-600 mb-1">{tQuickStats('chartMode')}</div>
           <div className="text-lg font-bold text-[var(--theme-text)] capitalize">
-            {data.chartMode === 'vs' ? 'Vibe Score' : data.chartMode === 'vs_weighted' ? 'Vibe Score Weighted' : 'Plays Only'}
+            {data.chartMode === 'vs' ? tQuickStats('vibeScore') : data.chartMode === 'vs_weighted' ? tQuickStats('vibeScoreWeighted') : tQuickStats('playsOnly')}
           </div>
         </div>
       </div>
 
       <div>
         <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)] mb-6">
-          Weekly Charts
+          {t('title')}
         </h2>
         <div className="space-y-6">
           {weeks.map((week: any) => {
@@ -152,9 +156,9 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
             return (
               <div key={week.id} className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 border border-theme">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                  Week of {week.weekStartFormatted}
+                  {t('weekOf', { date: week.weekStartFormatted })}
                   <span className="text-sm font-normal italic text-gray-500 ml-2">
-                    (from {week.weekStartFormatted} to {week.weekEndFormatted})
+                    ({t('fromTo', { start: week.weekStartFormatted, end: week.weekEndFormatted })})
                   </span>
                 </h3>
                 
@@ -163,11 +167,11 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                   <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-theme shadow-sm">
                     <h4 className="font-bold text-lg mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
                       <FontAwesomeIcon icon={faMicrophone} style={{ width: '1em', height: '1em' }} />
-                      Top Artists
+                      {t('topArtists')}
                     </h4>
                     <div className="space-y-3">
                       {topArtists.slice(0, 3).map((artist: any, idx: number) => {
-                        const displayValue = formatDisplayValue(artist, 'artists', showVS, vsMap)
+                        const displayValue = formatDisplayValue(artist, 'artists', showVS, vsMap, t)
                         const entryKey = getEntryKey(artist, 'artists')
                         const positionChange = positionChangeMap[`artists|${entryKey}`]
                         const entryType = entryTypeMap[`artists|${entryKey}`]
@@ -198,14 +202,14 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                               const entryType = entryTypeMap[`artists|${entryKey}`]
                               return (
                                 <li key={idx + 3} className="truncate flex items-center gap-1">
-                                  {artist.name} <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(artist, 'artists', showVS, vsMap)})</span>
+                                  {artist.name} <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(artist, 'artists', showVS, vsMap, t)})</span>
                                 </li>
                               )
                             })}
                           </ol>
                           {topArtists.length > 10 && (
                             <p className="text-xs text-gray-500 mt-2">
-                              ...and {topArtists.length - 10} more
+                              {t('andMore', { count: topArtists.length - 10 })}
                             </p>
                           )}
                         </div>
@@ -217,11 +221,11 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                   <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-theme shadow-sm">
                     <h4 className="font-bold text-lg mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
                       <FontAwesomeIcon icon={faMusic} style={{ width: '1em', height: '1em' }} />
-                      Top Tracks
+                      {t('topTracks')}
                     </h4>
                     <div className="space-y-3">
                       {topTracks.slice(0, 3).map((track: any, idx: number) => {
-                        const displayValue = formatDisplayValue(track, 'tracks', showVS, vsMap)
+                        const displayValue = formatDisplayValue(track, 'tracks', showVS, vsMap, t)
                         const entryKey = getEntryKey(track, 'tracks')
                         const positionChange = positionChangeMap[`tracks|${entryKey}`]
                         const entryType = entryTypeMap[`tracks|${entryKey}`]
@@ -238,7 +242,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                                 {track.name}
                                 <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-sm" />
                               </div>
-                              <div className="text-xs text-gray-600 truncate">by {track.artist}</div>
+                              <div className="text-xs text-gray-600 truncate">{t('by', { artist: track.artist })}</div>
                               <div className="text-sm text-[var(--theme-text)] font-medium mt-1">{displayValue}</div>
                             </div>
                           </div>
@@ -253,14 +257,14 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                               const entryType = entryTypeMap[`tracks|${entryKey}`]
                               return (
                                 <li key={idx + 3} className="truncate flex items-center gap-1">
-                                  {track.name} by {track.artist} <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(track, 'tracks', showVS, vsMap)})</span>
+                                  {track.name} {t('by', { artist: track.artist })} <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(track, 'tracks', showVS, vsMap, t)})</span>
                                 </li>
                               )
                             })}
                           </ol>
                           {topTracks.length > 10 && (
                             <p className="text-xs text-gray-500 mt-2">
-                              ...and {topTracks.length - 10} more
+                              {t('andMore', { count: topTracks.length - 10 })}
                             </p>
                           )}
                         </div>
@@ -272,11 +276,11 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                   <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-theme shadow-sm">
                     <h4 className="font-bold text-lg mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
                       <FontAwesomeIcon icon={faCompactDisc} style={{ width: '1em', height: '1em' }} />
-                      Top Albums
+                      {t('topAlbums')}
                     </h4>
                     <div className="space-y-3">
                       {topAlbums.slice(0, 3).map((album: any, idx: number) => {
-                        const displayValue = formatDisplayValue(album, 'albums', showVS, vsMap)
+                        const displayValue = formatDisplayValue(album, 'albums', showVS, vsMap, t)
                         const entryKey = getEntryKey(album, 'albums')
                         const positionChange = positionChangeMap[`albums|${entryKey}`]
                         const entryType = entryTypeMap[`albums|${entryKey}`]
@@ -293,7 +297,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                                 {album.name}
                                 <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-sm" />
                               </div>
-                              <div className="text-xs text-gray-600 truncate">by {album.artist}</div>
+                              <div className="text-xs text-gray-600 truncate">{t('by', { artist: album.artist })}</div>
                               <div className="text-sm text-[var(--theme-text)] font-medium mt-1">{displayValue}</div>
                             </div>
                           </div>
@@ -308,14 +312,14 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                               const entryType = entryTypeMap[`albums|${entryKey}`]
                               return (
                                 <li key={idx + 3} className="truncate flex items-center gap-1">
-                                  {album.name} by {album.artist} <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(album, 'albums', showVS, vsMap)})</span>
+                                  {album.name} {t('by', { artist: album.artist })} <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs" /> <span className="text-[var(--theme-text)]">({formatDisplayValue(album, 'albums', showVS, vsMap, t)})</span>
                                 </li>
                               )
                             })}
                           </ol>
                           {topAlbums.length > 10 && (
                             <p className="text-xs text-gray-500 mt-2">
-                              ...and {topAlbums.length - 10} more
+                              {t('andMore', { count: topAlbums.length - 10 })}
                             </p>
                           )}
                         </div>

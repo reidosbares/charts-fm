@@ -1,31 +1,35 @@
 import { getPublicGroupById } from '@/lib/group-queries'
 import PublicGroupHeroServer from './PublicGroupHeroServer'
 import PublicGroupWeeklyCharts from './PublicGroupWeeklyCharts'
+import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { id: string; locale: string } }): Promise<Metadata> {
   try {
     const group = await getPublicGroupById(params.id)
+    const t = await getTranslations('groups')
     return {
-      title: group?.name || 'Public Group',
+      title: group?.name || t('title'),
     }
   } catch {
+    const t = await getTranslations('groups')
     return {
-      title: 'Public Group',
+      title: t('title'),
     }
   }
 }
 
-export default async function PublicGroupPage({ params }: { params: { id: string } }) {
+export default async function PublicGroupPage({ params }: { params: { id: string; locale: string } }) {
   const group = await getPublicGroupById(params.id)
+  const t = await getTranslations('groups')
   
   if (!group) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Group not found</h1>
+          <h1 className="text-2xl font-bold mb-4">{t('notFound')}</h1>
           <p className="text-gray-600 mb-4">
-            This group may not exist or may be private.
+            {t('public.notFoundDescription')}
           </p>
         </div>
       </main>

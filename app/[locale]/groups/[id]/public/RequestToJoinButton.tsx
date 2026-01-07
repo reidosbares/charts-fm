@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from '@/i18n/routing'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 const MAX_GROUP_MEMBERS = 100
 
@@ -21,6 +22,7 @@ export default function RequestToJoinButton({
   allowFreeJoin = false,
   memberCount,
 }: RequestToJoinButtonProps) {
+  const t = useSafeTranslations('groups.public')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [hasRequested, setHasRequested] = useState(hasPendingRequest)
@@ -46,7 +48,7 @@ export default function RequestToJoinButton({
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to send request')
+        throw new Error(data.error || t('failedToSendRequest'))
       }
 
       if (data.joined) {
@@ -62,7 +64,7 @@ export default function RequestToJoinButton({
         router.refresh()
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send request')
+      setError(err instanceof Error ? err.message : t('failedToSendRequest'))
     } finally {
       setIsLoading(false)
     }
@@ -72,7 +74,7 @@ export default function RequestToJoinButton({
     <div>
       {isAtLimit && (
         <div className="mb-2 p-2 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded text-sm">
-          This group has reached the maximum limit of {MAX_GROUP_MEMBERS} members.
+          {t('groupFullMessage', { count: MAX_GROUP_MEMBERS })}
         </div>
       )}
       {error && (
@@ -87,25 +89,25 @@ export default function RequestToJoinButton({
         useTheme={false}
         title={
           isAtLimit
-            ? `Group has reached the maximum limit of ${MAX_GROUP_MEMBERS} members`
+            ? t('groupFullTooltip', { count: MAX_GROUP_MEMBERS })
             : hasPendingInvite
-            ? 'You have been invited to join this group'
+            ? t('invitedTooltip')
             : undefined
         }
       >
         {isLoading
-          ? (allowFreeJoin ? 'Joining...' : 'Sending...')
+          ? (allowFreeJoin ? t('joining') : t('sending'))
           : hasJoined
-          ? 'Joined!'
+          ? t('joined')
           : hasPendingInvite
-          ? 'Invited'
+          ? t('invited')
           : hasRequested
-          ? 'Request Sent'
+          ? t('requestSent')
           : isAtLimit
-          ? 'Group Full'
+          ? t('groupFull')
           : allowFreeJoin
-          ? 'Join'
-          : 'Request to Join'}
+          ? t('join')
+          : t('requestToJoin')}
       </LiquidGlassButton>
     </div>
   )

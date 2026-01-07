@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from '@/i18n/routing'
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 interface InviteNotificationProps {
   groupId: string
@@ -9,6 +10,7 @@ interface InviteNotificationProps {
 }
 
 export default function InviteNotification({ groupId, inviteId }: InviteNotificationProps) {
+  const t = useSafeTranslations('groups.public')
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -26,7 +28,7 @@ export default function InviteNotification({ groupId, inviteId }: InviteNotifica
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || 'Failed to accept invite')
+        throw new Error(data.error || t('failedToAcceptInvite'))
       }
 
       setIsAccepted(true)
@@ -35,7 +37,7 @@ export default function InviteNotification({ groupId, inviteId }: InviteNotifica
         router.push(`/groups/${groupId}`)
       }, 1000)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to accept invite')
+      setError(err instanceof Error ? err.message : t('failedToAcceptInvite'))
       setIsLoading(false)
     }
   }
@@ -51,14 +53,14 @@ export default function InviteNotification({ groupId, inviteId }: InviteNotifica
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || 'Failed to reject invite')
+        throw new Error(data.error || t('failedToRejectInvite'))
       }
 
       setIsRejected(true)
       // Refresh the page to update the UI
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to reject invite')
+      setError(err instanceof Error ? err.message : t('failedToRejectInvite'))
       setIsLoading(false)
     }
   }
@@ -66,7 +68,7 @@ export default function InviteNotification({ groupId, inviteId }: InviteNotifica
   if (isAccepted) {
     return (
       <div className="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
-        <p className="font-semibold">Invite accepted! Redirecting to group...</p>
+        <p className="font-semibold">{t('inviteAccepted')}</p>
       </div>
     )
   }
@@ -82,21 +84,21 @@ export default function InviteNotification({ groupId, inviteId }: InviteNotifica
           {error}
         </div>
       )}
-      <p className="font-semibold mb-3">You've been invited to join this group</p>
+      <p className="font-semibold mb-3">{t('invitedToJoin')}</p>
       <div className="flex gap-3">
         <button
           onClick={handleAccept}
           disabled={isLoading}
           className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
         >
-          {isLoading ? 'Processing...' : 'Accept Invite'}
+          {isLoading ? t('processing') : t('acceptInvite')}
         </button>
         <button
           onClick={handleReject}
           disabled={isLoading}
           className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
         >
-          {isLoading ? 'Processing...' : 'Reject Invite'}
+          {isLoading ? t('processing') : t('rejectInvite')}
         </button>
       </div>
     </div>

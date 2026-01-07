@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma'
 import RequestToJoinButton from './RequestToJoinButton'
 import InviteNotification from './InviteNotification'
 import CompatibilityScore from './CompatibilityScore'
+import { getTranslations } from 'next-intl/server'
 
 interface PublicGroupHeroServerProps {
   groupId: string
@@ -14,6 +15,7 @@ interface PublicGroupHeroServerProps {
 
 export default async function PublicGroupHeroServer({ groupId, colorTheme }: PublicGroupHeroServerProps) {
   const group = await getPublicGroupById(groupId)
+  const t = await getTranslations('groups.hero')
   
   if (!group) {
     return null
@@ -70,7 +72,15 @@ export default async function PublicGroupHeroServer({ groupId, colorTheme }: Pub
 
   // Calculate tracking day info
   const trackingDayOfWeek = group.trackingDayOfWeek ?? 0
-  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  const dayNames = [
+    t('daysOfWeek.sunday'),
+    t('daysOfWeek.monday'),
+    t('daysOfWeek.tuesday'),
+    t('daysOfWeek.wednesday'),
+    t('daysOfWeek.thursday'),
+    t('daysOfWeek.friday'),
+    t('daysOfWeek.saturday')
+  ]
   const trackingDayName = dayNames[trackingDayOfWeek]
 
   // Get chart mode
@@ -89,7 +99,7 @@ export default async function PublicGroupHeroServer({ groupId, colorTheme }: Pub
             href="/groups" 
             className="text-gray-500 hover:text-[var(--theme-text)] transition-colors"
           >
-            Groups
+            {t('breadcrumb')}
           </Link>
           <span className="text-gray-400">/</span>
           <span className="text-gray-900 font-medium truncate">{group.name}</span>
@@ -126,17 +136,17 @@ export default async function PublicGroupHeroServer({ groupId, colorTheme }: Pub
               </h1>
               <div className="flex flex-wrap items-center gap-4 mb-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">Owner:</span>
-                  <span className="font-semibold text-gray-900">{group.creator?.name || group.creator?.lastfmUsername || 'Unknown'}</span>
+                  <span className="text-sm text-gray-600">{t('owner')}</span>
+                  <span className="font-semibold text-gray-900">{group.creator?.name || group.creator?.lastfmUsername || t('deletedUser')}</span>
                 </div>
                 <span className="text-gray-300">•</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">Members:</span>
+                  <span className="text-sm text-gray-600">{t('members')}</span>
                   <span className="font-semibold text-gray-900">{group._count.members}</span>
                 </div>
                 <span className="text-gray-300">•</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">Tracking:</span>
+                  <span className="text-sm text-gray-600">{t('tracking')}</span>
                   <span className="font-semibold text-gray-900">{trackingDayName}</span>
                 </div>
               </div>
@@ -148,7 +158,7 @@ export default async function PublicGroupHeroServer({ groupId, colorTheme }: Pub
                     className="inline-flex items-center gap-2 text-[var(--theme-primary-dark)] hover:text-[var(--theme-primary-darker)] hover:underline font-medium text-sm transition-colors"
                   >
                     <span>←</span>
-                    <span>View as Member</span>
+                    <span>{t('public.viewAsMember')}</span>
                   </Link>
                 </div>
               )}

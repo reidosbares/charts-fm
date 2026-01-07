@@ -1,51 +1,59 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from '@/i18n/routing'
 import CustomSelect from '@/components/CustomSelect'
 import Toggle from '@/components/Toggle'
-
-const DAYS_OF_WEEK = [
-  { value: 0, label: 'Sunday' },
-  { value: 1, label: 'Monday' },
-  { value: 2, label: 'Tuesday' },
-  { value: 3, label: 'Wednesday' },
-  { value: 4, label: 'Thursday' },
-  { value: 5, label: 'Friday' },
-  { value: 6, label: 'Saturday' },
-]
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 const CHART_SIZES = [10, 20, 50]
 
-const CHART_MODES = [
-  {
-    value: 'vs',
-    label: 'Vibe Score (VS)',
-    icon: '/icons/icon_vs.png',
-    description: '✨ Recommended! Every member\'s top picks get equal love. Your #1 track scores 2.00 VS, and scores decrease gradually for lower positions. We sum everyone\'s scores together. Perfect for groups where everyone\'s taste matters equally!',
-  },
-  {
-    value: 'vs_weighted',
-    label: 'VS Weighted',
-    icon: '/icons/icon_vs_weighted.png',
-    description: 'The best of both worlds! We multiply your VS (calculated from your top 100) by how many times you actually played it, then sum across all members. Great for balancing what\'s important to you with how much you listened.',
-  },
-  {
-    value: 'plays_only',
-    label: 'Plays Only',
-    icon: '/icons/icon_plays.png',
-    description: 'Classic and simple! Just add up all the play counts. If you want the traditional "most played wins" approach, this is your jam.',
-  },
-]
-
-const ICON_SOURCES = [
-  { value: 'top_album', label: 'Top Album' },
-  { value: 'top_artist', label: 'Top Artist' },
-  { value: 'top_track_artist', label: 'Artist of Top Track' },
-]
-
 export default function CreateGroupPage() {
   const router = useRouter()
+  const t = useSafeTranslations('groups.create')
+  const tChart = useSafeTranslations('groups.settings.chartCreation')
+  const tGroupDetails = useSafeTranslations('groups.settings.groupDetails')
+  const tDays = useSafeTranslations('groups.settings.chartCreation.daysOfWeek')
+  const tModes = useSafeTranslations('groups.settings.chartCreation.modes')
+  const tCommon = useSafeTranslations('common')
+  
+  const DAYS_OF_WEEK = useMemo(() => [
+    { value: 0, label: tDays('sunday') },
+    { value: 1, label: tDays('monday') },
+    { value: 2, label: tDays('tuesday') },
+    { value: 3, label: tDays('wednesday') },
+    { value: 4, label: tDays('thursday') },
+    { value: 5, label: tDays('friday') },
+    { value: 6, label: tDays('saturday') },
+  ], [tDays])
+
+  const CHART_MODES = useMemo(() => [
+    {
+      value: 'vs',
+      label: tModes('vs.label'),
+      icon: '/icons/icon_vs.png',
+      description: tModes('vs.description'),
+    },
+    {
+      value: 'vs_weighted',
+      label: tModes('vsWeighted.label'),
+      icon: '/icons/icon_vs_weighted.png',
+      description: tModes('vsWeighted.description'),
+    },
+    {
+      value: 'plays_only',
+      label: tModes('playsOnly.label'),
+      icon: '/icons/icon_plays.png',
+      description: tModes('playsOnly.description'),
+    },
+  ], [tModes])
+
+  const ICON_SOURCES = useMemo(() => [
+    { value: 'top_album', label: tGroupDetails('iconSources.topAlbum') },
+    { value: 'top_artist', label: tGroupDetails('iconSources.topArtist') },
+    { value: 'top_track_artist', label: tGroupDetails('iconSources.topTrackArtist') },
+  ], [tGroupDetails])
+
   const [currentStep, setCurrentStep] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -71,13 +79,13 @@ export default function CreateGroupPage() {
   const [carouselIndex, setCarouselIndex] = useState(initialIndex >= 0 ? initialIndex : 0)
 
   useEffect(() => {
-    document.title = 'ChartsFM - Create Group'
-  }, [])
+    document.title = `ChartsFM - ${t('title')}`
+  }, [t])
 
   // Step 1 validation
   const validateStep1 = (): boolean => {
     if (!formData.name.trim()) {
-      setError('Group name is required')
+      setError(t('groupNameRequired'))
       return false
     }
     return true
@@ -124,7 +132,7 @@ export default function CreateGroupPage() {
     // Check for duplicates (case-insensitive)
     const normalizedInput = username.toLowerCase()
     if (formData.invites.some(inv => inv.toLowerCase() === normalizedInput)) {
-      setInviteErrors({ ...inviteErrors, [formData.invites.length]: 'This username is already in the list' })
+      setInviteErrors({ ...inviteErrors, [formData.invites.length]: t('usernameAlreadyInList') })
       return
     }
 
@@ -135,7 +143,7 @@ export default function CreateGroupPage() {
       const data = await response.json()
 
       if (!response.ok || !data.exists) {
-        setInviteErrors({ ...inviteErrors, [formData.invites.length]: data.error || 'User with this Last.fm username not found' })
+        setInviteErrors({ ...inviteErrors, [formData.invites.length]: data.error || t('userNotFound') })
         setIsValidatingUsername(false)
         return
       }
@@ -149,7 +157,7 @@ export default function CreateGroupPage() {
       setInviteInput('')
       setInviteErrors({})
     } catch (err) {
-      setInviteErrors({ ...inviteErrors, [formData.invites.length]: 'Failed to validate username. Please try again.' })
+      setInviteErrors({ ...inviteErrors, [formData.invites.length]: t('failedToValidateUsername') })
     } finally {
       setIsValidatingUsername(false)
     }
@@ -197,7 +205,7 @@ export default function CreateGroupPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create group')
+        throw new Error(data.error || t('failedToCreateGroup'))
       }
 
       const groupId = data.group.id
@@ -216,7 +224,7 @@ export default function CreateGroupPage() {
 
             if (!inviteResponse.ok) {
               const inviteData = await inviteResponse.json()
-              throw new Error(inviteData.error || 'Failed to send invite')
+              throw new Error(inviteData.error || t('failedToSendInvite'))
             }
             return { success: true, username: lastfmUsername }
           } catch (err) {
@@ -237,7 +245,7 @@ export default function CreateGroupPage() {
       // Redirect to the new group
       router.push(`/groups/${groupId}`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create group')
+      setError(err instanceof Error ? err.message : t('failedToCreateGroup'))
       setIsLoading(false)
     }
   }
@@ -245,15 +253,15 @@ export default function CreateGroupPage() {
   const renderStep1 = () => (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold mb-4">Group Details</h2>
+        <h2 className="text-2xl font-semibold mb-4">{t('step1.title')}</h2>
         <p className="text-sm text-gray-600 mb-6">
-          Set up the basic information for your group.
+          {t('step1.description')}
         </p>
       </div>
 
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-          Group Name *
+          {tGroupDetails('groupName')} *
         </label>
         <input
           type="text"
@@ -262,14 +270,14 @@ export default function CreateGroupPage() {
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-          placeholder="My Music Group"
+          placeholder={t('step1.namePlaceholder')}
           disabled={isLoading}
         />
       </div>
 
       <div>
         <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-2">
-          Group Icon (Image URL)
+          {tGroupDetails('groupIcon')}
         </label>
         <input
           type="url"
@@ -277,20 +285,20 @@ export default function CreateGroupPage() {
           value={formData.image}
           onChange={(e) => setFormData({ ...formData, image: e.target.value })}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-          placeholder="https://example.com/icon.png"
+          placeholder={tGroupDetails('iconUrlPlaceholder')}
           disabled={isLoading}
         />
         <p className="text-xs text-gray-500 mt-1">
-          Optional: Enter a URL to an image for your group icon
+          {t('step1.iconOptional')}
         </p>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Dynamic Icon
+          {tGroupDetails('dynamicIcon')}
         </label>
         <p className="text-xs text-gray-500 mb-3">
-          Automatically update the group icon based on the latest weekly chart. The icon will update whenever new charts are generated.
+          {tGroupDetails('dynamicIconDescription')}
         </p>
         
         <div className="mb-4">
@@ -299,14 +307,14 @@ export default function CreateGroupPage() {
             checked={formData.dynamicIconEnabled}
             onChange={(checked) => setFormData({ ...formData, dynamicIconEnabled: checked })}
             disabled={isLoading}
-            label="Enable Dynamic Icon"
+            label={tGroupDetails('enableDynamicIcon')}
           />
         </div>
 
         {formData.dynamicIconEnabled && (
           <div>
             <label htmlFor="dynamicIconSource" className="block text-sm font-medium text-gray-700 mb-2">
-              Icon Source
+              {tGroupDetails('iconSource')}
             </label>
             <CustomSelect
               id="dynamicIconSource"
@@ -316,7 +324,7 @@ export default function CreateGroupPage() {
               disabled={isLoading}
             />
             <p className="text-xs text-gray-500 mt-1">
-              Choose what the group icon should display from the latest weekly chart
+              {tGroupDetails('iconSourceDescription')}
             </p>
           </div>
         )}
@@ -327,18 +335,18 @@ export default function CreateGroupPage() {
   const renderStep2 = () => (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold mb-4">Chart Settings</h2>
+        <h2 className="text-2xl font-semibold mb-4">{t('step2.title')}</h2>
         <p className="text-sm text-gray-600 mb-6">
-          Configure how charts are calculated and displayed.
+          {t('step2.description')}
         </p>
       </div>
 
       <div>
         <label htmlFor="chartSize" className="block text-lg font-bold text-gray-900 mb-2">
-          Chart Size
+          {tChart('chartSize')}
         </label>
         <p className="text-sm text-gray-500 mb-4">
-          Number of items to display in each chart (Top 10, Top 20, or Top 50)
+          {tChart('chartSizeDescription')}
         </p>
         <div className="flex gap-4">
           {CHART_SIZES.map((size) => (
@@ -359,7 +367,7 @@ export default function CreateGroupPage() {
                 className="sr-only"
                 disabled={isLoading}
               />
-              <span className="font-medium">Top {size}</span>
+              <span className="font-medium">{tChart('top', { size })}</span>
             </label>
           ))}
         </div>
@@ -367,10 +375,10 @@ export default function CreateGroupPage() {
 
       <div>
         <label htmlFor="trackingDayOfWeek" className="block text-lg font-bold text-gray-900 mb-2">
-          Tracking Day of Week
+          {tChart('trackingDayOfWeek')}
         </label>
         <p className="text-sm text-gray-500 mb-4">
-          The day of the week that marks the start of each tracking period. Each week runs from this day through the day before the next occurrence (e.g., if set to Monday, weeks run from Monday to Sunday). Charts can be calculated after each week ends, and this can be done on the day selected below.
+          {tChart('trackingDayOfWeekDescription')}
         </p>
         <CustomSelect
           id="trackingDayOfWeek"
@@ -383,10 +391,10 @@ export default function CreateGroupPage() {
 
       <div>
         <label htmlFor="chartMode" className="block text-lg font-bold text-gray-900 mb-2">
-          Chart Mode
+          {tChart('chartMode')}
         </label>
         <p className="text-sm text-gray-500 mb-4">
-          How charts are calculated and ranked. Changing this only affects future charts.
+          {tChart('chartModeDescription')}
         </p>
         
         {/* Carousel Selector */}
@@ -401,7 +409,7 @@ export default function CreateGroupPage() {
                 setFormData({ ...formData, chartMode: CHART_MODES[newIndex].value })
               }}
               className="p-2 rounded-full hover:bg-yellow-100 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              aria-label="Previous mode"
+              aria-label={tChart('previousMode')}
               disabled={isLoading}
             >
               <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -444,7 +452,7 @@ export default function CreateGroupPage() {
                 setFormData({ ...formData, chartMode: CHART_MODES[newIndex].value })
               }}
               className="p-2 rounded-full hover:bg-yellow-100 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              aria-label="Next mode"
+              aria-label={tChart('nextMode')}
               disabled={isLoading}
             >
               <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -469,7 +477,7 @@ export default function CreateGroupPage() {
                     ? 'bg-yellow-500 w-8'
                     : 'bg-gray-300 hover:bg-gray-400'
                 }`}
-                aria-label={`Select ${mode.label}`}
+                aria-label={tChart('selectMode', { mode: mode.label })}
               />
             ))}
           </div>
@@ -491,15 +499,15 @@ export default function CreateGroupPage() {
   const renderStep3 = () => (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold mb-4">Invite Users</h2>
+        <h2 className="text-2xl font-semibold mb-4">{t('step3.title')}</h2>
         <p className="text-sm text-gray-600 mb-6">
-          Optionally invite users to join your group. You can skip this step and invite users later.
+          {t('step3.description')}
         </p>
       </div>
 
       <div>
         <label htmlFor="inviteInput" className="block text-sm font-medium text-gray-700 mb-2">
-          Last.fm Username
+          {t('step3.lastfmUsername')}
         </label>
         <div className="flex gap-2">
           <input
@@ -522,7 +530,7 @@ export default function CreateGroupPage() {
               }
             }}
             className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-            placeholder="Enter Last.fm username"
+            placeholder={t('step3.usernamePlaceholder')}
             disabled={isLoading || isValidatingUsername}
           />
           <button
@@ -531,7 +539,7 @@ export default function CreateGroupPage() {
             disabled={isLoading || !inviteInput.trim() || isValidatingUsername}
             className="px-6 py-2 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isValidatingUsername ? 'Checking...' : 'Add'}
+            {isValidatingUsername ? t('step3.checking') : t('step3.add')}
           </button>
         </div>
         {inviteErrors[formData.invites.length] && (
@@ -542,7 +550,7 @@ export default function CreateGroupPage() {
       {formData.invites.length > 0 && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Invites ({formData.invites.length})
+            {t('step3.invites', { count: formData.invites.length })}
           </label>
           <div className="space-y-2">
             {formData.invites.map((username, index) => (
@@ -557,7 +565,7 @@ export default function CreateGroupPage() {
                   disabled={isLoading}
                   className="text-red-600 hover:text-red-800 text-sm font-medium disabled:opacity-50"
                 >
-                  Remove
+                  {t('step3.remove')}
                 </button>
               </div>
             ))}
@@ -567,7 +575,7 @@ export default function CreateGroupPage() {
 
       {formData.invites.length === 0 && (
         <div className="text-sm text-gray-500 text-center py-4">
-          No invites added yet. You can skip this step and invite users later.
+          {t('step3.noInvitesYet')}
         </div>
       )}
     </div>
@@ -576,7 +584,7 @@ export default function CreateGroupPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <div className="z-10 max-w-2xl w-full">
-        <h1 className="text-4xl font-bold text-center mb-8">Create Group</h1>
+        <h1 className="text-4xl font-bold text-center mb-8">{t('title')}</h1>
 
         {/* Progress Indicator */}
         <div className="mb-8">
@@ -586,9 +594,9 @@ export default function CreateGroupPage() {
             <div className={`flex-1 h-2 rounded-full ${currentStep >= 3 ? 'bg-yellow-500' : 'bg-gray-200'}`} />
           </div>
           <div className="flex items-center justify-between text-sm text-gray-600">
-            <span className={currentStep === 1 ? 'font-semibold text-yellow-600' : ''}>Group Details</span>
-            <span className={currentStep === 2 ? 'font-semibold text-yellow-600' : ''}>Chart Settings</span>
-            <span className={currentStep === 3 ? 'font-semibold text-yellow-600' : ''}>Invite Users</span>
+            <span className={currentStep === 1 ? 'font-semibold text-yellow-600' : ''}>{t('step1.title')}</span>
+            <span className={currentStep === 2 ? 'font-semibold text-yellow-600' : ''}>{t('step2.title')}</span>
+            <span className={currentStep === 3 ? 'font-semibold text-yellow-600' : ''}>{t('step3.title')}</span>
           </div>
         </div>
 
@@ -613,7 +621,7 @@ export default function CreateGroupPage() {
                 disabled={isLoading}
                 className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
               >
-                Back
+                {t('back')}
               </button>
             )}
             <div className="flex-1" />
@@ -624,7 +632,7 @@ export default function CreateGroupPage() {
                 disabled={isLoading}
                 className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Next
+                {t('next')}
               </button>
             ) : (
               <>
@@ -634,7 +642,7 @@ export default function CreateGroupPage() {
                   disabled={isLoading}
                   className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
                 >
-                  Cancel
+                  {tCommon('cancel')}
                 </button>
                 <button
                   type="button"
@@ -642,7 +650,7 @@ export default function CreateGroupPage() {
                   disabled={isLoading}
                   className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? 'Creating...' : 'Create Group'}
+                  {isLoading ? t('creating') : t('createButton')}
                 </button>
               </>
             )}

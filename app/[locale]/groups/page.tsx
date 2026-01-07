@@ -5,10 +5,15 @@ import { getUserGroups, getUserGroupInvites } from '@/lib/group-queries'
 import { Link } from '@/i18n/routing'
 import GroupsTabs from './GroupsTabs'
 import { LiquidGlassLink } from '@/components/LiquidGlassButton'
+import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = {
-  title: 'My Groups',
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations('groups.list')
+  return {
+    title: t('title'),
+  }
 }
 
 export default async function GroupsPage({
@@ -17,6 +22,7 @@ export default async function GroupsPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const t = await getTranslations('groups.list')
   const session = await getSession()
   
   if (!session?.user?.email) {
@@ -63,24 +69,21 @@ export default async function GroupsPage({
   return (
     <main className="flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 relative">
       <div className="max-w-7xl w-full mx-auto relative z-10">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">
-            My Groups
-          </h1>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-end gap-4 mb-8">
           <div className="flex gap-3">
             <LiquidGlassLink
               href="/groups/discover"
               variant="neutral"
               useTheme={false}
             >
-              Browse Groups
+              {t('browseGroups')}
             </LiquidGlassLink>
             <LiquidGlassLink
               href="/groups/create"
               variant="primary"
               useTheme={false}
             >
-              Create Group
+              {t('createGroup')}
             </LiquidGlassLink>
           </div>
         </div>

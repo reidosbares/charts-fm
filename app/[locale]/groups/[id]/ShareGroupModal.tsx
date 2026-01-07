@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
+import { useLocale } from 'next-intl'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
@@ -19,6 +20,7 @@ export default function ShareGroupModal({
   buttonRef,
 }: ShareGroupModalProps) {
   const t = useSafeTranslations('groups.share')
+  const locale = useLocale()
   const [linkCopied, setLinkCopied] = useState(false)
   const [invitationCopied, setInvitationCopied] = useState(false)
   const [publicUrl, setPublicUrl] = useState('')
@@ -58,7 +60,7 @@ export default function ShareGroupModal({
 
   useEffect(() => {
     if (isOpen && typeof window !== 'undefined') {
-      const fullUrl = `${window.location.origin}/groups/${groupId}/public`
+      const fullUrl = `${window.location.origin}/${locale}/groups/${groupId}/public`
       setPublicUrl(fullUrl)
       
       // Update position on scroll
@@ -70,7 +72,7 @@ export default function ShareGroupModal({
         window.removeEventListener('resize', updatePosition)
       }
     }
-  }, [isOpen, groupId, updatePosition])
+  }, [isOpen, groupId, locale, updatePosition])
 
   useEffect(() => {
     if (linkCopied) {
