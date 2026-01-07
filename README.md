@@ -1,14 +1,19 @@
 # ChartsFM
 
-A web application for visualizing your Last.fm listening statistics with beautiful charts and social features.
+A web application for visualizing Last.fm statistics with social features.
 
 ## Features
 
-- 🔐 User authentication and accounts
-- 🎵 Last.fm account integration
-- 📊 Interactive charts and visualizations
-- 👥 Friend connections and social features
-- 📈 Listening statistics tracking
+- User authentication and account management
+- Last.fm account integration with statistics sync
+- Create and join music groups (public or private)
+- Generate weekly charts for artists, tracks, and albums with customizable calculation modes
+- Vibe Score (VS) system for charts generation with three modes: VS, VS Weighted, and Plays Only
+- Chart trends analysis (new entries, climbers, fallers, streaks)
+- All-time records and achievements tracking
+- Group recommendations with compatibility scores based on music taste (not released)
+- Group shoutbox and social features
+- Personal dashboard with listening overview and activity feed
 
 ## Tech Stack
 
@@ -17,160 +22,6 @@ A web application for visualizing your Last.fm listening statistics with beautif
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: NextAuth.js
 - **Styling**: Tailwind CSS
-- **Charts**: Recharts
-- **Deployment**: Vercel (recommended)
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ and npm/yarn/pnpm
-- PostgreSQL database (local or cloud)
-- Last.fm API key ([Get one here](https://www.last.fm/api/account/create))
-
-### Installation
-
-1. **Install dependencies:**
-   ```bash
-   npm install
-   # or
-   yarn install
-   # or
-   pnpm install
-   ```
-
-2. **Set up environment variables:**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Then edit `.env` and fill in:
-   - `DATABASE_URL`: Your PostgreSQL connection string
-   - `NEXTAUTH_SECRET`: Generate with `openssl rand -base64 32`
-   - `NEXTAUTH_URL`: Your app URL (http://localhost:3000 for local dev)
-   - `LASTFM_API_KEY`: Your Last.fm API key (from https://www.last.fm/api/account/create)
-   - `LASTFM_API_SECRET`: Your Last.fm API secret (found on your Last.fm API account page)
-
-3. **Set up the database:**
-   ```bash
-   # Generate Prisma client
-   npm run db:generate
-   
-   # Push schema to database (for development)
-   npm run db:push
-   
-   # Or create a migration (for production)
-   npm run db:migrate
-   ```
-
-4. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
-
-5. **Open your browser:**
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-## Database Setup
-
-### Local Development with Docker (Recommended)
-
-The easiest way to set up a local database is using Docker Compose:
-
-1. **Start the PostgreSQL container:**
-   ```bash
-   docker-compose up -d
-   ```
-
-2. **Create `.env.local` file** (or update your `.env`):
-   ```env
-   DATABASE_URL="postgresql://chartsfm:devpassword@localhost:5432/chartsfm_dev"
-   ```
-
-3. **Push the schema to the database:**
-   ```bash
-   npm run db:push
-   ```
-
-The database will persist in a Docker volume, so your data will remain even after stopping the container.
-
-**To stop the database:**
-```bash
-docker-compose down
-```
-
-**To remove the database and start fresh:**
-```bash
-docker-compose down -v
-```
-
-### Alternative: Local PostgreSQL Installation
-
-If you prefer to install PostgreSQL directly:
-
-**macOS (using Homebrew):**
-```bash
-brew install postgresql@14
-brew services start postgresql@14
-createdb chartsfm
-```
-
-**Or use a cloud service:**
-- [Supabase](https://supabase.com) (free tier available)
-- [Neon](https://neon.tech) (free tier available)
-- [Railway](https://railway.app) (free tier available)
-
-Update your `DATABASE_URL` in `.env` accordingly.
-
-## Project Structure
-
-```
-chartsfm/
-├── app/                    # Next.js App Router pages
-│   ├── api/               # API routes
-│   │   └── auth/         # NextAuth.js routes
-│   ├── globals.css       # Global styles
-│   ├── layout.tsx        # Root layout
-│   └── page.tsx          # Home page
-├── components/            # React components
-├── docs/                  # Documentation files
-│   ├── VIBE_SCORE_SYSTEM.md
-│   └── SIGNUP_IMPLEMENTATION.md
-├── lib/                   # Utility functions
-│   ├── prisma.ts         # Prisma client
-│   ├── lastfm.ts         # Last.fm API client
-│   └── vibe-score.ts     # Vibe Score calculation
-├── prisma/
-│   └── schema.prisma     # Database schema
-└── public/               # Static assets
-```
-
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run db:generate` - Generate Prisma client
-- `npm run db:push` - Push schema changes to database
-- `npm run db:migrate` - Create and run migrations
-- `npm run db:studio` - Open Prisma Studio (database GUI)
-
-## Next Steps
-
-1. Set up authentication pages (`/auth/signin`, `/auth/signup`)
-2. Create user dashboard
-3. Implement Last.fm connection flow
-4. Build chart components for listening stats
-5. Add friend system
-6. Create comparison visualizations
-
-## Documentation
-
-Detailed documentation for major features and systems:
-
-- [Vibe Score System](./docs/VIBE_SCORE_SYSTEM.md) - Customizable chart ranking system
-- [Signup Implementation](./docs/SIGNUP_IMPLEMENTATION.md) - Last.fm-based account creation flow
 
 ## Resources
 
@@ -179,6 +30,14 @@ Detailed documentation for major features and systems:
 - [NextAuth.js Documentation](https://next-auth.js.org)
 - [Last.fm API Documentation](https://www.last.fm/api)
 - [Recharts Documentation](https://recharts.org)
+
+## About
+
+ChartsFM was created by me (GreatWhiteShark) as a personal project. As a music lover and long-time Last.fm nerd, I've always loved the custom visualisations and tools that people create using Last.fm data, and for a long time wanted to create my own.
+
+This project was mostly created using the help of AI code editors. It is a bit of an experiment in "vibe coding" (but I *am* an actual developer).
+
+I hope people will have fun using ChartsFM and poking around the project. Feel free to suggest improvements, flag issues, create pull requests.
 
 ## License
 
