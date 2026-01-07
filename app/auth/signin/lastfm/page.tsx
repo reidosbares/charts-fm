@@ -33,7 +33,8 @@ export default function LastFMSignInPage() {
         })
 
         if (result?.error) {
-          setError('Log in failed. Please try again.')
+          // Sign-in failed - likely due to unverified email (since we check that in NextAuth)
+          setError('Log in failed. Please verify your email address before logging in. Check your inbox for the verification link, or request a new one.')
           setIsLoading(false)
         } else if (result?.ok) {
           // Success - redirect to dashboard

@@ -80,8 +80,8 @@ export default function CompleteSignUpPage() {
         throw new Error(data.error || 'Failed to create account')
       }
 
-      // Account created successfully, redirect to home with success message
-      router.push('/?success=account_created')
+      // Account created successfully, redirect to verification page
+      router.push('/auth/verify-email?email=' + encodeURIComponent(formData.email))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create account')
       setIsSubmitting(false)

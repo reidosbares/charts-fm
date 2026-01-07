@@ -35,6 +35,13 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
+        // Check if email is verified
+        if (!user.emailVerified) {
+          // Return null to indicate authentication failure
+          // The frontend will check verification status separately
+          return null
+        }
+
         return {
           id: user.id,
           email: user.email,
@@ -61,6 +68,12 @@ export const authOptions: NextAuthOptions = {
         })
 
         if (!user) {
+          return null
+        }
+
+        // Check if email is verified
+        if (!user.emailVerified) {
+          // Return null to prevent login - user must verify email first
           return null
         }
 
@@ -95,16 +108,16 @@ export const authOptions: NextAuthOptions = {
       if (session.user && token.id) {
         session.user.id = token.id as string
         
-        // Validate that the user still exists in the database
-        // This prevents issues after database migrations/wipes
+        // Validate that the user still exists in the database and email is verified
+        // This prevents issues after database migrations/wipes and ensures email verification
         try {
           const user = await prisma.user.findUnique({
             where: { id: token.id as string },
-            select: { id: true }
+            select: { id: true, emailVerified: true }
           })
           
-          // If user doesn't exist, clear the session by returning null user
-          if (!user) {
+          // If user doesn't exist or email is not verified, clear the session
+          if (!user || !user.emailVerified) {
             // Return session with null user - this will make useSession return unauthenticated
             return {
               ...session,

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
+import { generateVerificationToken, sendVerificationEmail } from '@/lib/email'
 
 export async function POST(request: Request) {
   try {
@@ -64,7 +65,12 @@ export async function POST(request: Request) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    // Create user
+    // Generate verification token
+    const verificationToken = generateVerificationToken()
+    const tokenExpires = new Date()
+    tokenExpires.setHours(tokenExpires.getHours() + 24) // 24 hours from now
+
+    // Create user with emailVerified: false
     const user = await prisma.user.create({
       data: {
         email,
@@ -72,14 +78,27 @@ export async function POST(request: Request) {
         password: hashedPassword,
         lastfmUsername,
         lastfmSessionKey: sessionKey,
+        emailVerified: false,
+        emailVerificationToken: verificationToken,
+        emailVerificationTokenExpires: tokenExpires,
+        lastVerificationEmailSentAt: new Date(), // Track when email was sent for rate limiting
       },
     })
+
+    // Send verification email
+    try {
+      await sendVerificationEmail(email, verificationToken, name)
+    } catch (error) {
+      console.error('Failed to send verification email:', error)
+      // Continue even if email fails - user can request resend
+    }
 
     // Clear the temporary session cookie
     cookieStore.delete('lastfm_session')
 
     return NextResponse.json({
       success: true,
+      message: 'Account created. Please check your email to verify your account.',
       user: {
         id: user.id,
         email: user.email,

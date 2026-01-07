@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { signIn, useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
 
 interface SignInModalProps {
@@ -13,10 +13,14 @@ interface SignInModalProps {
 
 export default function SignInModal({ isOpen, onClose, showSuccessMessage = false }: SignInModalProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { data: session, status } = useSession()
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingLastFM, setIsLoadingLastFM] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showResendVerification, setShowResendVerification] = useState(false)
+  const [isResending, setIsResending] = useState(false)
+  const [resendSuccess, setResendSuccess] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -55,7 +59,28 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
       })
 
       if (result?.error) {
-        setError('Invalid email or password')
+        // Check if user exists and email is unverified
+        try {
+          const checkResponse = await fetch('/api/auth/check-verification', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: formData.email }),
+          })
+
+          const checkData = await checkResponse.json()
+
+          if (checkData.exists && !checkData.verified) {
+            setError('Please verify your email address before logging in. Check your inbox for the verification link.')
+            setShowResendVerification(true)
+          } else {
+            setError('Invalid email or password')
+          }
+        } catch {
+          // If check fails, show generic error
+          setError('Invalid email or password')
+        }
         setIsLoading(false)
       } else {
         // Close modal and redirect to dashboard on success
@@ -66,6 +91,40 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
     } catch (err) {
       setError('An error occurred. Please try again.')
       setIsLoading(false)
+    }
+  }
+
+  const handleResendVerification = async () => {
+    if (!formData.email) {
+      setError('Please enter your email address')
+      return
+    }
+
+    setIsResending(true)
+    setError(null)
+    setResendSuccess(false)
+
+    try {
+      const response = await fetch('/api/auth/resend-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: formData.email }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to resend verification email')
+      }
+
+      setResendSuccess(true)
+      setError(null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to resend verification email')
+    } finally {
+      setIsResending(false)
     }
   }
 
@@ -148,13 +207,32 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
 
           {showSuccessMessage && (
             <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-              Account created successfully! Please log in.
+              {searchParams?.get('verified') === 'true' 
+                ? 'Email verified successfully! You can now log in.'
+                : 'Account created successfully! Please log in.'}
             </div>
           )}
 
           {error && (
             <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
               {error}
+              {showResendVerification && (
+                <div className="mt-3">
+                  <button
+                    type="button"
+                    onClick={handleResendVerification}
+                    disabled={isResending}
+                    className="text-sm underline hover:no-underline disabled:opacity-50"
+                  >
+                    {isResending ? 'Sending...' : 'Resend verification email'}
+                  </button>
+                  {resendSuccess && (
+                    <p className="text-sm text-green-700 mt-2">
+                      Verification email sent! Please check your inbox.
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           )}
 

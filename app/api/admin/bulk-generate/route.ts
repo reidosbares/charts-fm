@@ -56,7 +56,7 @@ export async function POST(request: Request) {
           continue
         }
 
-        // Create user
+        // Create user (admin-created users are verified by default)
         const user = await prisma.user.create({
           data: {
             email,
@@ -64,6 +64,7 @@ export async function POST(request: Request) {
             password: hashedPassword,
             lastfmUsername: trimmedUsername,
             isSuperuser: false,
+            emailVerified: true, // Admin-created users are verified by default
           },
           select: {
             id: true,

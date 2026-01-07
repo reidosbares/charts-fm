@@ -46,10 +46,24 @@ export async function GET(request: Request) {
     // Check if user already exists (for signin flow)
     if (mode === 'signin') {
       const existingUser = await prisma.user.findUnique({
-        where: { lastfmUsername: username }
+        where: { lastfmUsername: username },
+        select: {
+          id: true,
+          email: true,
+          emailVerified: true,
+          lastfmSessionKey: true,
+        }
       })
 
       if (existingUser) {
+        // Check if email is verified
+        if (!existingUser.emailVerified) {
+          // Redirect to verification page with email
+          return NextResponse.redirect(
+            new URL(`/auth/verify-email?email=${encodeURIComponent(existingUser.email)}&error=email_not_verified`, request.url)
+          )
+        }
+
         // Update session key
         await prisma.user.update({
           where: { id: existingUser.id },

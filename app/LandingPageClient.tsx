@@ -18,13 +18,14 @@ export default function LandingPageClient() {
   const musicRef = useRef<HTMLSpanElement>(null)
   const togetherRef = useRef<HTMLSpanElement>(null)
   const showSuccessMessage = searchParams?.get('success') === 'account_created'
+  const showVerifiedMessage = searchParams?.get('verified') === 'true'
 
   // Open modal if success parameter is present
   useEffect(() => {
-    if (showSuccessMessage) {
+    if (showSuccessMessage || showVerifiedMessage) {
       setIsSignInModalOpen(true)
     }
-  }, [showSuccessMessage])
+  }, [showSuccessMessage, showVerifiedMessage])
 
   // Animation sequence: fade in, then loop together/apart every 3 seconds
   useEffect(() => {
@@ -211,7 +212,7 @@ export default function LandingPageClient() {
       <SignInModal
         isOpen={isSignInModalOpen}
         onClose={() => setIsSignInModalOpen(false)}
-        showSuccessMessage={showSuccessMessage}
+        showSuccessMessage={showSuccessMessage || showVerifiedMessage}
       />
     </>
   )

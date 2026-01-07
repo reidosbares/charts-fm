@@ -20,6 +20,10 @@ model User {
   lastfmSessionKey String? // Last.fm session key for authenticated API calls
   isSuperuser   Boolean  @default(false) // Superuser/admin access
   quickAccessGroupId String? // Quick access group pinned to navbar
+  emailVerified Boolean  @default(false) // Email verification status
+  emailVerificationToken String? // Verification token for email confirmation
+  emailVerificationTokenExpires DateTime? // Token expiration (24 hours)
+  lastVerificationEmailSentAt DateTime? // Timestamp of last verification email sent (for rate limiting)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   

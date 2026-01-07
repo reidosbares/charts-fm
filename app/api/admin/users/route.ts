@@ -57,7 +57,7 @@ export async function POST(request: Request) {
       hashedPassword = await bcrypt.hash(password, 10)
     }
 
-    // Create user
+    // Create user (admin-created users are verified by default)
     const user = await prisma.user.create({
       data: {
         email,
@@ -67,6 +67,7 @@ export async function POST(request: Request) {
         lastfmSessionKey: lastfmSessionKey || null,
         image: image || null,
         isSuperuser: isSuperuserInput === true,
+        emailVerified: true, // Admin-created users are verified by default
       },
       select: {
         id: true,
