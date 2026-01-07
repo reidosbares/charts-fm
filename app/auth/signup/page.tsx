@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
@@ -18,7 +18,7 @@ const themes = [
   { from: [255, 255, 255], to: [249, 250, 251] }, // white
 ]
 
-export default function SignUpPage() {
+function SignUpPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { data: session, status } = useSession()
@@ -290,6 +290,21 @@ export default function SignUpPage() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={
+      <main className="flex min-h-screen flex-col items-center justify-center p-24">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </main>
+    }>
+      <SignUpPageContent />
+    </Suspense>
   )
 }
 
