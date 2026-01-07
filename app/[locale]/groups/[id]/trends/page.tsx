@@ -3,17 +3,20 @@ import { getTrendsForGroup } from '@/lib/group-trends'
 import { Link } from '@/i18n/routing'
 import TrendsClient from './TrendsClient'
 import GroupPageHero from '@/components/groups/GroupPageHero'
+import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   try {
     const { group } = await requireGroupMembership(params.id)
+    const t = await getTranslations('groups.trends')
     return {
-      title: `${group?.name || 'Group'} - Trends`,
+      title: `${group?.name || 'Group'} - ${t('title')}`,
     }
   } catch {
+    const t = await getTranslations('groups.trends')
     return {
-      title: 'Trends',
+      title: t('title'),
     }
   }
 }
@@ -29,14 +32,16 @@ function formatDateWritten(date: Date): string {
 
 export default async function TrendsPage({ params }: { params: { id: string } }) {
   const { user, group } = await requireGroupMembership(params.id)
+  const t = await getTranslations('groups')
+  const tTrends = await getTranslations('groups.trends')
 
   if (!group) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Group not found</h1>
+          <h1 className="text-2xl font-bold mb-4">{t('notFound')}</h1>
           <Link href="/groups" className="text-gray-600 hover:underline">
-            Back to Groups
+            {t('backToGroups')}
           </Link>
         </div>
       </main>
@@ -61,15 +66,15 @@ export default async function TrendsPage({ params }: { params: { id: string } })
               image: group.image,
             }}
             breadcrumbs={[
-              { label: 'Groups', href: '/groups' },
+              { label: t('hero.breadcrumb'), href: '/groups' },
               { label: group.name, href: `/groups/${group.id}` },
-              { label: 'Trends' },
+              { label: tTrends('title') },
             ]}
-            subheader="Trends"
+            subheader={tTrends('title')}
           />
           <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-            <p className="text-gray-600 mb-4">No trends available yet.</p>
-            <p className="text-gray-500 text-sm">Generate charts to see weekly trends and insights!</p>
+            <p className="text-gray-600 mb-4">{tTrends('noTrendsAvailable')}</p>
+            <p className="text-gray-500 text-sm">{tTrends('generateChartsToSee')}</p>
           </div>
         </div>
       </main>
@@ -89,15 +94,15 @@ export default async function TrendsPage({ params }: { params: { id: string } })
             image: group.image,
           }}
           breadcrumbs={[
-            { label: 'Groups', href: '/groups' },
+            { label: t('hero.breadcrumb'), href: '/groups' },
             { label: group.name, href: `/groups/${group.id}` },
-            { label: 'Trends' },
+            { label: tTrends('title') },
           ]}
           subheader={
             <>
-              Week of {weekStartFormatted}
+              {tTrends('weekOf', { date: weekStartFormatted })}
               <span className="text-xs italic text-gray-500 ml-1">
-                (from {weekStartFormatted} to {weekEndFormatted})
+                ({tTrends('from')} {weekStartFormatted} {tTrends('to')} {weekEndFormatted})
               </span>
             </>
           }

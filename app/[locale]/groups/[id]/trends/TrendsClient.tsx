@@ -25,6 +25,7 @@ import { formatWeekDate } from '@/lib/weekly-utils'
 import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
 import { generateSlug, ChartType } from '@/lib/chart-slugs'
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 type CategoryTab = 'members' | 'artists' | 'tracks' | 'albums'
 
@@ -41,7 +42,128 @@ interface CategoryData {
   exits: any[]
 }
 
+// Helper function to translate fun facts
+function translateFunFact(fact: string, t: (key: string, values?: Record<string, any>) => string): string {
+  const tf = (key: string, values?: Record<string, any>) => t(`funFacts.${key}`, values)
+  
+  // Comeback: "Artist "name" by artist made a comeback! Returned to the top 10 after X weeks away!"
+  const comebackMatch = fact.match(/^(Artist|Track|Album) "([^"]+)"(?: by ([^!]+))? made a comeback! Returned to the top 10 after (\d+) weeks away!$/)
+  if (comebackMatch) {
+    const [, type, name, artist, weeks] = comebackMatch
+    const typeKey = type.toLowerCase() as 'artist' | 'track' | 'album'
+    return tf('comeback', {
+      type: tf(typeKey),
+      name,
+      byArtist: artist ? ` ${t('by', { artist: artist.trim() })}` : '',
+      weeks
+    })
+  }
+
+  // On fire: "Artist "name" by artist is on fire! X weeks in a row in the top 10!"
+  const onFireMatch = fact.match(/^(Artist|Track|Album) "([^"]+)"(?: by ([^!]+))? is on fire! (\d+) weeks in a row in the top 10!$/)
+  if (onFireMatch) {
+    const [, type, name, artist, weeks] = onFireMatch
+    const typeKey = type.toLowerCase() as 'artist' | 'track' | 'album'
+    return tf('onFire', {
+      type: tf(typeKey),
+      name,
+      byArtist: artist ? ` ${t('by', { artist: artist.trim() })}` : '',
+      weeks
+    })
+  }
+
+  // Unstoppable: "Unstoppable! "name" by artist has been charting for X consecutive weeks"
+  const unstoppableMatch = fact.match(/^Unstoppable! "([^"]+)"(?: by ([^!]+))? has been charting for (\d+) consecutive weeks$/)
+  if (unstoppableMatch) {
+    const [, name, artist, weeks] = unstoppableMatch
+    return tf('unstoppable', {
+      name,
+      byArtist: artist ? ` ${t('by', { artist: artist.trim() })}` : '',
+      weeks
+    })
+  }
+
+  // New peak: "New peak! "name" by artist reached #X, their highest ever!"
+  const newPeakMatch = fact.match(/^New peak! "([^"]+)"(?: by ([^!]+))? reached #(\d+), their highest ever!$/)
+  if (newPeakMatch) {
+    const [, name, artist, position] = newPeakMatch
+    return tf('newPeak', {
+      name,
+      byArtist: artist ? ` ${t('by', { artist: artist.trim() })}` : '',
+      position
+    })
+  }
+
+  // First timer: "First timer! "name" by artist entered the charts for the very first time!"
+  const firstTimerMatch = fact.match(/^First timer! "([^"]+)"(?: by ([^!]+))? entered the charts for the very first time!$/)
+  if (firstTimerMatch) {
+    const [, name, artist] = firstTimerMatch
+    return tf('firstTimer', {
+      name,
+      byArtist: artist ? ` ${t('by', { artist: artist.trim() })}` : ''
+    })
+  }
+
+  // Welcome to the club: "Welcome to the club! X entries are charting for the first time ever"
+  const welcomeMatch = fact.match(/^Welcome to the club! (\d+) entries are charting for the first time ever$/)
+  if (welcomeMatch) {
+    const [, count] = welcomeMatch
+    return tf('welcomeToClub', { count })
+  }
+
+  // Dominating: "Artist is dominating with X entries in the charts!"
+  const dominatingMatch = fact.match(/^(.+) is dominating with (\d+) entries in the charts!$/)
+  if (dominatingMatch) {
+    const [, artist, count] = dominatingMatch
+    return tf('dominating', { artist, count })
+  }
+
+  // Steady as a rock: "Steady as a rock! X entries held their position this week"
+  const steadyMatch = fact.match(/^Steady as a rock! (\d+) entries held their position this week$/)
+  if (steadyMatch) {
+    const [, count] = steadyMatch
+    return tf('steadyAsRock', { count })
+  }
+
+  // Top 3 stable: "The top 3 stayed strong - no changes at the top!"
+  if (fact === "The top 3 stayed strong - no changes at the top!") {
+    return tf('top3Stable')
+  }
+
+  // Wild week: "This week was wild! X more plays than last week - that's a Y% increase!"
+  const wildWeekMatch = fact.match(/^This week was wild! (.+) more plays than last week - that's a (\d+)% increase!$/)
+  if (wildWeekMatch) {
+    const [, plays, percent] = wildWeekMatch
+    return tf('wildWeek', { plays, percent })
+  }
+
+  // Close race: "Close race! Top contributor only X plays ahead of second place"
+  const closeRaceMatch = fact.match(/^Close race! Top contributor only (\d+) plays ahead of second place$/)
+  if (closeRaceMatch) {
+    const [, difference] = closeRaceMatch
+    return tf('closeRace', { difference })
+  }
+
+  // MVP: "This week's MVP: Name with X plays - absolute legend!"
+  const mvpMatch = fact.match(/^This week's MVP: (.+) with (.+) plays - absolute legend!$/)
+  if (mvpMatch) {
+    const [, name, plays] = mvpMatch
+    return tf('mvp', { name, plays })
+  }
+
+  // Total plays: "The group listened to X songs this week - that's dedication!"
+  const totalPlaysMatch = fact.match(/^The group listened to (.+) songs this week - that's dedication!$/)
+  if (totalPlaysMatch) {
+    const [, plays] = totalPlaysMatch
+    return tf('totalPlays', { plays })
+  }
+
+  // If no match, return original
+  return fact
+}
+
 export default function TrendsClient({ trends, groupId, userId }: TrendsClientProps) {
+  const t = useSafeTranslations('groups.trends')
   const [personalizedStats, setPersonalizedStats] = useState<any>(null)
   const [isLoadingPersonal, setIsLoadingPersonal] = useState(true)
   const [activeTab, setActiveTab] = useState<CategoryTab>('members')
@@ -144,7 +266,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
     
     // Add Longest Streaks first (always show)
     trendBlocks.push({
-      title: 'Longest Streaks',
+      title: t('longestStreaks'),
       icon: faChartLine,
       iconColor: 'text-[var(--theme-primary)]',
       entries: categoryLongestStreaks,
@@ -164,11 +286,11 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
             >
               {entry.name}
               {entry.artist && (
-                <span className="text-sm font-normal text-gray-600"> by {entry.artist}</span>
+                <span className="text-sm font-normal text-gray-600"> {t('by', { artist: entry.artist })}</span>
               )}
             </Link>
             <div className="text-sm text-gray-500">
-              #{entry.position} • {entry.currentStreak} {entry.currentStreak === 1 ? 'week' : 'weeks'} streak
+              #{entry.position} • {entry.currentStreak} {entry.currentStreak === 1 ? t('week') : t('weeks')} streak
             </div>
           </div>
         </div>
@@ -177,7 +299,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
     
     // Add Comebacks second (always show)
     trendBlocks.push({
-      title: 'Comebacks',
+      title: t('comebacks'),
       icon: faTrophy,
       iconColor: 'text-[var(--theme-primary)]',
       entries: categoryComebacks,
@@ -197,11 +319,11 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
             >
               {entry.name}
               {entry.artist && (
-                <span className="text-sm font-normal text-gray-600"> by {entry.artist}</span>
+                <span className="text-sm font-normal text-gray-600"> {t('by', { artist: entry.artist })}</span>
               )}
             </Link>
             <div className="text-sm text-gray-500">
-              #{entry.position} • Returned after {entry.weeksAway} {entry.weeksAway === 1 ? 'week' : 'weeks'} away
+              #{entry.position} • {t('returnedAfter', { count: entry.weeksAway, unit: entry.weeksAway === 1 ? t('week') : t('weeks') })}
             </div>
           </div>
         </div>
@@ -210,7 +332,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
 
     // Add New Entries (always show)
     trendBlocks.push({
-      title: 'New Entries',
+      title: t('newEntries'),
       icon: faFire,
       iconColor: '',
       entries: data.newEntries,
@@ -227,7 +349,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
           >
             {isNumberOne && (
               <div className="absolute top-2 right-0 bg-yellow-500 text-white text-xs font-bold px-8 py-1.5 transform rotate-12 translate-x-1 shadow-md z-10 whitespace-nowrap">
-                #1 DEBUT
+                {t('numberOneDebut')}
               </div>
             )}
             <FontAwesomeIcon 
@@ -243,7 +365,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
               >
                 {entry.name}
                 {entry.artist && (
-                  <span className={`text-sm font-normal ${isNumberOne ? 'text-yellow-700' : 'text-gray-600'}`}> by {entry.artist}</span>
+                  <span className={`text-sm font-normal ${isNumberOne ? 'text-yellow-700' : 'text-gray-600'}`}> {t('by', { artist: entry.artist })}</span>
                 )}
               </Link>
               <div className={`text-sm ${isNumberOne ? 'text-yellow-700 font-semibold' : 'text-gray-500'}`}>#{entry.position}</div>
@@ -255,7 +377,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
 
     // Add Biggest Climbers (always show)
     trendBlocks.push({
-      title: 'Biggest Climbers',
+      title: t('biggestClimbers'),
       icon: faArrowUp,
       iconColor: 'text-green-600',
       entries: data.biggestClimbers,
@@ -272,7 +394,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
           >
             {isPeakPosition && (
               <div className="absolute top-2 right-0 bg-blue-500 text-white text-xs font-bold px-8 py-1.5 transform rotate-12 translate-x-1 shadow-md z-10 whitespace-nowrap">
-                NEW PEAK
+                {t('newPeak')}
               </div>
             )}
             <FontAwesomeIcon 
@@ -288,11 +410,11 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
               >
                 {entry.name}
                 {entry.artist && (
-                  <span className={`text-sm font-normal ${isPeakPosition ? 'text-blue-700' : 'text-gray-600'}`}> by {entry.artist}</span>
+                  <span className={`text-sm font-normal ${isPeakPosition ? 'text-blue-700' : 'text-gray-600'}`}> {t('by', { artist: entry.artist })}</span>
                 )}
               </Link>
               <div className={`text-sm font-semibold ${isPeakPosition ? 'text-blue-700' : 'text-green-600'}`}>
-                ↑ {Math.abs(entry.positionChange || 0)} positions
+                ↑ {Math.abs(entry.positionChange || 0)} {t('positions')}
                 {entry.oldPosition && entry.newPosition && (
                   <span className={`ml-1 ${isPeakPosition ? 'text-blue-600' : 'text-gray-500'}`}>({entry.oldPosition} → {entry.newPosition})</span>
                 )}
@@ -305,7 +427,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
 
     // Add Biggest Fallers (always show)
     trendBlocks.push({
-      title: 'Biggest Fallers',
+      title: t('biggestFallers'),
       icon: faArrowDown,
       iconColor: 'text-red-600',
       entries: data.biggestFallers,
@@ -324,11 +446,11 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
             >
               {entry.name}
               {entry.artist && (
-                <span className="text-sm font-normal text-gray-600"> by {entry.artist}</span>
+                <span className="text-sm font-normal text-gray-600"> {t('by', { artist: entry.artist })}</span>
               )}
             </Link>
             <div className="text-sm text-red-600 font-semibold">
-              ↓ {Math.abs(entry.positionChange || 0)} positions
+              ↓ {Math.abs(entry.positionChange || 0)} {t('positions')}
               {entry.oldPosition && entry.newPosition && (
                 <span className="text-gray-500 ml-1">({entry.oldPosition} → {entry.newPosition})</span>
               )}
@@ -340,7 +462,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
 
     // Add Exits (always show)
     trendBlocks.push({
-      title: 'Exits',
+      title: t('exits'),
       icon: faSkull,
       iconColor: 'text-gray-600',
       entries: data.exits,
@@ -359,10 +481,10 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
             >
               {entry.name}
               {entry.artist && (
-                <span className="text-sm font-normal text-gray-600"> by {entry.artist}</span>
+                <span className="text-sm font-normal text-gray-600"> {t('by', { artist: entry.artist })}</span>
               )}
             </Link>
-            <div className="text-sm text-gray-500">Last position: #{entry.lastPosition}</div>
+            <div className="text-sm text-gray-500">{t('lastPosition')}: #{entry.lastPosition}</div>
           </div>
         </div>
       ),
@@ -375,7 +497,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
           const firstThree = limitedEntries.slice(0, 3)
           const rest = limitedEntries.slice(3)
           const totalCount = block.entries.length
-          const showTotal = (block.title === 'New Entries' || block.title === 'Exits') && totalCount > 0
+          const showTotal = (block.title === t('newEntries') || block.title === t('exits')) && totalCount > 0
           const isEmpty = totalCount === 0
           
           return (
@@ -391,7 +513,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                   </div>
                 ) : isEmpty ? (
                   <div className="text-gray-500 text-center py-6 text-sm italic">
-                    There are no entries to show. 🍂
+                    {t('noEntriesToShow')}
                   </div>
                 ) : (
                   <>
@@ -416,30 +538,30 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                               >
                                 {entry.name}
                                 {entry.artist && (
-                                  <span className="text-xs font-normal text-gray-500"> by {entry.artist}</span>
+                                  <span className="text-xs font-normal text-gray-500"> {t('by', { artist: entry.artist })}</span>
                                 )}
                               </Link>
                               {entry.position && (
                                 <div className="text-xs text-gray-500">
                                   #{entry.position}
                                   {entry.weeksAway !== undefined && entry.weeksAway !== null && (
-                                    <span className="ml-1">• Returned after {entry.weeksAway} {entry.weeksAway === 1 ? 'week' : 'weeks'} away</span>
+                                    <span className="ml-1">• {t('returnedAfter', { count: entry.weeksAway, unit: entry.weeksAway === 1 ? t('week') : t('weeks') })}</span>
                                   )}
                                   {entry.currentStreak !== undefined && entry.currentStreak !== null && (
-                                    <span className="ml-1">• {entry.currentStreak} {entry.currentStreak === 1 ? 'week' : 'weeks'} streak</span>
+                                    <span className="ml-1">• {entry.currentStreak} {entry.currentStreak === 1 ? t('week') : t('weeks')} streak</span>
                                   )}
                                 </div>
                               )}
                               {entry.positionChange !== undefined && entry.positionChange !== null && (
                                 <div className={`text-xs font-medium ${entry.positionChange < 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                  {entry.positionChange < 0 ? '↑' : '↓'} {Math.abs(entry.positionChange)} positions
+                                  {entry.positionChange < 0 ? '↑' : '↓'} {Math.abs(entry.positionChange)} {t('positions')}
                                   {entry.oldPosition && entry.newPosition && (
                                     <span className="text-gray-400 ml-1">({entry.oldPosition} → {entry.newPosition})</span>
                                   )}
                                 </div>
                               )}
                               {entry.lastPosition && (
-                                <div className="text-xs text-gray-500">Last: #{entry.lastPosition}</div>
+                                <div className="text-xs text-gray-500">{t('lastPosition')}: #{entry.lastPosition}</div>
                               )}
                             </div>
                           </div>
@@ -451,7 +573,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                     {showTotal && (
                       <div className="pt-3 mt-3 border-t border-[var(--theme-border)]/50">
                         <div className="text-sm text-gray-600 text-center">
-                          Total: <span className="font-semibold text-gray-800">{totalCount}</span> {block.title === 'New Entries' ? 'new entries' : 'exits'}
+                          {block.title === t('newEntries') ? t('totalNewEntries', { count: totalCount }) : t('totalExits', { count: totalCount })}
                         </div>
                       </div>
                     )}
@@ -474,7 +596,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
           <div className="bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-background-to)] rounded-xl p-6 border border-[var(--theme-border)] shadow-sm">
             <h3 className="text-xl font-bold text-[var(--theme-text)] mb-4 flex items-center gap-2">
               <FontAwesomeIcon icon={faUser} className="text-lg" />
-              Your Impact
+              {t('yourImpact')}
             </h3>
             {isLoadingPersonal ? (
               <div className="flex items-center justify-center py-8">
@@ -484,15 +606,15 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
               <div className="space-y-4">
                 {/* Total Contribution */}
                 <div className="bg-white/80 rounded-lg p-4 border border-theme">
-                  <div className="text-sm text-gray-600 mb-1">Your Total Contribution</div>
+                  <div className="text-sm text-gray-600 mb-1">{t('yourTotalContribution')}</div>
                   <div className="text-2xl font-bold text-[var(--theme-text)]">
-                    {personalizedStats.totalContribution?.plays?.toLocaleString() || 0} plays
+                    {personalizedStats.totalContribution?.plays?.toLocaleString() || 0} {t('plays')}
                   </div>
                   <div className="text-base text-[var(--theme-text)] mt-1">
-                    {personalizedStats.totalContribution?.vs?.toFixed(2) || 0} VS
+                    {personalizedStats.totalContribution?.vs?.toFixed(2) || 0} {t('vs')}
                     {personalizedStats.totalContribution?.percentageOfGroup && (
                       <span className="text-xs text-gray-600 ml-2">
-                        ({personalizedStats.totalContribution.percentageOfGroup.toFixed(1)}% of group)
+                        ({personalizedStats.totalContribution.percentageOfGroup.toFixed(1)}% {t('ofGroup')})
                       </span>
                     )}
                   </div>
@@ -501,12 +623,12 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                 {/* Taste Match */}
                 {personalizedStats.tasteMatch && (
                   <div className="bg-white/80 rounded-lg p-3 border border-theme">
-                    <h4 className="text-sm font-bold text-[var(--theme-primary-dark)] mb-1">Your Taste Match</h4>
+                    <h4 className="text-sm font-bold text-[var(--theme-primary-dark)] mb-1">{t('yourTasteMatch')}</h4>
                     <div className="text-2xl font-bold text-[var(--theme-text)]">
                       {personalizedStats.tasteMatch.overlapPercentage.toFixed(1)}%
                     </div>
                     <div className="text-xs text-gray-600 mt-1">
-                      {personalizedStats.tasteMatch.sharedEntries} shared entries
+                      {personalizedStats.tasteMatch.sharedEntries} {t('sharedEntries')}
                     </div>
                   </div>
                 )}
@@ -514,23 +636,23 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                 {/* You vs MVP */}
                 {personalizedStats.vsMVP && (
                   <div className="bg-white/80 rounded-lg p-3 border border-theme">
-                    <h4 className="text-sm font-bold text-[var(--theme-primary-dark)] mb-1">You vs MVP</h4>
+                    <h4 className="text-sm font-bold text-[var(--theme-primary-dark)] mb-1">{t('youVsMVP')}</h4>
                     <div className="text-base font-bold text-gray-900 mb-1">{personalizedStats.vsMVP.mvpName}</div>
                     <div className="text-sm text-[var(--theme-text)]">
-                      You: {personalizedStats.vsMVP.userTotal.toFixed(2)} VS
+                      You: {personalizedStats.vsMVP.userTotal.toFixed(2)} {t('vs')}
                     </div>
                     <div className="text-sm text-[var(--theme-text)]">
-                      MVP: {personalizedStats.vsMVP.mvpTotal.toFixed(2)} VS
+                      MVP: {personalizedStats.vsMVP.mvpTotal.toFixed(2)} {t('vs')}
                     </div>
                     <div className="text-xs text-gray-600 mt-1">
-                      {personalizedStats.vsMVP.percentage.toFixed(1)}% of MVP
+                      {personalizedStats.vsMVP.percentage.toFixed(1)}% {t('ofMVP')}
                     </div>
                   </div>
                 )}
               </div>
             ) : (
               <div className="text-gray-500 text-center py-4 text-sm">
-                No personalized stats available
+                {t('noPersonalizedStats')}
               </div>
             )}
           </div>
@@ -540,7 +662,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
             <div className="bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-background-to)] rounded-xl shadow-sm p-6 border border-[var(--theme-border)]">
               <h3 className="text-xl font-bold text-[var(--theme-text)] mb-4 flex items-center gap-2">
                 <FontAwesomeIcon icon={faTrophy} className="text-lg" />
-                Top Contributors
+                {t('topContributors')}
               </h3>
               <div className="space-y-3">
                 {topContributors.map((contributor: any, idx: number) => (
@@ -554,9 +676,9 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-gray-900 text-sm">{contributor.name}</div>
                       <div className="text-xs text-[var(--theme-text)]">
-                        {contributor.totalPlays?.toLocaleString() || 0} plays
+                        {contributor.totalPlays?.toLocaleString() || 0} {t('plays')}
                         {contributor.totalVS && (
-                          <span className="ml-1">• {contributor.totalVS.toFixed(2)} VS</span>
+                          <span className="ml-1">• {contributor.totalVS.toFixed(2)} {t('vs')}</span>
                         )}
                       </div>
                     </div>
@@ -571,13 +693,13 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
             <div className="bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-background-to)] rounded-xl p-6 border border-[var(--theme-border)] shadow-sm">
               <div className="flex items-center gap-2 mb-3">
                 <FontAwesomeIcon icon={faTrophy} className="text-xl text-[var(--theme-primary)]" />
-                <h3 className="text-xl font-bold text-[var(--theme-text)]">This Week's MVP</h3>
+                <h3 className="text-xl font-bold text-[var(--theme-text)]">{t('thisWeeksMVP')}</h3>
               </div>
               <div className="text-xl font-bold text-gray-900 mb-2">{memberSpotlight.name}</div>
               <div className="text-base text-gray-700 mb-3">{memberSpotlight.highlight}</div>
               {memberSpotlight.topContributions && memberSpotlight.topContributions.length > 0 && (
                 <div className="text-xs text-gray-600">
-                  Top contributions: {memberSpotlight.topContributions.map((c: any) => c.name).join(', ')}
+                  {t('topContributions', { contributions: memberSpotlight.topContributions.map((c: any) => c.name).join(', ') })}
                 </div>
               )}
             </div>
@@ -589,15 +711,15 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
           <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 border border-theme">
             <h3 className="text-xl font-bold text-[var(--theme-primary-dark)] mb-4 flex items-center gap-2">
               <FontAwesomeIcon icon={faUser} className="text-lg" />
-              Your Detailed Stats
+              {t('yourDetailedStats')}
             </h3>
             <div className="space-y-4">
               {/* Top Contributions */}
               {personalizedStats.topContributions && personalizedStats.topContributions.length > 0 && (
                 <div>
                   <h4 className="text-lg font-bold text-[var(--theme-primary-dark)] mb-3 flex items-center gap-2">
-                    Your Top Contributions
-                    <Tooltip content="Chart entries where you contributed the most. Shows how much of the group's total you made up for each one." position="right">
+                    {t('yourTopContributions')}
+                    <Tooltip content={t('topContributionsTooltip')} position="right">
                       <FontAwesomeIcon icon={faQuestionCircle} className="text-sm text-[var(--theme-primary-dark)] cursor-help" />
                     </Tooltip>
                   </h4>
@@ -617,11 +739,11 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                           >
                             {contribution.name}
                             {contribution.artist && (
-                              <span className="text-sm font-normal text-gray-600"> by {contribution.artist}</span>
+                              <span className="text-sm font-normal text-gray-600"> {t('by', { artist: contribution.artist })}</span>
                             )}
                           </Link>
                           <div className="text-sm text-[var(--theme-text)]">
-                            #{contribution.position} • {contribution.percentage.toFixed(1)}% of group total
+                            #{contribution.position} • {contribution.percentage.toFixed(1)}% {t('ofGroupTotal')}
                           </div>
                         </div>
                       </div>
@@ -634,8 +756,8 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
               {personalizedStats.entriesDriven && personalizedStats.entriesDriven.length > 0 && (
                 <div>
                   <h4 className="text-lg font-bold text-[var(--theme-primary-dark)] mb-3 flex items-center gap-2">
-                    Entries You Drove
-                    <Tooltip content="Chart entries where you contributed at least half of the group's total. You were the main reason these made it into the charts." position="right">
+                    {t('entriesYouDrove')}
+                    <Tooltip content={t('entriesYouDroveTooltip')} position="right">
                       <FontAwesomeIcon icon={faQuestionCircle} className="text-sm text-[var(--theme-primary-dark)] cursor-help" />
                     </Tooltip>
                   </h4>
@@ -655,11 +777,11 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                           >
                             {entry.name}
                             {entry.artist && (
-                              <span className="text-sm font-normal text-gray-600"> by {entry.artist}</span>
+                              <span className="text-sm font-normal text-gray-600"> {t('by', { artist: entry.artist })}</span>
                             )}
                           </Link>
                           <div className="text-sm text-[var(--theme-text)]">
-                            #{entry.position} • You contributed {entry.percentage.toFixed(1)}%
+                            #{entry.position} • {t('youContributed', { percentage: entry.percentage.toFixed(1) })}
                           </div>
                         </div>
                       </div>
@@ -672,8 +794,8 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
               {personalizedStats.biggestMovers && personalizedStats.biggestMovers.length > 0 && (
                 <div>
                   <h4 className="text-lg font-bold text-[var(--theme-primary-dark)] mb-3 flex items-center gap-2">
-                    Your Biggest Movers
-                    <Tooltip content="Chart entries that moved up the most this week and that you helped with. Shows how many spots each one climbed." position="right">
+                    {t('yourBiggestMovers')}
+                    <Tooltip content={t('yourBiggestMoversTooltip')} position="right">
                       <FontAwesomeIcon icon={faQuestionCircle} className="text-sm text-[var(--theme-primary-dark)] cursor-help" />
                     </Tooltip>
                   </h4>
@@ -693,11 +815,11 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                           >
                             {mover.name}
                             {mover.artist && (
-                              <span className="text-sm font-normal text-gray-600"> by {mover.artist}</span>
+                              <span className="text-sm font-normal text-gray-600"> {t('by', { artist: mover.artist })}</span>
                             )}
                           </Link>
                           <div className="text-sm text-green-600 font-semibold">
-                            ↑ {Math.abs(mover.positionChange)} positions ({mover.oldPosition} → {mover.newPosition})
+                            ↑ {Math.abs(mover.positionChange)} {t('positions')} ({mover.oldPosition} → {mover.newPosition})
                           </div>
                         </div>
                       </div>
@@ -713,10 +835,10 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
   }
 
   const tabs: TabItem[] = [
-    { id: 'members', label: 'Member Trends', icon: faUsers },
-    { id: 'artists', label: 'Artists', icon: faMicrophone },
-    { id: 'tracks', label: 'Tracks', icon: faMusic },
-    { id: 'albums', label: 'Albums', icon: faCompactDisc },
+    { id: 'members', label: t('memberTrends'), icon: faUsers },
+    { id: 'artists', label: t('artists'), icon: faMicrophone },
+    { id: 'tracks', label: t('tracks'), icon: faMusic },
+    { id: 'albums', label: t('albums'), icon: faCompactDisc },
   ]
 
   return (
@@ -724,29 +846,29 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
       {/* Quick Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-theme shadow-sm">
-          <div className="text-sm text-gray-600 mb-1">Total Plays</div>
+          <div className="text-sm text-gray-600 mb-1">{t('totalPlays')}</div>
           <div className="text-3xl font-bold text-[var(--theme-text)]">
             {trends.totalPlays?.toLocaleString() || 0}
           </div>
           {trends.totalPlaysChange !== null && trends.totalPlaysChange !== undefined && (
             <div className={`text-sm mt-1 ${trends.totalPlaysChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {trends.totalPlaysChange >= 0 ? '+' : ''}{trends.totalPlaysChange.toLocaleString()} from last week
+              {trends.totalPlaysChange >= 0 ? '+' : ''}{trends.totalPlaysChange.toLocaleString()} {t('fromLastWeek')}
             </div>
           )}
         </div>
         <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-theme shadow-sm">
-          <div className="text-sm text-gray-600 mb-1">New Entries</div>
+          <div className="text-sm text-gray-600 mb-1">{t('newEntries')}</div>
           <div className="text-3xl font-bold text-[var(--theme-text)]">
             {trends.chartTurnover || 0}
           </div>
-          <div className="text-sm text-gray-500 mt-1">This week</div>
+          <div className="text-sm text-gray-500 mt-1">{t('thisWeek')}</div>
         </div>
         <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-theme shadow-sm">
-          <div className="text-sm text-gray-600 mb-1">Exits</div>
+          <div className="text-sm text-gray-600 mb-1">{t('exits')}</div>
           <div className="text-3xl font-bold text-[var(--theme-text)]">
             {(trends.exits as any[])?.length || 0}
           </div>
-          <div className="text-sm text-gray-500 mt-1">Dropped out</div>
+          <div className="text-sm text-gray-500 mt-1">{t('droppedOut')}</div>
         </div>
       </div>
 
@@ -756,10 +878,10 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex-1">
               <h3 className="text-xl font-bold text-[var(--theme-primary-dark)] mb-2">
-                See how the entire week played out
+                {t('seeHowWeekPlayedOut')}
               </h3>
               <p className="text-gray-600 text-sm">
-                Explore the complete charts with all artists, tracks, and albums ranked for this week.
+                {t('exploreCompleteCharts')}
               </p>
             </div>
             <LiquidGlassLink
@@ -770,7 +892,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
               icon={<FontAwesomeIcon icon={faArrowRight} className="text-sm" />}
               className="whitespace-nowrap flex-shrink-0"
             >
-              View Charts
+              {t('viewCharts')}
             </LiquidGlassLink>
           </div>
         </div>
@@ -781,12 +903,12 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
         <div className="bg-white/60 backdrop-blur-sm rounded-xl shadow-sm p-6 border border-theme">
           <h3 className="text-xl font-bold text-[var(--theme-primary-dark)] mb-4 flex items-center gap-2">
             <FontAwesomeIcon icon={faLaughBeam} className="text-lg text-[var(--theme-primary-dark)]" />
-            Fun Facts
+            {t('funFacts')}
           </h3>
           <div className="space-y-3">
             {funFacts.slice(0, 3).map((fact: string, idx: number) => (
               <div key={idx} className="text-lg text-gray-700 p-3 rounded-lg bg-white/80 border border-[var(--theme-border)]">
-                {fact}
+                {translateFunFact(fact, t)}
               </div>
             ))}
           </div>
