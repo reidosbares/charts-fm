@@ -250,7 +250,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
         <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm p-6 border border-theme">
           <h3 className="text-xl font-bold text-[var(--theme-primary-dark)] mb-4 flex items-center gap-2">
             <FontAwesomeIcon icon={faFire} className="text-lg text-[var(--theme-primary-dark)]" />
-            {t('funFacts')}
+            {t('funFactsTitle')}
           </h3>
           <div className="space-y-3">
             {funFacts.slice(0, 3).map((fact: string, idx: number) => (

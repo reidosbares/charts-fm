@@ -903,7 +903,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
         <div className="bg-white/60 backdrop-blur-sm rounded-xl shadow-sm p-6 border border-theme">
           <h3 className="text-xl font-bold text-[var(--theme-primary-dark)] mb-4 flex items-center gap-2">
             <FontAwesomeIcon icon={faLaughBeam} className="text-lg text-[var(--theme-primary-dark)]" />
-            {t('funFacts')}
+            {t('funFactsTitle')}
           </h3>
           <div className="space-y-3">
             {funFacts.slice(0, 3).map((fact: string, idx: number) => (

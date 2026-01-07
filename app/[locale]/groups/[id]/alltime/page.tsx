@@ -1,23 +1,26 @@
 import { requireGroupMembership } from '@/lib/group-auth'
 import { getGroupAllTimeStats } from '@/lib/group-queries'
 import { Link } from '@/i18n/routing'
-import SafeImage from '@/components/SafeImage'
 import ChartTypeSelector from '../charts/ChartTypeSelector'
 import AllTimeChartTable from './AllTimeChartTable'
 import { recalculateAllTimeStats } from '@/lib/group-alltime-stats'
 import { TopItem } from '@/lib/lastfm-weekly'
 import { EnrichedChartItem } from '@/lib/group-chart-metrics'
+import GroupPageHero from '@/components/groups/GroupPageHero'
+import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { id: string; locale: string } }): Promise<Metadata> {
+  const t = await getTranslations('groups.allTimeStats')
+  const tGroups = await getTranslations('groups')
   try {
     const { group } = await requireGroupMembership(params.id)
     return {
-      title: `${group?.name || 'Group'} - All-Time Stats`,
+      title: `${group?.name || tGroups('title')} - ${t('title')}`,
     }
   } catch {
     return {
-      title: 'All-Time Stats',
+      title: t('title'),
     }
   }
 }
@@ -28,18 +31,20 @@ export default async function AllTimePage({
   params,
   searchParams,
 }: {
-  params: { id: string }
+  params: { id: string; locale: string }
   searchParams: { type?: string }
 }) {
   const { user, group } = await requireGroupMembership(params.id)
+  const t = await getTranslations('groups.allTimeStats')
+  const tGroups = await getTranslations('groups')
 
   if (!group) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Group not found</h1>
+          <h1 className="text-2xl font-bold mb-4">{tGroups('notFound')}</h1>
           <Link href="/groups" className="text-yellow-600 hover:underline">
-            Back to Groups
+            {tGroups('backToGroups')}
           </Link>
         </div>
       </main>
@@ -85,27 +90,27 @@ export default async function AllTimePage({
     }))
   }
 
+  // Get color theme
+  const colorTheme = (group.colorTheme || 'white') as string
+  const themeClass = `theme-${colorTheme.replace('_', '-')}`
+
   return (
-    <main className="flex min-h-screen flex-col p-24">
+    <main className={`flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}>
       <div className="max-w-7xl w-full mx-auto">
-        <div className="mb-8">
-          <Link href={`/groups/${group.id}`} className="text-yellow-600 hover:underline mb-4 inline-block">
-            ← Back to Group
-          </Link>
-          <div className="flex items-start gap-4 mb-6">
-            <div className="relative w-16 h-16 flex-shrink-0">
-              <SafeImage
-                src={group.image}
-                alt={group.name}
-                className="rounded-lg object-cover w-16 h-16"
-              />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold mb-2">{group.name}</h1>
-              <p className="text-gray-600">All-Time Stats</p>
-            </div>
-          </div>
-        </div>
+        <GroupPageHero
+          group={{
+            id: group.id,
+            name: group.name,
+            image: group.image,
+          }}
+          breadcrumbs={[
+            { label: tGroups('hero.breadcrumb'), href: '/groups' },
+            { label: group.name, href: `/groups/${group.id}` },
+            { label: t('breadcrumb') },
+          ]}
+          subheader={t('subheaderTop100')}
+          narrow={true}
+        />
 
         <div className="grid grid-cols-12 gap-6">
           {/* Right: Chart Table and Type Selector */}
@@ -118,8 +123,8 @@ export default async function AllTimePage({
             {chartEntries.length > 0 ? (
               <AllTimeChartTable items={chartEntries} chartType={selectedType} />
             ) : (
-              <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-                <p className="text-gray-600">No all-time stats available yet.</p>
+              <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-8 text-center border border-theme">
+                <p className="text-gray-600">{t('noStatsAvailable')}</p>
               </div>
             )}
           </div>

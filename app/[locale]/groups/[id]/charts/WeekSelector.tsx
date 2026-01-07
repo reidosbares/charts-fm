@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { formatWeekDate, formatWeekLabel } from '@/lib/weekly-utils'
 import { useNavigation } from '@/contexts/NavigationContext'
 import WeekCalendar from './WeekCalendar'
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 interface WeekSelectorProps {
   weeks: { weekStart: Date }[]
@@ -17,6 +18,7 @@ export default function WeekSelector({ weeks, currentWeek, trackingDayOfWeek, on
   const router = useRouter()
   const searchParams = useSearchParams()
   const { triggerPulse } = useNavigation()
+  const t = useSafeTranslations('charts')
 
   const handleWeekChange = (weekStart: Date) => {
     onWeekChange?.()
@@ -39,7 +41,7 @@ export default function WeekSelector({ weeks, currentWeek, trackingDayOfWeek, on
         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
       }}
     >
-      <h3 className="text-lg font-semibold mb-4 text-[var(--theme-primary-dark)]">Select Week</h3>
+      <h3 className="text-lg font-semibold mb-4 text-[var(--theme-primary-dark)]">{t('selectWeek')}</h3>
       <div className="space-y-2 max-h-96 overflow-y-auto">
         {displayedWeeks.map((week) => {
           const isSelected = week.weekStart.getTime() === currentWeek.getTime()

@@ -6,6 +6,7 @@ import { getWeekStart, getWeekStartForDay, formatWeekDate, utcToLocalDate } from
 import { useRouter } from '@/i18n/routing'
 import { useSearchParams } from 'next/navigation'
 import { useNavigation } from '@/contexts/NavigationContext'
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 interface WeekCalendarProps {
   availableWeeks: { weekStart: Date }[]
@@ -19,6 +20,7 @@ export default function WeekCalendar({ availableWeeks, currentWeek, trackingDayO
   const router = useRouter()
   const searchParams = useSearchParams()
   const { triggerPulse, stopPulse } = useNavigation()
+  const t = useSafeTranslations('charts')
 
   useEffect(() => {
     const timer = setTimeout(() => stopPulse(), 500)
@@ -72,7 +74,7 @@ export default function WeekCalendar({ availableWeeks, currentWeek, trackingDayO
   return (
     <>
       <div className="mt-6">
-        <h3 className="text-lg font-semibold mb-4 text-[var(--theme-primary-dark)]">Other dates</h3>
+        <h3 className="text-lg font-semibold mb-4 text-[var(--theme-primary-dark)]">{t('otherDates')}</h3>
         <button
           onClick={() => setIsOpen(true)}
           className="w-full px-4 py-3 rounded-lg transition-all duration-200 text-left hover:shadow-sm"
@@ -82,7 +84,7 @@ export default function WeekCalendar({ availableWeeks, currentWeek, trackingDayO
             border: '1px solid rgba(255, 255, 255, 0.3)',
           }}
         >
-          Open calendar
+          {t('openCalendar')}
         </button>
       </div>
 
@@ -102,11 +104,11 @@ export default function WeekCalendar({ availableWeeks, currentWeek, trackingDayO
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-[var(--theme-primary-dark)]">Select Date</h2>
+              <h2 className="text-xl font-semibold text-[var(--theme-primary-dark)]">{t('selectDate')}</h2>
               <button
                 onClick={() => setIsOpen(false)}
                 className="text-[var(--theme-text)] hover:text-[var(--theme-primary-dark)] text-2xl leading-none w-8 h-8 flex items-center justify-center transition-colors"
-                aria-label="Close"
+                aria-label={t('close')}
               >
                 ×
               </button>

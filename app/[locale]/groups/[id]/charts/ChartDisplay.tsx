@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { EnrichedChartItem } from '@/lib/group-chart-metrics'
 import ChartTypeSelector from './ChartTypeSelector'
 import ChartTable from './ChartTable'
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 type ChartType = 'artists' | 'tracks' | 'albums'
 
@@ -23,6 +24,7 @@ export default function ChartDisplay({ initialType, artists, tracks, albums, isL
   const searchParams = useSearchParams()
   const isInternalChange = useRef(false)
   const previousItemsRef = useRef<EnrichedChartItem[] | null>(null)
+  const t = useSafeTranslations('charts')
 
   const currentItems = useMemo(() => {
     switch (currentType) {
@@ -82,7 +84,7 @@ export default function ChartDisplay({ initialType, artists, tracks, albums, isL
         <div className="absolute inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-lg z-10">
           <div className="flex flex-col items-center gap-3">
             <div className="w-12 h-12 border-4 border-[var(--theme-primary-lighter)] border-t-[var(--theme-primary)] rounded-full animate-spin"></div>
-            <p className="text-sm text-gray-600 font-medium">Loading chart data...</p>
+            <p className="text-sm text-gray-600 font-medium">{t('loadingChartData')}</p>
           </div>
         </div>
       )}

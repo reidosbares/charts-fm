@@ -211,7 +211,6 @@
       "andMore": "...e mais {count}",
       "thisWeeksMVP": "MVP da Semana",
       "topContributions": "Principais contribuições: {contributions}",
-      "funFacts": "Curiosidades",
       "by": "por {artist}",
       "weekOf": "Semana de {date}",
       "from": "de",
@@ -257,6 +256,7 @@
       "artists": "Artistas",
       "tracks": "Músicas",
       "albums": "Álbuns",
+      "funFactsTitle": "Curiosidades",
       "funFacts": {
         "comeback": "\"{name}\"{byArtist} está de volta ao top 10 depois de {weeks} semanas fora!",
         "onFire": "\"{name}\"{byArtist} está em alta! {weeks} semanas seguidas no top 10!",
@@ -278,6 +278,10 @@
     },
     "allTimeStats": {
       "title": "Recordes",
+      "subheader": "Recordes",
+      "subheaderTop100": "Top 100 de Todos os Tempos",
+      "breadcrumb": "Recordes",
+      "backToGroup": "Voltar para Comunidade",
       "failedToLoad": "Falha ao carregar recordes",
       "noStatsAvailable": "Ainda não há recordes disponíveis.",
       "generateChartsToStart": "Gere charts para começar a construir seus rankings de todos os tempos!",
@@ -296,7 +300,14 @@
       "topAlbums": "Top Álbuns",
       "plays": "{count} plays",
       "by": "por {artist}",
-      "andMore": "...e mais {count}"
+      "andMore": "...e mais {count}",
+      "table": {
+        "position": "#",
+        "plays": "Plays",
+        "artist": "Artista",
+        "track": "Música",
+        "album": "Álbum"
+      }
     },
     "members": {
       "title": "Membros",
@@ -344,6 +355,113 @@
       "pageOf": "Página {page} de {totalPages} ({total} total)",
       "deleteCommentTitle": "Apagar comentário",
       "deleteCommentConfirm": "Tem certeza que deseja apagar este comentário? Esta ação não pode ser desfeita."
+    }
+  },
+  "charts": {
+    "title": "Charts",
+    "groupNotFound": "Comunidade não encontrada",
+    "backToGroups": "Voltar para Comunidades",
+    "noChartsAvailable": "Ainda não há charts disponíveis.",
+    "weekOf": "Semana de {date}",
+    "fromTo": "(de {start} até {end})",
+    "selectWeek": "Selecionar semana",
+    "loadingChartData": "Carregando dados dos charts...",
+    "artists": "Artistas",
+    "tracks": "Músicas",
+    "albums": "Álbuns",
+    "new": "NOVO",
+    "reEntry": "RE",
+    "by": "por {artist}",
+    "plays": "Plays",
+    "vs": "VS",
+    "weeksOnChart": "Semanas no chart",
+    "peakPosition": "Maior posição",
+    "downloadRawData": "Exportar dados",
+    "generating": "Gerando...",
+    "downloadFailed": "Falha ao baixar arquivo. Por favor, tente novamente.",
+    "otherDates": "Outras datas",
+    "openCalendar": "Abrir calendário",
+    "selectDate": "Selecionar data",
+    "close": "Fechar"
+  },
+  "records": {
+    "title": "Recordes",
+    "subheader": "Recordes e conquistas",
+    "breadcrumb": "Recordes",
+    "notFound": "Comunidade não encontrada",
+    "backToGroups": "Voltar para Comunidades",
+    "tabs": {
+      "users": "Membros",
+      "artists": "Artistas",
+      "tracks": "Músicas",
+      "albums": "Álbuns"
+    },
+    "status": {
+      "calculating": "Os recordes estão sendo calculados...",
+      "calculatingDescription": "Por favor, volte mais tarde para ver os recordes.",
+      "failed": "O cálculo dos recordes falhou.",
+      "canRetry": "Você pode solicitar um recálculo agora.",
+      "waitToRetry": "Por favor, aguarde pelo menos 1 hora desde que os charts foram gerados antes de solicitar novamente.",
+      "retryCalculation": "Tentar novamente",
+      "noRecords": "Ainda não há recordes disponíveis.",
+      "generateCharts": "É preciso gerar charts para ver os recordes!",
+      "noRecordsForCategory": "Ainda não há recordes disponíveis nesta categoria."
+    },
+    "preview": {
+      "mostWeeksOnChart": "Mais semanas charteando",
+      "artist": "Artista",
+      "track": "Música",
+      "album": "Álbum",
+      "week": "semana",
+      "weeks": "semanas",
+      "by": "por {artist}"
+    },
+    "chartRecords": {
+      "mostWeeksOnChart": "Mais semanas charteando",
+      "mostWeeksAtOne": "Mais semanas em #1",
+      "mostWeeksInTop10": "Mais semanas no top 10",
+      "mostConsecutiveWeeks": "Mais semanas consecutivas",
+      "mostConsecutiveWeeksAtOne": "Mais semanas consecutivas em #1",
+      "mostConsecutiveWeeksInTop10": "Mais semanas consecutivas no top 10",
+      "totalAllTimeVS": "Mais VS total recebido",
+      "mostPlaysReceived": "Mais plays recebidos",
+      "mostPopular": "Ouvido por mais membros",
+      "longestTimeBetweenAppearances": "Maior tempo entre aparições",
+      "artistMostNumberOneSongs": "Artista com mais músicas em #1",
+      "artistMostNumberOneAlbums": "Artista com mais álbuns em #1",
+      "artistMostSongsInTop10": "Artista com mais músicas no top 10",
+      "artistMostAlbumsInTop10": "Artista com mais álbuns no top 10",
+      "artistMostSongsCharted": "Artista com mais músicas nos charts",
+      "artistMostAlbumsCharted": "Artista com mais álbuns nos charts",
+      "song": "música",
+      "songs": "músicas",
+      "album": "álbum",
+      "albums": "álbuns",
+      "member": "membro",
+      "members": "membros"
+    },
+    "userRecords": {
+      "comingSoon": "Conquistas dos membros em breve",
+      "unlockMessage": "Esta comunidade atualmente tem apenas {count} {memberOrMembers}. Convide {inviteCount} para desbloquear as conquistas!",
+      "inviteCountOne": "mais 1",
+      "inviteCountTwo": "mais 2",
+      "unlockDescription": "Com mais pessoas, podemos comparar contribuições e destacar quem está trazendo mais plays e bom gosto musical para o grupo.",
+      "vsVirtuoso": "Senhor do VS",
+      "playPowerhouse": "Potência do Flood",
+      "chartConnoisseur": "Influencer",
+      "hiddenGemHunter": "Alternativo(a)",
+      "consistencyChampion": "Farofeiro(a)",
+      "tasteMaker": "Hitmaker",
+      "entry": "item",
+      "entries": "itens",
+      "awardDescriptions": {
+        "vsVirtuoso": "O membro que contribuiu com mais Vibe Score (VS) total para os charts do grupo. Ele é a alma do grupo.",
+        "playPowerhouse": "Este é o usuário que deu mais plays para os charts do grupo. Ele é o que mais escuta.",
+        "chartConnoisseur": "Este é o membro que ajudou mais itens diferentes a debutarem nos charts. Ele não se prende a nenhum artista.",
+        "hiddenGemHunter": "O gosto deste membro não foi feito pros charts. Ele é o que menos escutou de tudo que entrou.",
+        "consistencyChampion": "Este é o membro que escutou itens dos charts por mais semanas. Ele gosta do que hita.",
+        "tasteMaker": "Este é o membro que fez debutar mais itens que em seguida pegaram #1. E quando ele quiser, ele hita."
+      }
     }
   }
 }

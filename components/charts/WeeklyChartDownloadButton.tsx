@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 interface WeeklyChartDownloadButtonProps {
   groupId: string
@@ -13,6 +14,7 @@ export default function WeeklyChartDownloadButton({
   weekStart,
 }: WeeklyChartDownloadButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const t = useSafeTranslations('charts')
 
   const handleDownload = async () => {
     setIsLoading(true)
@@ -52,7 +54,7 @@ export default function WeeklyChartDownloadButton({
       window.URL.revokeObjectURL(downloadUrl)
     } catch (error) {
       console.error('Error downloading file:', error)
-      alert('Failed to download file. Please try again.')
+      alert(t('downloadFailed'))
     } finally {
       setIsLoading(false)
     }
@@ -66,7 +68,7 @@ export default function WeeklyChartDownloadButton({
       size="sm"
       fullWidth
     >
-      {isLoading ? 'Generating...' : 'Download Raw Data'}
+      {isLoading ? t('generating') : t('downloadRawData')}
     </LiquidGlassButton>
   )
 }

@@ -211,7 +211,6 @@
       "andMore": "...and {count} more",
       "thisWeeksMVP": "This Week's MVP",
       "topContributions": "Top contributions: {contributions}",
-      "funFacts": "Fun Facts",
       "by": "by {artist}",
       "weekOf": "Week of {date}",
       "from": "from",
@@ -257,6 +256,7 @@
       "artists": "Artists",
       "tracks": "Tracks",
       "albums": "Albums",
+      "funFactsTitle": "Fun Facts",
       "funFacts": {
         "comeback": "{type} \"{name}\"{byArtist} made a comeback! Returned to the top 10 after {weeks} weeks away!",
         "onFire": "{type} \"{name}\"{byArtist} is on fire! {weeks} weeks in a row in the top 10!",
@@ -278,6 +278,10 @@
     },
     "allTimeStats": {
       "title": "All-Time Stats",
+      "subheader": "All-Time Stats",
+      "subheaderTop100": "Top 100 All-Time",
+      "breadcrumb": "All-Time Stats",
+      "backToGroup": "Back to Group",
       "failedToLoad": "Failed to load all-time stats",
       "noStatsAvailable": "No all-time stats available yet.",
       "generateChartsToStart": "Generate charts to start building your all-time rankings!",
@@ -296,7 +300,14 @@
       "topAlbums": "Top Albums",
       "plays": "{count} plays",
       "by": "by {artist}",
-      "andMore": "...and {count} more"
+      "andMore": "...and {count} more",
+      "table": {
+        "position": "#",
+        "plays": "Plays",
+        "artist": "Artist",
+        "track": "Track",
+        "album": "Album"
+      }
     },
     "members": {
       "title": "Members",
@@ -344,6 +355,113 @@
       "pageOf": "Page {page} of {totalPages} ({total} total)",
       "deleteCommentTitle": "Delete Comment",
       "deleteCommentConfirm": "Are you sure you want to delete this comment? This action cannot be undone."
+    }
+  },
+  "charts": {
+    "title": "Charts",
+    "groupNotFound": "Group not found",
+    "backToGroups": "Back to Groups",
+    "noChartsAvailable": "No charts available yet.",
+    "weekOf": "Week of {date}",
+    "fromTo": "(from {start} to {end})",
+    "selectWeek": "Select Week",
+    "loadingChartData": "Loading chart data...",
+    "artists": "Artists",
+    "tracks": "Tracks",
+    "albums": "Albums",
+    "new": "NEW",
+    "reEntry": "RE",
+    "by": "by {artist}",
+    "plays": "Plays",
+    "vs": "VS",
+    "weeksOnChart": "Weeks on Chart",
+    "peakPosition": "Peak Position",
+    "downloadRawData": "Download Raw Data",
+    "generating": "Generating...",
+    "downloadFailed": "Failed to download file. Please try again.",
+    "otherDates": "Other dates",
+    "openCalendar": "Open calendar",
+    "selectDate": "Select Date",
+    "close": "Close"
+  },
+  "records": {
+    "title": "Records",
+    "subheader": "Chart Records & Achievements",
+    "breadcrumb": "Records",
+    "notFound": "Group not found",
+    "backToGroups": "Back to Groups",
+    "tabs": {
+      "users": "Users",
+      "artists": "Artists",
+      "tracks": "Tracks",
+      "albums": "Albums"
+    },
+    "status": {
+      "calculating": "Records are being calculated...",
+      "calculatingDescription": "Please come back later to view the records.",
+      "failed": "Records calculation failed.",
+      "canRetry": "You can request a recalculation now.",
+      "waitToRetry": "Please wait at least 1 hour since charts were generated before requesting again.",
+      "retryCalculation": "Retry Calculation",
+      "noRecords": "No records available yet.",
+      "generateCharts": "Generate charts to start building records!",
+      "noRecordsForCategory": "No records available for this category yet."
+    },
+    "preview": {
+      "mostWeeksOnChart": "Most Weeks on Chart",
+      "artist": "Artist",
+      "track": "Track",
+      "album": "Album",
+      "week": "week",
+      "weeks": "weeks",
+      "by": "by {artist}"
+    },
+    "chartRecords": {
+      "mostWeeksOnChart": "Most Weeks on Chart",
+      "mostWeeksAtOne": "Most Weeks at #1",
+      "mostWeeksInTop10": "Most Weeks in Top 10",
+      "mostConsecutiveWeeks": "Most Consecutive Weeks",
+      "mostConsecutiveWeeksAtOne": "Most Consecutive Weeks at #1",
+      "mostConsecutiveWeeksInTop10": "Most Consecutive Weeks in Top 10",
+      "totalAllTimeVS": "Total All-Time VS Received",
+      "mostPlaysReceived": "Most Plays Received",
+      "mostPopular": "Most Popular",
+      "longestTimeBetweenAppearances": "Longest Time Between Appearances",
+      "artistMostNumberOneSongs": "Artist with Most #1 Songs",
+      "artistMostNumberOneAlbums": "Artist with Most #1 Albums",
+      "artistMostSongsInTop10": "Artist with Most Songs in Top 10",
+      "artistMostAlbumsInTop10": "Artist with Most Albums in Top 10",
+      "artistMostSongsCharted": "Artist with Most Songs Charted",
+      "artistMostAlbumsCharted": "Artist with Most Albums Charted",
+      "song": "song",
+      "songs": "songs",
+      "album": "album",
+      "albums": "albums",
+      "member": "member",
+      "members": "members"
+    },
+    "userRecords": {
+      "comingSoon": "User Records Coming Soon",
+      "unlockMessage": "This group currently has {count} {memberOrMembers}. Invite {inviteCount} to unlock user records!",
+      "inviteCountOne": "1 more",
+      "inviteCountTwo": "2 more",
+      "unlockDescription": "With more people, we can compare contributions and highlight who's bringing the most energy, plays, and taste to the group.",
+      "vsVirtuoso": "VS Virtuoso",
+      "playPowerhouse": "Play Powerhouse",
+      "chartConnoisseur": "Chart Connoisseur",
+      "hiddenGemHunter": "Hidden Gem Hunter",
+      "consistencyChampion": "Consistency Champion",
+      "tasteMaker": "Taste Maker",
+      "entry": "entry",
+      "entries": "entries",
+      "awardDescriptions": {
+        "vsVirtuoso": "The member who contributed the most total Vibe Score (VS) to this group's charts. They're the life of the group.",
+        "playPowerhouse": "This is the member with the most total plays across all their contributions. They really love scrobbling.",
+        "chartConnoisseur": "This member helped the most different entries make it onto the charts. They have broad taste.",
+        "hiddenGemHunter": "The member who helped the fewest entries chart. They keep it niche and curated.",
+        "consistencyChampion": "The member who contributed to charts for the most weeks. They show up every time.",
+        "tasteMaker": "This is the member who introduced the most entries that later became #1 hits. They have that magic touch."
+      }
     }
   }
 }

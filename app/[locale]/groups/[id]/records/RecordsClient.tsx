@@ -8,6 +8,7 @@ import RecordBlock from '@/components/records/RecordBlock'
 import { Link } from '@/i18n/routing'
 import { generateSlug } from '@/lib/chart-slugs'
 import SafeImage from '@/components/SafeImage'
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 // Image cache helpers (same as GroupWeeklyChartsTab)
 const IMAGE_CACHE_PREFIX = 'chartsfm_image_cache_'
@@ -110,6 +111,12 @@ interface RecordsClientProps {
 }
 
 export default function RecordsClient({ groupId, initialRecords, memberCount }: RecordsClientProps) {
+  const t = useSafeTranslations('records')
+  const tPreview = useSafeTranslations('records.preview')
+  const tChartRecords = useSafeTranslations('records.chartRecords')
+  const tUserRecords = useSafeTranslations('records.userRecords')
+  const tStatus = useSafeTranslations('records.status')
+  const tTabs = useSafeTranslations('records.tabs')
   const [records, setRecords] = useState<any>(initialRecords)
   const [isLoading, setIsLoading] = useState(false)
   const [previewData, setPreviewData] = useState<any>(null)
@@ -250,10 +257,10 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
   }, [previewData])
 
   const tabs: TabItem[] = [
-    { id: 'users', label: 'Users', icon: faUsers },
-    { id: 'artists', label: 'Artists', icon: faMicrophone },
-    { id: 'tracks', label: 'Tracks', icon: faMusic },
-    { id: 'albums', label: 'Albums', icon: faCompactDisc },
+    { id: 'users', label: tTabs('users'), icon: faUsers },
+    { id: 'artists', label: tTabs('artists'), icon: faMicrophone },
+    { id: 'tracks', label: tTabs('tracks'), icon: faMusic },
+    { id: 'albums', label: tTabs('albums'), icon: faCompactDisc },
   ]
 
   if (isLoading || !records) {
@@ -270,8 +277,8 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
         <div className="mb-4 text-[var(--theme-primary)]">
           <FontAwesomeIcon icon={faSpinner} size="3x" className="animate-spin" />
         </div>
-        <p className="text-gray-700 text-lg mb-2 font-medium">Records are being calculated...</p>
-        <p className="text-gray-500 text-sm mb-6">Please come back later to view the records.</p>
+        <p className="text-gray-700 text-lg mb-2 font-medium">{tStatus('calculating')}</p>
+        <p className="text-gray-500 text-sm mb-6">{tStatus('calculatingDescription')}</p>
       </div>
     )
   }
@@ -282,11 +289,11 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
 
     return (
       <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-12 text-center border border-theme">
-        <p className="text-gray-700 text-lg mb-2 font-medium">Records calculation failed.</p>
+        <p className="text-gray-700 text-lg mb-2 font-medium">{tStatus('failed')}</p>
         <p className="text-gray-500 text-sm mb-6">
           {canRetry 
-            ? 'You can request a recalculation now.'
-            : 'Please wait at least 1 hour since charts were generated before requesting again.'}
+            ? tStatus('canRetry')
+            : tStatus('waitToRetry')}
         </p>
         {canRetry && (
           <button
@@ -307,7 +314,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
             }}
             className="px-4 py-2 bg-[var(--theme-primary)] text-white rounded-lg hover:opacity-90 transition-opacity"
           >
-            Retry Calculation
+            {tStatus('retryCalculation')}
           </button>
         )}
       </div>
@@ -317,8 +324,8 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
   if (records.status !== 'completed' || !recordsData) {
     return (
       <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-12 text-center border border-theme">
-        <p className="text-gray-700 text-lg mb-2 font-medium">No records available yet.</p>
-        <p className="text-gray-500 text-sm mb-6">Generate charts to start building records!</p>
+        <p className="text-gray-700 text-lg mb-2 font-medium">{tStatus('noRecords')}</p>
+        <p className="text-gray-500 text-sm mb-6">{tStatus('generateCharts')}</p>
       </div>
     )
   }
@@ -329,7 +336,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
       <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 border border-theme mb-6">
         <h3 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
           <FontAwesomeIcon icon={faMedal} className="text-[var(--theme-primary)]" />
-          Most Weeks on Chart
+          {tPreview('mostWeeksOnChart')}
         </h3>
         {isLoadingPreview ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -365,7 +372,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-2">
                     <FontAwesomeIcon icon={faMicrophone} className="text-[var(--theme-primary)]" />
-                    <span className="text-sm font-semibold text-gray-600">Artist</span>
+                    <span className="text-sm font-semibold text-gray-600">{tPreview('artist')}</span>
                   </div>
                   <Link
                     href={`/groups/${groupId}/charts/artist/${previewData.artist.slug}`}
@@ -374,7 +381,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
                     {previewData.artist.name}
                   </Link>
                   <p className="text-sm text-gray-600">
-                    {previewData.artist.value} {previewData.artist.value === 1 ? 'week' : 'weeks'}
+                    {previewData.artist.value} {previewData.artist.value === 1 ? tPreview('week') : tPreview('weeks')}
                   </p>
                 </div>
               </div>
@@ -401,7 +408,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-2">
                     <FontAwesomeIcon icon={faMusic} className="text-[var(--theme-primary)]" />
-                    <span className="text-sm font-semibold text-gray-600">Track</span>
+                    <span className="text-sm font-semibold text-gray-600">{tPreview('track')}</span>
                   </div>
                   <Link
                     href={`/groups/${groupId}/charts/track/${previewData.track.slug}`}
@@ -410,10 +417,10 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
                     {previewData.track.name}
                   </Link>
                   {previewData.track.artist && (
-                    <p className="text-xs text-gray-600 mb-1 break-words">by {previewData.track.artist}</p>
+                    <p className="text-xs text-gray-600 mb-1 break-words">{tPreview('by', { artist: previewData.track.artist })}</p>
                   )}
                   <p className="text-sm text-gray-600">
-                    {previewData.track.value} {previewData.track.value === 1 ? 'week' : 'weeks'}
+                    {previewData.track.value} {previewData.track.value === 1 ? tPreview('week') : tPreview('weeks')}
                   </p>
                 </div>
               </div>
@@ -440,7 +447,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-2">
                     <FontAwesomeIcon icon={faCompactDisc} className="text-[var(--theme-primary)]" />
-                    <span className="text-sm font-semibold text-gray-600">Album</span>
+                    <span className="text-sm font-semibold text-gray-600">{tPreview('album')}</span>
                   </div>
                   <Link
                     href={`/groups/${groupId}/charts/album/${previewData.album.slug}`}
@@ -449,10 +456,10 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
                     {previewData.album.name}
                   </Link>
                   {previewData.album.artist && (
-                    <p className="text-xs text-gray-600 mb-1 break-words">by {previewData.album.artist}</p>
+                    <p className="text-xs text-gray-600 mb-1 break-words">{tPreview('by', { artist: previewData.album.artist })}</p>
                   )}
                   <p className="text-sm text-gray-600">
-                    {previewData.album.value} {previewData.album.value === 1 ? 'week' : 'weeks'}
+                    {previewData.album.value} {previewData.album.value === 1 ? tPreview('week') : tPreview('weeks')}
                   </p>
                 </div>
               </div>
@@ -472,61 +479,61 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
     // Most weeks on chart
     if (recordsData.mostWeeksOnChart?.[chartType]) {
       records.push({
-        title: 'Most Weeks on Chart',
+        title: tChartRecords('mostWeeksOnChart'),
         record: recordsData.mostWeeksOnChart[chartType],
-        value: `${recordsData.mostWeeksOnChart[chartType].value} ${recordsData.mostWeeksOnChart[chartType].value === 1 ? 'week' : 'weeks'}`,
+        value: `${recordsData.mostWeeksOnChart[chartType].value} ${recordsData.mostWeeksOnChart[chartType].value === 1 ? tPreview('week') : tPreview('weeks')}`,
       })
     }
 
     // Most weeks at #1
     if (recordsData.mostWeeksAtOne?.[chartType]) {
       records.push({
-        title: 'Most Weeks at #1',
+        title: tChartRecords('mostWeeksAtOne'),
         record: recordsData.mostWeeksAtOne[chartType],
-        value: `${recordsData.mostWeeksAtOne[chartType].value} ${recordsData.mostWeeksAtOne[chartType].value === 1 ? 'week' : 'weeks'}`,
+        value: `${recordsData.mostWeeksAtOne[chartType].value} ${recordsData.mostWeeksAtOne[chartType].value === 1 ? tPreview('week') : tPreview('weeks')}`,
       })
     }
 
     // Most weeks in top 10
     if (recordsData.mostWeeksInTop10?.[chartType]) {
       records.push({
-        title: 'Most Weeks in Top 10',
+        title: tChartRecords('mostWeeksInTop10'),
         record: recordsData.mostWeeksInTop10[chartType],
-        value: `${recordsData.mostWeeksInTop10[chartType].value} ${recordsData.mostWeeksInTop10[chartType].value === 1 ? 'week' : 'weeks'}`,
+        value: `${recordsData.mostWeeksInTop10[chartType].value} ${recordsData.mostWeeksInTop10[chartType].value === 1 ? tPreview('week') : tPreview('weeks')}`,
       })
     }
 
     // Most consecutive weeks
     if (recordsData.mostConsecutiveWeeks?.[chartType]) {
       records.push({
-        title: 'Most Consecutive Weeks',
+        title: tChartRecords('mostConsecutiveWeeks'),
         record: recordsData.mostConsecutiveWeeks[chartType],
-        value: `${recordsData.mostConsecutiveWeeks[chartType].value} ${recordsData.mostConsecutiveWeeks[chartType].value === 1 ? 'week' : 'weeks'}`,
+        value: `${recordsData.mostConsecutiveWeeks[chartType].value} ${recordsData.mostConsecutiveWeeks[chartType].value === 1 ? tPreview('week') : tPreview('weeks')}`,
       })
     }
 
     // Most consecutive weeks at #1
     if (recordsData.mostConsecutiveWeeksAtOne?.[chartType]) {
       records.push({
-        title: 'Most Consecutive Weeks at #1',
+        title: tChartRecords('mostConsecutiveWeeksAtOne'),
         record: recordsData.mostConsecutiveWeeksAtOne[chartType],
-        value: `${recordsData.mostConsecutiveWeeksAtOne[chartType].value} ${recordsData.mostConsecutiveWeeksAtOne[chartType].value === 1 ? 'week' : 'weeks'}`,
+        value: `${recordsData.mostConsecutiveWeeksAtOne[chartType].value} ${recordsData.mostConsecutiveWeeksAtOne[chartType].value === 1 ? tPreview('week') : tPreview('weeks')}`,
       })
     }
 
     // Most consecutive weeks in top 10
     if (recordsData.mostConsecutiveWeeksInTop10?.[chartType]) {
       records.push({
-        title: 'Most Consecutive Weeks in Top 10',
+        title: tChartRecords('mostConsecutiveWeeksInTop10'),
         record: recordsData.mostConsecutiveWeeksInTop10[chartType],
-        value: `${recordsData.mostConsecutiveWeeksInTop10[chartType].value} ${recordsData.mostConsecutiveWeeksInTop10[chartType].value === 1 ? 'week' : 'weeks'}`,
+        value: `${recordsData.mostConsecutiveWeeksInTop10[chartType].value} ${recordsData.mostConsecutiveWeeksInTop10[chartType].value === 1 ? tPreview('week') : tPreview('weeks')}`,
       })
     }
 
     // Most total VS
     if (recordsData.mostTotalVS?.[chartType]) {
       records.push({
-        title: 'Total All-Time VS Received',
+        title: tChartRecords('totalAllTimeVS'),
         record: recordsData.mostTotalVS[chartType],
         value: recordsData.mostTotalVS[chartType].value.toLocaleString(),
       })
@@ -535,7 +542,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
     // Most plays
     if (recordsData.mostPlays?.[chartType]) {
       records.push({
-        title: 'Most Plays Received',
+        title: tChartRecords('mostPlaysReceived'),
         record: recordsData.mostPlays[chartType],
         value: recordsData.mostPlays[chartType].value.toLocaleString(),
       })
@@ -544,18 +551,18 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
     // Most popular
     if (recordsData.mostPopular?.[chartType]) {
       records.push({
-        title: 'Most Popular',
+        title: tChartRecords('mostPopular'),
         record: recordsData.mostPopular[chartType],
-        value: `${recordsData.mostPopular[chartType].value} ${recordsData.mostPopular[chartType].value === 1 ? 'member' : 'members'}`,
+        value: `${recordsData.mostPopular[chartType].value} ${recordsData.mostPopular[chartType].value === 1 ? tChartRecords('member') : tChartRecords('members')}`,
       })
     }
 
     // Longest time between appearances
     if (recordsData.longestTimeBetweenAppearances?.[chartType]) {
       records.push({
-        title: 'Longest Time Between Appearances',
+        title: tChartRecords('longestTimeBetweenAppearances'),
         record: recordsData.longestTimeBetweenAppearances[chartType],
-        value: `${recordsData.longestTimeBetweenAppearances[chartType].value} ${recordsData.longestTimeBetweenAppearances[chartType].value === 1 ? 'week' : 'weeks'}`,
+        value: `${recordsData.longestTimeBetweenAppearances[chartType].value} ${recordsData.longestTimeBetweenAppearances[chartType].value === 1 ? tPreview('week') : tPreview('weeks')}`,
       })
     }
 
@@ -563,44 +570,44 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
     if (chartType === 'artists') {
       if (recordsData.artistMostNumberOneSongs) {
         records.push({
-          title: 'Artist with Most #1 Songs',
+          title: tChartRecords('artistMostNumberOneSongs'),
           record: recordsData.artistMostNumberOneSongs,
-          value: `${recordsData.artistMostNumberOneSongs.value} ${recordsData.artistMostNumberOneSongs.value === 1 ? 'song' : 'songs'}`,
+          value: `${recordsData.artistMostNumberOneSongs.value} ${recordsData.artistMostNumberOneSongs.value === 1 ? tChartRecords('song') : tChartRecords('songs')}`,
         })
       }
       if (recordsData.artistMostNumberOneAlbums) {
         records.push({
-          title: 'Artist with Most #1 Albums',
+          title: tChartRecords('artistMostNumberOneAlbums'),
           record: recordsData.artistMostNumberOneAlbums,
-          value: `${recordsData.artistMostNumberOneAlbums.value} ${recordsData.artistMostNumberOneAlbums.value === 1 ? 'album' : 'albums'}`,
+          value: `${recordsData.artistMostNumberOneAlbums.value} ${recordsData.artistMostNumberOneAlbums.value === 1 ? tChartRecords('album') : tChartRecords('albums')}`,
         })
       }
       if (recordsData.artistMostSongsInTop10) {
         records.push({
-          title: 'Artist with Most Songs in Top 10',
+          title: tChartRecords('artistMostSongsInTop10'),
           record: recordsData.artistMostSongsInTop10,
-          value: `${recordsData.artistMostSongsInTop10.value} ${recordsData.artistMostSongsInTop10.value === 1 ? 'song' : 'songs'}`,
+          value: `${recordsData.artistMostSongsInTop10.value} ${recordsData.artistMostSongsInTop10.value === 1 ? tChartRecords('song') : tChartRecords('songs')}`,
         })
       }
       if (recordsData.artistMostAlbumsInTop10) {
         records.push({
-          title: 'Artist with Most Albums in Top 10',
+          title: tChartRecords('artistMostAlbumsInTop10'),
           record: recordsData.artistMostAlbumsInTop10,
-          value: `${recordsData.artistMostAlbumsInTop10.value} ${recordsData.artistMostAlbumsInTop10.value === 1 ? 'album' : 'albums'}`,
+          value: `${recordsData.artistMostAlbumsInTop10.value} ${recordsData.artistMostAlbumsInTop10.value === 1 ? tChartRecords('album') : tChartRecords('albums')}`,
         })
       }
       if (recordsData.artistMostSongsCharted) {
         records.push({
-          title: 'Artist with Most Songs Charted',
+          title: tChartRecords('artistMostSongsCharted'),
           record: recordsData.artistMostSongsCharted,
-          value: `${recordsData.artistMostSongsCharted.value} ${recordsData.artistMostSongsCharted.value === 1 ? 'song' : 'songs'}`,
+          value: `${recordsData.artistMostSongsCharted.value} ${recordsData.artistMostSongsCharted.value === 1 ? tChartRecords('song') : tChartRecords('songs')}`,
         })
       }
       if (recordsData.artistMostAlbumsCharted) {
         records.push({
-          title: 'Artist with Most Albums Charted',
+          title: tChartRecords('artistMostAlbumsCharted'),
           record: recordsData.artistMostAlbumsCharted,
-          value: `${recordsData.artistMostAlbumsCharted.value} ${recordsData.artistMostAlbumsCharted.value === 1 ? 'album' : 'albums'}`,
+          value: `${recordsData.artistMostAlbumsCharted.value} ${recordsData.artistMostAlbumsCharted.value === 1 ? tChartRecords('album') : tChartRecords('albums')}`,
         })
       }
     }
@@ -614,7 +621,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
 
     if (recordsData.userMostVS) {
       records.push({
-        title: 'VS Virtuoso',
+        title: tUserRecords('vsVirtuoso'),
         record: recordsData.userMostVS,
         value: recordsData.userMostVS.value.toLocaleString(),
         isUser: true,
@@ -623,7 +630,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
 
     if (recordsData.userMostPlays) {
       records.push({
-        title: 'Play Powerhouse',
+        title: tUserRecords('playPowerhouse'),
         record: recordsData.userMostPlays,
         value: recordsData.userMostPlays.value.toLocaleString(),
         isUser: true,
@@ -632,36 +639,36 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
 
     if (recordsData.userMostEntries) {
       records.push({
-        title: 'Chart Connoisseur',
+        title: tUserRecords('chartConnoisseur'),
         record: recordsData.userMostEntries,
-        value: `${recordsData.userMostEntries.value} ${recordsData.userMostEntries.value === 1 ? 'entry' : 'entries'}`,
+        value: `${recordsData.userMostEntries.value} ${recordsData.userMostEntries.value === 1 ? tUserRecords('entry') : tUserRecords('entries')}`,
         isUser: true,
       })
     }
 
     if (recordsData.userLeastEntries) {
       records.push({
-        title: 'Hidden Gem Hunter',
+        title: tUserRecords('hiddenGemHunter'),
         record: recordsData.userLeastEntries,
-        value: `${recordsData.userLeastEntries.value} ${recordsData.userLeastEntries.value === 1 ? 'entry' : 'entries'}`,
+        value: `${recordsData.userLeastEntries.value} ${recordsData.userLeastEntries.value === 1 ? tUserRecords('entry') : tUserRecords('entries')}`,
         isUser: true,
       })
     }
 
     if (recordsData.userMostWeeksContributing) {
       records.push({
-        title: 'Consistency Champion',
+        title: tUserRecords('consistencyChampion'),
         record: recordsData.userMostWeeksContributing,
-        value: `${recordsData.userMostWeeksContributing.value} ${recordsData.userMostWeeksContributing.value === 1 ? 'week' : 'weeks'}`,
+        value: `${recordsData.userMostWeeksContributing.value} ${recordsData.userMostWeeksContributing.value === 1 ? tPreview('week') : tPreview('weeks')}`,
         isUser: true,
       })
     }
 
     if (recordsData.userTasteMaker) {
       records.push({
-        title: 'Taste Maker',
+        title: tUserRecords('tasteMaker'),
         record: recordsData.userTasteMaker,
-        value: `${recordsData.userTasteMaker.value} ${recordsData.userTasteMaker.value === 1 ? 'entry' : 'entries'}`,
+        value: `${recordsData.userTasteMaker.value} ${recordsData.userTasteMaker.value === 1 ? tUserRecords('entry') : tUserRecords('entries')}`,
         isUser: true,
       })
     }
@@ -689,7 +696,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
             backgroundClip: 'text'
           }}
         >
-          Records
+          {t('title')}
         </h1>
       </div>
 
@@ -719,20 +726,24 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
             <div className="absolute inset-0 bg-white/30 backdrop-blur-md rounded-xl z-50 flex items-center justify-center border border-white/20 shadow-xl">
               <div className="text-center p-6 max-w-md">
                 <p className="text-lg font-semibold text-gray-800 mb-3">
-                  User Records Coming Soon
+                  {tUserRecords('comingSoon')}
                 </p>
                 <p className="text-sm text-gray-500 mb-2">
-                  This group currently has {memberCount} {memberCount === 1 ? 'member' : 'members'}. Invite <b>{memberCount === 1 ? '2 more' : memberCount === 2 ? '1 more' : ''}</b> to unlock user records!
+                  {tUserRecords('unlockMessage', {
+                    count: memberCount,
+                    memberOrMembers: memberCount === 1 ? tChartRecords('member') : tChartRecords('members'),
+                    inviteCount: memberCount === 1 ? tUserRecords('inviteCountTwo') : memberCount === 2 ? tUserRecords('inviteCountOne') : ''
+                  })}
                 </p>
                 <p className="text-sm text-gray-500 mb-2">
-                  With more people, we can compare contributions and highlight who's bringing the most energy, plays, and taste to the group.
+                  {tUserRecords('unlockDescription')}
                 </p>
               </div>
             </div>
           </div>
         ) : currentRecords.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-600">No records available for this category yet.</p>
+            <p className="text-gray-600">{tStatus('noRecordsForCategory')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

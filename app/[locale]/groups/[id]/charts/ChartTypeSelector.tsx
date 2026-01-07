@@ -4,6 +4,7 @@ import { useRouter } from '@/i18n/routing'
 import { useSearchParams } from 'next/navigation'
 import { useNavigation } from '@/contexts/NavigationContext'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 type ChartType = 'artists' | 'tracks' | 'albums'
 
@@ -16,6 +17,7 @@ export default function ChartTypeSelector({ currentType, onTypeChange }: ChartTy
   const router = useRouter()
   const searchParams = useSearchParams()
   const { triggerPulse } = useNavigation()
+  const t = useSafeTranslations('charts')
 
   const handleTypeChange = (typeId: string) => {
     const type = typeId as ChartType
@@ -32,9 +34,9 @@ export default function ChartTypeSelector({ currentType, onTypeChange }: ChartTy
   }
 
   const tabs: TabItem[] = [
-    { id: 'artists', label: 'Artists' },
-    { id: 'tracks', label: 'Tracks' },
-    { id: 'albums', label: 'Albums' },
+    { id: 'artists', label: t('artists') },
+    { id: 'tracks', label: t('tracks') },
+    { id: 'albums', label: t('albums') },
   ]
 
   return (

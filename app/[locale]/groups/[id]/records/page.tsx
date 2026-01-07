@@ -5,30 +5,35 @@ import RecordsClient from './RecordsClient'
 import GroupPageHero from '@/components/groups/GroupPageHero'
 import { prisma } from '@/lib/prisma'
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { id: string; locale: string } }): Promise<Metadata> {
+  const t = await getTranslations('records')
   try {
     const { group } = await requireGroupMembership(params.id)
+    const tGroups = await getTranslations('groups')
     return {
-      title: `${group?.name || 'Group'} - Records`,
+      title: `${group?.name || tGroups('title')} - ${t('title')}`,
     }
   } catch {
     return {
-      title: 'Records',
+      title: t('title'),
     }
   }
 }
 
-export default async function RecordsPage({ params }: { params: { id: string } }) {
+export default async function RecordsPage({ params }: { params: { id: string; locale: string } }) {
   const { user, group } = await requireGroupMembership(params.id)
+  const t = await getTranslations('records')
+  const tGroups = await getTranslations('groups')
 
   if (!group) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Group not found</h1>
+          <h1 className="text-2xl font-bold mb-4">{t('notFound')}</h1>
           <Link href="/groups" className="text-gray-600 hover:underline">
-            Back to Groups
+            {t('backToGroups')}
           </Link>
         </div>
       </main>
@@ -98,11 +103,11 @@ export default async function RecordsPage({ params }: { params: { id: string } }
             image: group.image,
           }}
           breadcrumbs={[
-            { label: 'Groups', href: '/groups' },
+            { label: tGroups('hero.breadcrumb'), href: '/groups' },
             { label: group.name, href: `/groups/${group.id}` },
-            { label: 'Records' },
+            { label: t('breadcrumb') },
           ]}
-          subheader="Chart Records & Achievements"
+          subheader={t('subheader')}
         />
 
         {/* Records Content - Client Component */}

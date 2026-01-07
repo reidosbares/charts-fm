@@ -3,6 +3,7 @@ import ChartEntryCard from '@/components/ChartEntryCard'
 import Tooltip from '@/components/Tooltip'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 interface RecordBlockProps {
   title: string
@@ -73,17 +74,10 @@ const awardColorSchemes: Record<string, {
   },
 }
 
-// Award descriptions for tooltips
-const awardDescriptions: Record<string, string> = {
-  'VS Virtuoso': 'The member who contributed the most total Vibe Score (VS) to this group\'s charts. They\'re the life of the group.',
-  'Play Powerhouse': 'This is the member with the most total plays across all their contributions. They really love scrobbling.',
-  'Chart Connoisseur': 'This member helped the most different entries make it onto the charts. They have broad taste.',
-  'Hidden Gem Hunter': 'The member who helped the fewest entries chart. They keep it niche and curated.',
-  'Consistency Champion': 'The member who contributed to charts for the most weeks. They show up every time.',
-  'Taste Maker': 'This is the member who introduced the most entries that later became #1 hits. They have that magic touch.',
-}
-
 export default function RecordBlock({ title, record, value, groupId, isUser }: RecordBlockProps) {
+  const tAwardDescriptions = useSafeTranslations('records.userRecords.awardDescriptions')
+  const tUserRecords = useSafeTranslations('records.userRecords')
+  
   if (!record) {
     return null
   }
@@ -115,7 +109,23 @@ export default function RecordBlock({ title, record, value, groupId, isUser }: R
       }
 
   // Get description for this award
-  const description = isUser && awardDescriptions[title] ? awardDescriptions[title] : null
+  const getAwardDescription = (awardTitle: string): string | null => {
+    if (!isUser) return null
+    
+    // Map award titles to translation keys - check both English and translated versions
+    const awardKeys = ['vsVirtuoso', 'playPowerhouse', 'chartConnoisseur', 'hiddenGemHunter', 'consistencyChampion', 'tasteMaker']
+    
+    // Find the key that matches the title (works for both English and translated titles)
+    const matchingKey = awardKeys.find(key => tUserRecords(key) === awardTitle)
+    
+    if (matchingKey) {
+      return tAwardDescriptions(matchingKey)
+    }
+    
+    return null
+  }
+  
+  const description = getAwardDescription(title)
 
   return (
     <div className="h-full relative">

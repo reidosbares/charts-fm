@@ -5,6 +5,7 @@ import { Link } from '@/i18n/routing'
 import { EnrichedChartItem } from '@/lib/group-chart-metrics'
 import { useNavigation } from '@/contexts/NavigationContext'
 import { generateSlug } from '@/lib/chart-slugs'
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 interface ChartTableProps {
   items: EnrichedChartItem[]
@@ -14,6 +15,7 @@ interface ChartTableProps {
 
 export default function ChartTable({ items, chartType, groupId }: ChartTableProps) {
   const { stopPulse } = useNavigation()
+  const t = useSafeTranslations('charts')
 
   useEffect(() => {
     if (items.length > 0) {
@@ -36,14 +38,14 @@ export default function ChartTable({ items, chartType, groupId }: ChartTableProp
 
   const formatPositionChange = useCallback((change: number | null, entryType?: string | null): string => {
     if (change === null) {
-      if (entryType === 'new') return 'NEW'
-      if (entryType === 're-entry') return 'RE'
-      return 'NEW' // fallback for legacy data
+      if (entryType === 'new') return t('new')
+      if (entryType === 're-entry') return t('reEntry')
+      return t('new') // fallback for legacy data
     }
     if (change === 0) return ''
     if (change < 0) return `(↑${Math.abs(change)})`
     return `(↓${change})`
-  }, [])
+  }, [t])
 
   const formatPlaysChange = useCallback((change: number | null): string => {
     if (change === null) return ''
@@ -103,7 +105,7 @@ export default function ChartTable({ items, chartType, groupId }: ChartTableProp
             {item.name}
           </Link>
           {item.artist && (
-            <div className="text-gray-500 text-xs mt-1">by {item.artist}</div>
+            <div className="text-gray-500 text-xs mt-1">{t('by', { artist: item.artist })}</div>
           )}
         </div>
       </td>
@@ -148,19 +150,19 @@ export default function ChartTable({ items, chartType, groupId }: ChartTableProp
               #
             </th>
             <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-              {chartType === 'artists' ? 'Artist' : chartType === 'tracks' ? 'Track' : 'Album'}
+              {chartType === 'artists' ? t('artists') : chartType === 'tracks' ? t('tracks') : t('albums')}
             </th>
             <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
-              Plays
+              {t('plays')}
             </th>
             <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
-              VS
+              {t('vs')}
             </th>
             <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
-              Weeks on Chart
+              {t('weeksOnChart')}
             </th>
             <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
-              Peak Position
+              {t('peakPosition')}
             </th>
           </tr>
         </thead>

@@ -5,17 +5,20 @@ import { Link } from '@/i18n/routing'
 import ChartsClient from './ChartsClient'
 import { getCachedChartEntries } from '@/lib/group-chart-metrics'
 import GroupPageHero from '@/components/groups/GroupPageHero'
+import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   try {
     const { group } = await requireGroupMembership(params.id)
+    const t = await getTranslations('charts')
     return {
-      title: `${group?.name || 'Group'} - Charts`,
+      title: `${group?.name || 'Group'} - ${t('title')}`,
     }
   } catch {
+    const t = await getTranslations('charts')
     return {
-      title: 'Charts',
+      title: t('title'),
     }
   }
 }
@@ -46,6 +49,8 @@ export default async function ChartsPage({
   searchParams: { week?: string; type?: string }
 }) {
   const { user, group } = await requireGroupMembership(params.id)
+  const t = await getTranslations('charts')
+  const tGroups = await getTranslations('groups')
 
   // Get color theme
   // @ts-ignore - Prisma client will be regenerated after migration
@@ -56,9 +61,9 @@ export default async function ChartsPage({
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Group not found</h1>
+          <h1 className="text-2xl font-bold mb-4">{t('groupNotFound')}</h1>
           <Link href="/groups" className="text-[var(--theme-text)] hover:underline">
-            Back to Groups
+            {t('backToGroups')}
           </Link>
         </div>
       </main>
@@ -79,14 +84,14 @@ export default async function ChartsPage({
               image: group.image,
             }}
             breadcrumbs={[
-              { label: 'Groups', href: '/groups' },
+              { label: tGroups('hero.breadcrumb'), href: '/groups' },
               { label: group.name, href: `/groups/${group.id}` },
-              { label: 'Charts' },
+              { label: t('title') },
             ]}
-            subheader="Charts"
+            subheader={t('title')}
           />
           <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-            <p className="text-gray-600 mb-4">No charts available yet.</p>
+            <p className="text-gray-600 mb-4">{t('noChartsAvailable')}</p>
           </div>
         </div>
       </main>
@@ -123,15 +128,15 @@ export default async function ChartsPage({
             image: group.image,
           }}
           breadcrumbs={[
-            { label: 'Groups', href: '/groups' },
+            { label: tGroups('hero.breadcrumb'), href: '/groups' },
             { label: group.name, href: `/groups/${group.id}` },
-            { label: 'Charts' },
+            { label: t('title') },
           ]}
           subheader={
             <>
-              Week of {weekStartFormatted}
+              {t('weekOf', { date: weekStartFormatted })}
               <span className="text-xs italic text-gray-500 ml-1">
-                (from {weekStartFormatted} to {weekEndFormatted})
+                {t('fromTo', { start: weekStartFormatted, end: weekEndFormatted })}
               </span>
             </>
           }
