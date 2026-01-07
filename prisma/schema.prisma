@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,46 +8,44 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  name          String?
-  password      String?   // For email/password auth (hashed)
-  image         String?
-  lastfmUsername String   @unique // Required - same as Last.fm username
-  lastfmSessionKey String? // Last.fm session key for authenticated API calls
-  isSuperuser   Boolean  @default(false) // Superuser/admin access
-  quickAccessGroupId String? // Quick access group pinned to navbar
-  emailVerified Boolean  @default(false) // Email verification status
-  emailVerificationToken String? // Verification token for email confirmation
-  emailVerificationTokenExpires DateTime? // Token expiration (24 hours)
-  lastVerificationEmailSentAt DateTime? // Timestamp of last verification email sent (for rate limiting)
-  passwordResetToken String? // Password reset token
-  passwordResetTokenExpires DateTime? // Password reset token expiration (1 hour)
-  lastPasswordResetEmailSentAt DateTime? // Timestamp of last password reset email sent (for rate limiting)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  // Relations
-  friendshipsAsUser   Friendship[] @relation("UserFriendships")
-  friendshipsAsFriend Friendship[] @relation("FriendFriendships")
-  listeningStats      ListeningStat[]
-  groupsCreated       Group[] @relation("GroupCreator")
-  groupMemberships    GroupMember[]
-  groupJoinRequests   GroupJoinRequest[]
-  groupInvites         GroupInvite[]
-  weeklyStats         UserWeeklyStats[]
-  chartEntryVS        UserChartEntryVS[]
-  groupCompatibilityScores GroupCompatibilityScore[]
+  id                            String                         @id @default(cuid())
+  email                         String                         @unique
+  name                          String?
+  password                      String?
+  image                         String?
+  lastfmUsername                String                         @unique
+  lastfmSessionKey              String?
+  isSuperuser                   Boolean                        @default(false)
+  createdAt                     DateTime                       @default(now())
+  updatedAt                     DateTime                       @updatedAt
+  quickAccessGroupId            String?
+  emailVerificationToken        String?
+  emailVerificationTokenExpires DateTime?
+  emailVerified                 Boolean                        @default(false)
+  lastVerificationEmailSentAt   DateTime?
+  lastPasswordResetEmailSentAt  DateTime?
+  passwordResetToken            String?
+  passwordResetTokenExpires     DateTime?
+  chartEntryStatsAsMajorDriver  ChartEntryStats[]
+  friendshipsAsFriend           Friendship[]                   @relation("FriendFriendships")
+  friendshipsAsUser             Friendship[]                   @relation("UserFriendships")
+  comments                      GroupComment[]
+  groupCompatibilityScores      GroupCompatibilityScore[]
+  groupInvites                  GroupInvite[]
+  groupJoinRequests             GroupJoinRequest[]
+  groupMemberships              GroupMember[]
+  recommendationCache           GroupRecommendationCache?
   groupRecommendationRejections GroupRecommendationRejection[]
-  recommendationCache GroupRecommendationCache?
-  chartEntryStatsAsMajorDriver ChartEntryStats[]
-  quickAccessGroup Group? @relation("QuickAccessGroup", fields: [quickAccessGroupId], references: [id], onDelete: SetNull)
-  comments GroupComment[]
-  commentBans UserCommentBan[] @relation("UserCommentBans")
-  commentBansIssued UserCommentBan[] @relation("CommentBansIssued")
-  shoutboxPermissions GroupShoutboxPermission[]
-  shoutboxPermissionsGranted GroupShoutboxPermission[] @relation("ShoutboxPermissionsGranted")
-  
+  shoutboxPermissionsGranted    GroupShoutboxPermission[]      @relation("ShoutboxPermissionsGranted")
+  shoutboxPermissions           GroupShoutboxPermission[]
+  groupsCreated                 Group[]                        @relation("GroupCreator")
+  listeningStats                ListeningStat[]
+  chartEntryVS                  UserChartEntryVS[]
+  commentBansIssued             UserCommentBan[]               @relation("CommentBansIssued")
+  commentBans                   UserCommentBan?                @relation("UserCommentBans")
+  weeklyStats                   UserWeeklyStats[]
+  quickAccessGroup              Group?                         @relation("QuickAccessGroup", fields: [quickAccessGroupId], references: [id])
+
   @@map("users")
 }
 
@@ -58,146 +53,139 @@ model Friendship {
   id        String   @id @default(cuid())
   userId    String
   friendId  String
-  status    String   @default("pending") // pending, accepted, blocked
+  status    String   @default("pending")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  user   User @relation("UserFriendships", fields: [userId], references: [id], onDelete: Cascade)
-  friend User @relation("FriendFriendships", fields: [friendId], references: [id], onDelete: Cascade)
-  
+  friend    User     @relation("FriendFriendships", fields: [friendId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserFriendships", fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([userId, friendId])
   @@map("friendships")
 }
 
 model ListeningStat {
-  id          String   @id @default(cuid())
-  userId      String
-  trackName   String
-  artistName  String
-  albumName   String?
-  playCount   Int      @default(1)
-  lastPlayed  DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id         String    @id @default(cuid())
+  userId     String
+  trackName  String
+  artistName String
+  albumName  String?
+  playCount  Int       @default(1)
+  lastPlayed DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([trackName, artistName])
   @@map("listening_stats")
 }
 
 model Group {
-  id               String   @id @default(cuid())
-  name             String
-  image            String?  // Group icon/image URL
-  creatorId        String?
-  isPrivate        Boolean  @default(false) // If true, group is private and not viewable publicly
-  allowFreeJoin    Boolean  @default(false) // If true, users can join freely without approval (only for public groups)
-  chartSize        Int      @default(10) // Chart size: 10, 20, 50, or 100
-  chartMode        String   @default("vs") // Chart mode: "vs", "vs_weighted", or "plays_only"
-  trackingDayOfWeek Int    @default(0) // Day of week for tracking (0=Sunday, 1=Monday, ..., 6=Saturday)
-  dynamicIconEnabled Boolean @default(false) // Enable dynamic icon updates from weekly charts
-  dynamicIconSource String? // Source type: 'top_artist', 'top_album', or 'top_track_artist'
-  dynamicIconCaption String? // Caption text for the dynamic icon (e.g., "Artist Name" or "Album by Artist" or "Track by Artist")
-  colorTheme        String? @default("white") // Color theme: 'yellow', 'royal_blue', 'cyan', 'bright_red', 'maroon', 'graphite', 'hot_pink', 'neon_green', 'white', 'rainbow'
-  chartGenerationInProgress Boolean @default(false) // Lock flag to prevent concurrent chart updates
-  chartGenerationStartedAt DateTime? // Timestamp for timeout detection
-  shoutboxEnabled Boolean @default(true) // Enable/disable shoutbox for group
-  shoutboxRestrictiveMode Boolean @default(false) // If true, only explicitly allowed users can post
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  
-  creator     User?            @relation("GroupCreator", fields: [creatorId], references: [id], onDelete: SetNull)
-  members     GroupMember[]
-  joinRequests GroupJoinRequest[]
-  invites     GroupInvite[]
-  weeklyStats GroupWeeklyStats[]
-  chartEntries GroupChartEntry[]
-  allTimeStats GroupAllTimeStats?
-  trends GroupTrends?
-  compatibilityScores GroupCompatibilityScore[]
-  recommendationRejections GroupRecommendationRejection[]
-  chartEntryStats ChartEntryStats[]
-  quickAccessUsers User[] @relation("QuickAccessGroup")
-  comments GroupComment[]
-  shoutboxPermissions GroupShoutboxPermission[]
-  records GroupRecords?
-  
+  id                        String                         @id @default(cuid())
+  name                      String
+  image                     String?
+  creatorId                 String?
+  isPrivate                 Boolean                        @default(false)
+  allowFreeJoin             Boolean                        @default(false)
+  chartSize                 Int                            @default(10)
+  chartMode                 String                         @default("vs")
+  trackingDayOfWeek         Int                            @default(0)
+  dynamicIconEnabled        Boolean                        @default(false)
+  dynamicIconSource         String?
+  colorTheme                String?                        @default("white")
+  createdAt                 DateTime                       @default(now())
+  updatedAt                 DateTime                       @updatedAt
+  chartGenerationInProgress Boolean                        @default(false)
+  chartGenerationStartedAt  DateTime?
+  dynamicIconCaption        String?
+  shoutboxEnabled           Boolean                        @default(true)
+  shoutboxRestrictiveMode   Boolean                        @default(false)
+  chartEntryStats           ChartEntryStats[]
+  allTimeStats              GroupAllTimeStats?
+  chartEntries              GroupChartEntry[]
+  comments                  GroupComment[]
+  compatibilityScores       GroupCompatibilityScore[]
+  invites                   GroupInvite[]
+  joinRequests              GroupJoinRequest[]
+  members                   GroupMember[]
+  recommendationRejections  GroupRecommendationRejection[]
+  records                   GroupRecords?
+  shoutboxPermissions       GroupShoutboxPermission[]
+  trends                    GroupTrends?
+  weeklyStats               GroupWeeklyStats[]
+  creator                   User?                          @relation("GroupCreator", fields: [creatorId], references: [id])
+  quickAccessUsers          User[]                         @relation("QuickAccessGroup")
+
   @@map("groups")
 }
 
 model GroupMember {
-  id        String   @id @default(cuid())
-  groupId   String
-  userId    String
-  joinedAt  DateTime @default(now())
-  
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id       String   @id @default(cuid())
+  groupId  String
+  userId   String
+  joinedAt DateTime @default(now())
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([groupId, userId])
   @@map("group_members")
 }
 
 model UserWeeklyStats {
-  id        String   @id @default(cuid())
-  userId    String
-  weekStart DateTime // Sunday 00:00 UTC
-  weekEnd   DateTime // Next Sunday 00:00 UTC
-  topArtists Json    // Array of {name: string, playcount: number}
-  topTracks  Json    // Array of {name: string, artist: string, playcount: number}
-  topAlbums  Json    // Array of {name: string, artist: string, playcount: number}
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id         String   @id @default(cuid())
+  userId     String
+  weekStart  DateTime
+  weekEnd    DateTime
+  topArtists Json
+  topTracks  Json
+  topAlbums  Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([userId, weekStart])
   @@index([userId, weekStart])
   @@map("user_weekly_stats")
 }
 
 model GroupWeeklyStats {
-  id        String   @id @default(cuid())
-  groupId   String
-  weekStart DateTime // Sunday 00:00 UTC
-  weekEnd   DateTime // Next Sunday 00:00 UTC
-  topArtists Json    // Array of {name: string, playcount: number}
-  topTracks  Json    // Array of {name: string, artist: string, playcount: number}
-  topAlbums  Json    // Array of {name: string, artist: string, playcount: number}
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  
+  id         String   @id @default(cuid())
+  groupId    String
+  weekStart  DateTime
+  weekEnd    DateTime
+  topArtists Json
+  topTracks  Json
+  topAlbums  Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  group      Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
   @@unique([groupId, weekStart])
   @@index([groupId, weekStart])
   @@map("group_weekly_stats")
 }
 
 model GroupChartEntry {
-  id                String   @id @default(cuid())
-  groupId           String
-  weekStart         DateTime // Sunday 00:00 UTC
-  chartType         String   // "artists" | "tracks" | "albums"
-  entryKey          String   // Normalized key: name for artists, "name|artist" for tracks/albums
-  slug              String?  // URL-friendly slug: entryKey with pipes replaced by hyphens, special chars removed
-  name              String
-  artist            String?   // For tracks and albums
-  position          Int      // 1-10
-  playcount         Int
-  vibeScore         Float?   // Aggregated Vibe Score for this entry
-  positionChange    Int?     // null for new entries, negative = moved up, positive = moved down
-  playsChange       Int?     // null for new entries
-  totalWeeksAppeared Int     // Count of weeks this entry appears in up to this week
-  highestPosition   Int      // Best position across all weeks up to this week
-  entryType         String?   // "new" | "re-entry" | null (continuing entry)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  
+  id                 String   @id @default(cuid())
+  groupId            String
+  weekStart          DateTime
+  chartType          String
+  entryKey           String
+  name               String
+  artist             String?
+  position           Int
+  playcount          Int
+  vibeScore          Float?
+  positionChange     Int?
+  playsChange        Int?
+  totalWeeksAppeared Int
+  highestPosition    Int
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  entryType          String?
+  slug               String?
+  group              Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
   @@unique([groupId, weekStart, chartType, entryKey])
   @@index([groupId, weekStart, chartType])
   @@index([groupId, chartType, entryKey])
@@ -208,15 +196,14 @@ model GroupChartEntry {
 model GroupAllTimeStats {
   id          String   @id @default(cuid())
   groupId     String   @unique
-  topArtists  Json     // Array of {name: string, playcount: number}
-  topTracks   Json     // Array of {name: string, artist: string, playcount: number}
-  topAlbums   Json     // Array of {name: string, artist: string, playcount: number}
+  topArtists  Json
+  topTracks   Json
+  topAlbums   Json
   lastUpdated DateTime @default(now())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  
+  group       Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
   @@map("group_all_time_stats")
 }
 
@@ -224,13 +211,12 @@ model GroupJoinRequest {
   id        String   @id @default(cuid())
   groupId   String
   userId    String
-  status    String   @default("pending") // pending, accepted, rejected
+  status    String   @default("pending")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([groupId, userId])
   @@index([groupId, status])
   @@map("group_join_requests")
@@ -240,13 +226,12 @@ model GroupInvite {
   id        String   @id @default(cuid())
   groupId   String
   userId    String
-  status    String   @default("pending") // pending, accepted, rejected
+  status    String   @default("pending")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([groupId, userId])
   @@index([groupId, status])
   @@index([userId, status])
@@ -256,16 +241,15 @@ model GroupInvite {
 model UserChartEntryVS {
   id        String   @id @default(cuid())
   userId    String?
-  weekStart DateTime // Sunday 00:00 UTC
-  chartType String   // "artists" | "tracks" | "albums"
-  entryKey  String   // Normalized key: name for artists, "name|artist" for tracks/albums
-  vibeScore Float    // User's VS contribution for this entry (calculated from top 100)
-  playcount Int      // User's playcount for this entry, for reference
+  weekStart DateTime
+  chartType String
+  entryKey  String
+  vibeScore Float
+  playcount Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  user  User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
-  
+  user      User?    @relation(fields: [userId], references: [id])
+
   @@unique([userId, weekStart, chartType, entryKey])
   @@index([userId, weekStart])
   @@index([userId, weekStart, chartType])
@@ -273,21 +257,20 @@ model UserChartEntryVS {
 }
 
 model GroupCompatibilityScore {
-  id            String   @id @default(cuid())
-  userId        String
-  groupId       String
-  score         Float    // 0-100 compatibility score
-  artistOverlap Float    // Component score
-  trackOverlap  Float    // Component score
-  genreOverlap  Float    // Component score
-  patternScore  Float    // Component score
+  id             String   @id @default(cuid())
+  userId         String
+  groupId        String
+  score          Float
+  artistOverlap  Float
+  trackOverlap   Float
+  genreOverlap   Float
+  patternScore   Float
   lastCalculated DateTime @default(now())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  group          Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([userId, groupId])
   @@index([userId, score])
   @@index([groupId])
@@ -299,10 +282,9 @@ model GroupRecommendationRejection {
   userId    String
   groupId   String
   createdAt DateTime @default(now())
-  
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([userId, groupId])
   @@index([userId])
   @@map("group_recommendation_rejections")
@@ -310,103 +292,81 @@ model GroupRecommendationRejection {
 
 model ArtistGenre {
   id          String   @id @default(cuid())
-  artistName  String   @unique // Normalized: toLowerCase()
-  genres      Json     // Array of genre strings from Last.fm
+  artistName  String   @unique
+  genres      Json
   lastFetched DateTime @default(now())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   @@index([artistName])
   @@map("artist_genres")
 }
 
 model GroupRecommendationCache {
-  id            String   @id @default(cuid())
-  userId        String   @unique
-  recommendations Json   // Array of recommendation groups with scores
-  lastCalculated DateTime @default(now())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  recommendations Json
+  lastCalculated  DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@map("group_recommendation_cache")
 }
 
 model GroupTrends {
-  id                String   @id @default(cuid())
-  groupId           String   @unique
-  weekStart         DateTime // Latest week's start date
-  weekEnd           DateTime // Latest week's end date
-  
-  // Entry highlights
-  newEntries        Json     // Array of {chartType, entryKey, name, artist?, position}
-  biggestClimbers   Json     // Array of {chartType, entryKey, name, artist?, positionChange, oldPosition, newPosition}
-  biggestFallers    Json     // Array of {chartType, entryKey, name, artist?, positionChange, oldPosition, newPosition}
-  exits             Json     // Array of {chartType, entryKey, name, artist?, lastPosition}
-  
-  // Member contributions (if 3+ members)
-  topContributors   Json?    // Array of {userId, name, totalPlays, totalVS, contributions}
-  memberSpotlight   Json?    // {userId, name, highlight, topContributions[]}
-  
-  // Fun stats
+  id                String    @id @default(cuid())
+  groupId           String    @unique
+  weekStart         DateTime
+  weekEnd           DateTime
+  newEntries        Json
+  biggestClimbers   Json
+  biggestFallers    Json
+  exits             Json
+  topContributors   Json?
+  memberSpotlight   Json?
   totalPlays        Int
-  totalPlaysChange   Int?     // vs previous week
-  chartTurnover     Int      // Number of new entries
-  funFacts          Json     // Array of fun fact strings
-  
-  // Week comparison
+  totalPlaysChange  Int?
+  chartTurnover     Int
+  funFacts          Json
   previousWeekStart DateTime?
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  group             Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
   @@map("group_trends")
 }
 
 model ChartEntryStats {
-  id                String   @id @default(cuid())
-  groupId           String
-  chartType         String   // "artists" | "tracks" | "albums"
-  entryKey          String
-  slug              String
-  
-  // Cached statistics
-  peakPosition      Int
-  weeksAtPeak       Int
-  debutPosition     Int
-  weeksInTop10      Int
-  totalWeeksCharting Int
-  longestStreak     Int
-  isStreakOngoing   Boolean
-  
-  // Major driver (lazily calculated)
-  majorDriverUserId String?
-  majorDriverName   String?
-  majorDriverVS     Float?
-  majorDriverPlays Int?
-  majorDriverLastUpdated DateTime? // NULL = stale, needs recalculation
-  
-  // Totals
-  totalVS           Float?
-  totalPlays        Int
-  
-  // Staleness flags
-  statsStale        Boolean  @default(false) // True if stats need recalculation
-  statsLastUpdated  DateTime? // When stats were last calculated
-  
-  // Timestamps
-  latestAppearance  DateTime?
-  lastUpdated       DateTime @default(now())
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  majorDriver User? @relation(fields: [majorDriverUserId], references: [id], onDelete: SetNull)
-  
+  id                     String    @id @default(cuid())
+  groupId                String
+  chartType              String
+  entryKey               String
+  slug                   String
+  peakPosition           Int
+  weeksAtPeak            Int
+  debutPosition          Int
+  weeksInTop10           Int
+  totalWeeksCharting     Int
+  longestStreak          Int
+  isStreakOngoing        Boolean
+  majorDriverUserId      String?
+  majorDriverName        String?
+  majorDriverVS          Float?
+  majorDriverPlays       Int?
+  majorDriverLastUpdated DateTime?
+  totalVS                Float?
+  totalPlays             Int
+  statsStale             Boolean   @default(false)
+  statsLastUpdated       DateTime?
+  latestAppearance       DateTime?
+  lastUpdated            DateTime  @default(now())
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  group                  Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  majorDriver            User?     @relation(fields: [majorDriverUserId], references: [id])
+
   @@unique([groupId, chartType, entryKey])
   @@index([groupId, chartType, slug])
   @@index([groupId, chartType, entryKey])
@@ -420,43 +380,40 @@ model GroupComment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  user  User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
-  
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id])
+
   @@index([groupId, createdAt])
   @@index([userId, createdAt])
   @@map("group_comments")
 }
 
 model UserCommentBan {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  bannedBy  String
-  reason    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  user      User @relation("UserCommentBans", fields: [userId], references: [id], onDelete: Cascade)
-  bannedByUser User @relation("CommentBansIssued", fields: [bannedBy], references: [id], onDelete: Cascade)
-  
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  bannedBy     String
+  reason       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  bannedByUser User     @relation("CommentBansIssued", fields: [bannedBy], references: [id], onDelete: Cascade)
+  user         User     @relation("UserCommentBans", fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@map("user_comment_bans")
 }
 
 model GroupShoutboxPermission {
-  id         String   @id @default(cuid())
-  groupId    String
-  userId     String
-  permission String   // "silenced" | "allowed"
-  grantedBy  String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  
-  group      Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  user       User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  grantedByUser User @relation("ShoutboxPermissionsGranted", fields: [grantedBy], references: [id], onDelete: Cascade)
-  
+  id            String   @id @default(cuid())
+  groupId       String
+  userId        String
+  permission    String
+  grantedBy     String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  grantedByUser User     @relation("ShoutboxPermissionsGranted", fields: [grantedBy], references: [id], onDelete: Cascade)
+  group         Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([groupId, userId])
   @@index([groupId, permission])
   @@index([userId])
@@ -464,17 +421,15 @@ model GroupShoutboxPermission {
 }
 
 model GroupRecords {
-  id                    String   @id @default(cuid())
-  groupId               String   @unique
-  status                String   // "calculating" | "completed" | "failed"
-  calculationStartedAt  DateTime?
-  chartsGeneratedAt     DateTime? // When charts were last generated (for 1-hour check)
-  records               Json     // Stores all calculated records
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-  
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  
+  id                   String    @id @default(cuid())
+  groupId              String    @unique
+  status               String
+  calculationStartedAt DateTime?
+  chartsGeneratedAt    DateTime?
+  records              Json
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  group                Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
   @@map("group_records")
 }
-
