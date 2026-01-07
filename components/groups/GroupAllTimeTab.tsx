@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMusic, faMicrophone, faCompactDisc, faTrophy, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faMusic, faMicrophone, faCompactDisc, faTrophy, faSpinner, faMedal } from '@fortawesome/free-solid-svg-icons'
 import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
 import { generateSlug } from '@/lib/chart-slugs'
@@ -17,6 +17,8 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
   const [data, setData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [previewData, setPreviewData] = useState<any>(null)
+  const [previewLoading, setPreviewLoading] = useState(true)
 
   useEffect(() => {
     fetch(`/api/groups/${groupId}/alltime-stats`)
@@ -33,6 +35,20 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
         setError('Failed to load all-time stats')
         setIsLoading(false)
         console.error('Error fetching all-time stats:', err)
+      })
+
+    // Fetch preview data
+    fetch(`/api/groups/${groupId}/records/preview`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.error) {
+          setPreviewData(data)
+        }
+        setPreviewLoading(false)
+      })
+      .catch((err) => {
+        setPreviewLoading(false)
+        console.error('Error fetching records preview:', err)
       })
   }, [groupId])
 
@@ -92,6 +108,85 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
           View All-Time Stats
         </LiquidGlassLink>
       </div>
+
+      {/* Records Preview Section */}
+      {!previewLoading && previewData && (previewData.artist || previewData.track || previewData.album) && (
+        <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 border border-theme mb-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <FontAwesomeIcon icon={faMedal} className="text-[var(--theme-primary)]" />
+              Records
+            </h3>
+            <LiquidGlassLink
+              href={`/groups/${groupId}/records`}
+              variant="primary"
+              useTheme
+            >
+              View All Records
+            </LiquidGlassLink>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {previewData.artist && (
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <FontAwesomeIcon icon={faMicrophone} className="text-[var(--theme-primary)]" />
+                  <span className="text-sm font-semibold text-gray-600">Artist</span>
+                </div>
+                <Link
+                  href={`/groups/${groupId}/charts/artist/${previewData.artist.slug}`}
+                  className="font-bold text-lg text-gray-900 hover:text-[var(--theme-primary)] transition-colors block mb-1"
+                >
+                  {previewData.artist.name}
+                </Link>
+                <p className="text-sm text-gray-600">
+                  {previewData.artist.value} {previewData.artist.value === 1 ? 'week' : 'weeks'} on chart
+                </p>
+              </div>
+            )}
+            {previewData.track && (
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <FontAwesomeIcon icon={faMusic} className="text-[var(--theme-primary)]" />
+                  <span className="text-sm font-semibold text-gray-600">Track</span>
+                </div>
+                <Link
+                  href={`/groups/${groupId}/charts/track/${previewData.track.slug}`}
+                  className="font-bold text-lg text-gray-900 hover:text-[var(--theme-primary)] transition-colors block mb-1"
+                >
+                  {previewData.track.name}
+                </Link>
+                {previewData.track.artist && (
+                  <p className="text-xs text-gray-600 mb-1">by {previewData.track.artist}</p>
+                )}
+                <p className="text-sm text-gray-600">
+                  {previewData.track.value} {previewData.track.value === 1 ? 'week' : 'weeks'} on chart
+                </p>
+              </div>
+            )}
+            {previewData.album && (
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <FontAwesomeIcon icon={faCompactDisc} className="text-[var(--theme-primary)]" />
+                  <span className="text-sm font-semibold text-gray-600">Album</span>
+                </div>
+                <Link
+                  href={`/groups/${groupId}/charts/album/${previewData.album.slug}`}
+                  className="font-bold text-lg text-gray-900 hover:text-[var(--theme-primary)] transition-colors block mb-1"
+                >
+                  {previewData.album.name}
+                </Link>
+                {previewData.album.artist && (
+                  <p className="text-xs text-gray-600 mb-1">by {previewData.album.artist}</p>
+                )}
+                <p className="text-sm text-gray-600">
+                  {previewData.album.value} {previewData.album.value === 1 ? 'week' : 'weeks'} on chart
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 border border-theme">
         <h3 className="text-2xl font-bold mb-6 text-gray-900">Top 100 All-Time</h3>
         

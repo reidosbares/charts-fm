@@ -7,6 +7,9 @@ import { getWeekStartForDay, getWeekEndForDay, getLastNFinishedWeeksForDay } fro
 import { recalculateAllTimeStats } from '@/lib/group-alltime-stats'
 import { invalidateEntryStatsCacheBatch } from '@/lib/chart-deep-dive'
 import { calculateGroupTrends } from '@/lib/group-trends'
+import { calculateGroupRecords, getGroupRecords } from '@/lib/group-records'
+import { RecordsCalculationLogger } from '@/lib/records-calculation-logger'
+import { ChartType } from '@/lib/chart-slugs'
 
 const LOCK_TIMEOUT_MS = 30 * 60 * 1000 // 30 minutes
 
@@ -300,6 +303,105 @@ async function generateChartsInBackground(
       console.error('Error updating group icon after chart generation:', error)
     })
 
+    // Trigger records calculation after charts are generated
+    console.log(`[Records] Checking if records calculation should run. weeksToGenerate.length: ${weeksToGenerate.length}`)
+    if (weeksToGenerate.length > 0) {
+      console.log(`[Records] Collecting new entries for weeks: ${weeksToGenerate.map(w => w.toISOString()).join(', ')}`)
+      // Collect all entries that appeared in newly generated week(s)
+      const newEntries = await prisma.groupChartEntry.findMany({
+        where: {
+          groupId,
+          weekStart: { in: weeksToGenerate },
+        },
+        select: {
+          entryKey: true,
+          chartType: true,
+          position: true,
+        },
+      })
+      console.log(`[Records] Found ${newEntries.length} entries in newly generated weeks`)
+
+      // Extract unique entryKey + chartType combinations (for incremental calculation)
+      // We only need to check each entry once, not per week
+      const uniqueEntriesMap = new Map<string, {
+        entryKey: string
+        chartType: ChartType
+        position: number
+      }>()
+
+      for (const entry of newEntries) {
+        const key = `${entry.entryKey}|${entry.chartType}`
+        if (!uniqueEntriesMap.has(key)) {
+          // Use the best (lowest) position for this entry across all new weeks
+          uniqueEntriesMap.set(key, {
+            entryKey: entry.entryKey,
+            chartType: entry.chartType as ChartType,
+            position: entry.position,
+          })
+        } else {
+          // Update if this position is better (lower)
+          const existing = uniqueEntriesMap.get(key)!
+          if (entry.position < existing.position) {
+            existing.position = entry.position
+          }
+        }
+      }
+
+      const uniqueEntries = Array.from(uniqueEntriesMap.values())
+      console.log(`[Records] Unique entries to check: ${uniqueEntries.length}`)
+
+      // Check if GroupRecords exists
+      const existingRecords = await getGroupRecords(groupId)
+      const useIncremental = existingRecords && existingRecords.status === 'completed'
+      console.log(`[Records] Existing records found: ${!!existingRecords}, status: ${existingRecords?.status}, useIncremental: ${useIncremental}`)
+
+      // Delete existing GroupRecords if exists (for fresh calculation)
+      if (existingRecords) {
+        try {
+          await prisma.groupRecords.delete({
+            where: { groupId },
+          })
+          console.log(`[Records] Deleted existing GroupRecords`)
+        } catch (err) {
+          console.error('[Records] Error deleting existing records:', err)
+        }
+      }
+
+      // Create new GroupRecords with status "calculating"
+      try {
+        await prisma.groupRecords.create({
+          data: {
+            groupId,
+            status: 'calculating',
+            calculationStartedAt: new Date(),
+            chartsGeneratedAt: new Date(),
+            records: {},
+          },
+        })
+        console.log(`[Records] Created new GroupRecords with status 'calculating'`)
+      } catch (err) {
+        console.error('[Records] Error creating GroupRecords:', err)
+        // Don't proceed if we can't create the record
+        return
+      }
+
+      // Trigger async records calculation (fire-and-forget)
+      console.log(`[Records] Triggering records calculation for group ${groupId} (${useIncremental ? 'incremental' : 'full'}, ${uniqueEntries.length} new entries)`)
+      calculateRecordsInBackgroundAfterCharts(
+        groupId,
+        useIncremental ? uniqueEntries : undefined
+      ).catch((error) => {
+        console.error('[Records] Error calculating records in background:', error)
+        // Update status to failed
+        prisma.groupRecords.update({
+          where: { groupId },
+          data: { status: 'failed' },
+        }).catch((err) => {
+          console.error('[Records] Error updating records status to failed:', err)
+        })
+      })
+    }
+
     // Release lock
     await prisma.group.update({
       where: { id: groupId },
@@ -320,6 +422,52 @@ async function generateChartsInBackground(
     }).catch((err) => {
       console.error('Error releasing lock after error:', err)
     })
+    throw error
+  }
+}
+
+// Background function to calculate records after charts are generated
+async function calculateRecordsInBackgroundAfterCharts(
+  groupId: string,
+  newEntries?: Array<{ entryKey: string; chartType: ChartType; position: number }>
+): Promise<void> {
+  console.log(`[Records] Starting records calculation for group ${groupId}`)
+  const logger = new RecordsCalculationLogger(groupId)
+  const logFile = logger.getLogFile()
+  console.log(`[Records] Log file will be: ${logFile}`)
+  
+  try {
+    const records = await calculateGroupRecords(groupId, newEntries, logger)
+    
+    console.log(`[Records] Calculation completed for group ${groupId}`)
+    
+    // Update records with completed status
+    await prisma.groupRecords.update({
+      where: { groupId },
+      data: {
+        status: 'completed',
+        records: records as any,
+        updatedAt: new Date(),
+      },
+    })
+    
+    console.log(`[Records] Records saved to database for group ${groupId}`)
+    if (logFile) {
+      console.log(`[Records] Full log saved to: ${logFile}`)
+    }
+  } catch (error) {
+    console.error(`[Records] Error during calculation for group ${groupId}:`, error)
+    logger.log('Error during calculation', 0, String(error))
+    await logger.logSummary()
+    
+    // Update status to failed
+    await prisma.groupRecords.update({
+      where: { groupId },
+      data: { status: 'failed' },
+    }).catch((err) => {
+      console.error('[Records] Error updating records status to failed:', err)
+    })
+    
     throw error
   }
 }
