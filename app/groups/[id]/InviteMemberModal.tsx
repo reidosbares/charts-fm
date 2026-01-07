@@ -90,7 +90,7 @@ export default function InviteMemberModal({
     return () => clearTimeout(timeoutId)
   }, [lastfmUsername])
 
-  const isAtLimit = memberCount !== null && memberCount >= MAX_GROUP_MEMBERS
+  const isAtLimit = memberCount != null && memberCount >= MAX_GROUP_MEMBERS
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
