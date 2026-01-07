@@ -424,6 +424,24 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
 
   return (
     <div>
+      {/* Records Title - big, bold, centered with theme styling */}
+      <div className="text-center mb-6 py-2 overflow-visible">
+        <h1 
+          className="text-5xl sm:text-6xl lg:text-7xl font-bold"
+          style={{ 
+            lineHeight: '1.2', 
+            paddingBottom: '0.2em', 
+            overflow: 'visible',
+            backgroundImage: 'linear-gradient(to right, var(--theme-primary-darker), var(--theme-primary), var(--theme-primary-light))',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}
+        >
+          Records
+        </h1>
+      </div>
+
       {renderPreviewCards()}
 
       <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 border border-theme">

@@ -18,6 +18,7 @@ interface ChartEntryCardProps {
   variant?: 'default' | 'nested'
   userImage?: string | null
   accentColor?: string
+  openInNewTab?: boolean
 }
 
 export default function ChartEntryCard({
@@ -33,6 +34,7 @@ export default function ChartEntryCard({
   variant = 'default',
   userImage,
   accentColor,
+  openInNewTab = false,
 }: ChartEntryCardProps) {
   // Determine icon based on chartType if icon not provided
   const getIcon = () => {
@@ -89,6 +91,8 @@ export default function ChartEntryCard({
         {href ? (
           <Link
             href={href}
+            target={openInNewTab ? "_blank" : undefined}
+            rel={openInNewTab ? "noopener noreferrer" : undefined}
             className="font-semibold text-gray-900 break-words hover:text-[var(--theme-primary)] transition-colors"
           >
             {name}

@@ -2,6 +2,7 @@
 
 import { memo, useMemo } from 'react'
 import { EntryStats } from '@/lib/chart-deep-dive'
+import { formatWeekLabel } from '@/lib/weekly-utils'
 
 interface EntryStatsTableProps {
   stats: EntryStats
@@ -60,18 +61,15 @@ function EntryStatsTable({ stats }: EntryStatsTableProps) {
   const formatStreakDates = (startDate: Date | null, endDate: Date | null): string | null => {
     if (!startDate || !endDate) return null
     
-    const startFormatted = new Date(startDate).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-    const endFormatted = new Date(endDate).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
+    // Format start as week label (e.g., "Jan 16, 2025")
+    const startFormatted = formatWeekLabel(startDate)
     
-    // If start and end are the same, just show one date
+    // End date should represent the end of the last week (start of next week)
+    const endOfLastWeek = new Date(endDate)
+    endOfLastWeek.setUTCDate(endOfLastWeek.getUTCDate() + 7)
+    const endFormatted = formatWeekLabel(endOfLastWeek)
+    
+    // If start and end are the same week, just show one date
     if (startDate.getTime() === endDate.getTime()) {
       return startFormatted
     }
