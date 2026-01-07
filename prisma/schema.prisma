@@ -24,6 +24,9 @@ model User {
   emailVerificationToken String? // Verification token for email confirmation
   emailVerificationTokenExpires DateTime? // Token expiration (24 hours)
   lastVerificationEmailSentAt DateTime? // Timestamp of last verification email sent (for rate limiting)
+  passwordResetToken String? // Password reset token
+  passwordResetTokenExpires DateTime? // Password reset token expiration (1 hour)
+  lastPasswordResetEmailSentAt DateTime? // Timestamp of last password reset email sent (for rate limiting)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   

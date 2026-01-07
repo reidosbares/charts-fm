@@ -255,9 +255,22 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  Password
+                </label>
+                <a
+                  href="/auth/forgot-password"
+                  className="text-sm text-yellow-600 hover:text-yellow-700 hover:underline"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    onClose()
+                    router.push('/auth/forgot-password')
+                  }}
+                >
+                  Forgot password?
+                </a>
+              </div>
               <input
                 type="password"
                 id="password"
