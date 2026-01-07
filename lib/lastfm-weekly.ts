@@ -29,7 +29,6 @@ export async function getWeeklyTopTracks(
   const weekEnd = getWeekEnd(weekStart)
   const to = Math.floor(weekEnd.getTime() / 1000)
 
-  const apiStart = Date.now()
   let data
   if (sessionKey) {
     // Use authenticated call if we have session key
@@ -91,7 +90,6 @@ export async function getWeeklyTopArtists(
   const weekEnd = getWeekEnd(weekStart)
   const to = Math.floor(weekEnd.getTime() / 1000)
 
-  const apiStart = Date.now()
   let data
   if (sessionKey) {
     data = await authenticatedLastFMCall(
@@ -150,7 +148,6 @@ export async function getWeeklyTopAlbums(
   const weekEnd = getWeekEnd(weekStart)
   const to = Math.floor(weekEnd.getTime() / 1000)
 
-  const apiStart = Date.now()
   let data
   if (sessionKey) {
     data = await authenticatedLastFMCall(
@@ -210,11 +207,10 @@ export async function getWeeklyStats(
   topArtists: TopItem[]
   topAlbums: TopItem[]
 }> {
-  const totalStart = Date.now()
   const [topTracks, topArtists, topAlbums] = await Promise.all([
-    getWeeklyTopTracks(username, weekStart, apiKey, apiSecret, sessionKey, logger),
-    getWeeklyTopArtists(username, weekStart, apiKey, apiSecret, sessionKey, logger),
-    getWeeklyTopAlbums(username, weekStart, apiKey, apiSecret, sessionKey, logger),
+    getWeeklyTopTracks(username, weekStart, apiKey, apiSecret, sessionKey),
+    getWeeklyTopArtists(username, weekStart, apiKey, apiSecret, sessionKey),
+    getWeeklyTopAlbums(username, weekStart, apiKey, apiSecret, sessionKey),
   ])
 
   return {

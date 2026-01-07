@@ -7,6 +7,7 @@ import { getDefaultGroupImage } from '@/lib/default-images'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
+import DeleteAccountModal from '@/components/DeleteAccountModal'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -19,6 +20,7 @@ export default function ProfilePage() {
     image: '',
   })
   const [lastfmUsername, setLastfmUsername] = useState<string | null>(null)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
   useEffect(() => {
     fetch('/api/user/profile')
@@ -263,8 +265,50 @@ export default function ProfilePage() {
               </form>
             </div>
           </div>
+
+          {/* Danger Zone */}
+          <div
+            className="rounded-3xl p-8 sm:p-10 relative mt-8"
+            style={{
+              background: 'rgba(255, 255, 255, 0.6)',
+              backdropFilter: 'blur(16px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <div className="relative z-10">
+              <h2 className="text-2xl font-bold text-red-600 mb-2">Danger Zone</h2>
+              <p className="text-sm text-gray-600 mb-4">
+                Irreversible and destructive actions
+              </p>
+              <div className="pt-4 border-t border-red-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                      Delete Account
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Permanently delete your account and all associated data. This action cannot be undone.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setIsDeleteModalOpen(true)}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                  >
+                    Delete Account
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+      <DeleteAccountModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+      />
     </main>
   )
 }

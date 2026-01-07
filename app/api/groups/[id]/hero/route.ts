@@ -86,11 +86,11 @@ export async function GET(
         chartMode,
         trackingDayOfWeek,
         trackingDayName,
-        creator: {
+        creator: group.creator ? {
           id: group.creator.id,
           name: group.creator.name,
           lastfmUsername: group.creator.lastfmUsername,
-        },
+        } : null,
         memberCount: group._count.members,
       },
       isOwner,

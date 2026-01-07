@@ -91,7 +91,7 @@ model Group {
   id               String   @id @default(cuid())
   name             String
   image            String?  // Group icon/image URL
-  creatorId        String
+  creatorId        String?
   isPrivate        Boolean  @default(false) // If true, group is private and not viewable publicly
   allowFreeJoin    Boolean  @default(false) // If true, users can join freely without approval (only for public groups)
   chartSize        Int      @default(10) // Chart size: 10, 20, 50, or 100
@@ -108,7 +108,7 @@ model Group {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   
-  creator     User            @relation("GroupCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  creator     User?            @relation("GroupCreator", fields: [creatorId], references: [id], onDelete: SetNull)
   members     GroupMember[]
   joinRequests GroupJoinRequest[]
   invites     GroupInvite[]
@@ -254,7 +254,7 @@ model GroupInvite {
 
 model UserChartEntryVS {
   id        String   @id @default(cuid())
-  userId    String
+  userId    String?
   weekStart DateTime // Sunday 00:00 UTC
   chartType String   // "artists" | "tracks" | "albums"
   entryKey  String   // Normalized key: name for artists, "name|artist" for tracks/albums
@@ -263,7 +263,7 @@ model UserChartEntryVS {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
   
   @@unique([userId, weekStart, chartType, entryKey])
   @@index([userId, weekStart])
@@ -415,13 +415,13 @@ model ChartEntryStats {
 model GroupComment {
   id        String   @id @default(cuid())
   groupId   String
-  userId    String
+  userId    String?
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
   group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
   
   @@index([groupId, createdAt])
   @@index([userId, createdAt])

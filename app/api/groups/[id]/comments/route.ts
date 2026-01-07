@@ -51,10 +51,21 @@ export async function GET(
       take: limit,
     })
 
+    // Map comments to handle null user (deleted users)
+    const mappedComments = comments.map(comment => ({
+      ...comment,
+      user: comment.user || {
+        id: null,
+        name: 'Deleted User',
+        lastfmUsername: 'deleted',
+        image: null,
+      },
+    }))
+
     const totalPages = Math.ceil(total / limit)
 
     return NextResponse.json({
-      comments,
+      comments: mappedComments,
       total,
       page,
       totalPages,
