@@ -40,12 +40,14 @@ export default function Navbar() {
     image: string | null
     isSuperuser: boolean
   } | null>(null)
+  const [isUserDataLoading, setIsUserDataLoading] = useState(true)
   const [quickAccessGroup, setQuickAccessGroup] = useState<{
     id: string
     name: string
     image: string | null
     colorTheme: string
   } | null>(null)
+  const [isQuickAccessLoading, setIsQuickAccessLoading] = useState(true)
   const [isQuickAccessInfoOpen, setIsQuickAccessInfoOpen] = useState(false)
   const quickAccessButtonRef = useRef<HTMLButtonElement>(null)
   const prevPathnameRef = useRef(pathname)
@@ -53,6 +55,9 @@ export default function Navbar() {
   // Fetch user data and quick access group
   useEffect(() => {
     if (session?.user?.email) {
+      setIsUserDataLoading(true)
+      setIsQuickAccessLoading(true)
+      
       fetch('/api/user/me')
         .then(res => res.json())
         .then(data => {
@@ -66,6 +71,7 @@ export default function Navbar() {
           }
         })
         .catch(console.error)
+        .finally(() => setIsUserDataLoading(false))
       
       // Fetch quick access group
       fetch('/api/user/quick-access')
@@ -78,8 +84,11 @@ export default function Navbar() {
           }
         })
         .catch(console.error)
+        .finally(() => setIsQuickAccessLoading(false))
     } else {
       setQuickAccessGroup(null)
+      setIsUserDataLoading(false)
+      setIsQuickAccessLoading(false)
     }
   }, [session])
 
@@ -87,6 +96,7 @@ export default function Navbar() {
   useEffect(() => {
     const handleQuickAccessUpdate = () => {
       if (session?.user?.email) {
+        setIsQuickAccessLoading(true)
         fetch('/api/user/quick-access')
           .then(res => res.json())
           .then(data => {
@@ -97,6 +107,7 @@ export default function Navbar() {
             }
           })
           .catch(console.error)
+          .finally(() => setIsQuickAccessLoading(false))
       }
     }
 
@@ -109,6 +120,7 @@ export default function Navbar() {
   // Refetch when navigating away from profile page
   useEffect(() => {
     if (prevPathnameRef.current === '/profile' && pathname !== '/profile' && session?.user?.email) {
+      setIsUserDataLoading(true)
       fetch('/api/user/me')
         .then(res => res.json())
         .then(data => {
@@ -122,20 +134,10 @@ export default function Navbar() {
           }
         })
         .catch(console.error)
+        .finally(() => setIsUserDataLoading(false))
     }
-    // Refetch quick access on pathname change
-    if (session?.user?.email) {
-      fetch('/api/user/quick-access')
-        .then(res => res.json())
-        .then(data => {
-          if (data.group) {
-            setQuickAccessGroup(data.group)
-          } else {
-            setQuickAccessGroup(null)
-          }
-        })
-        .catch(console.error)
-    }
+    // Note: Quick access is not refetched on pathname change to prevent flashing
+    // It only updates when the session changes or when explicitly updated via events
     prevPathnameRef.current = pathname
   }, [pathname, session])
 
@@ -173,6 +175,7 @@ export default function Navbar() {
   }, [router])
 
   const isAuthenticated = useMemo(() => status === 'authenticated' && session?.user, [status, session?.user])
+  const isSessionLoading = status === 'loading'
 
   // Don't show navbar on auth pages, but still show loading screen if signing out
   if (pathname?.startsWith('/auth/')) {
@@ -346,10 +349,14 @@ export default function Navbar() {
             )}
           </div>
 
-          {isAuthenticated ? (
+          {isSessionLoading || (isAuthenticated && isUserDataLoading) ? (
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 border-2 border-gray-300 border-t-[var(--theme-primary)] rounded-full animate-spin"></div>
+            </div>
+          ) : isAuthenticated && !isUserDataLoading ? (
             <div className="flex items-center space-x-3">
               {/* Quick Access Group or + Button */}
-              {quickAccessGroup ? (() => {
+              {isQuickAccessLoading ? null : (quickAccessGroup ? (() => {
                 const theme = GROUP_THEMES[quickAccessGroup.colorTheme as keyof typeof GROUP_THEMES]
                 const isRainbow = quickAccessGroup.colorTheme === 'rainbow'
                 // Convert primaryDarker RGB to RGBA with opacity for glassmorphic effect
@@ -470,7 +477,7 @@ export default function Navbar() {
                 >
                   <FontAwesomeIcon icon={faPlus} className="w-4 h-4" />
                 </button>
-              )}
+              ))}
               
               {/* User Button */}
               <div className="relative">
@@ -609,7 +616,7 @@ export default function Navbar() {
               )}
               </div>
             </div>
-          ) : (
+          ) : status === 'unauthenticated' ? (
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setIsSignInModalOpen(true)}
@@ -650,7 +657,7 @@ export default function Navbar() {
                 Sign Up
               </Link>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </nav>
