@@ -38,6 +38,23 @@ export default function CreateUserForm() {
       return
     }
 
+    // Validate password if provided
+    if (formData.password) {
+      if (formData.password.length < 8) {
+        setError('Password must be at least 8 characters')
+        setIsSubmitting(false)
+        return
+      }
+
+      // Check for at least one special character
+      const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{}|;:'",.<>?/~`]/
+      if (!specialCharRegex.test(formData.password)) {
+        setError('Password must contain at least one special character')
+        setIsSubmitting(false)
+        return
+      }
+    }
+
     try {
       const response = await fetch('/api/admin/users', {
         method: 'POST',
@@ -161,7 +178,7 @@ export default function CreateUserForm() {
             placeholder="Leave empty if no password needed"
           />
           <p className="mt-1 text-sm text-gray-500">
-            If left empty, user will not be able to log in with email/password
+            If left empty, user will not be able to log in with email/password. If provided, password must be at least 8 characters with 1 special character.
           </p>
         </div>
 

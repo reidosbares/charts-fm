@@ -17,6 +17,23 @@ export async function POST(request: Request) {
       )
     }
 
+    // Validate password requirements
+    if (password.length < 8) {
+      return NextResponse.json(
+        { error: 'Password must be at least 8 characters' },
+        { status: 400 }
+      )
+    }
+
+    // Check for at least one special character
+    const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{}|;:'",.<>?/~`]/
+    if (!specialCharRegex.test(password)) {
+      return NextResponse.json(
+        { error: 'Password must contain at least one special character' },
+        { status: 400 }
+      )
+    }
+
     // Get Last.fm session from cookie
     const cookieStore = await cookies()
     const sessionCookie = cookieStore.get('lastfm_session')

@@ -61,6 +61,14 @@ export default function CompleteSignUpPage() {
       return
     }
 
+    // Check for at least one special character
+    const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{}|;:'",.<>?/~`]/
+    if (!specialCharRegex.test(formData.password)) {
+      setError('Password must contain at least one special character')
+      setIsSubmitting(false)
+      return
+    }
+
     try {
       const response = await fetch('/api/auth/signup/complete', {
         method: 'POST',
@@ -221,11 +229,11 @@ export default function CompleteSignUpPage() {
                       background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
-                    placeholder="At least 8 characters"
+                    placeholder="At least 8 characters with 1 special character"
                     minLength={8}
                   />
                   <p className="text-xs text-gray-600 mt-2">
-                    You'll use this password along with your email to log in.
+                    Password must be at least 8 characters and include at least one special character (!@#$%^&* etc.)
                   </p>
                 </div>
 
