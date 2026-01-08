@@ -24,11 +24,21 @@ async function retryWithBackoff<T>(
     } catch (error: any) {
       lastError = error
       
-      // Don't retry on certain errors (authentication, invalid parameters)
-      if (error.message?.includes('Invalid API key') || 
-          error.message?.includes('Invalid session key') ||
-          error.message?.includes('Invalid method') ||
-          error.message?.includes('Invalid parameters')) {
+      // Don't retry on certain errors (authentication, invalid parameters, 404 errors)
+      // 404 errors (user not found, resource not found) should not be retried
+      const errorMessage = error.message || String(error) || ''
+      const is404 = error.statusCode === 404 || error.status === 404
+      const isNonRetryable = 
+        is404 ||
+        errorMessage.includes('Invalid API key') || 
+        errorMessage.includes('Invalid session key') ||
+        errorMessage.includes('Invalid method') ||
+        errorMessage.includes('Invalid parameters')
+      
+      if (isNonRetryable) {
+        if (is404) {
+          console.warn(`[Last.fm API] ⚠️  404 error detected, skipping retries: ${errorMessage}`)
+        }
         throw error
       }
       
@@ -146,18 +156,41 @@ export async function getWeeklyTopTracks(
         throw error
       }
       
+      // Check for user not found error first (before checking response.ok)
+      // This handles both 404 responses and 200 responses with error code 6
+      if (responseData.error === 6 || responseData.error === '6' || 
+          (responseData.message && responseData.message.toLowerCase().includes('user not found'))) {
+        const error: any = new Error(`Last.fm API error: User not found`)
+        error.responseBody = responseData
+        error.statusCode = response.status
+        error.isUserNotFound = true // Add flag for easy detection
+        throw error
+      }
+
       if (!response.ok) {
-        throw new Error(`Last.fm API error: ${response.statusText}`)
+        const error: any = new Error(`Last.fm API error: ${response.statusText}`)
+        error.responseBody = responseData
+        error.statusCode = response.status
+        throw error
       }
       
       if (responseData.error) {
-        throw new Error(`Last.fm API error: ${responseData.message || responseData.error}`)
+        const error: any = new Error(`Last.fm API error: ${responseData.message || responseData.error}`)
+        error.responseBody = responseData
+        error.statusCode = response.status
+        throw error
       }
       return responseData
     })
   }
 
   if (data.error) {
+    // Check if it's a user not found error (error code 6) - don't retry these
+    if (data.error === 6 || data.error === '6' || data.message?.toLowerCase().includes('user not found')) {
+      const error: any = new Error(`Last.fm API error: User not found`)
+      error.responseBody = data
+      throw error
+    }
     throw new Error(`Last.fm API error: ${data.message || data.error}`)
   }
 
@@ -256,18 +289,41 @@ export async function getWeeklyTopArtists(
         throw error
       }
       
+      // Check for user not found error first (before checking response.ok)
+      // This handles both 404 responses and 200 responses with error code 6
+      if (responseData.error === 6 || responseData.error === '6' || 
+          (responseData.message && responseData.message.toLowerCase().includes('user not found'))) {
+        const error: any = new Error(`Last.fm API error: User not found`)
+        error.responseBody = responseData
+        error.statusCode = response.status
+        error.isUserNotFound = true // Add flag for easy detection
+        throw error
+      }
+
       if (!response.ok) {
-        throw new Error(`Last.fm API error: ${response.statusText}`)
+        const error: any = new Error(`Last.fm API error: ${response.statusText}`)
+        error.responseBody = responseData
+        error.statusCode = response.status
+        throw error
       }
       
       if (responseData.error) {
-        throw new Error(`Last.fm API error: ${responseData.message || responseData.error}`)
+        const error: any = new Error(`Last.fm API error: ${responseData.message || responseData.error}`)
+        error.responseBody = responseData
+        error.statusCode = response.status
+        throw error
       }
       return responseData
     })
   }
 
   if (data.error) {
+    // Check if it's a user not found error (error code 6) - don't retry these
+    if (data.error === 6 || data.error === '6' || data.message?.toLowerCase().includes('user not found')) {
+      const error: any = new Error(`Last.fm API error: User not found`)
+      error.responseBody = data
+      throw error
+    }
     throw new Error(`Last.fm API error: ${data.message || data.error}`)
   }
 
@@ -365,18 +421,41 @@ export async function getWeeklyTopAlbums(
         throw error
       }
       
+      // Check for user not found error first (before checking response.ok)
+      // This handles both 404 responses and 200 responses with error code 6
+      if (responseData.error === 6 || responseData.error === '6' || 
+          (responseData.message && responseData.message.toLowerCase().includes('user not found'))) {
+        const error: any = new Error(`Last.fm API error: User not found`)
+        error.responseBody = responseData
+        error.statusCode = response.status
+        error.isUserNotFound = true // Add flag for easy detection
+        throw error
+      }
+
       if (!response.ok) {
-        throw new Error(`Last.fm API error: ${response.statusText}`)
+        const error: any = new Error(`Last.fm API error: ${response.statusText}`)
+        error.responseBody = responseData
+        error.statusCode = response.status
+        throw error
       }
       
       if (responseData.error) {
-        throw new Error(`Last.fm API error: ${responseData.message || responseData.error}`)
+        const error: any = new Error(`Last.fm API error: ${responseData.message || responseData.error}`)
+        error.responseBody = responseData
+        error.statusCode = response.status
+        throw error
       }
       return responseData
     })
   }
 
   if (data.error) {
+    // Check if it's a user not found error (error code 6) - don't retry these
+    if (data.error === 6 || data.error === '6' || data.message?.toLowerCase().includes('user not found')) {
+      const error: any = new Error(`Last.fm API error: User not found`)
+      error.responseBody = data
+      throw error
+    }
     throw new Error(`Last.fm API error: ${data.message || data.error}`)
   }
 

@@ -15,16 +15,41 @@ const API_KEY = process.env.LASTFM_API_KEY!
 const API_SECRET = process.env.LASTFM_API_SECRET!
 
 /**
+ * Check if an error is a "User not found" error from Last.fm API
+ * Last.fm returns error code 6 with message "User not found" for deleted/non-existent users
+ */
+function isUserNotFoundError(error: any): boolean {
+  if (!error) return false
+  
+  const errorMessage = error.message || String(error)
+  const errorString = errorMessage.toLowerCase()
+  
+  // Check for Last.fm API error code 6 or "User not found" message
+  // Error can appear in various formats:
+  // - Error message: "Last.fm API error: User not found"
+  // - Error message: "User not found"
+  // - Response body: { error: 6, message: "User not found" }
+  return (
+    errorString.includes('user not found') ||
+    errorString.includes('error: 6') ||
+    errorString.includes('error 6') ||
+    (error.responseBody && (error.responseBody.error === 6 || error.responseBody.error === '6')) ||
+    (typeof error === 'object' && 'error' in error && (error.error === 6 || error.error === '6'))
+  )
+}
+
+/**
  * Process items in parallel with a concurrency limit
  * This allows controlled parallelization while respecting rate limits
+ * Returns results with success/error information
  */
 async function processWithConcurrencyLimit<T, R>(
   items: T[],
   concurrency: number,
   processor: (item: T, index: number, total: number) => Promise<R>,
   itemLabel?: (item: T) => string
-): Promise<R[]> {
-  const results: R[] = new Array(items.length)
+): Promise<Array<{ success: boolean; result?: R; error?: any; item: T }>> {
+  const results: Array<{ success: boolean; result?: R; error?: any; item: T }> = new Array(items.length)
   const executing: Array<Promise<void>> = []
   let index = 0
   let completed = 0
@@ -44,16 +69,22 @@ async function processWithConcurrencyLimit<T, R>(
     try {
       console.log(`[Parallel Processing] ▶️  Starting ${label} (${currentIndex + 1}/${items.length})`)
       const result = await processor(item, currentIndex, items.length)
-      results[currentIndex] = result
+      results[currentIndex] = { success: true, result, item }
       completed++
       const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
       console.log(`[Parallel Processing] ✅ Completed ${label} (${completed}/${items.length}) - ${elapsed}s elapsed`)
     } catch (error) {
       completed++
       const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
-      console.error(`[Parallel Processing] ❌ Error processing ${label} (${completed}/${items.length}) - ${elapsed}s elapsed:`, error)
-      // Store error in results array
-      results[currentIndex] = error as any
+      const isUserNotFound = isUserNotFoundError(error)
+      
+      if (isUserNotFound) {
+        console.warn(`[Parallel Processing] ⚠️  Skipping ${label} - Last.fm user not found (${completed}/${items.length}) - ${elapsed}s elapsed`)
+        results[currentIndex] = { success: false, error, item }
+      } else {
+        console.error(`[Parallel Processing] ❌ Error processing ${label} (${completed}/${items.length}) - ${elapsed}s elapsed:`, error)
+        results[currentIndex] = { success: false, error, item }
+      }
     }
     
     // Process next item
@@ -344,6 +375,12 @@ export async function deleteOverlappingCharts(
  * @param logger - Optional logger for performance tracking
  * @param members - Optional pre-fetched group members (to avoid redundant queries)
  */
+export interface ChartGenerationResult {
+  entries: Array<{ entryKey: string; vibeScore: number | null; playcount: number; weekStart: Date; chartType: ChartType }>
+  failedUsers: string[]
+  shouldAbort: boolean
+}
+
 export async function calculateGroupWeeklyStats(
   groupId: string,
   weekStart: Date,
@@ -357,8 +394,9 @@ export async function calculateGroupWeeklyStats(
       lastfmSessionKey: string | null
     }
   }>,
-  skipTrends: boolean = false
-): Promise<Array<{ entryKey: string; vibeScore: number | null; playcount: number; weekStart: Date; chartType: ChartType }>> {
+  skipTrends: boolean = false,
+  excludedUsers?: Set<string> // Users to skip (failed in previous weeks)
+): Promise<ChartGenerationResult> {
   const overallStart = Date.now()
   console.log(`[Group Stats] 🎯 Starting group weekly stats calculation for week ${weekStart.toISOString().split('T')[0]}`)
   
@@ -380,8 +418,24 @@ export async function calculateGroupWeeklyStats(
     })
   }
 
+  // Store original total users count BEFORE filtering (for abort calculation)
+  const originalTotalUsers = membersToUse.length
+
+  // Filter out excluded users (failed in previous weeks)
+  if (excludedUsers && excludedUsers.size > 0) {
+    const excludedCount = membersToUse.length
+    membersToUse = membersToUse.filter(member => !excludedUsers.has(member.user.lastfmUsername))
+    if (excludedCount > membersToUse.length) {
+      console.log(`[Group Stats] ⏭️  Skipping ${excludedCount - membersToUse.length} user(s) that failed in previous weeks`)
+    }
+  }
+
   if (membersToUse.length === 0) {
-    return []
+    return {
+      entries: [],
+      failedUsers: [],
+      shouldAbort: false,
+    }
   }
 
   // Fetch or get stats for all members (this also calculates and stores VS automatically)
@@ -389,7 +443,7 @@ export async function calculateGroupWeeklyStats(
   // The rate limiter will handle spacing between requests automatically
   const fetchStatsStart = Date.now()
   console.log(`[Group Stats] 📊 Fetching weekly stats for ${membersToUse.length} members for week ${weekStart.toISOString().split('T')[0]}`)
-  const userStatsArray = await processWithConcurrencyLimit(
+  const userStatsResults = await processWithConcurrencyLimit(
     membersToUse,
     3, // Process 3 members concurrently to avoid rate limits (each makes 3 API calls = 9 max concurrent)
     async (member, index, total) => {
@@ -403,11 +457,79 @@ export async function calculateGroupWeeklyStats(
     (member) => `member ${member.user.lastfmUsername}`
   )
   const fetchStatsTime = ((Date.now() - fetchStatsStart) / 1000).toFixed(1)
-  console.log(`[Group Stats] ✅ Fetched stats for all ${membersToUse.length} members in ${fetchStatsTime}s`)
+  
+  // Filter out failed users - ALL failures are tracked (not just user not found)
+  const successfulResults = userStatsResults.filter(r => r.success)
+  const allFailedResults = userStatsResults.filter(r => !r.success)
+  
+  // Collect all failed usernames (any failure reason)
+  const allFailedUsernames: string[] = []
+  
+  if (allFailedResults.length > 0) {
+    const failedUsernames = allFailedResults.map(r => {
+      const member = r.item as typeof membersToUse[0]
+      return member.user.lastfmUsername
+    })
+    allFailedUsernames.push(...failedUsernames)
+    
+    // Log with more detail about failure types
+    const userNotFoundCount = allFailedResults.filter(r => isUserNotFoundError(r.error)).length
+    const otherFailureCount = allFailedResults.length - userNotFoundCount
+    
+    if (userNotFoundCount > 0) {
+      console.warn(`[Group Stats] ⚠️  ${userNotFoundCount} user(s) with invalid Last.fm accounts (user not found)`)
+    }
+    if (otherFailureCount > 0) {
+      console.error(`[Group Stats] ❌ ${otherFailureCount} user(s) failed to fetch stats (other errors)`)
+    }
+    console.error(`[Group Stats] ❌ Total failed: ${allFailedResults.length} user(s): ${failedUsernames.join(', ')}`)
+  }
+  
+  // Determine if chart generation should be aborted based on failure rate
+  // Use originalTotalUsers (before exclusions) + excludedUsers count to get true total
+  // This ensures we count unique users that failed, not week failures
+  const totalFailedUniqueUsers = allFailedUsernames.length + (excludedUsers?.size || 0)
+  const totalUsers = originalTotalUsers
+  let shouldAbort = false
+  
+  if (totalFailedUniqueUsers > 0) {
+    if (totalUsers <= 5) {
+      // For groups of 5 or less: abort if any user failed
+      shouldAbort = true
+    } else {
+      // For groups of 6 or more: abort if at least 1/3rd failed
+      const failureThreshold = Math.ceil(totalUsers / 3)
+      shouldAbort = totalFailedUniqueUsers >= failureThreshold
+    }
+  }
+  
+  if (shouldAbort) {
+    console.error(`[Group Stats] 🛑 Aborting chart generation: ${totalFailed}/${totalUsers} users failed (threshold exceeded)`)
+    return {
+      entries: [],
+      failedUsers: allFailedUsernames,
+      shouldAbort: true,
+    }
+  }
+  
+  if (successfulResults.length === 0) {
+    console.warn(`[Group Stats] ⚠️  No valid users to generate charts for`)
+    return {
+      entries: [],
+      failedUsers: allFailedUsernames,
+      shouldAbort: false,
+    }
+  }
+  
+  console.log(`[Group Stats] ✅ Fetched stats for ${successfulResults.length}/${membersToUse.length} members in ${fetchStatsTime}s`)
+  
+  // Get only successful members for VS data fetching
+  const successfulMembers = successfulResults.map(r => r.item as typeof membersToUse[0])
+  const userStatsArray = successfulResults.map(r => r.result!)
 
-  // Fetch pre-calculated VS data for all members
+  // Fetch pre-calculated VS data for successful members only
   const fetchVSStart = Date.now()
-  const userVSDataPromises = membersToUse.map((member) =>
+  const userVSDataPromises = successfulMembers.map((member) =>
     getUserVSForWeek(member.user.id, weekStart, prisma)
   )
 
@@ -415,7 +537,7 @@ export async function calculateGroupWeeklyStats(
 
   // Prepare VS data with userId and original stats for aggregation
   const userVSData = userVSDataArray.map((vsData: { topTracks: any[]; topArtists: any[]; topAlbums: any[] }, index: number) => ({
-    userId: membersToUse[index].user.id,
+    userId: successfulMembers[index].user.id,
     ...vsData,
     originalStats: userStatsArray[index], // Include original stats for name lookup
   }))
@@ -519,7 +641,11 @@ export async function calculateGroupWeeklyStats(
   const overallTime = ((Date.now() - overallStart) / 1000).toFixed(1)
   console.log(`[Group Stats] 🎉 Completed group weekly stats calculation in ${overallTime}s`)
 
-  return entriesForInvalidation
+  return {
+    entries: entriesForInvalidation,
+    failedUsers: allFailedUsernames,
+    shouldAbort: false,
+  }
 }
 
 /**

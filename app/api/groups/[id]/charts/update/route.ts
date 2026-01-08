@@ -251,6 +251,10 @@ async function generateChartsInBackground(
       chartType: 'artists' | 'tracks' | 'albums'
     }> = []
     
+    // Track failed users across all weeks - once a user fails, skip them for all subsequent weeks
+    const allFailedUsers = new Set<string>()
+    let shouldAbortGeneration = false
+    
     try {
       for (let weekIndex = 0; weekIndex < weeksToGenerate.length; weekIndex++) {
         const weekStart = weeksToGenerate[weekIndex]
@@ -260,21 +264,36 @@ async function generateChartsInBackground(
         await deleteOverlappingCharts(groupId, weekStart, weekEnd)
         
         // Generate chart for the week (skip trends, collect entries for invalidation)
-        const entriesForInvalidation = await calculateGroupWeeklyStats(
+        const result = await calculateGroupWeeklyStats(
           groupId,
           weekStart,
           chartSize,
           trackingDayOfWeek,
           chartMode,
           members,
-          true // skipTrends = true
+          true, // skipTrends = true
+          allFailedUsers // Pass failed users to skip them for this week
         )
         
+        // Collect failed users - add them to the set so they're skipped in future weeks
+        result.failedUsers.forEach(username => allFailedUsers.add(username))
+        
+        // Check if we should abort
+        if (result.shouldAbort) {
+          shouldAbortGeneration = true
+        }
+        
         // Collect entries for batch invalidation at the end
-        allEntriesForInvalidation.push(...entriesForInvalidation)
+        allEntriesForInvalidation.push(...result.entries)
         
         // Small delay between weeks
         await new Promise(resolve => setTimeout(resolve, 500))
+      }
+      
+      // If generation should be aborted, we've already logged it, just return
+      // The error will be handled by the outer catch block
+      if (shouldAbortGeneration) {
+        throw new Error(`Chart generation aborted: Too many user failures (${allFailedUsers.size} users)`)
       }
 
       // Recalculate all-time stats once after all weeks are processed

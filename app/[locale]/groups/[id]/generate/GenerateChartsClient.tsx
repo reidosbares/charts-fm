@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from '@/i18n/routing'
+import ChartGenerationErrorModal from '@/components/ChartGenerationErrorModal'
 
 const LOADING_MESSAGES = [
   "This group sure has some interesting tastes...",
@@ -31,6 +32,9 @@ export default function GenerateChartsClient({
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
   const [showFirstMessage, setShowFirstMessage] = useState(true)
   const [weeks, setWeeks] = useState<number>(5)
+  const [showErrorModal, setShowErrorModal] = useState(false)
+  const [failedUsers, setFailedUsers] = useState<string[]>([])
+  const [aborted, setAborted] = useState(false)
 
   // Poll for completion if initially in progress
   useEffect(() => {
@@ -125,16 +129,33 @@ export default function GenerateChartsClient({
       const data = await response.json()
 
       if (!response.ok) {
+        // Check if this is an abort error with failed users info
+        if (data.failedUsers && Array.isArray(data.failedUsers)) {
+          setFailedUsers(data.failedUsers)
+          setAborted(data.aborted || false)
+          setShowErrorModal(true)
+          setIsLoading(false)
+          return
+        }
         throw new Error(data.error || 'Failed to generate charts')
+      }
+
+      // Check if there are failed users in the success response
+      if (data.failedUsers && Array.isArray(data.failedUsers) && data.failedUsers.length > 0) {
+        setFailedUsers(data.failedUsers)
+        setAborted(data.aborted || false)
+        setShowErrorModal(true)
       }
 
       setSuccess(true)
       setIsLoading(false)
       
-      // Redirect after a short delay
-      setTimeout(() => {
-        router.push(`/groups/${groupId}`)
-      }, 1500)
+      // Redirect after a short delay (only if no errors to show)
+      if (!data.failedUsers || data.failedUsers.length === 0) {
+        setTimeout(() => {
+          router.push(`/groups/${groupId}`)
+        }, 1500)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate charts')
       setIsLoading(false)
@@ -259,6 +280,18 @@ export default function GenerateChartsClient({
           </div>
         </div>
       </div>
+
+      <ChartGenerationErrorModal
+        isOpen={showErrorModal}
+        onClose={() => {
+          setShowErrorModal(false)
+          if (success) {
+            router.push(`/groups/${groupId}`)
+          }
+        }}
+        failedUsers={failedUsers}
+        aborted={aborted}
+      />
     </main>
   )
 }

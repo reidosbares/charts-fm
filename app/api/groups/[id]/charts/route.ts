@@ -228,24 +228,65 @@ export async function POST(
     chartType: 'artists' | 'tracks' | 'albums'
   }> = []
   
+  // Track failed users across all weeks - once a user fails, skip them for all subsequent weeks
+  const allFailedUsers = new Set<string>()
+  let shouldAbortGeneration = false
+  
   try {
     for (let i = 0; i < weeksInOrder.length; i++) {
       const weekStart = weeksInOrder[i]
-      const entriesForInvalidation = await calculateGroupWeeklyStats(
+      const result = await calculateGroupWeeklyStats(
         groupId,
         weekStart,
         chartSize,
         trackingDayOfWeek,
         chartMode,
         members,
-        true // skipTrends = true
+        true, // skipTrends = true
+        allFailedUsers // Pass failed users to skip them for this week
       )
       
+      // Collect failed users - add them to the set so they're skipped in future weeks
+      result.failedUsers.forEach(username => allFailedUsers.add(username))
+      
+      // Check if we should abort
+      if (result.shouldAbort) {
+        shouldAbortGeneration = true
+      }
+      
       // Collect entries for batch invalidation at the end
-      allEntriesForInvalidation.push(...entriesForInvalidation)
+      allEntriesForInvalidation.push(...result.entries)
       
       // Small delay between weeks
       await new Promise(resolve => setTimeout(resolve, 500))
+    }
+    
+    // If generation should be aborted, return error with failed users info
+    if (shouldAbortGeneration) {
+      // Release lock before returning error
+      await prisma.group.update({
+        where: { id: groupId },
+        data: {
+          chartGenerationInProgress: false,
+          chartGenerationStartedAt: null,
+        },
+      }).catch((err) => {
+        console.error('Error releasing lock after abort:', err)
+      })
+      
+      // Log summary
+      await lastfmLogger.logSummary().catch((err) => {
+        console.error('Error writing Last.fm API log summary:', err)
+      })
+      
+      return NextResponse.json(
+        {
+          error: 'Chart generation aborted due to too many user failures',
+          failedUsers: Array.from(allFailedUsers),
+          aborted: true,
+        },
+        { status: 400 }
+      )
     }
 
     // Recalculate all-time stats once after all weeks are processed
@@ -415,7 +456,14 @@ export async function POST(
     },
   })
 
-  return NextResponse.json({ weeklyStats })
+  // Return success response, but include failed users info if any
+  const response: any = { weeklyStats }
+  if (allFailedUsers.size > 0) {
+    response.failedUsers = Array.from(allFailedUsers)
+    response.aborted = false
+  }
+
+  return NextResponse.json(response)
 }
 
 // Background function to calculate records after charts are generated

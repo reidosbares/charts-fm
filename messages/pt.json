@@ -573,6 +573,16 @@
           "uniqueHabits": "Esses gostos musicais são bem... distintos!",
           "processingScrobbles": "Processando milhares e milhares de scrobbles...",
           "hiddenGems": "Vamos ver o que tem de melhor por aqui..."
+        },
+        "userFetchErrors": {
+          "title": "Problemas na Geração de Charts",
+          "abortedTitle": "Geração de Charts Abortada",
+          "partialSuccessTitle": "Geração de Charts Concluída com Avisos",
+          "failedUsers": "Não foi possível recuperar dados para os seguintes usuários:",
+          "abortedMessage": "A geração de charts foi abortada porque muitos usuários falharam ao carregar. Por favor, tente novamente mais tarde.",
+          "partialSuccessMessage": "Os charts foram gerados com sucesso, mas alguns usuários não puderam ser incluídos.",
+          "lastfmOutageTip": "Se você não conseguir acessar o site do last.fm normalmente, isso sugere uma interrupção temporária. Por favor, tente novamente mais tarde quando o status do last.fm tiver normalizado.",
+          "close": "Fechar"
         }
       },
       "shoutbox": {

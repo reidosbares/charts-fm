@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from '@/i18n/routing'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import ChartGenerationErrorModal from '@/components/ChartGenerationErrorModal'
 
 interface RegenerateChartsTabProps {
   groupId: string
@@ -37,6 +38,9 @@ export default function RegenerateChartsTab({
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
   const [showFirstMessage, setShowFirstMessage] = useState(true)
   const [weeks, setWeeks] = useState<number>(5)
+  const [showErrorModal, setShowErrorModal] = useState(false)
+  const [failedUsers, setFailedUsers] = useState<string[]>([])
+  const [aborted, setAborted] = useState(false)
 
   // Poll for completion if initially in progress
   useEffect(() => {
@@ -131,14 +135,31 @@ export default function RegenerateChartsTab({
       const data = await response.json()
 
       if (!response.ok) {
+        // Check if this is an abort error with failed users info
+        if (data.failedUsers && Array.isArray(data.failedUsers)) {
+          setFailedUsers(data.failedUsers)
+          setAborted(data.aborted || false)
+          setShowErrorModal(true)
+          setIsLoading(false)
+          return
+        }
         throw new Error(data.error || t('failedToGenerate'))
+      }
+
+      // Check if there are failed users in the success response
+      if (data.failedUsers && Array.isArray(data.failedUsers) && data.failedUsers.length > 0) {
+        setFailedUsers(data.failedUsers)
+        setAborted(data.aborted || false)
+        setShowErrorModal(true)
       }
 
       setSuccess(true)
       setIsLoading(false)
       
-      // Refresh the page to show updated charts
-      router.refresh()
+      // Refresh the page to show updated charts (only if no errors to show)
+      if (!data.failedUsers || data.failedUsers.length === 0) {
+        router.refresh()
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : t('failedToGenerate'))
       setIsLoading(false)
@@ -248,6 +269,18 @@ export default function RegenerateChartsTab({
           t('generateCharts')
         )}
       </button>
+
+      <ChartGenerationErrorModal
+        isOpen={showErrorModal}
+        onClose={() => {
+          setShowErrorModal(false)
+          if (success) {
+            router.refresh()
+          }
+        }}
+        failedUsers={failedUsers}
+        aborted={aborted}
+      />
     </div>
   )
 }

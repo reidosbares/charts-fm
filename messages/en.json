@@ -573,6 +573,16 @@
           "uniqueHabits": "These listening habits are... unique!",
           "processingScrobbles": "Processing thousands of scrobbles...",
           "hiddenGems": "Finding the hidden gems in your music taste..."
+        },
+        "userFetchErrors": {
+          "title": "Chart Generation Issues",
+          "abortedTitle": "Chart Generation Aborted",
+          "partialSuccessTitle": "Chart Generation Completed with Warnings",
+          "failedUsers": "Could not retrieve data for the following users:",
+          "abortedMessage": "Chart generation was aborted because too many users failed to load. Please try again later.",
+          "partialSuccessMessage": "Charts were generated successfully, but some users could not be included.",
+          "lastfmOutageTip": "If you cannot access last.fm's website normally, this suggests a temporary outage. Please try again later when last.fm's status has normalized.",
+          "close": "Close"
         }
       },
       "shoutbox": {
