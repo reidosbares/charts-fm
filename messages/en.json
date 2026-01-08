@@ -453,7 +453,9 @@
         "styling": "Styling",
         "shoutbox": "Shoutbox",
         "regenerateCharts": "Regenerate Charts",
-        "deleteGroup": "Delete Group"
+        "deleteGroup": "Delete Group",
+        "showMore": "Show {count} More",
+        "showLess": "Show Less"
       },
       "chartCreation": {
         "title": "Chart Settings",

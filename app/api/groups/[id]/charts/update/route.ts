@@ -10,6 +10,7 @@ import { calculateGroupTrends } from '@/lib/group-trends'
 import { calculateGroupRecords, getGroupRecords } from '@/lib/group-records'
 import { RecordsCalculationLogger } from '@/lib/records-calculation-logger'
 import { ChartType } from '@/lib/chart-slugs'
+import { getLastFMAPILogger, resetLastFMAPILogger } from '@/lib/lastfm-api-logger'
 
 const LOCK_TIMEOUT_MS = 30 * 60 * 1000 // 30 minutes
 
@@ -167,6 +168,10 @@ async function generateChartsInBackground(
   chartSize: number,
   chartMode: 'vs' | 'vs_weighted' | 'plays_only'
 ): Promise<void> {
+  // Initialize Last.fm API logger for this chart generation
+  const lastfmLogger = getLastFMAPILogger(groupId)
+  console.log(`[Chart Generation] Last.fm API logger initialized: ${lastfmLogger.getLogFile()}`)
+  
   try {
     // Get last chart week
     const lastChartWeek = await getLastChartWeek(groupId)
@@ -288,6 +293,11 @@ async function generateChartsInBackground(
     } catch (error: any) {
       console.error('Error generating charts in background:', error)
       
+      // Log summary before handling error
+      await lastfmLogger.logSummary().catch((err) => {
+        console.error('Error writing Last.fm API log summary:', err)
+      })
+      
       // Handle Prisma validation errors
       if (error.message && error.message.includes('did not match the expected pattern')) {
         // Don't throw - we want to release the lock even on validation errors
@@ -296,6 +306,14 @@ async function generateChartsInBackground(
         throw error
       }
     }
+    
+    // Log summary on successful completion
+    await lastfmLogger.logSummary().catch((err) => {
+      console.error('Error writing Last.fm API log summary:', err)
+    })
+    
+    // Reset logger for next generation
+    resetLastFMAPILogger()
 
     // Update group icon if dynamic icon is enabled (don't await - let it run in background)
     updateGroupIconFromChart(groupId).catch((error) => {
@@ -303,9 +321,7 @@ async function generateChartsInBackground(
     })
 
     // Trigger records calculation after charts are generated
-    console.log(`[Records] Checking if records calculation should run. weeksToGenerate.length: ${weeksToGenerate.length}`)
     if (weeksToGenerate.length > 0) {
-      console.log(`[Records] Collecting new entries for weeks: ${weeksToGenerate.map(w => w.toISOString()).join(', ')}`)
       // Collect all entries that appeared in newly generated week(s)
       const newEntries = await prisma.groupChartEntry.findMany({
         where: {
@@ -318,7 +334,6 @@ async function generateChartsInBackground(
           position: true,
         },
       })
-      console.log(`[Records] Found ${newEntries.length} entries in newly generated weeks`)
 
       // Extract unique entryKey + chartType combinations (for incremental calculation)
       // We only need to check each entry once, not per week
@@ -347,12 +362,10 @@ async function generateChartsInBackground(
       }
 
       const uniqueEntries = Array.from(uniqueEntriesMap.values())
-      console.log(`[Records] Unique entries to check: ${uniqueEntries.length}`)
 
       // Check if GroupRecords exists
       const existingRecords = await getGroupRecords(groupId)
       const useIncremental = existingRecords && existingRecords.status === 'completed'
-      console.log(`[Records] Existing records found: ${!!existingRecords}, status: ${existingRecords?.status}, useIncremental: ${useIncremental}`)
 
       // Delete existing GroupRecords if exists (for fresh calculation)
       if (existingRecords) {
@@ -360,7 +373,6 @@ async function generateChartsInBackground(
           await prisma.groupRecords.delete({
             where: { groupId },
           })
-          console.log(`[Records] Deleted existing GroupRecords`)
         } catch (err) {
           console.error('[Records] Error deleting existing records:', err)
         }
@@ -377,7 +389,6 @@ async function generateChartsInBackground(
             records: {},
           },
         })
-        console.log(`[Records] Created new GroupRecords with status 'calculating'`)
       } catch (err) {
         console.error('[Records] Error creating GroupRecords:', err)
         // Don't proceed if we can't create the record
@@ -385,7 +396,6 @@ async function generateChartsInBackground(
       }
 
       // Trigger async records calculation (fire-and-forget)
-      console.log(`[Records] Triggering records calculation for group ${groupId} (${useIncremental ? 'incremental' : 'full'}, ${uniqueEntries.length} new entries)`)
       calculateRecordsInBackgroundAfterCharts(
         groupId,
         useIncremental ? uniqueEntries : undefined
@@ -430,15 +440,10 @@ async function calculateRecordsInBackgroundAfterCharts(
   groupId: string,
   newEntries?: Array<{ entryKey: string; chartType: ChartType; position: number }>
 ): Promise<void> {
-  console.log(`[Records] Starting records calculation for group ${groupId}`)
   const logger = new RecordsCalculationLogger(groupId)
-  const logFile = logger.getLogFile()
-  console.log(`[Records] Log file will be: ${logFile}`)
   
   try {
     const records = await calculateGroupRecords(groupId, newEntries, logger)
-    
-    console.log(`[Records] Calculation completed for group ${groupId}`)
     
     // Update records with completed status
     await prisma.groupRecords.update({
@@ -449,11 +454,6 @@ async function calculateRecordsInBackgroundAfterCharts(
         updatedAt: new Date(),
       },
     })
-    
-    console.log(`[Records] Records saved to database for group ${groupId}`)
-    if (logFile) {
-      console.log(`[Records] Full log saved to: ${logFile}`)
-    }
   } catch (error) {
     console.error(`[Records] Error during calculation for group ${groupId}:`, error)
     logger.log('Error during calculation', 0, String(error))

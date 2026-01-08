@@ -3,6 +3,7 @@
 
 import crypto from 'crypto'
 import { acquireLastFMRateLimit } from './lastfm-rate-limiter'
+import { getLastFMAPILogger } from './lastfm-api-logger'
 
 const LASTFM_API_BASE = 'https://ws.audioscrobbler.com/2.0/'
 const LASTFM_AUTH_URL = 'https://www.last.fm/api/auth'
@@ -149,6 +150,19 @@ export async function authenticatedLastFMCall(
   // Acquire rate limit token before making the request
   await acquireLastFMRateLimit(1)
   
+  // Extract username from params if available
+  const username = additionalParams.user || 'unknown'
+  const logger = getLastFMAPILogger()
+  const logEntry = logger.logRequest(
+    username,
+    method,
+    'authenticated',
+    {
+      method,
+      ...additionalParams,
+    }
+  )
+  
   return retryWithBackoff(async () => {
     const params: Record<string, string> = {
       method,
@@ -168,6 +182,26 @@ export async function authenticatedLastFMCall(
     })
 
     const response = await fetch(`${LASTFM_API_BASE}?${queryParams}`)
+    const responseText = await response.text()
+    let responseData: any
+    
+    try {
+      responseData = JSON.parse(responseText)
+    } catch (e) {
+      responseData = { _rawResponse: responseText }
+    }
+
+    // Log the response
+    if (!response.ok || responseData.error) {
+      await logger.logResponse(
+        logEntry,
+        response.status,
+        responseData,
+        responseData.error ? `${responseData.message || responseData.error}` : `HTTP ${response.status}: ${response.statusText}`
+      )
+    } else {
+      await logger.logResponse(logEntry, response.status, responseData)
+    }
 
     // Handle rate limiting (HTTP 429)
     if (response.status === 429) {
@@ -180,13 +214,11 @@ export async function authenticatedLastFMCall(
       throw new Error(`Last.fm API error: ${response.statusText}`)
     }
 
-    const data = await response.json()
-
-    if (data.error) {
-      throw new Error(`Last.fm API error: ${data.message || data.error}`)
+    if (responseData.error) {
+      throw new Error(`Last.fm API error: ${responseData.message || responseData.error}`)
     }
 
-    return data
+    return responseData
   })
 }
 

@@ -7,6 +7,7 @@ import { getLastNFinishedWeeks, getLastNFinishedWeeksForDay, getWeekEndForDay } 
 import { recalculateAllTimeStats } from '@/lib/group-alltime-stats'
 import { getGroupRecords, triggerRecordsCalculation } from '@/lib/group-records'
 import type { ChartType } from '@/lib/chart-slugs'
+import { getLastFMAPILogger, resetLastFMAPILogger } from '@/lib/lastfm-api-logger'
 
 const LOCK_TIMEOUT_MS = 30 * 60 * 1000 // 30 minutes
 
@@ -204,6 +205,10 @@ export async function POST(
     },
   })
   
+  // Initialize Last.fm API logger for this chart generation
+  const lastfmLogger = getLastFMAPILogger(groupId)
+  console.log(`[Chart Generation] Last.fm API logger initialized: ${lastfmLogger.getLogFile()}`)
+  
   // Before generating, delete any overlapping charts for the weeks we're about to regenerate
   for (const weekStart of weeks) {
     const weekEnd = getWeekEndForDay(weekStart, trackingDayOfWeek)
@@ -260,9 +265,7 @@ export async function POST(
     }
 
     // Trigger records calculation after charts are generated
-    console.log(`[Records] Checking if records calculation should run. weeksInOrder.length: ${weeksInOrder.length}`)
     if (weeksInOrder.length > 0) {
-      console.log(`[Records] Collecting new entries for weeks: ${weeksInOrder.map(w => w.toISOString()).join(', ')}`)
       // Collect all entries that appeared in newly generated week(s)
       const newEntries = await prisma.groupChartEntry.findMany({
         where: {
@@ -275,7 +278,6 @@ export async function POST(
           position: true,
         },
       })
-      console.log(`[Records] Found ${newEntries.length} entries in newly generated weeks`)
 
       // Extract unique entryKey + chartType combinations (for incremental calculation)
       // We only need to check each entry once, not per week
@@ -304,12 +306,10 @@ export async function POST(
       }
 
       const uniqueEntries = Array.from(uniqueEntriesMap.values())
-      console.log(`[Records] Unique entries to check: ${uniqueEntries.length}`)
 
       // Check if GroupRecords exists
       const existingRecords = await getGroupRecords(groupId)
       const useIncremental = existingRecords && existingRecords.status === 'completed'
-      console.log(`[Records] Existing records found: ${!!existingRecords}, status: ${existingRecords?.status}, useIncremental: ${useIncremental}`)
 
       // Delete existing GroupRecords if exists (for fresh calculation)
       if (existingRecords) {
@@ -317,7 +317,6 @@ export async function POST(
           await prisma.groupRecords.delete({
             where: { groupId },
           })
-          console.log(`[Records] Deleted existing GroupRecords`)
         } catch (err) {
           console.error('[Records] Error deleting existing records:', err)
         }
@@ -334,14 +333,12 @@ export async function POST(
             records: {},
           },
         })
-        console.log(`[Records] Created new GroupRecords with status 'calculating'`)
       } catch (err) {
         console.error('[Records] Error creating GroupRecords:', err)
         // Don't proceed if we can't create the record
       }
 
       // Trigger async records calculation (fire-and-forget)
-      console.log(`[Records] Triggering records calculation for group ${groupId} (${useIncremental ? 'incremental' : 'full'}, ${uniqueEntries.length} new entries)`)
       calculateRecordsInBackgroundAfterCharts(
         groupId,
         useIncremental ? uniqueEntries : undefined
@@ -378,9 +375,22 @@ export async function POST(
       )
     }
     
+    // Log summary before re-throwing
+    await lastfmLogger.logSummary().catch((err) => {
+      console.error('Error writing Last.fm API log summary:', err)
+    })
+    
     // Re-throw other errors
     throw error
   }
+
+  // Log summary on successful completion
+  await lastfmLogger.logSummary().catch((err) => {
+    console.error('Error writing Last.fm API log summary:', err)
+  })
+  
+  // Reset logger for next generation
+  resetLastFMAPILogger()
 
   // Update group icon if dynamic icon is enabled
   // Don't await - let it run in background to avoid blocking the response
@@ -413,17 +423,12 @@ async function calculateRecordsInBackgroundAfterCharts(
   groupId: string,
   newEntries?: Array<{ entryKey: string; chartType: ChartType; position: number }>
 ): Promise<void> {
-  console.log(`[Records] Starting records calculation for group ${groupId}`)
   const { RecordsCalculationLogger } = await import('@/lib/records-calculation-logger')
   const logger = new RecordsCalculationLogger(groupId)
-  const logFile = logger.getLogFile()
-  console.log(`[Records] Log file will be: ${logFile}`)
   
   try {
     const { calculateGroupRecords } = await import('@/lib/group-records')
     const records = await calculateGroupRecords(groupId, newEntries, logger)
-    
-    console.log(`[Records] Calculation completed for group ${groupId}`)
     
     // Update records with completed status
     await prisma.groupRecords.update({
@@ -434,11 +439,6 @@ async function calculateRecordsInBackgroundAfterCharts(
         updatedAt: new Date(),
       },
     })
-    
-    console.log(`[Records] Records saved to database for group ${groupId}`)
-    if (logFile) {
-      console.log(`[Records] Full log saved to: ${logFile}`)
-    }
   } catch (error) {
     console.error(`[Records] Error during calculation for group ${groupId}:`, error)
     logger.log('Error during calculation', 0, String(error))

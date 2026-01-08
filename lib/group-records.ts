@@ -1376,11 +1376,9 @@ export async function calculateGroupRecords(
   newEntries?: Array<{ entryKey: string; chartType: ChartType; position: number }>,
   logger?: RecordsCalculationLogger
 ): Promise<GroupRecordsData> {
-  console.log(`[Records] calculateGroupRecords called for group ${groupId}, newEntries: ${newEntries?.length || 0}`)
   const recordsLogger = logger || new RecordsCalculationLogger(groupId)
   const isIncremental = !!newEntries
   recordsLogger.setCalculationType(isIncremental ? 'incremental' : 'full')
-  console.log(`[Records] Calculation type: ${isIncremental ? 'incremental' : 'full'}`)
 
   const startLog = await recordsLogger.logStart(
     `Starting records calculation (${isIncremental ? 'incremental' : 'full'})`
@@ -1400,7 +1398,6 @@ export async function calculateGroupRecords(
       typeof existingRecordsData.mostConsecutiveWeeksInTop10 === 'object'
     
     if (!hasValidStructure) {
-      console.warn(`[Records] Existing records structure is incomplete, falling back to full calculation`)
       // If structure is incomplete, treat as full calculation
       existingRecordsData = null
     }

@@ -453,7 +453,9 @@
         "styling": "Estilo",
         "shoutbox": "Caixa de comentários",
         "regenerateCharts": "Re-gerar Charts",
-        "deleteGroup": "Excluir Comunidade"
+        "deleteGroup": "Excluir Comunidade",
+        "showMore": "Mostrar {count} Mais",
+        "showLess": "Mostrar Menos"
       },
       "chartCreation": {
         "title": "Configurações dos charts",

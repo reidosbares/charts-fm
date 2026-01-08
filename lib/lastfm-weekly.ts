@@ -4,6 +4,7 @@
 import { authenticatedLastFMCall } from './lastfm-auth'
 import { getWeekStart, getWeekEnd } from './weekly-utils'
 import { acquireLastFMRateLimit } from './lastfm-rate-limiter'
+import { getLastFMAPILogger } from './lastfm-api-logger'
 
 const LASTFM_API_BASE = 'https://ws.audioscrobbler.com/2.0/'
 
@@ -94,6 +95,19 @@ export async function getWeeklyTopTracks(
     // Acquire rate limit token before making the request
     await acquireLastFMRateLimit(1)
     
+    const logger = getLastFMAPILogger()
+    const logEntry = logger.logRequest(
+      username,
+      'user.getWeeklyTrackChart',
+      'unauthenticated',
+      {
+        method: 'user.getWeeklyTrackChart',
+        user: username,
+        from: from.toString(),
+        to: to.toString(),
+      }
+    )
+    
     data = await retryWithBackoff(async () => {
       const params = new URLSearchParams({
         method: 'user.getWeeklyTrackChart',
@@ -104,6 +118,26 @@ export async function getWeeklyTopTracks(
         format: 'json',
       })
       const response = await fetch(`${LASTFM_API_BASE}?${params}`)
+      const responseText = await response.text()
+      let responseData: any
+      
+      try {
+        responseData = JSON.parse(responseText)
+      } catch (e) {
+        responseData = { _rawResponse: responseText }
+      }
+      
+      // Log the response
+      if (!response.ok || responseData.error) {
+        await logger.logResponse(
+          logEntry,
+          response.status,
+          responseData,
+          responseData.error ? `${responseData.message || responseData.error}` : `HTTP ${response.status}: ${response.statusText}`
+        )
+      } else {
+        await logger.logResponse(logEntry, response.status, responseData)
+      }
       
       // Handle rate limiting (HTTP 429)
       if (response.status === 429) {
@@ -115,7 +149,7 @@ export async function getWeeklyTopTracks(
       if (!response.ok) {
         throw new Error(`Last.fm API error: ${response.statusText}`)
       }
-      const responseData = await response.json()
+      
       if (responseData.error) {
         throw new Error(`Last.fm API error: ${responseData.message || responseData.error}`)
       }
@@ -171,6 +205,19 @@ export async function getWeeklyTopArtists(
     // Acquire rate limit token before making the request
     await acquireLastFMRateLimit(1)
     
+    const logger = getLastFMAPILogger()
+    const logEntry = logger.logRequest(
+      username,
+      'user.getWeeklyArtistChart',
+      'unauthenticated',
+      {
+        method: 'user.getWeeklyArtistChart',
+        user: username,
+        from: from.toString(),
+        to: to.toString(),
+      }
+    )
+    
     data = await retryWithBackoff(async () => {
       const params = new URLSearchParams({
         method: 'user.getWeeklyArtistChart',
@@ -181,6 +228,26 @@ export async function getWeeklyTopArtists(
         format: 'json',
       })
       const response = await fetch(`${LASTFM_API_BASE}?${params}`)
+      const responseText = await response.text()
+      let responseData: any
+      
+      try {
+        responseData = JSON.parse(responseText)
+      } catch (e) {
+        responseData = { _rawResponse: responseText }
+      }
+      
+      // Log the response
+      if (!response.ok || responseData.error) {
+        await logger.logResponse(
+          logEntry,
+          response.status,
+          responseData,
+          responseData.error ? `${responseData.message || responseData.error}` : `HTTP ${response.status}: ${response.statusText}`
+        )
+      } else {
+        await logger.logResponse(logEntry, response.status, responseData)
+      }
       
       // Handle rate limiting (HTTP 429)
       if (response.status === 429) {
@@ -192,7 +259,7 @@ export async function getWeeklyTopArtists(
       if (!response.ok) {
         throw new Error(`Last.fm API error: ${response.statusText}`)
       }
-      const responseData = await response.json()
+      
       if (responseData.error) {
         throw new Error(`Last.fm API error: ${responseData.message || responseData.error}`)
       }
@@ -247,6 +314,19 @@ export async function getWeeklyTopAlbums(
     // Acquire rate limit token before making the request
     await acquireLastFMRateLimit(1)
     
+    const logger = getLastFMAPILogger()
+    const logEntry = logger.logRequest(
+      username,
+      'user.getWeeklyAlbumChart',
+      'unauthenticated',
+      {
+        method: 'user.getWeeklyAlbumChart',
+        user: username,
+        from: from.toString(),
+        to: to.toString(),
+      }
+    )
+    
     data = await retryWithBackoff(async () => {
       const params = new URLSearchParams({
         method: 'user.getWeeklyAlbumChart',
@@ -257,6 +337,26 @@ export async function getWeeklyTopAlbums(
         format: 'json',
       })
       const response = await fetch(`${LASTFM_API_BASE}?${params}`)
+      const responseText = await response.text()
+      let responseData: any
+      
+      try {
+        responseData = JSON.parse(responseText)
+      } catch (e) {
+        responseData = { _rawResponse: responseText }
+      }
+      
+      // Log the response
+      if (!response.ok || responseData.error) {
+        await logger.logResponse(
+          logEntry,
+          response.status,
+          responseData,
+          responseData.error ? `${responseData.message || responseData.error}` : `HTTP ${response.status}: ${response.statusText}`
+        )
+      } else {
+        await logger.logResponse(logEntry, response.status, responseData)
+      }
       
       // Handle rate limiting (HTTP 429)
       if (response.status === 429) {
@@ -268,7 +368,7 @@ export async function getWeeklyTopAlbums(
       if (!response.ok) {
         throw new Error(`Last.fm API error: ${response.statusText}`)
       }
-      const responseData = await response.json()
+      
       if (responseData.error) {
         throw new Error(`Last.fm API error: ${responseData.message || responseData.error}`)
       }

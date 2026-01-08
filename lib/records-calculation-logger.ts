@@ -24,8 +24,6 @@ class RecordsCalculationLogger {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
     this.logFile = join(process.cwd(), 'logs', `records-calculation-${groupId}-${timestamp}.log`)
     this.startTime = Date.now()
-    // Always log the log file path to console for debugging
-    console.log(`[RecordsLogger] Initialized for group ${groupId}, log file: ${this.logFile}`)
     // Write initial log entry immediately to verify file writing works
     this.writeInitialLog().catch((err) => {
       console.error(`[RecordsLogger] Failed to write initial log:`, err)
@@ -37,7 +35,6 @@ class RecordsCalculationLogger {
     try {
       await mkdir(join(process.cwd(), 'logs'), { recursive: true })
       await appendFile(this.logFile!, message, 'utf-8')
-      console.log(`[RecordsLogger] Initial log entry written to ${this.logFile}`)
     } catch (error) {
       console.error(`[RecordsLogger] Failed to write initial log to ${this.logFile}:`, error)
     }
