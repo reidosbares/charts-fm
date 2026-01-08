@@ -80,29 +80,29 @@ export default function StylingTab({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-8">
+    <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
       {success && (
-        <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-green-100 border border-green-400 text-green-700 rounded text-sm md:text-base">
           {t('updatedSuccessfully')}
         </div>
       )}
 
       {error && (
-        <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-red-100 border border-red-400 text-red-700 rounded text-sm md:text-base">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
         <div>
-          <label htmlFor="colorTheme" className="block text-lg font-bold text-gray-900 mb-2">
+          <label htmlFor="colorTheme" className="block text-base md:text-lg font-bold text-gray-900 mb-2">
             {t('colorTheme')}
           </label>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
             {t('colorThemeDescription')}
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
             {THEME_NAMES.map((themeName) => {
               const theme = GROUP_THEMES[themeName]
               const isSelected = colorTheme === themeName
@@ -180,18 +180,18 @@ export default function StylingTab({
           </div>
         </div>
 
-        <div className="flex gap-4 pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-3 md:pt-4">
           <button
             type="submit"
             disabled={isLoading || !hasChanges}
-            className="flex-1 py-3 px-6 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 py-2.5 md:py-3 px-4 md:px-6 text-sm md:text-base bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? t('saving') : t('saveSettings')}
           </button>
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+            className="px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
           >
             {t('cancel')}
           </button>

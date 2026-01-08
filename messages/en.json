@@ -264,7 +264,11 @@
       "failedToUpdate": "Failed to update charts",
       "plays": "{count} plays",
       "vs": "VS",
-      "failedToLoad": "Failed to load charts"
+      "failedToLoad": "Failed to load charts",
+      "public": {
+        "totalPlaysThisWeek": "Total Plays This Week",
+        "noChartsDescription": "This group hasn't generated any charts yet."
+      }
     },
     "trends": {
       "title": "Trends",
@@ -859,7 +863,7 @@
     "notFound": "Group not found",
     "backToGroups": "Back to Groups",
     "tabs": {
-      "users": "Users",
+      "users": "Members",
       "artists": "Artists",
       "tracks": "Tracks",
       "albums": "Albums"
@@ -909,8 +913,8 @@
       "members": "members"
     },
     "userRecords": {
-      "comingSoon": "User Records Coming Soon",
-      "unlockMessage": "This group currently has {count} {memberOrMembers}. Invite {inviteCount} to unlock user records!",
+      "comingSoon": "Member Records Coming Soon",
+      "unlockMessage": "This group currently has {count} {memberOrMembers}. Invite {inviteCount} to unlock member records!",
       "inviteCountOne": "1 more",
       "inviteCountTwo": "2 more",
       "unlockDescription": "With more people, we can compare contributions and highlight who's bringing the most energy, plays, and taste to the group.",

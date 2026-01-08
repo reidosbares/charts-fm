@@ -246,10 +246,10 @@ export default function CreateGroupPage() {
   }
 
   const renderStep1 = () => (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold mb-4">{t('step1.title')}</h2>
-        <p className="text-sm text-gray-600 mb-6">
+        <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">{t('step1.title')}</h2>
+        <p className="text-xs md:text-sm text-gray-600 mb-4 md:mb-6">
           {t('step1.description')}
         </p>
       </div>
@@ -264,7 +264,7 @@ export default function CreateGroupPage() {
           required
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+          className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-base"
           placeholder={t('step1.namePlaceholder')}
           disabled={isLoading}
         />
@@ -279,7 +279,7 @@ export default function CreateGroupPage() {
           id="image"
           value={formData.image}
           onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+          className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-base"
           placeholder={tGroupDetails('iconUrlPlaceholder')}
           disabled={isLoading}
         />
@@ -328,26 +328,26 @@ export default function CreateGroupPage() {
   )
 
   const renderStep2 = () => (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold mb-4">{t('step2.title')}</h2>
-        <p className="text-sm text-gray-600 mb-6">
+        <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">{t('step2.title')}</h2>
+        <p className="text-xs md:text-sm text-gray-600 mb-4 md:mb-6">
           {t('step2.description')}
         </p>
       </div>
 
       <div>
-        <label htmlFor="chartSize" className="block text-lg font-bold text-gray-900 mb-2">
+        <label htmlFor="chartSize" className="block text-base md:text-lg font-bold text-gray-900 mb-2">
           {tChart('chartSize')}
         </label>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
           {tChart('chartSizeDescription')}
         </p>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-2 md:gap-4">
           {CHART_SIZES.map((size) => (
             <label
               key={size}
-              className={`flex items-center px-4 py-2 border-2 rounded-lg cursor-pointer transition-colors ${
+              className={`flex items-center px-3 md:px-4 py-2.5 md:py-2 border-2 rounded-lg cursor-pointer transition-colors min-h-[44px] ${
                 formData.chartSize === size
                   ? 'border-yellow-500 bg-yellow-50'
                   : 'border-gray-300 hover:border-gray-400'
@@ -362,17 +362,17 @@ export default function CreateGroupPage() {
                 className="sr-only"
                 disabled={isLoading}
               />
-              <span className="font-medium">{tChart('top', { size })}</span>
+              <span className="font-medium text-sm md:text-base">{tChart('top', { size })}</span>
             </label>
           ))}
         </div>
       </div>
 
       <div>
-        <label htmlFor="trackingDayOfWeek" className="block text-lg font-bold text-gray-900 mb-2">
+        <label htmlFor="trackingDayOfWeek" className="block text-base md:text-lg font-bold text-gray-900 mb-2">
           {tChart('trackingDayOfWeek')}
         </label>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
           {tChart('trackingDayOfWeekDescription')}
         </p>
         <CustomSelect
@@ -385,16 +385,16 @@ export default function CreateGroupPage() {
       </div>
 
       <div>
-        <label htmlFor="chartMode" className="block text-lg font-bold text-gray-900 mb-2">
+        <label htmlFor="chartMode" className="block text-base md:text-lg font-bold text-gray-900 mb-2">
           {tChart('chartMode')}
         </label>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
           {tChart('chartModeDescription')}
         </p>
         
         {/* Carousel Selector */}
         <div className="relative">
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-2 md:gap-4">
             {/* Previous Button */}
             <button
               type="button"
@@ -403,21 +403,21 @@ export default function CreateGroupPage() {
                 setCarouselIndex(newIndex)
                 setFormData({ ...formData, chartMode: CHART_MODES[newIndex].value })
               }}
-              className="p-2 rounded-full hover:bg-yellow-100 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="p-2 md:p-2 rounded-full hover:bg-yellow-100 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label={tChart('previousMode')}
               disabled={isLoading}
             >
-              <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 md:w-6 md:h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
 
             {/* Carousel Card */}
-            <div className="flex-1 max-w-md">
-              <div className="relative bg-white border-2 border-yellow-500 rounded-2xl p-6 shadow-lg h-[420px] flex flex-col">
+            <div className="flex-1 max-w-md w-full">
+              <div className="relative bg-white border-2 border-yellow-500 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-lg min-h-[380px] md:min-h-[400px] lg:min-h-[420px] flex flex-col">
                 <div className="flex flex-col items-center flex-1">
                   {/* Icon */}
-                  <div className="mb-4 w-48 h-48 flex items-center justify-center bg-white rounded-xl p-2 flex-shrink-0">
+                  <div className="mb-3 md:mb-4 w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 flex items-center justify-center bg-white rounded-xl p-2 flex-shrink-0">
                     <img
                       src={CHART_MODES[carouselIndex].icon}
                       alt={CHART_MODES[carouselIndex].label}
@@ -426,12 +426,12 @@ export default function CreateGroupPage() {
                   </div>
                   
                   {/* Title (outside bubble) */}
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2 flex-shrink-0">
+                  <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2 flex-shrink-0 text-center w-full px-2">
                     {CHART_MODES[carouselIndex].label}
                   </h3>
                   
                   {/* Description */}
-                  <p className="text-sm text-gray-600 text-center flex-1 flex items-center">
+                  <p className="text-xs md:text-sm text-gray-600 text-left break-words w-full px-2 md:px-3">
                     {CHART_MODES[carouselIndex].description}
                   </p>
                 </div>
@@ -446,18 +446,18 @@ export default function CreateGroupPage() {
                 setCarouselIndex(newIndex)
                 setFormData({ ...formData, chartMode: CHART_MODES[newIndex].value })
               }}
-              className="p-2 rounded-full hover:bg-yellow-100 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="p-2 md:p-2 rounded-full hover:bg-yellow-100 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label={tChart('nextMode')}
               disabled={isLoading}
             >
-              <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 md:w-6 md:h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
           </div>
 
           {/* Dots Indicator */}
-          <div className="flex justify-center gap-2 mt-4">
+          <div className="flex justify-center gap-2 mt-3 md:mt-4">
             {CHART_MODES.map((mode, index) => (
               <button
                 key={mode.value}
@@ -467,10 +467,10 @@ export default function CreateGroupPage() {
                   setFormData({ ...formData, chartMode: mode.value })
                 }}
                 disabled={isLoading}
-                className={`w-2 h-2 rounded-full transition-all ${
+                className={`h-2 rounded-full transition-all min-w-[8px] min-h-[8px] ${
                   carouselIndex === index
                     ? 'bg-yellow-500 w-8'
-                    : 'bg-gray-300 hover:bg-gray-400'
+                    : 'bg-gray-300 hover:bg-gray-400 w-2'
                 }`}
                 aria-label={tChart('selectMode', { mode: mode.label })}
               />
@@ -492,10 +492,10 @@ export default function CreateGroupPage() {
   )
 
   const renderStep3 = () => (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold mb-4">{t('step3.title')}</h2>
-        <p className="text-sm text-gray-600 mb-6">
+        <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">{t('step3.title')}</h2>
+        <p className="text-xs md:text-sm text-gray-600 mb-4 md:mb-6">
           {t('step3.description')}
         </p>
       </div>
@@ -504,7 +504,7 @@ export default function CreateGroupPage() {
         <label htmlFor="inviteInput" className="block text-sm font-medium text-gray-700 mb-2">
           {t('step3.lastfmUsername')}
         </label>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             id="inviteInput"
@@ -524,7 +524,7 @@ export default function CreateGroupPage() {
                 await handleAddInvite()
               }
             }}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+            className="flex-1 px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-base"
             placeholder={t('step3.usernamePlaceholder')}
             disabled={isLoading || isValidatingUsername}
           />
@@ -532,7 +532,7 @@ export default function CreateGroupPage() {
             type="button"
             onClick={handleAddInvite}
             disabled={isLoading || !inviteInput.trim() || isValidatingUsername}
-            className="px-6 py-2 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 md:py-2 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
           >
             {isValidatingUsername ? t('step3.checking') : t('step3.add')}
           </button>
@@ -551,14 +551,14 @@ export default function CreateGroupPage() {
             {formData.invites.map((username, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg"
+                className="flex items-center justify-between p-3 md:p-3 bg-gray-50 border border-gray-200 rounded-lg"
               >
-                <span className="text-sm font-medium text-gray-900">{username}</span>
+                <span className="text-sm font-medium text-gray-900 truncate pr-2">{username}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveInvite(index)}
                   disabled={isLoading}
-                  className="text-red-600 hover:text-red-800 text-sm font-medium disabled:opacity-50"
+                  className="text-red-600 hover:text-red-800 text-sm font-medium disabled:opacity-50 px-2 py-1 min-h-[36px] min-w-[60px] flex-shrink-0"
                 >
                   {t('step3.remove')}
                 </button>
@@ -577,55 +577,55 @@ export default function CreateGroupPage() {
   )
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+    <main className="flex min-h-screen flex-col items-center justify-center px-4 py-8 md:px-6 md:py-12 lg:px-12 lg:py-16 xl:p-24">
       <div className="z-10 max-w-2xl w-full">
-        <h1 className="text-4xl font-bold text-center mb-8">{t('title')}</h1>
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-6 md:mb-8">{t('title')}</h1>
 
         {/* Progress Indicator */}
-        <div className="mb-8">
+        <div className="mb-6 md:mb-8">
           <div className="flex items-center justify-between mb-2">
             <div className={`flex-1 h-2 rounded-full ${currentStep >= 1 ? 'bg-yellow-500' : 'bg-gray-200'}`} />
-            <div className={`flex-1 h-2 rounded-full mx-2 ${currentStep >= 2 ? 'bg-yellow-500' : 'bg-gray-200'}`} />
+            <div className={`flex-1 h-2 rounded-full mx-1 md:mx-2 ${currentStep >= 2 ? 'bg-yellow-500' : 'bg-gray-200'}`} />
             <div className={`flex-1 h-2 rounded-full ${currentStep >= 3 ? 'bg-yellow-500' : 'bg-gray-200'}`} />
           </div>
-          <div className="flex items-center justify-between text-sm text-gray-600">
-            <span className={currentStep === 1 ? 'font-semibold text-yellow-600' : ''}>{t('step1.title')}</span>
-            <span className={currentStep === 2 ? 'font-semibold text-yellow-600' : ''}>{t('step2.title')}</span>
-            <span className={currentStep === 3 ? 'font-semibold text-yellow-600' : ''}>{t('step3.title')}</span>
+          <div className="flex items-center justify-between text-xs md:text-sm text-gray-600">
+            <span className={`truncate px-1 ${currentStep === 1 ? 'font-semibold text-yellow-600' : ''}`}>{t('step1.title')}</span>
+            <span className={`truncate px-1 ${currentStep === 2 ? 'font-semibold text-yellow-600' : ''}`}>{t('step2.title')}</span>
+            <span className={`truncate px-1 ${currentStep === 3 ? 'font-semibold text-yellow-600' : ''}`}>{t('step3.title')}</span>
           </div>
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          <div className="mb-4 p-3 md:p-4 bg-red-100 border border-red-400 text-red-700 rounded text-sm md:text-base">
             {error}
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
           {/* Step Content */}
           {currentStep === 1 && renderStep1()}
           {currentStep === 2 && renderStep2()}
           {currentStep === 3 && renderStep3()}
 
           {/* Navigation Buttons */}
-          <div className="flex gap-4 mt-8 pt-6 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 mt-6 md:mt-8 pt-4 md:pt-6 border-t border-gray-200">
             {currentStep > 1 && (
               <button
                 type="button"
                 onClick={handleBack}
                 disabled={isLoading}
-                className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
+                className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 min-h-[44px] order-2 sm:order-1"
               >
                 {t('back')}
               </button>
             )}
-            <div className="flex-1" />
+            <div className="flex-1 hidden sm:block" />
             {currentStep < 3 ? (
               <button
                 type="button"
                 onClick={handleNext}
                 disabled={isLoading}
-                className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] order-1 sm:order-2"
               >
                 {t('next')}
               </button>
@@ -635,7 +635,7 @@ export default function CreateGroupPage() {
                   type="button"
                   onClick={() => router.back()}
                   disabled={isLoading}
-                  className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
+                  className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 min-h-[44px] order-2 sm:order-1"
                 >
                   {tCommon('cancel')}
                 </button>
@@ -643,7 +643,7 @@ export default function CreateGroupPage() {
                   type="button"
                   onClick={handleSubmit}
                   disabled={isLoading}
-                  className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] order-1 sm:order-2"
                 >
                   {isLoading ? t('creating') : t('createButton')}
                 </button>

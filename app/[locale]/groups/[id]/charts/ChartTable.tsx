@@ -88,7 +88,7 @@ export default function ChartTable({ items, chartType, groupId }: ChartTableProp
   // Memoized table row component
   const TableRow = memo(({ item }: { item: EnrichedChartItem }) => (
     <tr className="hover:bg-gray-50 transition-colors">
-      <td className="px-6 py-5 text-sm">
+      <td className="px-2 md:px-6 py-3 md:py-5 text-sm">
         <span className="font-bold text-gray-900">{item.position}</span>
         {(item.positionChange !== null && item.positionChange !== 0) || item.positionChange === null ? (
           <span className={`ml-2 ${getPositionChangeColor(item.positionChange, item.entryType)}`}>
@@ -96,7 +96,7 @@ export default function ChartTable({ items, chartType, groupId }: ChartTableProp
           </span>
         ) : null}
       </td>
-      <td className="px-6 py-5 text-sm">
+      <td className="px-2 md:px-6 py-3 md:py-5 text-sm">
         <div>
           <Link
             href={`/groups/${groupId}/charts/${routeType}/${encodeURIComponent(getSlug(item))}`}
@@ -109,7 +109,7 @@ export default function ChartTable({ items, chartType, groupId }: ChartTableProp
           )}
         </div>
       </td>
-      <td className="px-6 py-5 text-sm text-right">
+      <td className="px-2 md:px-6 py-3 md:py-5 text-sm text-right">
         <span className="text-gray-900 font-medium">{item.playcount}</span>
         {item.playsChange !== null && item.playsChange !== 0 && (
           <span className={`ml-2 ${getPlaysChangeColor(item.playsChange)}`}>
@@ -117,7 +117,7 @@ export default function ChartTable({ items, chartType, groupId }: ChartTableProp
           </span>
         )}
       </td>
-      <td className="px-6 py-5 text-sm text-right">
+      <td className="px-2 md:px-6 py-3 md:py-5 text-sm text-right">
         {item.vibeScore !== null && item.vibeScore !== undefined ? (
           <>
             <span className="text-gray-900 font-medium">{item.vibeScore.toFixed(2)}</span>
@@ -131,10 +131,10 @@ export default function ChartTable({ items, chartType, groupId }: ChartTableProp
           <span className="text-gray-400">—</span>
         )}
       </td>
-      <td className="px-6 py-5 text-sm text-center text-gray-600">
+      <td className="px-2 md:px-6 py-3 md:py-5 text-sm text-center text-gray-600">
         {item.totalWeeksAppeared}
       </td>
-      <td className="px-6 py-5 text-sm text-center text-gray-600">
+      <td className="px-2 md:px-6 py-3 md:py-5 text-sm text-center text-gray-600">
         #{item.highestPosition}
       </td>
     </tr>
@@ -143,35 +143,40 @@ export default function ChartTable({ items, chartType, groupId }: ChartTableProp
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-      <table className="w-full">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
-              #
-            </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-              {chartType === 'artists' ? t('artists') : chartType === 'tracks' ? t('tracks') : t('albums')}
-            </th>
-            <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
-              {t('plays')}
-            </th>
-            <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
-              {t('vs')}
-            </th>
-            <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
-              {t('weeksOnChart')}
-            </th>
-            <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
-              {t('peakPosition')}
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200">
-          {items.map((item) => (
-            <TableRow key={item.position} item={item} />
-          ))}
-        </tbody>
-      </table>
+      {/* Horizontal scroll wrapper for mobile */}
+      <div className="overflow-x-auto -mx-4 md:mx-0">
+        <div className="inline-block min-w-full align-middle px-4 md:px-0">
+          <table className="w-full">
+            <thead className="bg-gray-50 sticky top-0 z-10">
+              <tr>
+                <th className="px-2 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
+                  #
+                </th>
+                <th className="px-2 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  {chartType === 'artists' ? t('artists') : chartType === 'tracks' ? t('tracks') : t('albums')}
+                </th>
+                <th className="px-2 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
+                  {t('plays')}
+                </th>
+                <th className="px-2 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
+                  {t('vs')}
+                </th>
+                <th className="px-2 md:px-6 py-3 md:py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
+                  {t('weeksOnChart')}
+                </th>
+                <th className="px-2 md:px-6 py-3 md:py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
+                  {t('peakPosition')}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {items.map((item) => (
+                <TableRow key={item.position} item={item} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   )
 }

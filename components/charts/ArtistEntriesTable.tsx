@@ -5,6 +5,7 @@ import { ArtistChartEntry } from '@/lib/chart-deep-dive'
 import LiquidGlassTabs from '@/components/LiquidGlassTabs'
 import { Link } from '@/i18n/routing'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import { faMusic, faCompactDisc } from '@fortawesome/free-solid-svg-icons'
 
 interface ArtistEntriesTableProps {
   tracks: ArtistChartEntry[]
@@ -17,8 +18,8 @@ const ArtistEntriesTable = memo(function ArtistEntriesTable({ tracks, albums, gr
   const [activeTab, setActiveTab] = useState<'tracks' | 'albums'>('tracks')
 
   const tabs = [
-    { id: 'tracks', label: t('tracks'), count: tracks.length },
-    { id: 'albums', label: t('albums'), count: albums.length },
+    { id: 'tracks', label: t('tracks'), count: tracks.length, icon: faMusic },
+    { id: 'albums', label: t('albums'), count: albums.length, icon: faCompactDisc },
   ]
 
   const currentEntries = activeTab === 'tracks' ? tracks : albums
@@ -70,8 +71,8 @@ const ArtistEntriesTable = memo(function ArtistEntriesTable({ tracks, albums, gr
   }
 
   return (
-    <div className="bg-white/40 backdrop-blur-md rounded-xl p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
-      <h2 className="text-xl font-bold text-gray-900 mb-4">{t('title')}</h2>
+    <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
+      <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-4">{t('title')}</h2>
       
       <div className="mb-6 flex justify-center">
         <LiquidGlassTabs
@@ -86,60 +87,62 @@ const ArtistEntriesTable = memo(function ArtistEntriesTable({ tracks, albums, gr
           {activeTab === 'tracks' ? t('noTracks') : t('noAlbums')}
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <div className="text-sm text-gray-600 mb-3 text-center">
-            {t('total')} {currentEntries.length} {currentEntries.length === 1 ? t('entry') : t('entries')}
-            <span className="mx-2">•</span>
-            {t('numberOneWeeks')} {totalNumberOneWeeks}
+        <div className="overflow-x-auto -mx-4 md:mx-0">
+          <div className="inline-block min-w-full align-middle px-4 md:px-0">
+            <div className="text-sm text-gray-600 mb-3 text-center">
+              {t('total')} {currentEntries.length} {currentEntries.length === 1 ? t('entry') : t('entries')}
+              <span className="mx-2">•</span>
+              {t('numberOneWeeks')} {totalNumberOneWeeks}
+            </div>
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200/50 sticky top-0 bg-white/40 backdrop-blur-sm z-10">
+                  <th className="text-left py-2 md:py-3 px-2 md:px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    {t('peak')}
+                  </th>
+                  <th className="text-left py-2 md:py-3 px-2 md:px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    {t('weeksAtPeak')}
+                  </th>
+                  <th className="text-left py-2 md:py-3 px-2 md:px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    {t('name')}
+                  </th>
+                  <th className="text-left py-2 md:py-3 px-2 md:px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    {t('weeksOnChart')}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200/50">
+                {currentEntries.map((entry) => {
+                  const href = `/groups/${groupId}/charts/${entry.chartType.slice(0, -1)}/${entry.slug}`
+                  const rowStyles = getRowStyles(entry.peakPosition)
+                  return (
+                    <tr 
+                      key={entry.entryKey} 
+                      className={`${rowStyles} hover:bg-white/20 transition-colors`}
+                    >
+                      <td className="py-2 md:py-3 px-2 md:px-4 text-sm">
+                        {renderPeakPosition(entry.peakPosition)}
+                      </td>
+                      <td className="py-2 md:py-3 px-2 md:px-4 text-sm text-gray-700">
+                        {entry.weeksAtPeak}
+                      </td>
+                      <td className="py-2 md:py-3 px-2 md:px-4 text-sm">
+                        <Link
+                          href={href}
+                          className="font-medium text-gray-900 hover:text-[var(--theme-primary-dark)] transition-colors"
+                        >
+                          {entry.name}
+                        </Link>
+                      </td>
+                      <td className="py-2 md:py-3 px-2 md:px-4 text-sm text-gray-700">
+                        {entry.totalWeeksCharting}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-200/50">
-                <th className="text-left py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  {t('peak')}
-                </th>
-                <th className="text-left py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  {t('weeksAtPeak')}
-                </th>
-                <th className="text-left py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  {t('name')}
-                </th>
-                <th className="text-left py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  {t('weeksOnChart')}
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200/50">
-              {currentEntries.map((entry) => {
-                const href = `/groups/${groupId}/charts/${entry.chartType.slice(0, -1)}/${entry.slug}`
-                const rowStyles = getRowStyles(entry.peakPosition)
-                return (
-                  <tr 
-                    key={entry.entryKey} 
-                    className={`${rowStyles} hover:bg-white/20 transition-colors`}
-                  >
-                    <td className="py-3 px-4 text-sm">
-                      {renderPeakPosition(entry.peakPosition)}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-gray-700">
-                      {entry.weeksAtPeak}
-                    </td>
-                    <td className="py-3 px-4 text-sm">
-                      <Link
-                        href={href}
-                        className="font-medium text-gray-900 hover:text-[var(--theme-primary-dark)] transition-colors"
-                      >
-                        {entry.name}
-                      </Link>
-                    </td>
-                    <td className="py-3 px-4 text-sm text-gray-700">
-                      {entry.totalWeeksCharting}
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
         </div>
       )}
     </div>

@@ -57,7 +57,7 @@ export default async function TrendsPage({ params }: { params: { id: string } })
 
   if (!trends) {
     return (
-      <main className={`flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}>
+      <main className={`flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}>
         <div className="max-w-7xl w-full mx-auto">
           <GroupPageHero
             group={{
@@ -72,9 +72,9 @@ export default async function TrendsPage({ params }: { params: { id: string } })
             ]}
             subheader={tTrends('title')}
           />
-          <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-            <p className="text-gray-600 mb-4">{tTrends('noTrendsAvailable')}</p>
-            <p className="text-gray-500 text-sm">{tTrends('generateChartsToSee')}</p>
+          <div className="bg-white rounded-lg shadow-sm p-6 md:p-8 text-center">
+            <p className="text-gray-600 mb-3 md:mb-4 text-sm md:text-base">{tTrends('noTrendsAvailable')}</p>
+            <p className="text-gray-500 text-xs md:text-sm">{tTrends('generateChartsToSee')}</p>
           </div>
         </div>
       </main>
@@ -85,7 +85,7 @@ export default async function TrendsPage({ params }: { params: { id: string } })
   const weekEndFormatted = formatDateWritten(trends.weekEnd)
 
   return (
-    <main className={`flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}>
+    <main className={`flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}>
       <div className="max-w-7xl w-full mx-auto">
         <GroupPageHero
           group={{

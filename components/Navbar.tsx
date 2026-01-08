@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic'
 import SafeImage from '@/components/SafeImage'
 import { useNavigation } from '@/contexts/NavigationContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { GROUP_THEMES } from '@/lib/group-themes'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
@@ -53,6 +53,23 @@ export default function Navbar() {
   const [isQuickAccessInfoOpen, setIsQuickAccessInfoOpen] = useState(false)
   const quickAccessButtonRef = useRef<HTMLButtonElement>(null)
   const prevPathnameRef = useRef(pathname)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // Close mobile menu on Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false)
+      }
+    }
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [isMobileMenuOpen])
+
+  // Close mobile menu when pathname changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false)
+  }, [pathname])
 
   // Fetch user data and quick access group
   useEffect(() => {
@@ -231,15 +248,16 @@ export default function Navbar() {
       )}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-4 md:space-x-8">
             <Link 
               href="/" 
-              className={`text-3xl font-bold text-yellow-500 transition-all font-oswald leading-none pb-1 ${isLoading ? 'animate-pulse-scale' : ''}`}
+              className={`text-2xl md:text-3xl font-bold text-yellow-500 transition-all font-oswald leading-none pb-1 ${isLoading ? 'animate-pulse-scale' : ''}`}
             >
               ChartsFM
             </Link>
+            {/* Desktop Navigation - hidden on mobile */}
             {isAuthenticated && (
-              <div className="flex space-x-2">
+              <div className="hidden md:flex space-x-2">
                 <Link
                   href="/dashboard"
                   className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 leading-tight ${
@@ -360,7 +378,18 @@ export default function Navbar() {
               <div className="w-8 h-8 border-2 border-gray-300 border-t-[var(--theme-primary)] rounded-full animate-spin"></div>
             </div>
           ) : isAuthenticated && !isUserDataLoading ? (
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 md:space-x-3">
+              {/* Mobile Hamburger Button */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden p-2 rounded-lg text-gray-200 hover:text-white hover:bg-white/10 transition-colors"
+                aria-label="Toggle menu"
+              >
+                <FontAwesomeIcon icon={isMobileMenuOpen ? faTimes : faBars} className="w-6 h-6" />
+              </button>
+              
+              {/* Desktop Quick Access and User Menu - hidden on mobile */}
+              <div className="hidden md:flex items-center space-x-3">
               {/* Quick Access Group or + Button */}
               {isQuickAccessLoading ? null : (quickAccessGroup ? (() => {
                 const theme = GROUP_THEMES[quickAccessGroup.colorTheme as keyof typeof GROUP_THEMES]
@@ -621,9 +650,21 @@ export default function Navbar() {
                 </>
               )}
               </div>
+              </div>
             </div>
           ) : status === 'unauthenticated' ? (
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 md:space-x-3">
+              {/* Mobile Hamburger Button for unauthenticated */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden p-2 rounded-lg text-gray-200 hover:text-white hover:bg-white/10 transition-colors"
+                aria-label="Toggle menu"
+              >
+                <FontAwesomeIcon icon={isMobileMenuOpen ? faTimes : faBars} className="w-6 h-6" />
+              </button>
+              
+              {/* Desktop Auth Buttons - hidden on mobile */}
+              <div className="hidden md:flex items-center space-x-3">
               <button
                 onClick={() => setIsSignInModalOpen(true)}
                 className="px-4 py-2 rounded-full text-sm font-semibold text-gray-200 hover:text-white transition-all duration-200"
@@ -662,10 +703,170 @@ export default function Navbar() {
               >
                 {t('signUp')}
               </Link>
+              </div>
             </div>
           ) : null}
         </div>
       </div>
+      
+      {/* Mobile Menu Slide-out */}
+      {isMobileMenuOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/50 z-[60] md:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          {/* Mobile Menu */}
+          <div
+            className="fixed top-16 left-0 right-0 bottom-0 bg-black z-[70] md:hidden overflow-y-auto"
+            style={{
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <div className="px-4 py-6 space-y-4">
+              {isAuthenticated ? (
+                <>
+                  {/* User Info */}
+                  {userData && (
+                    <div className="pb-4 border-b border-gray-800">
+                      <div className="flex items-center space-x-3">
+                        <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border-2 border-yellow-500">
+                          <SafeImage
+                            src={userData.image}
+                            alt={userData.name || t('user')}
+                            className="object-cover w-10 h-10 rounded-full"
+                          />
+                        </div>
+                        <div>
+                          <p className="text-white font-semibold">{userData.name || session?.user?.name || t('user')}</p>
+                          {userData.lastfmUsername && (
+                            <p className="text-gray-400 text-sm">@{userData.lastfmUsername}</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Navigation Links */}
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`block px-4 py-3 rounded-lg text-base font-semibold transition-all ${
+                      pathnameWithoutLocale === '/dashboard'
+                        ? 'bg-yellow-500 text-black'
+                        : 'text-gray-200 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t('dashboard')}
+                  </Link>
+                  <Link
+                    href="/groups"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`block px-4 py-3 rounded-lg text-base font-semibold transition-all ${
+                      pathnameWithoutLocale?.startsWith('/groups') && !pathnameWithoutLocale?.startsWith('/groups/discover')
+                        ? 'bg-yellow-500 text-black'
+                        : 'text-gray-200 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t('groups')}
+                  </Link>
+                  <Link
+                    href="/groups/discover"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`block px-4 py-3 rounded-lg text-base font-semibold transition-all ${
+                      pathnameWithoutLocale?.startsWith('/groups/discover')
+                        ? 'bg-yellow-500 text-black'
+                        : 'text-gray-200 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t('discover')}
+                  </Link>
+                  
+                  {/* Quick Access Group */}
+                  {quickAccessGroup && (
+                    <Link
+                      href={`/groups/${quickAccessGroup.id}`}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-4 py-3 rounded-lg text-base font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-all"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                          <SafeImage
+                            src={quickAccessGroup.image}
+                            alt={quickAccessGroup.name}
+                            className="object-cover w-8 h-8 rounded-full"
+                          />
+                        </div>
+                        <span>{quickAccessGroup.name}</span>
+                      </div>
+                    </Link>
+                  )}
+                  
+                  {/* Profile Link */}
+                  <Link
+                    href="/profile"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block px-4 py-3 rounded-lg text-base font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-all"
+                  >
+                    {t('profile')}
+                  </Link>
+                  
+                  {/* Admin Links */}
+                  {userData?.isSuperuser && (
+                    <>
+                      <Link
+                        href="/admin/users/create"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block px-4 py-3 rounded-lg text-base font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-all"
+                      >
+                        {t('createUser')}
+                      </Link>
+                      <Link
+                        href="/admin/bulk-generate"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block px-4 py-3 rounded-lg text-base font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-all"
+                      >
+                        {t('bulkGenerate')}
+                      </Link>
+                    </>
+                  )}
+                  
+                  {/* Sign Out */}
+                  <button
+                    onClick={() => {
+                      setIsMobileMenuOpen(false)
+                      handleLogout()
+                    }}
+                    className="block w-full text-left px-4 py-3 rounded-lg text-base font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-all"
+                  >
+                    {t('signOut')}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => {
+                      setIsMobileMenuOpen(false)
+                      setIsSignInModalOpen(true)
+                    }}
+                    className="block w-full text-left px-4 py-3 rounded-lg text-base font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-all"
+                  >
+                    {t('signIn')}
+                  </button>
+                  <Link
+                    href="/auth/signup"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block px-4 py-3 rounded-lg text-base font-semibold bg-yellow-500 text-black text-center hover:bg-yellow-600 transition-all"
+                  >
+                    {t('signUp')}
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </nav>
     <SignInModal
       isOpen={isSignInModalOpen}

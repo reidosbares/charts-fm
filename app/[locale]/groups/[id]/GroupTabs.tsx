@@ -38,9 +38,9 @@ export default function GroupTabs({
   ], [t, pendingRequestsCount])
 
   return (
-    <div className="mt-10">
+    <div className="mt-6 md:mt-10">
       {/* Tab Navigation */}
-      <div className="mb-6 flex justify-center">
+      <div className="mb-4 md:mb-6 flex justify-center">
         <LiquidGlassTabs
           tabs={tabs}
           activeTab={activeTab}
@@ -49,7 +49,7 @@ export default function GroupTabs({
       </div>
 
       {/* Tab Content - All tabs load asynchronously on page load, hidden until active */}
-      <div className="bg-white/60 backdrop-blur-md rounded-xl p-6 border border-theme shadow-sm">
+      <div className="bg-white/60 backdrop-blur-md rounded-xl p-4 md:p-6 border border-theme shadow-sm">
         <div style={{ display: activeTab === 'charts' ? 'block' : 'none' }}>
           {chartsContent}
         </div>

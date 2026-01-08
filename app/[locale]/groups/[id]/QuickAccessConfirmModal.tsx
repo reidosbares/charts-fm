@@ -52,10 +52,12 @@ export default function QuickAccessConfirmModal({
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
+          maxHeight: '90vh',
+          overflowY: 'auto',
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="bg-white rounded-lg shadow-2xl p-6 relative">
+        <div className="bg-white rounded-lg shadow-2xl p-4 md:p-6 relative">
           <div className="space-y-4 mb-6">
             <p className="text-sm text-gray-700">
               {t('replaceConfirm')}

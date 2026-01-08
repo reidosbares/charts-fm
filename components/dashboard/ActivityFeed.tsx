@@ -76,10 +76,10 @@ export default function ActivityFeed() {
   if (isLoading) {
     return (
       <div 
-        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
         style={glassStyle}
       >
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
+        <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
         <div className="flex items-center justify-center py-12">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
         </div>
@@ -90,10 +90,10 @@ export default function ActivityFeed() {
   if (error || activities.length === 0) {
     return (
       <div 
-        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
         style={glassStyle}
       >
-        <h2 className="text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">{t('title')}</h2>
+        <h2 className="text-xl md:text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">{t('title')}</h2>
         <div className="text-center py-8 text-gray-500">
           <p>{t('noActivity')}</p>
         </div>
@@ -137,20 +137,20 @@ export default function ActivityFeed() {
 
   return (
     <div 
-      className="rounded-xl shadow-lg p-6 border border-theme"
+      className="rounded-xl shadow-lg p-4 md:p-6 border border-theme"
       style={{
         background: 'rgba(255, 255, 255, 0.6)',
         backdropFilter: 'blur(12px) saturate(180%)',
         WebkitBackdropFilter: 'blur(12px) saturate(180%)',
       }}
     >
-      <h2 className="text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">{t('title')}</h2>
-      <div className="space-y-3">
+      <h2 className="text-xl md:text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">{t('title')}</h2>
+      <div className="space-y-2 md:space-y-3">
         {activities.map((activity, idx) => (
           <Link
             key={idx}
             href={`/groups/${activity.groupId}`}
-            className="flex items-start gap-3 p-3 rounded-lg transition-all hover:shadow-sm"
+            className="flex items-start gap-2 md:gap-3 p-2 md:p-3 rounded-lg transition-all hover:shadow-sm"
             style={{
               background: 'rgba(255, 255, 255, 0.4)',
               backdropFilter: 'blur(8px) saturate(180%)',
@@ -159,11 +159,11 @@ export default function ActivityFeed() {
             }}
           >
             <div
-              className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${getActivityColor(
+              className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center ${getActivityColor(
                 activity.type
               )}`}
             >
-              <FontAwesomeIcon icon={getActivityIcon(activity.type)} className="text-sm" />
+              <FontAwesomeIcon icon={getActivityIcon(activity.type)} className="text-xs md:text-sm" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-900">

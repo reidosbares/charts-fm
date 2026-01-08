@@ -47,14 +47,14 @@ export default function QuickActionsPanel() {
   if (isLoading) {
     return (
       <div 
-        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
         style={{
           background: 'rgba(255, 255, 255, 0.6)',
           backdropFilter: 'blur(12px) saturate(180%)',
           WebkitBackdropFilter: 'blur(12px) saturate(180%)',
         }}
       >
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
+        <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
         <div className="flex items-center justify-center py-12">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
         </div>
@@ -66,14 +66,14 @@ export default function QuickActionsPanel() {
     // Show basic actions even on error
     return (
       <div 
-        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
         style={{
           background: 'rgba(255, 255, 255, 0.6)',
           backdropFilter: 'blur(12px) saturate(180%)',
           WebkitBackdropFilter: 'blur(12px) saturate(180%)',
         }}
       >
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
+        <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <Link
             href="/groups/create"
@@ -106,31 +106,31 @@ export default function QuickActionsPanel() {
   const { pendingInvitesCount, pendingRequestsCount, groupsCount } = data
   return (
     <div 
-      className="rounded-xl shadow-lg p-6 border border-gray-200"
+      className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
       style={{
         background: 'rgba(255, 255, 255, 0.6)',
         backdropFilter: 'blur(12px) saturate(180%)',
         WebkitBackdropFilter: 'blur(12px) saturate(180%)',
       }}
     >
-      <h2 className="text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">{t('title')}</h2>
+      <h2 className="text-xl md:text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">{t('title')}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <Link
           href="/groups/create"
-          className="flex items-center gap-3 p-4 rounded-lg transition-all shadow-sm hover:shadow font-semibold bg-yellow-500 text-black hover:bg-yellow-600"
+          className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-lg transition-all shadow-sm hover:shadow font-semibold bg-yellow-500 text-black hover:bg-yellow-600"
         >
-          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-            <FontAwesomeIcon icon={faPlus} />
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+            <FontAwesomeIcon icon={faPlus} className="text-sm md:text-base" />
           </div>
-          <div>
-            <div className="font-bold">{t('createGroup')}</div>
-            <div className="text-xs opacity-80">{t('createGroupDescription')}</div>
+          <div className="min-w-0">
+            <div className="font-bold text-sm md:text-base">{t('createGroup')}</div>
+            <div className="text-xs opacity-80 hidden sm:block">{t('createGroupDescription')}</div>
           </div>
         </Link>
 
         <Link
           href="/groups"
-          className="flex items-center gap-3 p-4 rounded-lg transition-all hover:shadow-sm"
+          className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-lg transition-all hover:shadow-sm"
           style={{
             background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
@@ -138,11 +138,11 @@ export default function QuickActionsPanel() {
             border: '1px solid rgba(255, 255, 255, 0.3)',
           }}
         >
-          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 text-gray-700">
-            <FontAwesomeIcon icon={faUsers} />
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center bg-gray-200 text-gray-700 flex-shrink-0">
+            <FontAwesomeIcon icon={faUsers} className="text-sm md:text-base" />
           </div>
-            <div>
-              <div className="font-semibold text-gray-900">{t('viewAllGroups')}</div>
+            <div className="min-w-0">
+              <div className="font-semibold text-gray-900 text-sm md:text-base">{t('viewAllGroups')}</div>
               <div className="text-xs text-gray-600">{groupsCount} {groupsCount === 1 ? t('group') : t('groups')}</div>
             </div>
         </Link>
@@ -150,7 +150,7 @@ export default function QuickActionsPanel() {
         {pendingInvitesCount > 0 && (
           <Link
             href="/groups"
-            className="flex items-center gap-3 p-4 rounded-lg transition-all hover:shadow-sm"
+            className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-lg transition-all hover:shadow-sm"
             style={{
               background: 'rgba(255, 255, 255, 0.4)',
               backdropFilter: 'blur(8px) saturate(180%)',
@@ -158,14 +158,14 @@ export default function QuickActionsPanel() {
               border: '1px solid rgba(255, 255, 255, 0.3)',
             }}
           >
-            <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-yellow-100 text-yellow-700">
-              <FontAwesomeIcon icon={faEnvelope} />
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center relative bg-yellow-100 text-yellow-700 flex-shrink-0">
+              <FontAwesomeIcon icon={faEnvelope} className="text-sm md:text-base" />
               <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold">
                 {pendingInvitesCount}
               </span>
             </div>
-            <div>
-              <div className="font-semibold text-gray-900">{t('pendingInvites')}</div>
+            <div className="min-w-0">
+              <div className="font-semibold text-gray-900 text-sm md:text-base">{t('pendingInvites')}</div>
               <div className="text-xs text-gray-600">{pendingInvitesCount} {pendingInvitesCount === 1 ? t('invite') : t('invites')}</div>
             </div>
           </Link>
@@ -174,7 +174,7 @@ export default function QuickActionsPanel() {
         {pendingRequestsCount > 0 && (
           <Link
             href="/groups"
-            className="flex items-center gap-3 p-4 rounded-lg transition-all hover:shadow-sm"
+            className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-lg transition-all hover:shadow-sm"
             style={{
               background: 'rgba(255, 255, 255, 0.4)',
               backdropFilter: 'blur(8px) saturate(180%)',
@@ -182,14 +182,14 @@ export default function QuickActionsPanel() {
               border: '1px solid rgba(255, 255, 255, 0.3)',
             }}
           >
-            <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-purple-100 text-purple-700">
-              <FontAwesomeIcon icon={faHandPaper} />
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center relative bg-purple-100 text-purple-700 flex-shrink-0">
+              <FontAwesomeIcon icon={faHandPaper} className="text-sm md:text-base" />
               <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold">
                 {pendingRequestsCount}
               </span>
             </div>
-            <div>
-              <div className="font-semibold text-gray-900">{t('joinRequests')}</div>
+            <div className="min-w-0">
+              <div className="font-semibold text-gray-900 text-sm md:text-base">{t('joinRequests')}</div>
               <div className="text-xs text-gray-600">{pendingRequestsCount} {pendingRequestsCount === 1 ? t('request') : t('requests')}</div>
             </div>
           </Link>
@@ -197,7 +197,7 @@ export default function QuickActionsPanel() {
 
         <Link
           href="/profile"
-          className="flex items-center gap-3 p-4 rounded-lg transition-all hover:shadow-sm"
+          className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-lg transition-all hover:shadow-sm"
           style={{
             background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
@@ -205,11 +205,11 @@ export default function QuickActionsPanel() {
             border: '1px solid rgba(255, 255, 255, 0.3)',
           }}
         >
-          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 text-gray-700">
-            <FontAwesomeIcon icon={faCog} />
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center bg-gray-200 text-gray-700 flex-shrink-0">
+            <FontAwesomeIcon icon={faCog} className="text-sm md:text-base" />
           </div>
-          <div>
-            <div className="font-semibold text-gray-900">{t('editProfile')}</div>
+          <div className="min-w-0">
+            <div className="font-semibold text-gray-900 text-sm md:text-base">{t('editProfile')}</div>
             <div className="text-xs text-gray-600">{t('updateSettings')}</div>
           </div>
         </Link>

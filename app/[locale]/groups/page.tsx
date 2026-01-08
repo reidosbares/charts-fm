@@ -67,10 +67,10 @@ export default async function GroupsPage({
   }
 
   return (
-    <main className="flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 relative">
+    <main className="flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 relative">
       <div className="max-w-7xl w-full mx-auto relative z-10">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-end gap-4 mb-8">
-          <div className="flex gap-3">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-end gap-3 md:gap-4 mb-6 md:mb-8">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <LiquidGlassLink
               href="/groups/discover"
               variant="neutral"

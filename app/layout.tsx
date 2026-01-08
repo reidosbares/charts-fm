@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "react-day-picker/dist/style.css";
 import "./globals.css";
 import { Oswald, Inter } from "next/font/google";
@@ -23,6 +23,12 @@ export const metadata: Metadata = {
     default: "ChartsFM",
   },
   description: "Create beautiful charts and visualizations from your Last.fm listening data",
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 // Root layout - must have html and body tags

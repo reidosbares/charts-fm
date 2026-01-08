@@ -93,10 +93,10 @@ export default function PersonalListeningOverview() {
   if (isLoading) {
     return (
       <div 
-        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
         style={glassStyle}
       >
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
+        <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
         <div className="flex items-center justify-center py-12">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
         </div>
@@ -107,10 +107,10 @@ export default function PersonalListeningOverview() {
   if (error || !stats || !currentWeek) {
     return (
       <div 
-        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
         style={glassStyle}
       >
-        <h2 className="text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">{t('title')}</h2>
+        <h2 className="text-xl md:text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">{t('title')}</h2>
         <div className="text-center py-8 text-gray-500">
           <p className="mb-2">{t('noData')}</p>
           <p className="text-sm">{t('noDataDescription')}</p>
@@ -121,26 +121,26 @@ export default function PersonalListeningOverview() {
 
   return (
     <div 
-      className="rounded-xl shadow-lg p-6 border border-theme"
+      className="rounded-xl shadow-lg p-4 md:p-6 border border-theme"
       style={{
         background: 'rgba(255, 255, 255, 0.6)',
         backdropFilter: 'blur(12px) saturate(180%)',
         WebkitBackdropFilter: 'blur(12px) saturate(180%)',
       }}
     >
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">{t('title')}</h2>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 md:mb-6 gap-2">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-900">{t('title')}</h2>
         {currentWeek && (
-          <span className="text-sm text-gray-500">
+          <span className="text-xs sm:text-sm text-gray-500">
             {t('weekOf', { date: formatWeekLabel(weekStartDate) })}
         </span>
         )}
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-6">
         <div 
-          className="rounded-lg p-4 border"
+          className="rounded-lg p-3 md:p-4 border"
           style={{
             background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
@@ -148,8 +148,8 @@ export default function PersonalListeningOverview() {
             borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
-          <div className="text-sm text-gray-600 font-medium mb-1">{t('totalPlays')}</div>
-          <div className="text-2xl font-bold text-gray-900">{currentWeek.totalPlays.toLocaleString()}</div>
+          <div className="text-xs md:text-sm text-gray-600 font-medium mb-1">{t('totalPlays')}</div>
+          <div className="text-xl md:text-2xl font-bold text-gray-900">{currentWeek.totalPlays.toLocaleString()}</div>
           {playsChange !== null && (
             <div className="flex items-center gap-1 mt-1 text-xs">
               {playsChange > 0 ? (
@@ -175,7 +175,7 @@ export default function PersonalListeningOverview() {
         </div>
 
         <div 
-          className="rounded-lg p-4 border"
+          className="rounded-lg p-3 md:p-4 border"
           style={{
             background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
@@ -183,12 +183,12 @@ export default function PersonalListeningOverview() {
             borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
-          <div className="text-sm text-gray-600 font-medium mb-1">{t('uniqueArtists')}</div>
-          <div className="text-2xl font-bold text-gray-900">{currentWeek.uniqueArtists}</div>
+          <div className="text-xs md:text-sm text-gray-600 font-medium mb-1">{t('uniqueArtists')}</div>
+          <div className="text-xl md:text-2xl font-bold text-gray-900">{currentWeek.uniqueArtists}</div>
         </div>
 
         <div 
-          className="rounded-lg p-4 border"
+          className="rounded-lg p-3 md:p-4 border"
           style={{
             background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
@@ -196,12 +196,12 @@ export default function PersonalListeningOverview() {
             borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
-          <div className="text-sm text-gray-600 font-medium mb-1">{t('uniqueTracks')}</div>
-          <div className="text-2xl font-bold text-gray-900">{currentWeek.uniqueTracks}</div>
+          <div className="text-xs md:text-sm text-gray-600 font-medium mb-1">{t('uniqueTracks')}</div>
+          <div className="text-xl md:text-2xl font-bold text-gray-900">{currentWeek.uniqueTracks}</div>
         </div>
 
         <div 
-          className="rounded-lg p-4 border"
+          className="rounded-lg p-3 md:p-4 border"
           style={{
             background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
@@ -209,18 +209,18 @@ export default function PersonalListeningOverview() {
             borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
-          <div className="text-sm text-gray-600 font-medium mb-1">{t('topItems')}</div>
-          <div className="text-2xl font-bold text-gray-900">
+          <div className="text-xs md:text-sm text-gray-600 font-medium mb-1">{t('topItems')}</div>
+          <div className="text-xl md:text-2xl font-bold text-gray-900">
             {currentWeek.topArtists.length + currentWeek.topTracks.length + currentWeek.topAlbums.length}
           </div>
         </div>
       </div>
 
       {/* Top Items Preview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
         {/* Top Artists */}
         <div 
-          className="rounded-lg p-4 border"
+          className="rounded-lg p-3 md:p-4 border"
           style={{
             background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',

@@ -37,10 +37,10 @@ const GroupCard = memo(({ group, t }: { group: GroupQuickView; t: any }) => {
   return (
     <Link
       href={`/groups/${group.id}`}
-      className={`block bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-background-to)] rounded-xl p-4 border border-[var(--theme-border)] hover:shadow-md transition-all ${themeClass}`}
+      className={`block bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-background-to)] rounded-xl p-3 md:p-4 border border-[var(--theme-border)] hover:shadow-md transition-all ${themeClass}`}
     >
-      <div className="flex items-start gap-3 mb-3">
-        <div className="relative w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)]">
+      <div className="flex items-start gap-2 md:gap-3 mb-2 md:mb-3">
+        <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg overflow-hidden ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)]">
           <SafeImage
             src={groupImage}
             alt={group.name}
@@ -161,10 +161,10 @@ export default function GroupQuickViewCards() {
   if (isLoading) {
     return (
       <div 
-        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
         style={glassStyle}
       >
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
+        <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
         <div className="flex items-center justify-center py-12">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
         </div>
@@ -175,10 +175,10 @@ export default function GroupQuickViewCards() {
   if (error || groups.length === 0) {
     return (
       <div 
-        className="rounded-xl shadow-lg p-6 border border-gray-200"
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
         style={glassStyle}
       >
-        <h2 className="text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">{t('title')}</h2>
+        <h2 className="text-xl md:text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">{t('title')}</h2>
         <div className="text-center py-8 text-gray-500">
           <p className="mb-4">{t('noGroups')}</p>
           <Link
@@ -194,20 +194,20 @@ export default function GroupQuickViewCards() {
 
   return (
     <div 
-      className="rounded-xl shadow-lg p-6 border border-theme"
+      className="rounded-xl shadow-lg p-4 md:p-6 border border-theme"
       style={glassStyle}
     >
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">{t('title')}</h2>
+      <div className="flex items-center justify-between mb-4 md:mb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-900">{t('title')}</h2>
         <Link
           href="/groups"
-          className="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
+          className="text-xs md:text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
         >
           {t('viewAll')}
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
         {groups.map((group) => (
           <GroupCard key={group.id} group={group} t={t} />
         ))}

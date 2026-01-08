@@ -158,30 +158,16 @@ export default function RecordBlock({ title, record, value, groupId, isUser }: R
 
   return (
     <div className="h-full relative">
-      <div className={`relative bg-gradient-to-br ${colorScheme.bgGradient} backdrop-blur-sm rounded-xl p-4 border ${colorScheme.borderColor} shadow-sm h-full transition-all hover:shadow-md`}>
+      <div className={`relative bg-gradient-to-br ${colorScheme.bgGradient} backdrop-blur-sm rounded-xl p-3 md:p-4 border ${colorScheme.borderColor} shadow-sm h-full transition-all hover:shadow-md`}>
         <div className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
           {isUser && colorScheme.ribbonColor && (
-            <div className={`absolute top-2 right-0 ${colorScheme.ribbonColor} text-white text-xs font-bold px-8 py-1.5 transform rotate-12 translate-x-1 shadow-md z-10 whitespace-nowrap`}>
+            <div className={`absolute top-2 right-0 ${colorScheme.ribbonColor} text-white text-[10px] md:text-xs font-bold px-4 md:px-8 py-1 md:py-1.5 transform rotate-12 translate-x-1 shadow-md z-10 whitespace-nowrap`}>
               {title.toUpperCase()}
             </div>
           )}
         </div>
-        <div className="flex items-center gap-2 mb-3 relative z-10">
-          <h4 className={`text-sm font-semibold ${colorScheme.titleColor}`}>{title}</h4>
-          {description && (
-            <Tooltip content={description} position="top">
-              <button
-                type="button"
-                className="flex items-center justify-center focus:outline-none"
-                aria-label="What does this award mean?"
-              >
-                <FontAwesomeIcon 
-                  icon={faQuestionCircle} 
-                  className={`text-xs ${colorScheme.accentColor} opacity-60 hover:opacity-100 transition-opacity cursor-help`}
-                />
-              </button>
-            </Tooltip>
-          )}
+        <div className="flex items-center gap-2 mb-2 md:mb-3 relative z-10">
+          <h4 className={`text-xs md:text-sm font-semibold ${colorScheme.titleColor}`}>{title}</h4>
         </div>
         <ChartEntryCard
           name={record.name}
@@ -193,7 +179,22 @@ export default function RecordBlock({ title, record, value, groupId, isUser }: R
           userImage={isUser ? record.image : undefined}
           accentColor={colorScheme.accentColor}
           openInNewTab={!isUser && !!link}
-        />
+        >
+          {isUser && description && (
+            <Tooltip content={description} position="top">
+              <button
+                type="button"
+                className="absolute bottom-2 right-2 flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-600 hover:text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 focus:ring-offset-1 z-10"
+                aria-label="What does this award mean?"
+              >
+                <FontAwesomeIcon 
+                  icon={faQuestionCircle} 
+                  className="text-xs flex-shrink-0"
+                />
+              </button>
+            </Tooltip>
+          )}
+        </ChartEntryCard>
       </div>
     </div>
   )

@@ -256,19 +256,19 @@ export default function GroupsYouMightLike() {
 
   return (
     <div 
-        className="rounded-xl shadow-lg p-6 border border-gray-200 relative"
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200 relative"
       style={{
         background: 'rgba(255, 255, 255, 0.6)',
         backdropFilter: 'blur(12px) saturate(180%)',
         WebkitBackdropFilter: 'blur(12px) saturate(180%)',
       }}
     >
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">{t('title')}</h2>
+      <div className="flex items-center justify-between mb-4 md:mb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-900">{t('title')}</h2>
         {/* TEMPORARY: Refresh button disabled - recommendations system hidden for launch */}
         <button
           disabled
-          className="text-sm text-gray-400 cursor-not-allowed font-medium"
+          className="text-xs md:text-sm text-gray-400 cursor-not-allowed font-medium"
         >
           {t('refresh')}
         </button>
@@ -276,7 +276,7 @@ export default function GroupsYouMightLike() {
 
       {/* TEMPORARY: Opaque overlay with "Coming Soon!" text */}
       <div className="relative">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 opacity-30 pointer-events-none">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 opacity-30 pointer-events-none">
           {recommendations.map((rec) => {
             const themeClass = `theme-${rec.group.colorTheme.replace('_', '-')}`
             const groupImage = rec.group.image || getDefaultGroupImage()
@@ -340,9 +340,9 @@ export default function GroupsYouMightLike() {
 
         {/* Opaque overlay with "Coming Soon!" text */}
         <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center rounded-lg z-10">
-          <div className="text-center">
-            <h3 className="text-3xl font-bold text-gray-900 mb-2">{t('comingSoon')}</h3>
-            <p className="text-gray-600">{t('comingSoonDescription')}</p>
+          <div className="text-center px-4">
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{t('comingSoon')}</h3>
+            <p className="text-sm md:text-base text-gray-600">{t('comingSoonDescription')}</p>
           </div>
         </div>
       </div>

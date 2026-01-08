@@ -70,9 +70,9 @@ export default function GroupSettingsTabs({
   }
 
   return (
-    <div className="flex gap-8">
+    <div className="flex flex-col md:flex-row gap-4 md:gap-8">
       {/* Left sidebar with tabs */}
-      <div className="w-64 flex-shrink-0">
+      <div className="w-full md:w-64 flex-shrink-0">
         <nav 
           className="space-y-2 p-2 rounded-lg"
           style={{
@@ -92,7 +92,7 @@ export default function GroupSettingsTabs({
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`
-                  w-full text-left px-4 py-3 rounded-lg transition-all duration-200
+                  w-full text-left px-3 md:px-4 py-2 md:py-3 rounded-lg transition-all duration-200 text-sm md:text-base
                   ${isSelected ? 'font-semibold shadow-lg' : 'hover:shadow-md'}
                 `}
                 style={{

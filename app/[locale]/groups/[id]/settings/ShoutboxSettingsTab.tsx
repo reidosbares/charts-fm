@@ -225,29 +225,29 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-8">
-        <div className="flex justify-center py-8">
-          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-2xl text-gray-400" />
+      <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
+        <div className="flex justify-center py-6 md:py-8">
+          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-xl md:text-2xl text-gray-400" />
         </div>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-8">
+    <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
       {success && (
-        <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-green-100 border border-green-400 text-green-700 rounded text-sm md:text-base">
           {t('updatedSuccessfully')}
         </div>
       )}
 
       {error && (
-        <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-red-100 border border-red-400 text-red-700 rounded text-sm md:text-base">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSave} className="space-y-6">
+      <form onSubmit={handleSave} className="space-y-4 md:space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t('shoutboxSettings')}
@@ -286,7 +286,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
             {t('silencedUsersDescription')}
           </p>
 
-          <div className="mb-4">
+          <div className="mb-3 md:mb-4">
             <div className="flex gap-2">
               <input
                 type="text"
@@ -299,14 +299,14 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
                   }
                 }}
                 placeholder={t('searchByUsername')}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                className="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                 disabled={isSearching}
               />
               <button
                 type="button"
                 onClick={searchUser}
                 disabled={isSearching || !searchUsername.trim()}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 md:px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
               >
                 {isSearching ? (
                   <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
@@ -319,14 +319,14 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
               <p className="text-xs text-red-600 mt-1">{searchError}</p>
             )}
             {searchResult && (
-              <div className="mt-2 p-3 bg-gray-50 rounded-lg flex items-center justify-between">
-                <div className="flex items-center gap-3">
+              <div className="mt-2 p-2 md:p-3 bg-gray-50 rounded-lg flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                   <SafeImage
                     src={null}
                     alt={searchResult.name || searchResult.lastfmUsername}
-                    className="w-8 h-8 rounded-full"
+                    className="w-7 h-7 md:w-8 md:h-8 rounded-full flex-shrink-0"
                   />
-                  <span className="font-medium">
+                  <span className="font-medium text-sm md:text-base truncate">
                     {searchResult.name || searchResult.lastfmUsername}
                   </span>
                 </div>
@@ -334,7 +334,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
                   type="button"
                   onClick={() => handleSilence(searchResult.id)}
                   disabled={silencingUserId === searchResult.id}
-                  className="px-3 py-1 bg-yellow-500 text-black rounded text-sm font-semibold hover:bg-yellow-400 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-2 md:px-3 py-1 text-xs md:text-sm bg-yellow-500 text-black rounded font-semibold hover:bg-yellow-400 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 md:gap-2 flex-shrink-0"
                 >
                   {silencingUserId === searchResult.id && (
                     <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
@@ -350,15 +350,15 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
               {silencedUsers.map((user) => (
                 <div
                   key={user.id}
-                  className="p-3 bg-gray-50 rounded-lg flex items-center justify-between"
+                  className="p-2 md:p-3 bg-gray-50 rounded-lg flex items-center justify-between gap-2"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                     <SafeImage
                       src={user.image}
                       alt={user.name || user.lastfmUsername}
-                      className="w-8 h-8 rounded-full"
+                      className="w-7 h-7 md:w-8 md:h-8 rounded-full flex-shrink-0"
                     />
-                    <span className="font-medium">
+                    <span className="font-medium text-sm md:text-base truncate">
                       {user.name || user.lastfmUsername}
                     </span>
                   </div>
@@ -366,7 +366,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
                     type="button"
                     onClick={() => handleUnsilence(user.id)}
                     disabled={unsilencingUserId === user.id}
-                    className="p-2 text-red-600 hover:text-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-1.5 md:p-2 text-red-600 hover:text-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
                     title={t('removeSilence')}
                   >
                     {unsilencingUserId === user.id ? (
@@ -379,7 +379,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
               ))}
             </div>
           ) : (
-            <p className="text-sm text-gray-500 italic">{t('noSilencedUsers')}</p>
+            <p className="text-xs md:text-sm text-gray-500 italic">{t('noSilencedUsers')}</p>
           )}
         </div>
 
@@ -393,7 +393,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
               {t('allowedUsersDescription')}
             </p>
 
-            <div className="mb-4">
+            <div className="mb-3 md:mb-4">
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -406,14 +406,14 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
                     }
                   }}
                   placeholder={t('searchByUsername')}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                  className="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                   disabled={isSearching}
                 />
                 <button
                   type="button"
                   onClick={searchUser}
                   disabled={isSearching || !searchUsername.trim()}
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 md:px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
                 >
                   {isSearching ? (
                     <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
@@ -426,21 +426,21 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
                 <p className="text-xs text-red-600 mt-1">{searchError}</p>
               )}
               {searchResult && (
-                <div className="mt-2 p-3 bg-gray-50 rounded-lg flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                <div className="mt-2 p-2 md:p-3 bg-gray-50 rounded-lg flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                     <SafeImage
                       src={null}
                       alt={searchResult.name || searchResult.lastfmUsername}
-                      className="w-8 h-8 rounded-full"
+                      className="w-7 h-7 md:w-8 md:h-8 rounded-full flex-shrink-0"
                     />
-                    <span className="font-medium">
+                    <span className="font-medium text-sm md:text-base truncate">
                       {searchResult.name || searchResult.lastfmUsername}
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => handleAllow(searchResult.id)}
-                    className="px-3 py-1 bg-yellow-500 text-black rounded text-sm font-semibold hover:bg-yellow-400"
+                    className="px-2 md:px-3 py-1 text-xs md:text-sm bg-yellow-500 text-black rounded font-semibold hover:bg-yellow-400 flex-shrink-0"
                   >
                     {t('allow')}
                   </button>
@@ -453,22 +453,22 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
                 {allowedUsers.map((user) => (
                   <div
                     key={user.id}
-                    className="p-3 bg-gray-50 rounded-lg flex items-center justify-between"
+                    className="p-2 md:p-3 bg-gray-50 rounded-lg flex items-center justify-between gap-2"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                       <SafeImage
                         src={user.image}
                         alt={user.name || user.lastfmUsername}
-                        className="w-8 h-8 rounded-full"
+                        className="w-7 h-7 md:w-8 md:h-8 rounded-full flex-shrink-0"
                       />
-                      <span className="font-medium">
+                      <span className="font-medium text-sm md:text-base truncate">
                         {user.name || user.lastfmUsername}
                       </span>
                     </div>
                     <button
                       type="button"
                       onClick={() => handleRevokeAllow(user.id)}
-                      className="p-2 text-red-600 hover:text-red-800 transition-colors"
+                      className="p-1.5 md:p-2 text-red-600 hover:text-red-800 transition-colors flex-shrink-0"
                       title={t('revokePermission')}
                     >
                       <FontAwesomeIcon icon={faTrash} />
@@ -477,23 +477,23 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-gray-500 italic">{t('noAllowedUsers')}</p>
+              <p className="text-xs md:text-sm text-gray-500 italic">{t('noAllowedUsers')}</p>
             )}
           </div>
         )}
 
-        <div className="flex gap-4 pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-3 md:pt-4">
           <button
             type="submit"
             disabled={isSaving}
-            className="flex-1 py-3 px-6 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 py-2.5 md:py-3 px-4 md:px-6 text-sm md:text-base bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSaving ? t('saving') : t('saveSettings')}
           </button>
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+            className="px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
           >
             {t('cancel')}
           </button>

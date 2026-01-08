@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from '@/i18n/routing'
 import { useSearchParams } from 'next/navigation'
@@ -28,6 +28,97 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
     email: '',
     password: '',
   })
+  const [isMobile, setIsMobile] = useState(false)
+  const [dragY, setDragY] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const [startY, setStartY] = useState(0)
+  const [startScrollTop, setStartScrollTop] = useState(0)
+  const [canDrag, setCanDrag] = useState(false)
+  const modalRef = useRef<HTMLDivElement>(null)
+
+  // Detect mobile on mount
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Reset drag state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setDragY(0)
+      setIsDragging(false)
+      setCanDrag(false)
+    }
+  }, [isOpen])
+
+  // Handle drag start
+  const handleDragStart = (e: React.TouchEvent | React.MouseEvent, fromHandle: boolean = false) => {
+    if (!isMobile) return
+    
+    const target = e.currentTarget as HTMLElement
+    const modalContent = modalRef.current
+    if (!modalContent) return
+
+    const scrollTop = modalContent.scrollTop
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
+    
+    // Only allow drag if:
+    // 1. Starting from the drag handle, OR
+    // 2. Starting from top area AND content is scrolled to top
+    if (fromHandle || (scrollTop === 0 && (target === modalContent || target.closest('.drag-handle-area')))) {
+      setStartY(clientY)
+      setStartScrollTop(scrollTop)
+      setIsDragging(true)
+      setCanDrag(true)
+      e.preventDefault()
+    }
+  }
+
+  // Handle drag move
+  const handleDragMove = (e: React.TouchEvent | React.MouseEvent) => {
+    if (!isMobile || !isDragging || !canDrag) return
+    
+    const modalContent = modalRef.current
+    if (!modalContent) return
+
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
+    const deltaY = clientY - startY
+    
+    // Only allow dragging down
+    if (deltaY > 0) {
+      // Prevent scrolling while dragging
+      e.preventDefault()
+      setDragY(deltaY)
+    } else if (deltaY < -10) {
+      // If dragging up, cancel drag (user is trying to scroll)
+      setIsDragging(false)
+      setCanDrag(false)
+      setDragY(0)
+    }
+  }
+
+  // Handle drag end
+  const handleDragEnd = () => {
+    if (!isMobile || !isDragging || !canDrag) return
+    
+    const threshold = 100 // pixels to drag before dismissing
+    const velocity = dragY // simple velocity calculation
+    
+    if (dragY > threshold || velocity > 50) {
+      // Dismiss modal
+      onClose()
+    } else {
+      // Snap back
+      setDragY(0)
+    }
+    
+    setIsDragging(false)
+    setCanDrag(false)
+  }
 
   // Redirect to dashboard if already logged in
   useEffect(() => {
@@ -48,6 +139,18 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
     window.addEventListener('keydown', handleEscape)
     return () => window.removeEventListener('keydown', handleEscape)
   }, [isOpen, onClose])
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -163,31 +266,60 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm transition-opacity"
+        style={{
+          opacity: isMobile && dragY > 0 ? Math.max(0, 0.5 - dragY / 300) : 1,
+        }}
         onClick={onClose}
       />
       
       {/* Modal */}
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 pointer-events-none">
+      <div className="fixed inset-0 z-[9999] flex items-end md:items-center justify-center pointer-events-none">
         <div
-          className="relative rounded-2xl shadow-2xl max-w-md w-full p-8 pointer-events-auto"
+          ref={modalRef}
+          className="relative rounded-t-3xl md:rounded-2xl shadow-2xl max-w-md w-full p-5 md:p-8 max-h-[95vh] md:max-h-[90vh] overflow-y-auto pointer-events-auto"
           style={{
-            animation: 'fadeIn 0.2s ease-in-out',
-            background: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(20px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
+            animation: isDragging ? 'none' : 'fadeIn 0.2s ease-in-out',
+            transform: isMobile && dragY > 0 ? `translateY(${dragY}px)` : 'translateY(0)',
+            transition: isDragging ? 'none' : 'transform 0.3s ease-out',
+            background: isMobile 
+              ? 'rgba(255, 255, 255, 1)' 
+              : 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: isMobile ? 'none' : 'blur(20px) saturate(180%)',
+            WebkitBackdropFilter: isMobile ? 'none' : 'blur(20px) saturate(180%)',
+            border: isMobile ? 'none' : '1px solid rgba(255, 255, 255, 0.3)',
+            boxShadow: isMobile 
+              ? '0 -4px 20px 0 rgba(0, 0, 0, 0.15)' 
+              : '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
+            paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))',
+            opacity: isMobile && dragY > 0 ? Math.max(0.5, 1 - dragY / 300) : 1,
+            touchAction: isDragging ? 'none' : 'pan-y',
           }}
           onClick={(e) => e.stopPropagation()}
+          onTouchStart={(e) => handleDragStart(e, false)}
+          onTouchMove={handleDragMove}
+          onTouchEnd={handleDragEnd}
         >
+          {/* Mobile drag handle area */}
+          <div 
+            className="drag-handle-area md:hidden flex justify-center mb-4 pt-2 cursor-grab active:cursor-grabbing touch-none select-none"
+            onTouchStart={(e) => {
+              e.stopPropagation()
+              handleDragStart(e, true)
+            }}
+            onTouchMove={handleDragMove}
+            onTouchEnd={handleDragEnd}
+          >
+            <div className="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+          </div>
+
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 active:text-gray-900 transition-colors w-10 h-10 md:w-8 md:h-8 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 flex-shrink-0 z-10 touch-manipulation"
             aria-label="Close"
           >
             <svg
-              className="w-5 h-5"
+              className="w-6 h-6 md:w-5 md:h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -201,15 +333,15 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
             </svg>
           </button>
 
-          <h1 className="text-3xl font-bold text-center mb-2 text-gray-900">
+          <h1 className="text-2xl md:text-3xl font-bold text-center mb-2 md:mb-2 text-gray-900 pr-8 md:pr-0">
             {t('title')}
           </h1>
-          <p className="text-center text-gray-600 mb-6">
+          <p className="text-center text-gray-600 mb-5 md:mb-6 text-sm md:text-base">
             {t('subtitle')}
           </p>
 
           {showSuccessMessage && (
-            <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+            <div className="mb-4 p-3 md:p-4 bg-green-100 border border-green-400 text-green-700 rounded text-sm md:text-base">
               {searchParams?.get('verified') === 'true' 
                 ? t('emailVerified')
                 : t('accountCreated')}
@@ -217,7 +349,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
           )}
 
           {error && (
-            <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+            <div className="mb-4 p-3 md:p-4 bg-red-100 border border-red-400 text-red-700 rounded text-sm md:text-base">
               {error}
               {showResendVerification && (
                 <div className="mt-3">
@@ -225,7 +357,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
                     type="button"
                     onClick={handleResendVerification}
                     disabled={isResending}
-                    className="text-sm underline hover:no-underline disabled:opacity-50"
+                    className="text-sm underline hover:no-underline active:no-underline disabled:opacity-50 touch-manipulation min-h-[44px] min-w-[44px]"
                   >
                     {isResending ? t('sending') : t('resendVerification')}
                   </button>
@@ -239,7 +371,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 {t('emailLabel')}
@@ -250,10 +382,12 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
+                className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors text-base md:text-sm touch-manipulation"
                 placeholder={t('emailPlaceholder')}
                 disabled={isLoading}
                 autoFocus
+                autoComplete="email"
+                inputMode="email"
               />
             </div>
 
@@ -264,7 +398,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
                 </label>
                 <a
                   href="/auth/forgot-password"
-                  className="text-sm text-yellow-600 hover:text-yellow-700 hover:underline"
+                  className="text-sm text-yellow-600 hover:text-yellow-700 active:text-yellow-800 hover:underline active:underline touch-manipulation min-h-[44px] min-w-[44px] flex items-center"
                   onClick={(e) => {
                     e.preventDefault()
                     onClose()
@@ -280,9 +414,10 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
                 required
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
+                className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors text-base md:text-sm touch-manipulation"
                 placeholder={t('passwordPlaceholder')}
                 disabled={isLoading}
+                autoComplete="current-password"
               />
             </div>
 
@@ -293,17 +428,25 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
               size="lg"
               fullWidth
               useTheme={false}
+              className="touch-manipulation min-h-[48px] md:min-h-[44px]"
             >
               {isLoading ? t('loggingIn') : t('logInButton')}
             </LiquidGlassButton>
           </form>
 
-          <div className="relative my-6">
+          <div className="relative my-5 md:my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">{t('or')}</span>
+              <span 
+                className="px-2 text-gray-500"
+                style={{
+                  background: isMobile ? 'rgba(255, 255, 255, 1)' : 'transparent'
+                }}
+              >
+                {t('or')}
+              </span>
             </div>
           </div>
 
@@ -314,7 +457,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
             size="lg"
             fullWidth
             useTheme={false}
-            className="text-lg"
+            className="text-base md:text-lg touch-manipulation min-h-[48px] md:min-h-[44px]"
             style={{
               background: '#d51007',
               color: 'white',
@@ -336,10 +479,18 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
             {isLoadingLastFM ? t('redirecting') : t('logInWithLastfm')}
           </LiquidGlassButton>
 
-          <div className="text-center mt-6">
-            <p className="text-gray-600">
+          <div className="text-center mt-5 md:mt-6 pb-2">
+            <p className="text-gray-600 text-sm md:text-base">
               {t('noAccount')}{' '}
-              <a href="/auth/signup" className="text-yellow-600 hover:underline">
+              <a 
+                href="/auth/signup" 
+                className="text-yellow-600 hover:text-yellow-700 active:text-yellow-800 hover:underline active:underline touch-manipulation"
+                onClick={(e) => {
+                  e.preventDefault()
+                  onClose()
+                  router.push('/auth/signup')
+                }}
+              >
                 {t('signUp')}
               </a>
             </p>

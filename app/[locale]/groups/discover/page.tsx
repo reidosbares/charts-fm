@@ -101,10 +101,10 @@ export default async function DiscoverGroupsPage({
   }
 
   return (
-    <main className="flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 relative">
+    <main className="flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 relative">
       <div className="max-w-7xl w-full mx-auto relative z-10">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
             {t('title')}
           </h1>
         </div>

@@ -20,7 +20,7 @@ export async function GET() {
   }
 
   try {
-    const activities = await getActivityFeed(user.id, 10)
+    const activities = await getActivityFeed(user.id, 6)
     
     // Convert Date objects to ISO strings for JSON serialization
     return NextResponse.json(

@@ -107,13 +107,13 @@ function CompleteSignUpPageContent() {
     return (
       <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden flex items-center justify-center">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute top-40 right-20 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-20 left-10 w-48 h-48 md:w-72 md:h-72 bg-yellow-400/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-40 right-20 w-64 h-64 md:w-96 md:h-96 bg-pink-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute bottom-20 left-1/3 w-56 h-56 md:w-80 md:h-80 bg-orange-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
         <div className="relative z-10 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-          <p className="text-gray-700">{t('verifying')}</p>
+          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-yellow-500 mx-auto mb-3 md:mb-4"></div>
+          <p className="text-sm md:text-base text-gray-700">{t('verifying')}</p>
         </div>
       </main>
     )
@@ -128,20 +128,20 @@ function CompleteSignUpPageContent() {
         <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-24">
         <div className="max-w-2xl w-full">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-yellow-600 via-orange-500 to-pink-500 bg-clip-text text-transparent">
+          <div className="text-center mb-6 md:mb-8">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-yellow-600 via-orange-500 to-pink-500 bg-clip-text text-transparent">
               {t('title')}
             </h1>
-            <p className="text-lg sm:text-xl text-gray-700">
+            <p className="text-base sm:text-lg md:text-xl text-gray-700">
               {t('subtitle')}
             </p>
           </div>
 
           {lastfmUsername && (
             <div 
-              className="mb-6 p-4 rounded-2xl"
+              className="mb-4 md:mb-6 p-3 md:p-4 rounded-xl md:rounded-2xl text-sm md:text-base"
               style={{
                 background: 'rgba(34, 197, 94, 0.2)',
                 backdropFilter: 'blur(12px) saturate(180%)',
@@ -151,13 +151,13 @@ function CompleteSignUpPageContent() {
               }}
             >
               <p className="text-green-700 font-semibold">✓ {t('connected')}</p>
-              <p className="text-sm text-green-600 mt-1">{t('username', { username: lastfmUsername })}</p>
+              <p className="text-xs md:text-sm text-green-600 mt-1">{t('username', { username: lastfmUsername })}</p>
             </div>
           )}
 
           {error && (
             <div 
-              className="mb-6 p-4 rounded-2xl"
+              className="mb-4 md:mb-6 p-3 md:p-4 rounded-xl md:rounded-2xl text-sm md:text-base"
               style={{
                 background: 'rgba(239, 68, 68, 0.2)',
                 backdropFilter: 'blur(12px) saturate(180%)',
@@ -171,7 +171,7 @@ function CompleteSignUpPageContent() {
           )}
 
           <div
-            className="rounded-3xl p-8 sm:p-10 relative overflow-hidden"
+            className="rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-10 relative overflow-hidden"
             style={{
               background: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(16px) saturate(180%)',
@@ -180,11 +180,11 @@ function CompleteSignUpPageContent() {
               boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
             }}
           >
-            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-pink-400/30 to-purple-400/30 rounded-full blur-2xl"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-pink-400/30 to-purple-400/30 rounded-full blur-2xl"></div>
             <div className="relative z-10">
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="email" className="block text-xs md:text-sm font-semibold text-gray-800 mb-2">
                     {t('emailLabel')}
                   </label>
                   <input
@@ -193,7 +193,7 @@ function CompleteSignUpPageContent() {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                     style={{
                       background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
@@ -203,7 +203,7 @@ function CompleteSignUpPageContent() {
                 </div>
 
                 <div>
-                  <label htmlFor="name" className="block text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="name" className="block text-xs md:text-sm font-semibold text-gray-800 mb-2">
                     {t('nameLabel')}
                   </label>
                   <input
@@ -212,7 +212,7 @@ function CompleteSignUpPageContent() {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                     style={{
                       background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
@@ -222,7 +222,7 @@ function CompleteSignUpPageContent() {
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="block text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="password" className="block text-xs md:text-sm font-semibold text-gray-800 mb-2">
                     {t('passwordLabel')}
                   </label>
                   <input
@@ -231,7 +231,7 @@ function CompleteSignUpPageContent() {
                     required
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                     style={{
                       background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
@@ -239,13 +239,13 @@ function CompleteSignUpPageContent() {
                     placeholder={t('passwordPlaceholder')}
                     minLength={8}
                   />
-                  <p className="text-xs text-gray-600 mt-2">
+                  <p className="text-xs text-gray-600 mt-1 md:mt-2">
                     {t('passwordHint')}
                   </p>
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="confirmPassword" className="block text-xs md:text-sm font-semibold text-gray-800 mb-2">
                     {t('confirmPasswordLabel')}
                   </label>
                   <input
@@ -254,7 +254,7 @@ function CompleteSignUpPageContent() {
                     required
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                     style={{
                       background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
@@ -269,7 +269,7 @@ function CompleteSignUpPageContent() {
                   variant="primary"
                   size="lg"
                   fullWidth
-                  className="text-lg"
+                  className="text-base md:text-lg"
                 >
                   {isSubmitting ? t('creatingAccount') : t('createAccount')}
                 </LiquidGlassButton>
@@ -277,8 +277,8 @@ function CompleteSignUpPageContent() {
             </div>
           </div>
 
-          <div className="text-center mt-8">
-            <p className="text-gray-700">
+          <div className="text-center mt-6 md:mt-8">
+            <p className="text-sm md:text-base text-gray-700">
               {t('alreadyHaveAccount')}{' '}
               <a href="/" className="text-yellow-600 hover:text-yellow-700 font-semibold underline underline-offset-2">
                 {t('logIn')}
@@ -296,8 +296,8 @@ export default function CompleteSignUpPage() {
     <Suspense fallback={
       <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-          <p className="text-gray-700">Loading...</p>
+          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-yellow-500 mx-auto mb-3 md:mb-4"></div>
+          <p className="text-sm md:text-base text-gray-700">Loading...</p>
         </div>
       </main>
     }>

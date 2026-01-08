@@ -30,7 +30,7 @@ export default async function DashboardPage({
   }
 
   return (
-    <main className="flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 relative">
+    <main className="flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 relative">
       <div className="max-w-7xl w-full mx-auto relative z-10">
         {/* Quick Actions Panel - loads its own data */}
         <div className="mb-8">

@@ -539,3 +539,36 @@ svg.svg-inline--fa[style*="width"] {
   background-position: center;
 }
 
+/* Timeline container - responsive background gradient for chart history bubbles */
+.timeline-container {
+  /* Mobile: line at 20-22px (center of 40-48px bubbles), repeat every 60px */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 19px,
+    rgba(209, 213, 219, 0.4) 19px,
+    rgba(209, 213, 219, 0.4) 23px,
+    transparent 23px,
+    transparent 60px
+  );
+  background-size: 100% 60px;
+  background-position: 0 0;
+  background-repeat: repeat-y;
+}
+
+@media (min-width: 768px) {
+  .timeline-container {
+    /* Desktop: line at 31-33px (center of 48-64px bubbles), repeat every 80px */
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 31px,
+      rgba(209, 213, 219, 0.4) 31px,
+      rgba(209, 213, 219, 0.4) 33px,
+      transparent 33px,
+      transparent 80px
+    );
+    background-size: 100% 80px;
+  }
+}
+

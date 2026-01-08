@@ -213,11 +213,11 @@ export default function DiscoverGroupsClient({
         <Link
           key={group.id}
           href={`/groups/${group.id}/public`}
-          className={`block bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-background-to)] rounded-xl p-4 border border-[var(--theme-border)] hover:shadow-md transition-all ${themeClass}`}
+          className={`block bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-background-to)] rounded-xl p-3 md:p-4 border border-[var(--theme-border)] hover:shadow-md transition-all ${themeClass}`}
         >
-          <div className="flex items-center gap-4">
-            <div className="relative w-16 h-16 flex-shrink-0">
-              <div className="w-16 h-16 rounded-xl overflow-hidden ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)]">
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="relative w-12 h-12 md:w-16 md:h-16 flex-shrink-0">
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-lg md:rounded-xl overflow-hidden ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)]">
                 <SafeImage
                   src={groupImage}
                   alt={group.name}
@@ -226,24 +226,24 @@ export default function DiscoverGroupsClient({
               </div>
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-xl font-bold text-[var(--theme-text)] truncate">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <h3 className="text-base md:text-xl font-bold text-[var(--theme-text)] truncate">
                   {group.name}
                 </h3>
                 {group.allowFreeJoin && (
-                  <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">
+                  <span className="text-[10px] md:text-xs bg-green-500 text-white px-1.5 md:px-2 py-0.5 rounded-full font-bold flex-shrink-0">
                     {t('freeJoin')}
                   </span>
                 )}
               </div>
-              <div className="text-sm text-gray-600 flex items-center gap-4 flex-wrap">
-                <span>{t('owner')}: <span className="font-semibold">{group.creator.name || group.creator.lastfmUsername}</span></span>
-                <span className="flex items-center gap-1">
+              <div className="text-xs md:text-sm text-gray-600 flex items-center gap-2 md:gap-4 flex-wrap">
+                <span className="truncate">{t('owner')}: <span className="font-semibold">{group.creator.name || group.creator.lastfmUsername}</span></span>
+                <span className="flex items-center gap-1 flex-shrink-0">
                   <FontAwesomeIcon icon={faUsers} className="text-xs" />
                   <span>{group._count.members} {group._count.members === 1 ? t('member') : t('members')}</span>
                 </span>
                 {group.weekCount !== undefined && (
-                  <span className="text-xs text-gray-500">
+                  <span className="text-[10px] md:text-xs text-gray-500 flex-shrink-0">
                     {group.weekCount} {group.weekCount === 1 ? t('weekTracked') : t('weeksTracked')}
                   </span>
                 )}
@@ -259,11 +259,11 @@ export default function DiscoverGroupsClient({
       <Link
         key={group.id}
         href={`/groups/${group.id}/public`}
-        className={`block bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-background-to)] rounded-xl p-6 border border-[var(--theme-border)] hover:shadow-md transition-all ${themeClass}`}
+        className={`block bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-background-to)] rounded-xl p-4 md:p-6 border border-[var(--theme-border)] hover:shadow-md transition-all ${themeClass}`}
       >
-        <div className="flex items-start gap-4 mb-4">
-          <div className="relative w-20 h-20 flex-shrink-0">
-            <div className="w-20 h-20 rounded-xl overflow-hidden ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] transition-all">
+        <div className="flex items-start gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="relative w-16 h-16 md:w-20 md:h-20 flex-shrink-0">
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-lg md:rounded-xl overflow-hidden ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] transition-all">
               <SafeImage
                 src={groupImage}
                 alt={group.name}
@@ -273,26 +273,26 @@ export default function DiscoverGroupsClient({
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <h3 className="text-2xl font-bold text-[var(--theme-text)] transition-colors truncate">
+              <h3 className="text-lg md:text-2xl font-bold text-[var(--theme-text)] transition-colors truncate">
                 {group.name}
               </h3>
               {group.allowFreeJoin && (
-                <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold flex-shrink-0">
+                <span className="text-[10px] md:text-xs bg-green-500 text-white px-1.5 md:px-2 py-0.5 rounded-full font-bold flex-shrink-0">
                   {t('freeJoin')}
                 </span>
               )}
             </div>
-            <div className="text-sm text-gray-600 space-y-1">
+            <div className="text-xs md:text-sm text-gray-600 space-y-1">
               <p className="flex items-center gap-2 flex-wrap">
                 <span>{t('owner')}:</span>
-                <span className="font-semibold text-gray-900">{group.creator.name || group.creator.lastfmUsername}</span>
+                <span className="font-semibold text-gray-900 truncate">{group.creator.name || group.creator.lastfmUsername}</span>
               </p>
               <p className="flex items-center gap-2">
-                <FontAwesomeIcon icon={faUsers} className="text-[var(--theme-primary)] font-medium" />
+                <FontAwesomeIcon icon={faUsers} className="text-[var(--theme-primary)] font-medium text-xs md:text-sm" />
                 <span>{group._count.members} {group._count.members === 1 ? t('member') : t('members')}</span>
               </p>
               {group.weekCount !== undefined && (
-                <p className="text-xs text-gray-500">
+                <p className="text-[10px] md:text-xs text-gray-500">
                   {group.weekCount} {group.weekCount === 1 ? t('weekTracked') : t('weeksTracked')}
                 </p>
               )}
@@ -306,31 +306,31 @@ export default function DiscoverGroupsClient({
   return (
     <div>
       {/* Search and Controls */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 mb-6">
+      <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-200 mb-4 md:mb-6">
         {/* Search Bar */}
-        <div className="mb-4">
+        <div className="mb-3 md:mb-4">
           <div className="relative">
             <FontAwesomeIcon
               icon={faSearch}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+              className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm md:text-base"
             />
             <input
               type="text"
               placeholder={t('searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              className="w-full pl-10 md:pl-12 pr-3 md:pr-4 py-2.5 md:py-3 text-sm md:text-base border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
             />
           </div>
         </div>
 
         {/* Filters and Sort Row */}
-        <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex flex-col lg:flex-row gap-3 md:gap-4">
           {/* Filters Toggle (Mobile) */}
           <div className="lg:hidden">
             <button
               onClick={() => setFiltersExpanded(!filtersExpanded)}
-              className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold text-gray-700"
+              className="w-full px-3 md:px-4 py-2 text-sm md:text-base bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold text-gray-700"
             >
               {filtersExpanded ? t('hideFilters') : t('showFilters')}
             </button>
@@ -338,10 +338,10 @@ export default function DiscoverGroupsClient({
 
           {/* Filters Panel */}
           <div className={`flex-1 ${filtersExpanded ? 'block' : 'hidden lg:block'}`}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               {/* Free Join Toggle */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
                   {t('freeJoinOnly')}
                 </label>
                 <Toggle
@@ -353,7 +353,7 @@ export default function DiscoverGroupsClient({
 
               {/* Min Members */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
                   {t('minMembers')}
                 </label>
                 <input
@@ -362,13 +362,13 @@ export default function DiscoverGroupsClient({
                   placeholder={t('any')}
                   value={minMembers || ''}
                   onChange={(e) => setMinMembers(e.target.value ? parseInt(e.target.value, 10) : null)}
-                  className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                  className="w-full px-3 md:px-4 py-2 text-sm md:text-base border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                 />
               </div>
 
               {/* Max Members */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
                   {t('maxMembers')}
                 </label>
                 <input
@@ -377,13 +377,13 @@ export default function DiscoverGroupsClient({
                   placeholder={t('any')}
                   value={maxMembers || ''}
                   onChange={(e) => setMaxMembers(e.target.value ? parseInt(e.target.value, 10) : null)}
-                  className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                  className="w-full px-3 md:px-4 py-2 text-sm md:text-base border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                 />
               </div>
 
               {/* Activity Level */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
                   {t('activity')}
                 </label>
                 <CustomSelect
@@ -396,9 +396,9 @@ export default function DiscoverGroupsClient({
           </div>
 
           {/* Sort and View Toggle */}
-          <div className="flex flex-col sm:flex-row gap-4 lg:flex-col">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 lg:flex-col">
             <div className="w-full sm:w-auto lg:w-full">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
                 {t('sortBy')}
               </label>
               <CustomSelect
@@ -411,25 +411,25 @@ export default function DiscoverGroupsClient({
               <div className="flex border-2 border-gray-300 rounded-lg overflow-hidden">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`px-4 py-2 transition-colors ${
+                  className={`px-3 md:px-4 py-2 transition-colors ${
                     viewMode === 'grid'
                       ? 'bg-yellow-500 text-black'
                       : 'bg-white text-gray-700 hover:bg-gray-100'
                   }`}
                   title={t('gridView')}
                 >
-                  <FontAwesomeIcon icon={faTh} />
+                  <FontAwesomeIcon icon={faTh} className="text-sm md:text-base" />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`px-4 py-2 transition-colors ${
+                  className={`px-3 md:px-4 py-2 transition-colors ${
                     viewMode === 'list'
                       ? 'bg-yellow-500 text-black'
                       : 'bg-white text-gray-700 hover:bg-gray-100'
                   }`}
                   title={t('listView')}
                 >
-                  <FontAwesomeIcon icon={faList} />
+                  <FontAwesomeIcon icon={faList} className="text-sm md:text-base" />
                 </button>
               </div>
             </div>
@@ -438,18 +438,18 @@ export default function DiscoverGroupsClient({
       </div>
 
       {/* Results Area */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 relative min-h-[400px]">
+      <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-200 relative min-h-[300px] md:min-h-[400px]">
         {isLoading && (
           <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-xl">
-            <div className="flex flex-col items-center gap-3">
-              <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-[var(--theme-primary)]" />
-              <span className="text-gray-600 font-medium">{t('loading')}</span>
+            <div className="flex flex-col items-center gap-2 md:gap-3">
+              <FontAwesomeIcon icon={faSpinner} className="animate-spin text-3xl md:text-4xl text-[var(--theme-primary)]" />
+              <span className="text-sm md:text-base text-gray-600 font-medium">{t('loading')}</span>
             </div>
           </div>
         )}
 
         {error && (
-          <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg mb-4">
+          <div className="p-3 md:p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg mb-3 md:mb-4 text-sm md:text-base">
             {error}
           </div>
         )}
@@ -459,32 +459,32 @@ export default function DiscoverGroupsClient({
             <div
               className={
                 viewMode === 'grid'
-                  ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'
-                  : 'space-y-4'
+                  ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4'
+                  : 'space-y-3 md:space-y-4'
               }
             >
               {groups.map((group) => renderGroupCard(group))}
             </div>
             {/* Infinite scroll trigger */}
             {hasMore && (
-              <div ref={observerTarget} className="h-10 flex items-center justify-center mt-4">
+              <div ref={observerTarget} className="h-8 md:h-10 flex items-center justify-center mt-3 md:mt-4">
                 {isLoadingMore && (
-                  <FontAwesomeIcon icon={faSpinner} className="animate-spin text-2xl text-[var(--theme-primary)]" />
+                  <FontAwesomeIcon icon={faSpinner} className="animate-spin text-xl md:text-2xl text-[var(--theme-primary)]" />
                 )}
               </div>
             )}
           </>
         ) : (
-          <div className="p-12 text-center">
-            <div className="mb-4 text-gray-400">
-              <FontAwesomeIcon icon={faMusic} size="3x" />
+          <div className="p-6 md:p-12 text-center">
+            <div className="mb-3 md:mb-4 text-gray-400">
+              <FontAwesomeIcon icon={faMusic} className="text-4xl md:text-5xl" />
             </div>
-            <p className="text-gray-700 text-lg mb-2 font-medium">
+            <p className="text-gray-700 text-base md:text-lg mb-2 font-medium">
               {debouncedSearch || allowFreeJoin !== null || minMembers !== null || maxMembers !== null || activityLevel !== 'all'
                 ? t('noGroupsMatchFilters')
                 : t('noGroupsAvailable')}
             </p>
-            <p className="text-gray-500 text-sm mb-6">
+            <p className="text-gray-500 text-xs md:text-sm mb-4 md:mb-6">
               {debouncedSearch || allowFreeJoin !== null || minMembers !== null || maxMembers !== null || activityLevel !== 'all'
                 ? t('tryAdjustingFilters')
                 : t('beFirstToCreate')}
@@ -492,7 +492,7 @@ export default function DiscoverGroupsClient({
             {(!debouncedSearch && allowFreeJoin === null && minMembers === null && maxMembers === null && activityLevel === 'all') && (
               <Link
                 href="/groups/create"
-                className="inline-block px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg transition-all font-semibold"
+                className="inline-block px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg transition-all font-semibold"
               >
                 {t('createGroup')}
               </Link>

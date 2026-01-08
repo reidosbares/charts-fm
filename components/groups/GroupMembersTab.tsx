@@ -49,11 +49,11 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
   if (isLoading) {
     return (
       <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
+        <div className="flex justify-between items-center mb-4 md:mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
         </div>
-        <div className="flex items-center justify-center py-12">
-          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-[var(--theme-primary)]" />
+        <div className="flex items-center justify-center py-8 md:py-12">
+          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-3xl md:text-4xl text-[var(--theme-primary)]" />
         </div>
       </div>
     )
@@ -62,10 +62,10 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
   if (error || !data) {
     return (
       <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
+        <div className="flex justify-between items-center mb-4 md:mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
         </div>
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-6 md:py-8 text-gray-500 text-sm md:text-base">
           <p>{error || t('failedToLoad')}</p>
         </div>
       </div>
@@ -80,10 +80,10 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
         <div>
-          <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
-          <p className="text-sm text-gray-600 mt-1">
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
+          <p className="text-xs md:text-sm text-gray-600 mt-1">
             {t('membersCount', { count: memberCount, max: MAX_GROUP_MEMBERS })}
             {isAtLimit && (
               <span className="ml-2 text-yellow-600 font-semibold">{t('limitReached')}</span>
@@ -97,8 +97,8 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
           </div>
         )}
       </div>
-      <div className="bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-primary-lighter)]/30 rounded-xl shadow-sm p-6 border border-theme">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-primary-lighter)]/30 rounded-xl shadow-sm p-4 md:p-6 border border-theme">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
           {/* Display actual members */}
           {members.map((member: any) => (
             <div

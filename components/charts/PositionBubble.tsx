@@ -27,15 +27,16 @@ function PositionBubble({
     
     // Size based on position (higher position = smaller, but we want top positions to be larger)
     // Position 1-3 get larger sizes, 4-10 get progressively smaller
+    // Responsive sizes for mobile
     let sizeClass: string
     if (isOut) {
-      sizeClass = 'w-12 h-12 text-sm'
+      sizeClass = 'w-10 h-10 md:w-12 md:h-12 text-xs md:text-sm'
     } else if (position <= 3) {
-      sizeClass = 'w-16 h-16 text-lg'
+      sizeClass = 'w-12 h-12 md:w-16 md:h-16 text-sm md:text-lg'
     } else if (position <= 6) {
-      sizeClass = 'w-14 h-14 text-base'
+      sizeClass = 'w-11 h-11 md:w-14 md:h-14 text-xs md:text-base'
     } else {
-      sizeClass = 'w-12 h-12 text-sm'
+      sizeClass = 'w-10 h-10 md:w-12 md:h-12 text-xs md:text-sm'
     }
 
     // Color based on position

@@ -37,10 +37,10 @@ export default async function GroupSettingsPage({ params }: { params: { id: stri
 
   if (!group) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center p-24">
+      <main className="flex min-h-screen flex-col items-center justify-center p-4 md:p-6 lg:p-24">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t('notFound')}</h1>
-          <Link href="/groups" className="text-yellow-600 hover:underline">
+          <h1 className="text-xl md:text-2xl font-bold mb-4">{t('notFound')}</h1>
+          <Link href="/groups" className="text-yellow-600 hover:underline text-sm md:text-base">
             {t('backToGroups')}
           </Link>
         </div>
@@ -61,7 +61,7 @@ export default async function GroupSettingsPage({ params }: { params: { id: stri
   const chartGenerationInProgress = latestGroup?.chartGenerationInProgress || false
 
   return (
-    <main className="flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 relative">
+    <main className="flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 relative">
       <div className="max-w-6xl w-full mx-auto relative z-10">
         <GroupPageHero
           group={{

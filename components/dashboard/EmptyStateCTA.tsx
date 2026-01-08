@@ -47,31 +47,31 @@ export default function EmptyStateCTA() {
 
   return (
     <div 
-      className="rounded-xl shadow-lg p-8 border border-gray-200 mb-8"
+      className="rounded-xl shadow-lg p-4 sm:p-6 md:p-8 border border-gray-200 mb-6 sm:mb-8"
       style={glassStyle}
     >
       <div className="text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-3">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
           {t('title')}
         </h2>
-        <p className="text-lg text-gray-600 mb-6">
+        <p className="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6 px-2 sm:px-0">
           {t('description')}
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center">
           <Link
             href="/groups/discover"
-            className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-yellow-500 to-yellow-400 text-black rounded-lg hover:from-yellow-600 hover:to-yellow-500 transition-all shadow-md hover:shadow-lg font-semibold text-lg"
+            className="flex items-center justify-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-yellow-500 to-yellow-400 text-black rounded-lg hover:from-yellow-600 hover:to-yellow-500 transition-all shadow-md hover:shadow-lg font-semibold text-base sm:text-lg w-full sm:w-auto"
           >
-            <FontAwesomeIcon icon={faUsers} className="text-xl" />
+            <FontAwesomeIcon icon={faUsers} className="text-lg sm:text-xl" />
             <span>{t('discoverGroups')}</span>
           </Link>
           
           <Link
             href="/groups/create"
-            className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-yellow-500 to-yellow-400 text-black rounded-lg hover:from-yellow-600 hover:to-yellow-500 transition-all shadow-md hover:shadow-lg font-semibold text-lg"
+            className="flex items-center justify-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-yellow-500 to-yellow-400 text-black rounded-lg hover:from-yellow-600 hover:to-yellow-500 transition-all shadow-md hover:shadow-lg font-semibold text-base sm:text-lg w-full sm:w-auto"
           >
-            <FontAwesomeIcon icon={faPlus} className="text-xl" />
+            <FontAwesomeIcon icon={faPlus} className="text-lg sm:text-xl" />
             <span>{t('createYourOwn')}</span>
           </Link>
         </div>

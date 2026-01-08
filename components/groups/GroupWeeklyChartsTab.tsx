@@ -279,11 +279,11 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
   if (isLoading) {
     return (
       <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
+        <div className="flex justify-between items-center mb-4 md:mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
         </div>
-        <div className="flex items-center justify-center py-12">
-          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-[var(--theme-primary)]" />
+        <div className="flex items-center justify-center py-8 md:py-12">
+          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-3xl md:text-4xl text-[var(--theme-primary)]" />
         </div>
       </div>
     )
@@ -292,15 +292,15 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
   if (error || !data || !data.latestWeek) {
     return (
       <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
+        <div className="flex justify-between items-center mb-4 md:mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
         </div>
-        <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-12 text-center border border-theme">
+        <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-8 md:p-12 text-center border border-theme">
           <div className="mb-4 text-[var(--theme-primary)]">
-            <FontAwesomeIcon icon={faMusic} size="3x" />
+            <FontAwesomeIcon icon={faMusic} className="text-4xl md:text-5xl" />
           </div>
-          <p className="text-gray-700 text-lg mb-2 font-medium">{t('noChartsAvailable')}</p>
-          <p className="text-gray-500 text-sm mb-6">{t('startTracking')}</p>
+          <p className="text-gray-700 text-base md:text-lg mb-2 font-medium">{t('noChartsAvailable')}</p>
+          <p className="text-gray-500 text-sm mb-4 md:mb-6">{t('startTracking')}</p>
           {isOwner && (
             <LiquidGlassLink
               href={`/groups/${groupId}/settings?tab=regenerate`}
@@ -323,8 +323,8 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
         <LiquidGlassLink
           href={`/groups/${groupId}/charts`}
           variant="primary"
@@ -333,21 +333,20 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
           {t('exploreCharts')}
         </LiquidGlassLink>
       </div>
-      <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 border border-theme">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-bold text-gray-900">
-            {t('weekOf', { date: latestWeek.weekStartFormatted })}
-            <span className="text-sm font-normal italic text-gray-500 ml-2">
-              ({t('fromTo', { start: latestWeek.weekStartFormatted, end: latestWeek.weekEndFormatted })})
-            </span>
-          </h3>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="mb-4 md:mb-6">
+        <h3 className="text-lg md:text-2xl font-bold text-gray-900">
+          {t('weekOf', { date: latestWeek.weekStartFormatted })}
+          <span className="text-xs md:text-sm font-normal italic text-gray-500 ml-1 md:ml-2">
+            ({t('fromTo', { start: latestWeek.weekStartFormatted, end: latestWeek.weekEndFormatted })})
+          </span>
+        </h3>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
           {/* Top Artists */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-theme shadow-sm">
-            <h4 className="font-bold text-lg mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
-              <FontAwesomeIcon icon={faMicrophone} className="text-lg" />
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
+            <h4 className="font-bold text-base md:text-lg mb-3 md:mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
+              <FontAwesomeIcon icon={faMicrophone} className="text-base md:text-lg flex-shrink-0" />
               {t('topArtists')}
             </h4>
             {topArtists && topArtists.length > 0 && (
@@ -432,9 +431,9 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
           </div>
           
           {/* Top Tracks */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-theme shadow-sm">
-            <h4 className="font-bold text-lg mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
-              <FontAwesomeIcon icon={faMusic} className="text-lg" />
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
+            <h4 className="font-bold text-base md:text-lg mb-3 md:mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
+              <FontAwesomeIcon icon={faMusic} className="text-base md:text-lg flex-shrink-0" />
               {t('topTracks')}
             </h4>
             {topTracks && topTracks.length > 0 && topTracks[0].artist && (
@@ -521,9 +520,9 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
           </div>
           
           {/* Top Albums */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-theme shadow-sm">
-            <h4 className="font-bold text-lg mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
-              <FontAwesomeIcon icon={faCompactDisc} className="text-lg" />
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
+            <h4 className="font-bold text-base md:text-lg mb-3 md:mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
+              <FontAwesomeIcon icon={faCompactDisc} className="text-base md:text-lg flex-shrink-0" />
               {t('topAlbums')}
             </h4>
             {topAlbums && topAlbums.length > 0 && (
@@ -609,7 +608,6 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
             </div>
           </div>
         </div>
-      </div>
     </div>
   )
 }

@@ -29,10 +29,10 @@ export default async function RecordsPage({ params }: { params: { id: string; lo
 
   if (!group) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center p-24">
+      <main className="flex min-h-screen flex-col items-center justify-center p-4 md:p-6 lg:p-24">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t('notFound')}</h1>
-          <Link href="/groups" className="text-gray-600 hover:underline">
+          <h1 className="text-xl md:text-2xl font-bold mb-4">{t('notFound')}</h1>
+          <Link href="/groups" className="text-gray-600 hover:underline text-sm md:text-base">
             {t('backToGroups')}
           </Link>
         </div>
@@ -94,7 +94,7 @@ export default async function RecordsPage({ params }: { params: { id: string; lo
   }
 
   return (
-    <main className={`flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}>
+    <main className={`flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}>
       <div className="max-w-7xl w-full mx-auto">
         <GroupPageHero
           group={{

@@ -122,26 +122,24 @@ function ChartHistoryTimeline({
 
   if (history.length === 0) {
     return (
-      <div className="bg-white/40 backdrop-blur-xl rounded-xl p-8 text-center border border-white/30">
-        <p className="text-gray-600">{t('noHistory')}</p>
+      <div className="bg-white/40 backdrop-blur-xl rounded-xl p-6 md:p-8 text-center border border-white/30">
+        <p className="text-sm md:text-base text-gray-600">{t('noHistory')}</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white/40 backdrop-blur-md rounded-xl p-6 border border-white/30" style={{ overflow: 'visible', contain: 'layout style paint' }}>
-      <h2 className="text-xl font-bold text-gray-900 mb-6">{t('title')}</h2>
+    <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/30" style={{ overflow: 'visible', contain: 'layout style paint' }}>
+      <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-4 md:mb-6">{t('title')}</h2>
       <div className="relative" style={{ overflow: 'visible' }}>
         {/* Timeline items container with repeating lines on all rows */}
+        {/* Mobile: line at 20-22px (center of 40-48px bubbles), repeat every 60px */}
+        {/* Desktop: line at 31-33px (center of 48-64px bubbles), repeat every 80px */}
         <div 
-          className="relative flex flex-wrap items-center gap-4 pb-12 pl-8"
+          className="relative flex flex-wrap items-center gap-2 md:gap-4 pb-8 md:pb-12 pl-4 md:pl-8 timeline-container"
           style={{ 
             zIndex: 1, 
             overflow: 'visible',
-            backgroundImage: 'repeating-linear-gradient(to bottom, transparent 0, transparent 31px, rgba(209, 213, 219, 0.4) 31px, rgba(209, 213, 219, 0.4) 33px, transparent 33px, transparent 80px)',
-            backgroundSize: '100% 80px',
-            backgroundPosition: '0 0',
-            backgroundRepeat: 'repeat-y'
           }}
         >
           {timelineItems.map((item, index) => {
@@ -160,7 +158,7 @@ function ChartHistoryTimeline({
                     isOut={item.isOut}
                   />
                   {item.isFirst && firstAppearanceDate && (
-                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 text-xs text-gray-600 font-medium whitespace-nowrap">
+                    <span className="absolute bottom-full mb-1 md:mb-2 left-1/2 -translate-x-1/2 text-[10px] md:text-xs text-gray-600 font-medium whitespace-nowrap">
                       {formatWeekLabel(firstAppearanceDate)}
                     </span>
                   )}
@@ -174,7 +172,7 @@ function ChartHistoryTimeline({
                   position="top"
                 >
                   <div 
-                    className="px-2 text-xs text-gray-500 cursor-help"
+                    className="px-1 md:px-2 text-[10px] md:text-xs text-gray-500 cursor-help"
                     style={{ contain: 'layout style' }}
                   >
                     ⏸ {item.gapWeeks}

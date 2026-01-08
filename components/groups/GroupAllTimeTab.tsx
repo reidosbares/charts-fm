@@ -57,11 +57,11 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
   if (isLoading) {
     return (
       <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
+        <div className="flex justify-between items-center mb-4 md:mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
         </div>
-        <div className="flex items-center justify-center py-12">
-          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-[var(--theme-primary)]" />
+        <div className="flex items-center justify-center py-8 md:py-12">
+          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-3xl md:text-4xl text-[var(--theme-primary)]" />
         </div>
       </div>
     )
@@ -70,15 +70,15 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
   if (error || !data || !data.allTimeStats || (data.allTimeStats.topArtists as any[]).length === 0) {
     return (
       <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
+        <div className="flex justify-between items-center mb-4 md:mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
         </div>
-        <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-12 text-center border border-theme">
+        <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-8 md:p-12 text-center border border-theme">
           <div className="mb-4 text-[var(--theme-primary)]">
-            <FontAwesomeIcon icon={faTrophy} size="3x" />
+            <FontAwesomeIcon icon={faTrophy} className="text-4xl md:text-5xl" />
           </div>
-          <p className="text-gray-700 text-lg mb-2 font-medium">{t('noStatsAvailable')}</p>
-          <p className="text-gray-500 text-sm mb-6">{t('generateChartsToStart')}</p>
+          <p className="text-gray-700 text-base md:text-lg mb-2 font-medium">{t('noStatsAvailable')}</p>
+          <p className="text-gray-500 text-sm mb-4 md:mb-6">{t('generateChartsToStart')}</p>
           {!data?.hasWeeklyStats && isOwner && (
             <LiquidGlassLink
               href={`/groups/${groupId}/settings?tab=regenerate`}
@@ -100,16 +100,16 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
+      <div className="flex justify-between items-center mb-4 md:mb-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
       </div>
 
       {/* Records Preview Section */}
       {!previewLoading && previewData && (previewData.artist || previewData.track || previewData.album) && (
-        <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 border border-theme mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <FontAwesomeIcon icon={faMedal} className="text-[var(--theme-primary)]" />
+        <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-4 md:p-6 border border-theme mb-4 md:mb-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-3 md:mb-4">
+            <h3 className="text-lg md:text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <FontAwesomeIcon icon={faMedal} className="text-[var(--theme-primary)] flex-shrink-0" />
               {t('records')}
             </h3>
             <LiquidGlassLink
@@ -120,20 +120,20 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
               {t('viewAllRecords')}
             </LiquidGlassLink>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
             {previewData.artist && (
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
-                  <FontAwesomeIcon icon={faMicrophone} className="text-[var(--theme-primary)]" />
-                  <span className="text-sm font-semibold text-gray-600">{t('artistMostConsecutive')}</span>
+                  <FontAwesomeIcon icon={faMicrophone} className="text-[var(--theme-primary)] flex-shrink-0" />
+                  <span className="text-xs md:text-sm font-semibold text-gray-600">{t('artistMostConsecutive')}</span>
                 </div>
                 <Link
                   href={`/groups/${groupId}/charts/artist/${previewData.artist.slug}`}
-                  className="font-bold text-lg text-gray-900 hover:text-[var(--theme-primary)] transition-colors block mb-1 break-words"
+                  className="font-bold text-base md:text-lg text-gray-900 hover:text-[var(--theme-primary)] transition-colors block mb-1 break-words"
                 >
                   {previewData.artist.name}
                 </Link>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs md:text-sm text-gray-600">
                   {previewData.artist.value === 1 
                     ? t('weeksOnChart', { count: previewData.artist.value })
                     : t('weeksOnChartPlural', { count: previewData.artist.value })}
@@ -141,21 +141,21 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
               </div>
             )}
             {previewData.track && (
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
-                  <FontAwesomeIcon icon={faMusic} className="text-[var(--theme-primary)]" />
-                  <span className="text-sm font-semibold text-gray-600">{t('trackMostConsecutive')}</span>
+                  <FontAwesomeIcon icon={faMusic} className="text-[var(--theme-primary)] flex-shrink-0" />
+                  <span className="text-xs md:text-sm font-semibold text-gray-600">{t('trackMostConsecutive')}</span>
                 </div>
                 <Link
                   href={`/groups/${groupId}/charts/track/${previewData.track.slug}`}
-                  className="font-bold text-lg text-gray-900 hover:text-[var(--theme-primary)] transition-colors block mb-1 break-words"
+                  className="font-bold text-base md:text-lg text-gray-900 hover:text-[var(--theme-primary)] transition-colors block mb-1 break-words"
                 >
                   {previewData.track.name}
                 </Link>
                 {previewData.track.artist && (
                   <p className="text-xs text-gray-600 mb-1 break-words">{t('by', { artist: previewData.track.artist })}</p>
                 )}
-                <p className="text-sm text-gray-600">
+                <p className="text-xs md:text-sm text-gray-600">
                   {previewData.track.value === 1 
                     ? t('weeksOnChart', { count: previewData.track.value })
                     : t('weeksOnChartPlural', { count: previewData.track.value })}
@@ -163,21 +163,21 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
               </div>
             )}
             {previewData.album && (
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
-                  <FontAwesomeIcon icon={faCompactDisc} className="text-[var(--theme-primary)]" />
-                  <span className="text-sm font-semibold text-gray-600">{t('albumMostConsecutive')}</span>
+                  <FontAwesomeIcon icon={faCompactDisc} className="text-[var(--theme-primary)] flex-shrink-0" />
+                  <span className="text-xs md:text-sm font-semibold text-gray-600">{t('albumMostConsecutive')}</span>
                 </div>
                 <Link
                   href={`/groups/${groupId}/charts/album/${previewData.album.slug}`}
-                  className="font-bold text-lg text-gray-900 hover:text-[var(--theme-primary)] transition-colors block mb-1 break-words"
+                  className="font-bold text-base md:text-lg text-gray-900 hover:text-[var(--theme-primary)] transition-colors block mb-1 break-words"
                 >
                   {previewData.album.name}
                 </Link>
                 {previewData.album.artist && (
                   <p className="text-xs text-gray-600 mb-1 break-words">{t('by', { artist: previewData.album.artist })}</p>
                 )}
-                <p className="text-sm text-gray-600">
+                <p className="text-xs md:text-sm text-gray-600">
                   {previewData.album.value === 1 
                     ? t('weeksOnChart', { count: previewData.album.value })
                     : t('weeksOnChartPlural', { count: previewData.album.value })}
@@ -188,10 +188,10 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
         </div>
       )}
 
-      <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 border border-theme">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <FontAwesomeIcon icon={faTrophy} className="text-[var(--theme-primary)]" />
+      <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-4 md:p-6 border border-theme">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
+          <h3 className="text-lg md:text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <FontAwesomeIcon icon={faTrophy} className="text-[var(--theme-primary)] flex-shrink-0" />
             {t('top100AllTime')}
           </h3>
           <LiquidGlassLink
@@ -203,10 +203,10 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
           </LiquidGlassLink>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-theme shadow-sm">
-            <h4 className="font-bold text-lg mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
-              <FontAwesomeIcon icon={faMicrophone} className="text-lg" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
+            <h4 className="font-bold text-base md:text-lg mb-3 md:mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
+              <FontAwesomeIcon icon={faMicrophone} className="text-base md:text-lg flex-shrink-0" />
               {t('topArtists')}
             </h4>
             <ol className="space-y-2">

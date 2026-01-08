@@ -63,10 +63,10 @@ export default function LandingPageClient() {
   return (
     <>
       <main className="min-h-screen relative">
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-24">
           {/* Hero Section */}
-          <div className="text-center mb-20">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 flex flex-wrap justify-center items-center gap-4 sm:gap-5 leading-tight overflow-visible">
+          <div className="text-center mb-12 md:mb-16 lg:mb-20">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 md:mb-6 flex flex-wrap justify-center items-center gap-2 sm:gap-3 md:gap-4 lg:gap-5 leading-tight overflow-visible">
               <span 
                 ref={musicRef} 
                 className={`inline-block bg-gradient-to-r from-yellow-600 via-orange-500 to-pink-500 bg-clip-text text-transparent leading-tight ${
@@ -86,10 +86,10 @@ export default function LandingPageClient() {
                 {t('titlePart2')}
               </span>
             </h1>
-            <p className="text-xl sm:text-2xl text-gray-700 mb-4 max-w-3xl mx-auto font-inter">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 mb-3 md:mb-4 max-w-3xl mx-auto font-inter px-4">
               {t('subtitle')}
             </p>
-            <p className="text-lg text-gray-600 mb-10 max-w-2xl mx-auto font-inter">
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-6 md:mb-8 lg:mb-10 max-w-2xl mx-auto font-inter px-4">
               {t('description')}
             </p>
             <div className="flex justify-center">
@@ -97,7 +97,7 @@ export default function LandingPageClient() {
                 href="/auth/signup"
                 variant="primary"
                 size="lg"
-                className="text-lg"
+                className="text-base md:text-lg"
               >
                 {t('getStarted')}
               </LiquidGlassLink>
@@ -105,10 +105,10 @@ export default function LandingPageClient() {
           </div>
 
           {/* Feature Cards */}
-          <div className="grid md:grid-cols-3 gap-6 mb-16">
+          <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-12 md:mb-16">
             {/* Feature 1: Groups */}
             <div
-              className="rounded-3xl p-8 relative overflow-hidden"
+              className="rounded-2xl md:rounded-3xl p-5 md:p-6 lg:p-8 relative overflow-hidden"
               style={{
                 background: 'rgba(255, 255, 255, 0.6)',
                 backdropFilter: 'blur(16px) saturate(180%)',
@@ -117,11 +117,11 @@ export default function LandingPageClient() {
                 boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
               }}
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-yellow-400/30 to-orange-400/30 rounded-full blur-2xl"></div>
+              <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-yellow-400/30 to-orange-400/30 rounded-full blur-2xl"></div>
               <div className="relative z-10">
-                <div className="text-5xl mb-4">🎵</div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-3">{t('features.createGroups.title')}</h3>
-                <p className="text-gray-600 leading-relaxed">
+                <div className="text-4xl md:text-5xl mb-3 md:mb-4">🎵</div>
+                <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{t('features.createGroups.title')}</h3>
+                <p className="text-sm md:text-base text-gray-600 leading-relaxed">
                   {t('features.createGroups.description')}
                 </p>
               </div>
@@ -129,7 +129,7 @@ export default function LandingPageClient() {
 
             {/* Feature 2: Stats & Trends */}
             <div
-              className="rounded-3xl p-8 relative overflow-hidden"
+              className="rounded-2xl md:rounded-3xl p-5 md:p-6 lg:p-8 relative overflow-hidden"
               style={{
                 background: 'rgba(255, 255, 255, 0.6)',
                 backdropFilter: 'blur(16px) saturate(180%)',
@@ -138,11 +138,11 @@ export default function LandingPageClient() {
                 boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
               }}
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-pink-400/30 to-purple-400/30 rounded-full blur-2xl"></div>
+              <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-pink-400/30 to-purple-400/30 rounded-full blur-2xl"></div>
               <div className="relative z-10">
-                <div className="text-5xl mb-4">📊</div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-3">{t('features.statsTrends.title')}</h3>
-                <p className="text-gray-600 leading-relaxed">
+                <div className="text-4xl md:text-5xl mb-3 md:mb-4">📊</div>
+                <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{t('features.statsTrends.title')}</h3>
+                <p className="text-sm md:text-base text-gray-600 leading-relaxed">
                   {t('features.statsTrends.description')}
                 </p>
               </div>
@@ -150,7 +150,7 @@ export default function LandingPageClient() {
 
             {/* Feature 3: Share Taste */}
             <div
-              className="rounded-3xl p-8 relative overflow-hidden"
+              className="rounded-2xl md:rounded-3xl p-5 md:p-6 lg:p-8 relative overflow-hidden"
               style={{
                 background: 'rgba(255, 255, 255, 0.6)',
                 backdropFilter: 'blur(16px) saturate(180%)',
@@ -159,11 +159,11 @@ export default function LandingPageClient() {
                 boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
               }}
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-400/30 to-red-400/30 rounded-full blur-2xl"></div>
+              <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-orange-400/30 to-red-400/30 rounded-full blur-2xl"></div>
               <div className="relative z-10">
-                <div className="text-5xl mb-4">🌟</div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-3">{t('features.shareTaste.title')}</h3>
-                <p className="text-gray-600 leading-relaxed">
+                <div className="text-4xl md:text-5xl mb-3 md:mb-4">🌟</div>
+                <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{t('features.shareTaste.title')}</h3>
+                <p className="text-sm md:text-base text-gray-600 leading-relaxed">
                   {t('features.shareTaste.description')}
                 </p>
               </div>
@@ -172,7 +172,7 @@ export default function LandingPageClient() {
 
           {/* CTA Section */}
           <div
-            className="rounded-3xl p-12 text-center relative overflow-hidden"
+            className="rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-12 text-center relative overflow-hidden"
             style={{
               background: 'rgba(255, 255, 255, 0.5)',
               backdropFilter: 'blur(20px) saturate(180%)',
@@ -183,18 +183,18 @@ export default function LandingPageClient() {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 via-orange-400/20 to-pink-400/20"></div>
             <div className="relative z-10">
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-3 md:mb-4">
                 {t('cta.title')}
               </h2>
-              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto font-inter">
+              <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-6 md:mb-8 max-w-2xl mx-auto font-inter px-4">
                 {t('cta.description')}
               </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <div className="flex flex-col sm:flex-row justify-center gap-3 md:gap-4">
                 <LiquidGlassButton
                   onClick={() => setIsSignInModalOpen(true)}
                   variant="primary"
                   size="lg"
-                  className="text-lg"
+                  className="text-base md:text-lg"
                 >
                   {t('cta.logIn')}
                 </LiquidGlassButton>
@@ -202,7 +202,7 @@ export default function LandingPageClient() {
                   href="/auth/signup"
                   variant="secondary"
                   size="lg"
-                  className="text-lg"
+                  className="text-base md:text-lg"
                 >
                   {t('cta.createAccount')}
                 </LiquidGlassLink>

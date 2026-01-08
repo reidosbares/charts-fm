@@ -79,7 +79,7 @@ export default async function ArtistDeepDivePage({
   const history = await getEntryChartHistory(group!.id, 'artists', entry!.entryKey)
 
   return (
-    <main className={`flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}>
+    <main className={`flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}>
       <div className="max-w-7xl w-full mx-auto">
         <DeepDiveHero
           group={{

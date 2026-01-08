@@ -121,22 +121,22 @@ export default function GroupDetailsTab({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-8">
+    <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
       {success && (
-        <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-green-100 border border-green-400 text-green-700 rounded text-sm md:text-base">
           {t('updatedSuccessfully')}
         </div>
       )}
 
       {error && (
-        <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-red-100 border border-red-400 text-red-700 rounded text-sm md:text-base">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
         <div>
-          <label htmlFor="groupName" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="groupName" className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
             {t('groupName')}
           </label>
           <input
@@ -144,14 +144,14 @@ export default function GroupDetailsTab({
             id="groupName"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+            className="w-full px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
             required
             disabled={isLoading}
           />
         </div>
 
         <div>
-          <label htmlFor="groupIcon" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="groupIcon" className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
             {t('groupIcon')}
           </label>
           <input
@@ -159,7 +159,7 @@ export default function GroupDetailsTab({
             id="groupIcon"
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+            className="w-full px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
             placeholder={t('iconUrlPlaceholder')}
             disabled={isLoading}
           />
@@ -167,8 +167,8 @@ export default function GroupDetailsTab({
             {t('iconUrlDescription')}
           </p>
           {imageUrl && (
-            <div className="mt-4 flex justify-center">
-              <div className="relative w-32 h-32">
+            <div className="mt-3 md:mt-4 flex justify-center">
+              <div className="relative w-24 h-24 md:w-32 md:h-32">
                 <SafeImage
                   src={imageUrl}
                   alt="Preview"
@@ -181,7 +181,7 @@ export default function GroupDetailsTab({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
             {t('privacySettings')}
           </label>
           <Toggle
@@ -198,7 +198,7 @@ export default function GroupDetailsTab({
 
         {!isPrivate && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
               {t('joinSettings')}
             </label>
             <Toggle
@@ -215,14 +215,14 @@ export default function GroupDetailsTab({
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
             {t('dynamicIcon')}
           </label>
           <p className="text-xs text-gray-500 mb-3">
             {t('dynamicIconDescription')}
           </p>
           
-          <div className="mb-4">
+          <div className="mb-3 md:mb-4">
             <Toggle
               id="dynamicIconEnabled"
               checked={dynamicIconEnabled}
@@ -234,7 +234,7 @@ export default function GroupDetailsTab({
 
           {dynamicIconEnabled && (
             <div>
-              <label htmlFor="dynamicIconSource" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="dynamicIconSource" className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
                 {t('iconSource')}
               </label>
               <CustomSelect
@@ -250,18 +250,18 @@ export default function GroupDetailsTab({
           )}
         </div>
 
-        <div className="flex gap-4 pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-3 md:pt-4">
           <button
             type="submit"
             disabled={isLoading || !hasChanges}
-            className="flex-1 py-3 px-6 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 py-2.5 md:py-3 px-4 md:px-6 text-sm md:text-base bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? t('saving') : t('saveChanges')}
           </button>
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+            className="px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
           >
             {t('cancel')}
           </button>

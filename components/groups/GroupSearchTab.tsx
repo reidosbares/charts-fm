@@ -31,10 +31,10 @@ export default function GroupSearchTab({ groupId }: GroupSearchTabProps) {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
+      <div className="flex justify-between items-center mb-4 md:mb-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
       </div>
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
         <div className="flex-1 relative">
           <input
             type="text"
@@ -43,7 +43,7 @@ export default function GroupSearchTab({ groupId }: GroupSearchTabProps) {
             onKeyPress={handleKeyPress}
             placeholder={t('placeholder')}
             disabled={isSearching}
-            className="w-full px-4 py-3 pr-12 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-3 md:px-4 py-2.5 md:py-3 pr-10 md:pr-12 rounded-lg text-sm md:text-base text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               background: 'rgba(255, 255, 255, 0.4)',
               backdropFilter: 'blur(12px) saturate(180%)',
@@ -54,13 +54,13 @@ export default function GroupSearchTab({ groupId }: GroupSearchTabProps) {
           />
           <FontAwesomeIcon
             icon={faSearch}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+            className="absolute right-3 md:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm md:text-base"
           />
         </div>
         <button
           onClick={handleSearch}
           disabled={!searchTerm.trim() || isSearching}
-          className="px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg active:scale-95"
+          className="px-4 md:px-6 py-2.5 md:py-3 rounded-lg font-semibold text-sm md:text-base transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg active:scale-95"
           style={{
             background: 'var(--theme-primary)',
             color: 'var(--theme-button-text)',

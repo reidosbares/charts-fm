@@ -170,7 +170,7 @@ function SignUpPageContent() {
   if (status === 'loading' && !showContent) {
     return (
       <main 
-        className="flex min-h-screen flex-col items-center justify-center p-24"
+        className="flex min-h-screen flex-col items-center justify-center p-4 md:p-6 lg:p-24"
         style={{
           background: backgroundGradient,
           backgroundAttachment: 'fixed',
@@ -180,8 +180,8 @@ function SignUpPageContent() {
         }}
       >
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
-          <p className="text-gray-600">{tCommon('loading')}</p>
+          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-gray-400 mx-auto mb-3 md:mb-4"></div>
+          <p className="text-sm md:text-base text-gray-600">{tCommon('loading')}</p>
         </div>
       </main>
     )
@@ -195,7 +195,7 @@ function SignUpPageContent() {
 
   return (
     <main 
-      className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-24"
+      className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-24"
       style={{
         background: backgroundGradient,
         backgroundAttachment: 'fixed',
@@ -205,21 +205,21 @@ function SignUpPageContent() {
       }}
     >
       <div className="max-w-2xl w-full">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-gray-900">
+        <div className="text-center mb-6 md:mb-8">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 md:mb-4 text-gray-900">
             {t('title')}
           </h1>
-          <p className="text-lg sm:text-xl text-gray-700 mb-2">
+          <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-2">
             {t('subtitle')}
           </p>
-          <p className="text-base text-gray-600">
+          <p className="text-sm sm:text-base text-gray-600">
             {t('subtitle2')}
           </p>
         </div>
 
         {error && (
           <div 
-            className="mb-6 p-4 rounded-2xl"
+            className="mb-4 md:mb-6 p-3 md:p-4 rounded-xl md:rounded-2xl text-sm md:text-base"
             style={{
               background: 'rgba(239, 68, 68, 0.2)',
               backdropFilter: 'blur(12px) saturate(180%)',
@@ -233,7 +233,7 @@ function SignUpPageContent() {
         )}
 
         <div
-          className="rounded-3xl p-8 sm:p-10 relative overflow-hidden"
+          className="rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-10 relative overflow-hidden"
           style={{
             background: 'rgba(255, 255, 255, 0.6)',
             backdropFilter: 'blur(16px) saturate(180%)',
@@ -242,14 +242,14 @@ function SignUpPageContent() {
             boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
           }}
         >
-          <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-yellow-400/30 to-orange-400/30 rounded-full blur-2xl"></div>
+          <div className="absolute top-0 right-0 w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-yellow-400/30 to-orange-400/30 rounded-full blur-2xl"></div>
           <div className="relative z-10">
-            <div className="text-center mb-8">
-              <div className="text-5xl mb-4">🎵</div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">
+            <div className="text-center mb-6 md:mb-8">
+              <div className="text-4xl md:text-5xl mb-3 md:mb-4">🎵</div>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 md:mb-3">
                 {t('step1Title')}
               </h2>
-              <p className="text-gray-600">
+              <p className="text-sm md:text-base text-gray-600">
                 {t('step1Description')}
               </p>
             </div>
@@ -259,7 +259,7 @@ function SignUpPageContent() {
               disabled={isLoading}
               size="lg"
               fullWidth
-              className="text-lg"
+              className="text-base md:text-lg"
               useTheme={false}
               style={{
                 background: '#d51007',
@@ -268,12 +268,12 @@ function SignUpPageContent() {
               }}
               icon={
                 isLoading ? (
-                  <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin h-4 w-4 md:h-5 md:w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                 ) : (
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.568 8.16c-.169 0-.315.063-.441.189l-1.701 1.7-3.703 3.704-1.701-1.701c-.126-.126-.272-.189-.441-.189s-.315.063-.441.189l-1.701 1.701c-.252.252-.252.63 0 .882l1.701 1.701c.126.126.272.189.441.189s.315-.063.441-.189l1.701-1.701 3.703-3.704 1.701 1.701c.126.126.272.189.441.189s.315-.063.441-.189l1.701-1.701c.252-.252.252-.63 0-.882l-1.701-1.701c-.126-.126-.272-.189-.441-.189z"/>
                   </svg>
                 )
@@ -282,14 +282,14 @@ function SignUpPageContent() {
               {isLoading ? t('redirecting') : t('connectWithLastfm')}
             </LiquidGlassButton>
 
-            <p className="text-sm text-gray-600 text-center mt-6">
+            <p className="text-xs md:text-sm text-gray-600 text-center mt-4 md:mt-6">
               {t('redirectMessage')}
             </p>
           </div>
         </div>
 
-        <div className="text-center mt-8">
-          <p className="text-gray-700">
+        <div className="text-center mt-6 md:mt-8">
+          <p className="text-sm md:text-base text-gray-700">
             {t('alreadyHaveAccount')}{' '}
             <a href="/" className="text-yellow-600 hover:text-yellow-700 font-semibold underline underline-offset-2">
               {t('logIn')}
@@ -304,10 +304,10 @@ function SignUpPageContent() {
 export default function SignUpPage() {
   return (
     <Suspense fallback={
-      <main className="flex min-h-screen flex-col items-center justify-center p-24">
+      <main className="flex min-h-screen flex-col items-center justify-center p-4 md:p-6 lg:p-24">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-gray-400 mx-auto mb-3 md:mb-4"></div>
+          <p className="text-sm md:text-base text-gray-600">Loading...</p>
         </div>
       </main>
     }>

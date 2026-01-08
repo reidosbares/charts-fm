@@ -95,42 +95,47 @@ export default function LiquidGlassTabs({
         />
       )}
 
-      {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          ref={(el) => {
-            if (el) {
-              tabRefs.current.set(tab.id, el)
-            } else {
-              tabRefs.current.delete(tab.id)
-            }
-          }}
-          onClick={() => onTabChange(tab.id)}
-          className={`
-            relative z-10 py-2.5 px-5 font-semibold text-sm rounded-full
-            flex items-center justify-center gap-2 transition-all duration-300
-            ${fullWidth ? 'flex-1' : ''}
-            ${
-              activeTab === tab.id
-                ? 'text-[var(--theme-primary-dark)]'
-                : 'text-gray-600 hover:text-[var(--theme-text)]'
-            }
-          `}
-        >
-          {tab.icon && <FontAwesomeIcon icon={tab.icon} className="text-lg" />}
-          <span>{tab.label}</span>
-          {tab.count !== undefined && (
-            <span className="ml-1 px-2 py-0.5 bg-gray-500/30 text-gray-700 rounded-full text-xs font-semibold">
-              {tab.count}
-            </span>
-          )}
-          {tab.badge !== undefined && tab.badge > 0 && (
-            <span className="ml-1 px-2 py-0.5 bg-red-500 text-white rounded-full text-xs font-bold">
-              {tab.badge}
-            </span>
-          )}
-        </button>
-      ))}
+      {tabs.map((tab) => {
+        const isActive = activeTab === tab.id
+        return (
+          <button
+            key={tab.id}
+            ref={(el) => {
+              if (el) {
+                tabRefs.current.set(tab.id, el)
+              } else {
+                tabRefs.current.delete(tab.id)
+              }
+            }}
+            onClick={() => onTabChange(tab.id)}
+            className={`
+              relative z-10 py-2.5 px-3 md:px-5 font-semibold text-sm rounded-full
+              flex items-center justify-center gap-2 transition-all duration-300
+              ${fullWidth ? 'flex-1' : ''}
+              ${
+                isActive
+                  ? 'text-[var(--theme-primary-dark)]'
+                  : 'text-gray-600 hover:text-[var(--theme-text)]'
+              }
+            `}
+            aria-label={tab.label}
+          >
+            {tab.icon && <FontAwesomeIcon icon={tab.icon} className="text-lg flex-shrink-0" />}
+            {/* Show text only for active tab on mobile, always show on desktop */}
+            <span className={isActive ? '' : 'hidden md:inline'}>{tab.label}</span>
+            {tab.count !== undefined && (
+              <span className="ml-1 px-2 py-0.5 bg-gray-500/30 text-gray-700 rounded-full text-xs font-semibold">
+                {tab.count}
+              </span>
+            )}
+            {tab.badge !== undefined && tab.badge > 0 && (
+              <span className="ml-1 px-2 py-0.5 bg-red-500 text-white rounded-full text-xs font-bold">
+                {tab.badge}
+              </span>
+            )}
+          </button>
+        )
+      })}
     </nav>
   )
 }

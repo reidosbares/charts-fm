@@ -38,11 +38,11 @@ export default function GroupQuickStats({ groupId }: GroupQuickStatsProps) {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mt-6 md:mt-8">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow-sm">
-            <div className="flex items-center justify-center py-4">
-              <FontAwesomeIcon icon={faSpinner} className="animate-spin text-2xl text-[var(--theme-primary)]" />
+          <div key={i} className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-gray-200 shadow-sm">
+            <div className="flex items-center justify-center py-3 md:py-4">
+              <FontAwesomeIcon icon={faSpinner} className="animate-spin text-xl md:text-2xl text-[var(--theme-primary)]" />
             </div>
           </div>
         ))}
@@ -57,25 +57,25 @@ export default function GroupQuickStats({ groupId }: GroupQuickStatsProps) {
   const { totalPlaysThisWeek, weeksTracked, chartMode, obsessionArtist } = data
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-        <div className="text-sm text-gray-600 mb-1">{isRainbowTheme ? t('mother') : t('obsession')}</div>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mt-6 md:mt-8">
+      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm">
+        <div className="text-xs md:text-sm text-gray-600 mb-1">{isRainbowTheme ? t('mother') : t('obsession')}</div>
         {obsessionArtist ? (
           <>
-            <div className="text-xl font-bold text-[var(--theme-text)] truncate">{obsessionArtist.name}</div>
-            <div className="text-sm text-gray-500 mt-1">{obsessionArtist.weeks === 1 ? t('weekStreak', { count: obsessionArtist.weeks }) : t('weeksStreak', { count: obsessionArtist.weeks })}</div>
+            <div className="text-lg md:text-xl font-bold text-[var(--theme-text)] truncate">{obsessionArtist.name}</div>
+            <div className="text-xs md:text-sm text-gray-500 mt-1">{obsessionArtist.weeks === 1 ? t('weekStreak', { count: obsessionArtist.weeks }) : t('weeksStreak', { count: obsessionArtist.weeks })}</div>
           </>
         ) : (
-          <div className="text-lg font-bold text-gray-400">{t('noDataYet')}</div>
+          <div className="text-base md:text-lg font-bold text-gray-400">{t('noDataYet')}</div>
         )}
       </div>
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-        <div className="text-sm text-gray-600 mb-1">{t('weeksTracked')}</div>
-        <div className="text-3xl font-bold text-[var(--theme-text)]">{weeksTracked}</div>
+      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm">
+        <div className="text-xs md:text-sm text-gray-600 mb-1">{t('weeksTracked')}</div>
+        <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">{weeksTracked}</div>
       </div>
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-        <div className="text-sm text-gray-600 mb-1">{t('chartMode')}</div>
-        <div className="text-lg font-bold text-[var(--theme-text)] capitalize">
+      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm">
+        <div className="text-xs md:text-sm text-gray-600 mb-1">{t('chartMode')}</div>
+        <div className="text-base md:text-lg font-bold text-[var(--theme-text)] capitalize">
           {chartMode === 'vs' ? t('vibeScore') : chartMode === 'vs_weighted' ? t('vibeScoreWeighted') : t('playsOnly')}
         </div>
       </div>

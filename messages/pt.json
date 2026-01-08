@@ -264,7 +264,11 @@
       "failedToUpdate": "Falha ao atualizar charts",
       "plays": "{count} plays",
       "vs": "VS",
-      "failedToLoad": "Falha ao carregar charts"
+      "failedToLoad": "Falha ao carregar charts",
+      "public": {
+        "totalPlaysThisWeek": "Total de plays esta semana",
+        "noChartsDescription": "Esta comunidade ainda não gerou nenhum chart."
+      }
     },
     "trends": {
       "title": "Trends",

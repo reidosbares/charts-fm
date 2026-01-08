@@ -77,7 +77,7 @@ export default async function DeepDiveHero({ group, entry, chartType, artistSlug
           href={getLastFmUrl()}
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-red-800 hover:bg-red-900 text-white px-4 py-2 rounded-lg font-bold transition-colors flex items-center gap-2 whitespace-nowrap"
+          className="bg-red-800 hover:bg-red-900 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg font-bold transition-colors flex items-center gap-2 whitespace-nowrap text-sm md:text-base"
         >
           {t('viewInLastfm')}
         </a>

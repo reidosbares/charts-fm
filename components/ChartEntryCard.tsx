@@ -83,7 +83,7 @@ export default function ChartEntryCard({
 
   const content = (
     <div
-      className={`${baseClasses} ${variantClasses} ${className}`}
+      className={`relative ${baseClasses} ${variantClasses} ${className}`}
       onClick={onClick}
     >
       {iconElement}

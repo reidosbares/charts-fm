@@ -121,16 +121,16 @@ function EntryStatsTable({ stats }: EntryStatsTableProps) {
   ], [stats, t])
 
   return (
-    <div className="bg-white/40 backdrop-blur-md rounded-xl p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
-      <h2 className="text-xl font-bold text-gray-900 mb-4">{t('title')}</h2>
+    <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
+      <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-4">{t('title')}</h2>
       <table className="w-full">
         <tbody className="divide-y divide-gray-200/50">
           {tableData.map((row, index) => (
             <tr key={index} className="hover:bg-white/20 transition-colors">
-              <td className="py-3 px-4 text-sm font-medium text-gray-700 w-1/2">
+              <td className="py-2 md:py-3 px-2 md:px-4 text-sm font-medium text-gray-700 w-1/2">
                 {row.label}
               </td>
-              <td className="py-3 px-4 text-sm text-gray-900 font-semibold">
+              <td className="py-2 md:py-3 px-2 md:px-4 text-sm text-gray-900 font-semibold">
                 {row.value}
               </td>
             </tr>

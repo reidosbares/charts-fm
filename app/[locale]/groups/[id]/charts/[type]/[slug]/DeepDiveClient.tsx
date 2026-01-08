@@ -80,11 +80,11 @@ export default function DeepDiveClient({
   }, [groupId, chartType, slug, isArtist])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Entry Name Title - big, bold, centered with theme styling */}
-      <div className="text-center mb-4 py-2 overflow-visible">
+      <div className="text-center mb-3 md:mb-4 py-2 overflow-visible">
         <h1 
-          className="text-5xl sm:text-6xl lg:text-7xl font-bold"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold"
           style={{ 
             lineHeight: '1.2', 
             paddingBottom: '0.2em', 
@@ -98,7 +98,7 @@ export default function DeepDiveClient({
           {entryName}
         </h1>
         {entryArtist && (
-          <p className="text-xl sm:text-2xl text-gray-600 mt-2">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 mt-2">
             {chartType === 'tracks' ? t('track') : chartType === 'albums' ? t('album') : ''} {t('by')}{' '}
             {artistSlug ? (
               <Link
@@ -123,13 +123,13 @@ export default function DeepDiveClient({
 
       {/* Quick Stats - loaded asynchronously */}
       {loading ? (
-        <div className="bg-white/40 backdrop-blur-md rounded-xl p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
+        <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
           <div className="animate-pulse">
-            <div className="h-6 bg-gray-200 rounded w-48 mb-4"></div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="h-16 bg-gray-200 rounded"></div>
-              <div className="h-16 bg-gray-200 rounded"></div>
-              <div className="h-16 bg-gray-200 rounded"></div>
+            <div className="h-5 md:h-6 bg-gray-200 rounded w-32 md:w-48 mb-3 md:mb-4"></div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+              <div className="h-14 md:h-16 bg-gray-200 rounded"></div>
+              <div className="h-14 md:h-16 bg-gray-200 rounded"></div>
+              <div className="h-14 md:h-16 bg-gray-200 rounded"></div>
             </div>
           </div>
         </div>
@@ -147,12 +147,12 @@ export default function DeepDiveClient({
 
       {/* Stats Table - loaded asynchronously */}
       {loading ? (
-        <div className="bg-white/40 backdrop-blur-md rounded-xl p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
+        <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
           <div className="animate-pulse">
-            <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
-            <div className="space-y-3">
+            <div className="h-5 md:h-6 bg-gray-200 rounded w-24 md:w-32 mb-3 md:mb-4"></div>
+            <div className="space-y-2 md:space-y-3">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="h-12 bg-gray-200 rounded"></div>
+                <div key={i} className="h-10 md:h-12 bg-gray-200 rounded"></div>
               ))}
             </div>
           </div>
@@ -164,13 +164,13 @@ export default function DeepDiveClient({
       {/* Artist Entries Table - only for artists, loaded asynchronously */}
       {isArtist && (
         loading ? (
-          <div className="bg-white/40 backdrop-blur-md rounded-xl p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
+          <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
             <div className="animate-pulse">
-              <div className="h-6 bg-gray-200 rounded w-48 mb-4"></div>
-              <div className="h-10 bg-gray-200 rounded mb-4"></div>
-              <div className="space-y-3">
+              <div className="h-5 md:h-6 bg-gray-200 rounded w-32 md:w-48 mb-3 md:mb-4"></div>
+              <div className="h-8 md:h-10 bg-gray-200 rounded mb-3 md:mb-4"></div>
+              <div className="space-y-2 md:space-y-3">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-12 bg-gray-200 rounded"></div>
+                  <div key={i} className="h-10 md:h-12 bg-gray-200 rounded"></div>
                 ))}
               </div>
             </div>

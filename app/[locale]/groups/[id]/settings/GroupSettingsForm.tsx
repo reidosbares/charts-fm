@@ -107,32 +107,32 @@ export default function GroupSettingsForm({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-8">
+    <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
       {success && (
-        <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-green-100 border border-green-400 text-green-700 rounded text-sm md:text-base">
           {t('settingsUpdated')}
         </div>
       )}
 
       {error && (
-        <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-red-100 border border-red-400 text-red-700 rounded text-sm md:text-base">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
         <div>
-          <label htmlFor="chartSize" className="block text-lg font-bold text-gray-900 mb-2">
+          <label htmlFor="chartSize" className="block text-base md:text-lg font-bold text-gray-900 mb-2">
             {t('chartSize')}
           </label>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
             {t('chartSizeDescription')}
           </p>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-2 md:gap-4">
             {CHART_SIZES.map((size) => (
               <label
                 key={size}
-                className={`flex items-center px-4 py-2 border-2 rounded-lg cursor-pointer transition-colors ${
+                className={`flex items-center px-3 md:px-4 py-2 text-sm md:text-base border-2 rounded-lg cursor-pointer transition-colors ${
                   chartSize === size
                     ? 'border-yellow-500 bg-yellow-50'
                     : 'border-gray-300 hover:border-gray-400'
@@ -153,16 +153,16 @@ export default function GroupSettingsForm({
         </div>
 
         <div>
-          <label htmlFor="chartMode" className="block text-lg font-bold text-gray-900 mb-2">
+          <label htmlFor="chartMode" className="block text-base md:text-lg font-bold text-gray-900 mb-2">
             {t('chartMode')}
           </label>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
             {t('chartModeDescription')}
           </p>
           
           {/* Carousel Selector */}
           <div className="relative">
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center justify-center gap-2 md:gap-4">
               {/* Previous Button */}
               <button
                 type="button"
@@ -171,20 +171,20 @@ export default function GroupSettingsForm({
                   setCarouselIndex(newIndex)
                   setChartMode(CHART_MODES[newIndex].value)
                 }}
-                className="p-2 rounded-full hover:bg-yellow-100 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                className="p-2 md:p-2 rounded-full hover:bg-yellow-100 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 min-w-[44px] min-h-[44px] flex items-center justify-center"
                 aria-label={t('previousMode')}
               >
-                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 md:w-6 md:h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
 
               {/* Carousel Card */}
-              <div className="flex-1 max-w-md">
-                <div className="relative bg-white border-2 border-yellow-500 rounded-2xl p-6 shadow-lg h-[420px] flex flex-col">
+              <div className="flex-1 max-w-md w-full">
+                <div className="relative bg-white border-2 border-yellow-500 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-lg min-h-[380px] md:min-h-[400px] lg:min-h-[420px] flex flex-col">
                   <div className="flex flex-col items-center flex-1">
                     {/* Icon */}
-                    <div className="mb-4 w-48 h-48 flex items-center justify-center bg-white rounded-xl p-2 flex-shrink-0">
+                    <div className="mb-3 md:mb-4 w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 flex items-center justify-center bg-white rounded-xl p-2 flex-shrink-0">
                       <img
                         src={CHART_MODES[carouselIndex].icon}
                         alt={CHART_MODES[carouselIndex].label}
@@ -193,12 +193,12 @@ export default function GroupSettingsForm({
                     </div>
                     
                     {/* Title (outside bubble) */}
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2 flex-shrink-0">
+                    <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2 flex-shrink-0 text-center w-full px-2">
                       {CHART_MODES[carouselIndex].label}
                     </h3>
                     
                     {/* Description */}
-                    <p className="text-sm text-gray-600 text-center flex-1 flex items-center">
+                    <p className="text-xs md:text-sm text-gray-600 text-left break-words w-full px-2 md:px-3">
                       {CHART_MODES[carouselIndex].description}
                     </p>
                   </div>
@@ -213,17 +213,17 @@ export default function GroupSettingsForm({
                   setCarouselIndex(newIndex)
                   setChartMode(CHART_MODES[newIndex].value)
                 }}
-                className="p-2 rounded-full hover:bg-yellow-100 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                className="p-2 md:p-2 rounded-full hover:bg-yellow-100 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 min-w-[44px] min-h-[44px] flex items-center justify-center"
                 aria-label={t('nextMode')}
               >
-                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 md:w-6 md:h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </button>
             </div>
 
             {/* Dots Indicator */}
-            <div className="flex justify-center gap-2 mt-4">
+            <div className="flex justify-center gap-2 mt-3 md:mt-4">
               {CHART_MODES.map((mode, index) => (
                 <button
                   key={mode.value}
@@ -232,10 +232,10 @@ export default function GroupSettingsForm({
                     setCarouselIndex(index)
                     setChartMode(mode.value)
                   }}
-                  className={`w-2 h-2 rounded-full transition-all ${
+                  className={`h-2 rounded-full transition-all min-w-[8px] min-h-[8px] ${
                     carouselIndex === index
                       ? 'bg-yellow-500 w-8'
-                      : 'bg-gray-300 hover:bg-gray-400'
+                      : 'bg-gray-300 hover:bg-gray-400 w-2'
                   }`}
                   aria-label={t('selectMode', { mode: mode.label })}
                 />
@@ -255,10 +255,10 @@ export default function GroupSettingsForm({
         </div>
 
         <div>
-          <label htmlFor="trackingDayOfWeek" className="block text-lg font-bold text-gray-900 mb-2">
+          <label htmlFor="trackingDayOfWeek" className="block text-base md:text-lg font-bold text-gray-900 mb-2">
             {t('trackingDayOfWeek')}
           </label>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
             {t('trackingDayOfWeekDescription')}
           </p>
           <CustomSelect
@@ -269,18 +269,18 @@ export default function GroupSettingsForm({
           />
         </div>
 
-        <div className="flex gap-4 pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-3 md:pt-4">
           <button
             type="submit"
             disabled={isLoading || !hasChanges}
-            className="flex-1 py-3 px-6 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 py-2.5 md:py-3 px-4 md:px-6 text-sm md:text-base bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? t('saving') : t('saveSettings')}
           </button>
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+            className="px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
           >
             {t('cancel')}
           </button>
