@@ -1,6 +1,7 @@
 import SessionProvider from "@/components/SessionProvider";
 import { NavigationProvider } from "@/contexts/NavigationContext";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -41,8 +42,13 @@ export default async function LocaleLayout({
       <NextIntlClientProvider messages={messages} locale={locale}>
         <SessionProvider>
           <NavigationProvider>
-            <Navbar />
-            {children}
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <div className="flex-grow">
+                {children}
+              </div>
+              <Footer />
+            </div>
           </NavigationProvider>
         </SessionProvider>
       </NextIntlClientProvider>

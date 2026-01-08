@@ -1163,6 +1163,14 @@
         "footer": "{year} ChartsFM. No rights reserved."
       }
     }
+  },
+  "footer": {
+    "faq": "FAQ",
+    "copyright": "© {year} ChartsFM. All rights reserved."
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "tableOfContents": "Table of Contents"
   }
 }
 

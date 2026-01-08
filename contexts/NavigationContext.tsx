@@ -73,13 +73,18 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
           return
         }
         
+        // Don't trigger loading for hash-only links (marked with data-hash-only attribute)
+        if (link.getAttribute('data-hash-only') === 'true') {
+          return
+        }
+        
         // Check if it's an internal link (same origin)
         try {
           const url = new URL(link.href)
           const currentUrl = new URL(window.location.href)
           
           // Only trigger for internal navigation
-          if (url.origin === currentUrl.origin && !link.href.startsWith('#')) {
+          if (url.origin === currentUrl.origin) {
             setIsLoading(true)
           }
         } catch {

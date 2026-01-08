@@ -1163,6 +1163,14 @@
         "footer": "{year} ChartsFM. Nenhum direito reservado."
       }
     }
+  },
+  "footer": {
+    "faq": "Perguntas Frequentes",
+    "copyright": "{year} ChartsFM"
+  },
+  "faq": {
+    "title": "Perguntas Frequentes",
+    "tableOfContents": "Índice"
   }
 }
 
