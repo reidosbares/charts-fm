@@ -91,10 +91,10 @@ export default async function PublicGroupHeroServer({ groupId, colorTheme }: Pub
   const imageCaption = group.dynamicIconCaption || null
 
   return (
-    <div className={`mb-8 relative ${themeClass}`}>
-      <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm p-8 border border-theme">
+    <div className={`mb-6 md:mb-8 relative ${themeClass}`}>
+      <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm p-4 md:p-6 lg:p-8 border border-theme">
         {/* Breadcrumb Navigation */}
-        <nav className="mb-6 flex items-center gap-2 text-sm">
+        <nav className="mb-4 md:mb-6 flex items-center gap-2 text-xs md:text-sm">
           <Link 
             href="/groups" 
             className="text-gray-500 hover:text-[var(--theme-text)] transition-colors"
@@ -106,16 +106,16 @@ export default async function PublicGroupHeroServer({ groupId, colorTheme }: Pub
         </nav>
 
         {hasPendingInvite && pendingInviteId && (
-          <div className="mb-6">
+          <div className="mb-4 md:mb-6">
             <InviteNotification groupId={group.id} inviteId={pendingInviteId} />
           </div>
         )}
 
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-          <div className="flex items-start gap-6">
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6">
+          <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-6">
             {/* Large Group Icon */}
             <div className="relative flex-shrink-0">
-              <div className="w-40 h-40 rounded-2xl overflow-hidden shadow-sm ring-4 ring-theme bg-[var(--theme-primary-lighter)]">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-xl md:rounded-2xl overflow-hidden shadow-sm ring-2 md:ring-4 ring-theme bg-[var(--theme-primary-lighter)]">
                 <SafeImage
                   src={group.image}
                   alt={group.name}
@@ -130,32 +130,32 @@ export default async function PublicGroupHeroServer({ groupId, colorTheme }: Pub
             </div>
             
             {/* Group Info */}
-            <div className="flex-1">
-              <h1 className="text-5xl font-bold mb-3 text-[var(--theme-primary-dark)] leading-[1.1] pb-2 overflow-visible">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3 text-[var(--theme-primary-dark)] leading-[1.1] pb-2 overflow-visible">
                 {group.name}
               </h1>
-              <div className="flex flex-wrap items-center gap-4 mb-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">{t('owner')}</span>
-                  <span className="font-semibold text-gray-900">{group.creator?.name || group.creator?.lastfmUsername || t('deletedUser')}</span>
+              <div className="flex flex-wrap items-center gap-2 md:gap-4 mb-3 md:mb-4">
+                <div className="flex items-center gap-1.5 md:gap-2">
+                  <span className="text-xs md:text-sm text-gray-600">{t('owner')}</span>
+                  <span className="font-semibold text-xs md:text-sm text-gray-900 truncate max-w-[120px] md:max-w-none">{group.creator?.name || group.creator?.lastfmUsername || t('deletedUser')}</span>
                 </div>
-                <span className="text-gray-300">•</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">{t('members')}</span>
-                  <span className="font-semibold text-gray-900">{group._count.members}</span>
+                <span className="text-gray-300 hidden sm:inline">•</span>
+                <div className="flex items-center gap-1.5 md:gap-2">
+                  <span className="text-xs md:text-sm text-gray-600">{t('members')}</span>
+                  <span className="font-semibold text-xs md:text-sm text-gray-900">{group._count.members}</span>
                 </div>
-                <span className="text-gray-300">•</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">{t('tracking')}</span>
-                  <span className="font-semibold text-gray-900">{trackingDayName}</span>
+                <span className="text-gray-300 hidden sm:inline">•</span>
+                <div className="flex items-center gap-1.5 md:gap-2">
+                  <span className="text-xs md:text-sm text-gray-600">{t('tracking')}</span>
+                  <span className="font-semibold text-xs md:text-sm text-gray-900">{trackingDayName}</span>
                 </div>
               </div>
               
               {isMember && (
-                <div className="mb-4">
+                <div className="mb-3 md:mb-4">
                   <Link 
                     href={`/groups/${group.id}`} 
-                    className="inline-flex items-center gap-2 text-[var(--theme-primary-dark)] hover:text-[var(--theme-primary-darker)] hover:underline font-medium text-sm transition-colors"
+                    className="inline-flex items-center gap-2 text-[var(--theme-primary-dark)] hover:text-[var(--theme-primary-darker)] hover:underline font-medium text-xs md:text-sm transition-colors"
                   >
                     <span>←</span>
                     <span>{t('public.viewAsMember')}</span>
@@ -166,7 +166,7 @@ export default async function PublicGroupHeroServer({ groupId, colorTheme }: Pub
           </div>
           
           {/* Action Buttons */}
-          <div className="flex flex-wrap gap-2 items-center">
+          <div className="flex flex-wrap gap-2 items-center justify-start sm:justify-end">
             {session?.user?.email && !isMember && (
               <>
                 <CompatibilityScore groupId={group.id} />

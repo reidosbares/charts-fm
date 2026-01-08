@@ -368,7 +368,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                 </div>
               </div>
             )}
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3">
               {topArtists.slice(0, 3).map((artist: any, idx: number) => {
                 const displayValue = formatDisplayValue(artist, 'artists', showVS, vsMapObj, t)
                 const entryKey = getEntryKey(artist, 'artists')
@@ -377,9 +377,9 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                 return (
                   <div
                     key={idx}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
+                    className="flex items-center gap-2 md:gap-3 p-2.5 md:p-3 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
                   >
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                    <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-xs md:text-sm shadow-sm">
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -387,12 +387,12 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                         href={`/groups/${groupId}/charts/artist/${generateSlug(entryKey, 'artists')}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-semibold text-gray-900 truncate flex items-center gap-2 hover:text-[var(--theme-primary)] transition-colors"
+                        className="font-semibold text-xs md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 hover:text-[var(--theme-primary)] transition-colors min-w-0"
                       >
-                        {artist.name}
-                        <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-sm" />
+                        <span className="truncate">{artist.name}</span>
+                        <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs md:text-sm flex-shrink-0" />
                       </Link>
-                      <div className="text-sm text-[var(--theme-text)] font-medium">{displayValue}</div>
+                      <div className="text-xs md:text-sm text-[var(--theme-text)] font-medium truncate">{displayValue}</div>
                     </div>
                   </div>
                 )
@@ -405,17 +405,17 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                       const positionChange = positionChangeMapObj[`artists|${entryKey}`]
                       const entryType = entryTypeMapObj[`artists|${entryKey}`]
                       return (
-                        <li key={idx + 3} className="truncate flex items-center gap-1">
+                        <li key={idx + 3} className="flex items-center gap-1 min-w-0">
                           <Link
                             href={`/groups/${groupId}/charts/artist/${generateSlug(entryKey, 'artists')}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:text-[var(--theme-primary)] transition-colors"
+                            className="hover:text-[var(--theme-primary)] transition-colors truncate"
                           >
                             {artist.name}
                           </Link>{' '}
-                          <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs" />{' '}
-                          <span className="text-[var(--theme-text)]">({formatDisplayValue(artist, 'artists', showVS, vsMapObj, t)})</span>
+                          <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs flex-shrink-0" />{' '}
+                          <span className="text-[var(--theme-text)] flex-shrink-0">({formatDisplayValue(artist, 'artists', showVS, vsMapObj, t)})</span>
                         </li>
                       )
                     })}
@@ -455,7 +455,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                 </div>
               </div>
             )}
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3">
               {topTracks.slice(0, 3).map((track: any, idx: number) => {
                 const displayValue = formatDisplayValue(track, 'tracks', showVS, vsMapObj, t)
                 const entryKey = getEntryKey(track, 'tracks')
@@ -464,9 +464,9 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                 return (
                   <div
                     key={idx}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
+                    className="flex items-center gap-2 md:gap-3 p-2.5 md:p-3 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
                   >
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                    <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-xs md:text-sm shadow-sm">
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -474,13 +474,13 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                         href={`/groups/${groupId}/charts/track/${generateSlug(entryKey, 'tracks')}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-semibold text-gray-900 truncate flex items-center gap-2 hover:text-[var(--theme-primary)] transition-colors"
+                        className="font-semibold text-xs md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 hover:text-[var(--theme-primary)] transition-colors min-w-0"
                       >
-                        {track.name}
-                        <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-sm" />
+                        <span className="truncate">{track.name}</span>
+                        <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs md:text-sm flex-shrink-0" />
                       </Link>
                       <div className="text-xs text-gray-600 truncate">{t('by', { artist: track.artist })}</div>
-                      <div className="text-sm text-[var(--theme-text)] font-medium mt-1">{displayValue}</div>
+                      <div className="text-xs md:text-sm text-[var(--theme-text)] font-medium mt-1 truncate">{displayValue}</div>
                     </div>
                   </div>
                 )
@@ -493,18 +493,20 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                       const positionChange = positionChangeMapObj[`tracks|${entryKey}`]
                       const entryType = entryTypeMapObj[`tracks|${entryKey}`]
                       return (
-                        <li key={idx + 3} className="truncate flex items-center gap-1">
-                          <Link
-                            href={`/groups/${groupId}/charts/track/${generateSlug(entryKey, 'tracks')}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-[var(--theme-primary)] transition-colors"
-                          >
-                            {track.name}
-                          </Link>{' '}
-                          {t('by', { artist: track.artist })}{' '}
-                          <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs" />{' '}
-                          <span className="text-[var(--theme-text)]">({formatDisplayValue(track, 'tracks', showVS, vsMapObj, t)})</span>
+                        <li key={idx + 3} className="flex items-center gap-1 min-w-0">
+                          <span className="truncate">
+                            <Link
+                              href={`/groups/${groupId}/charts/track/${generateSlug(entryKey, 'tracks')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:text-[var(--theme-primary)] transition-colors"
+                            >
+                              {track.name}
+                            </Link>{' '}
+                            {t('by', { artist: track.artist })}
+                          </span>{' '}
+                          <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs flex-shrink-0" />{' '}
+                          <span className="text-[var(--theme-text)] flex-shrink-0">({formatDisplayValue(track, 'tracks', showVS, vsMapObj, t)})</span>
                         </li>
                       )
                     })}
@@ -544,7 +546,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                 </div>
               </div>
             )}
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3">
               {topAlbums.slice(0, 3).map((album: any, idx: number) => {
                 const displayValue = formatDisplayValue(album, 'albums', showVS, vsMapObj, t)
                 const entryKey = getEntryKey(album, 'albums')
@@ -553,9 +555,9 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                 return (
                   <div
                     key={idx}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
+                    className="flex items-center gap-2 md:gap-3 p-2.5 md:p-3 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
                   >
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                    <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-xs md:text-sm shadow-sm">
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -563,13 +565,13 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                         href={`/groups/${groupId}/charts/album/${generateSlug(entryKey, 'albums')}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-semibold text-gray-900 truncate flex items-center gap-2 hover:text-[var(--theme-primary)] transition-colors"
+                        className="font-semibold text-xs md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 hover:text-[var(--theme-primary)] transition-colors min-w-0"
                       >
-                        {album.name}
-                        <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-sm" />
+                        <span className="truncate">{album.name}</span>
+                        <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs md:text-sm flex-shrink-0" />
                       </Link>
                       <div className="text-xs text-gray-600 truncate">{t('by', { artist: album.artist })}</div>
-                      <div className="text-sm text-[var(--theme-text)] font-medium mt-1">{displayValue}</div>
+                      <div className="text-xs md:text-sm text-[var(--theme-text)] font-medium mt-1 truncate">{displayValue}</div>
                     </div>
                   </div>
                 )
@@ -582,18 +584,20 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                       const positionChange = positionChangeMapObj[`albums|${entryKey}`]
                       const entryType = entryTypeMapObj[`albums|${entryKey}`]
                       return (
-                        <li key={idx + 3} className="truncate flex items-center gap-1">
-                          <Link
-                            href={`/groups/${groupId}/charts/album/${generateSlug(entryKey, 'albums')}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-[var(--theme-primary)] transition-colors"
-                          >
-                            {album.name}
-                          </Link>{' '}
-                          {t('by', { artist: album.artist })}{' '}
-                          <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs" />{' '}
-                          <span className="text-[var(--theme-text)]">({formatDisplayValue(album, 'albums', showVS, vsMapObj, t)})</span>
+                        <li key={idx + 3} className="flex items-center gap-1 min-w-0">
+                          <span className="truncate">
+                            <Link
+                              href={`/groups/${groupId}/charts/album/${generateSlug(entryKey, 'albums')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:text-[var(--theme-primary)] transition-colors"
+                            >
+                              {album.name}
+                            </Link>{' '}
+                            {t('by', { artist: album.artist })}
+                          </span>{' '}
+                          <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs flex-shrink-0" />{' '}
+                          <span className="text-[var(--theme-text)] flex-shrink-0">({formatDisplayValue(album, 'albums', showVS, vsMapObj, t)})</span>
                         </li>
                       )
                     })}

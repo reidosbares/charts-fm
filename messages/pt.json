@@ -211,6 +211,9 @@
         "thursday": "Quinta-feira",
         "friday": "Sexta-feira",
         "saturday": "Sábado"
+      },
+      "public": {
+        "viewAsMember": "Visualizar como membro"
       }
     },
     "share": {
@@ -244,10 +247,12 @@
       "chartMode": "Modo de cálculo",
       "vibeScore": "Vibe Score",
       "vibeScoreWeighted": "Vibe Score Ponderado",
-      "playsOnly": "Apenas Plays"
+      "playsOnly": "Apenas Plays",
+      "plays": "plays",
+      "weeks": "semanas"
     },
     "weeklyCharts": {
-      "title": "Charts Semanais",
+      "title": "Charts",
       "exploreCharts": "Ver mais charts",
       "weekOf": "Semana de {date}",
       "fromTo": "de {start} até {end}",
@@ -279,6 +284,7 @@
       "totalPlays": "Total de plays",
       "fromLastWeek": "desde a semana passada",
       "newEntries": "Itens que estrearam",
+      "newEntriesLowercase": "itens que estrearam",
       "thisWeek": "Esta semana",
       "biggestClimber": "Maior subida",
       "none": "Nenhum",
@@ -315,6 +321,7 @@
       "yourImpact": "Seu impacto",
       "yourTotalContribution": "Sua contribuição total",
       "plays": "plays",
+      "entries": "itens",
       "vs": "VS",
       "ofGroup": "do grupo",
       "yourTasteMatch": "Seu match musical",

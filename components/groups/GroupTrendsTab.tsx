@@ -224,7 +224,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
         <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
           <div className="text-xs md:text-sm text-gray-600 mb-1">{t('totalPlays')}</div>
           <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">
-            {trends.totalPlays?.toLocaleString() || 0}
+            {trends.totalPlays?.toLocaleString() || 0} <span className="text-base md:text-lg font-normal">{t('plays')}</span>
           </div>
           {trends.totalPlaysChange !== null && trends.totalPlaysChange !== undefined && (
             <div className={`text-xs md:text-sm mt-1 ${trends.totalPlaysChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -235,20 +235,16 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
         <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
           <div className="text-xs md:text-sm text-gray-600 mb-1">{t('newEntries')}</div>
           <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">
-            {trends.chartTurnover || 0}
+            {trends.chartTurnover || 0} <span className="text-base md:text-lg font-normal">{t('newEntriesLowercase')}</span>
           </div>
           <div className="text-xs md:text-sm text-gray-500 mt-1">{t('thisWeek')}</div>
         </div>
         <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
-          <div className="text-xs md:text-sm text-gray-600 mb-1">{t('biggestClimber')}</div>
-          {biggestClimbers.length > 0 ? (
-            <div className="text-base md:text-lg font-bold text-[var(--theme-text)] truncate">
-              {biggestClimbers[0].name}
-              {biggestClimbers[0].artist && ` by ${biggestClimbers[0].artist}`}
-            </div>
-          ) : (
-            <div className="text-base md:text-lg font-bold text-gray-400">{t('none')}</div>
-          )}
+          <div className="text-xs md:text-sm text-gray-600 mb-1">{t('exits')}</div>
+          <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">
+            {(trends.exits as any[])?.length || 0} <span className="text-base md:text-lg font-normal">{t('entries')}</span>
+          </div>
+          <div className="text-xs md:text-sm text-gray-500 mt-1">{t('droppedOut')}</div>
         </div>
       </div>
 

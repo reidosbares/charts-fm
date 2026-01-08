@@ -181,15 +181,20 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
           
           {/* Details Popup */}
           <div 
-            className="fixed z-[9999] bg-white rounded-lg shadow-lg border border-gray-200 p-4 min-w-[280px]"
+            className="fixed z-[9999] bg-white rounded-lg shadow-lg border border-gray-200 p-3 md:p-4 min-w-[280px] max-w-[calc(100vw-2rem)] mx-4 md:mx-0"
             style={{
               top: `${popupPosition.top}px`,
-              left: `${popupPosition.left}px`,
+              left: typeof window !== 'undefined' && window.innerWidth < 768 
+                ? '1rem' 
+                : `${popupPosition.left}px`,
+              right: typeof window !== 'undefined' && window.innerWidth < 768 
+                ? '1rem' 
+                : 'auto',
             }}
           >
-            <h4 className="font-semibold text-gray-900 mb-3">{t('compatibilityBreakdown')}</h4>
+            <h4 className="font-semibold text-sm md:text-base text-gray-900 mb-3">{t('compatibilityBreakdown')}</h4>
             
-            <div className="space-y-2 text-sm">
+            <div className="space-y-2 text-xs md:text-sm">
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">{t('artistOverlap')}</span>
                 <span className="font-semibold text-gray-900">
@@ -218,8 +223,8 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
 
             <div className="mt-4 pt-3 border-t border-gray-200">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-gray-900">{t('overallMatch')}</span>
-                <span className={`font-bold text-lg ${scoreColor}`}>
+                <span className="font-semibold text-sm md:text-base text-gray-900">{t('overallMatch')}</span>
+                <span className={`font-bold text-base md:text-lg ${scoreColor}`}>
                   {Math.round(score.score)}%
                 </span>
               </div>

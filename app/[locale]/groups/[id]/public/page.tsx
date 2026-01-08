@@ -25,10 +25,10 @@ export default async function PublicGroupPage({ params }: { params: { id: string
   
   if (!group) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center p-24">
+      <main className="flex min-h-screen flex-col items-center justify-center px-4 md:px-6 lg:px-12 xl:px-24 py-8 md:py-16 lg:py-24">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t('notFound')}</h1>
-          <p className="text-gray-600 mb-4">
+          <h1 className="text-xl md:text-2xl font-bold mb-4">{t('notFound')}</h1>
+          <p className="text-sm md:text-base text-gray-600 mb-4">
             {t('public.notFoundDescription')}
           </p>
         </div>
@@ -47,7 +47,7 @@ export default async function PublicGroupPage({ params }: { params: { id: string
 
   return (
     <main 
-      className={`flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}
+      className={`flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}
     >
       <div className="max-w-6xl w-full mx-auto">
         {/* Hero Section - loaded server-side for immediate display */}

@@ -211,6 +211,9 @@
         "thursday": "Thursday",
         "friday": "Friday",
         "saturday": "Saturday"
+      },
+      "public": {
+        "viewAsMember": "View as Member"
       }
     },
     "share": {
@@ -229,7 +232,7 @@
     },
     "tabs": {
       "trends": "Trends",
-      "weeklyCharts": "Weekly Charts",
+      "weeklyCharts": "Charts",
       "allTimeStats": "All-Time Stats",
       "members": "Members",
       "search": "Search"
@@ -244,7 +247,9 @@
       "chartMode": "Chart Mode",
       "vibeScore": "Vibe Score",
       "vibeScoreWeighted": "Vibe Score Weighted",
-      "playsOnly": "Plays Only"
+      "playsOnly": "Plays Only",
+      "plays": "plays",
+      "weeks": "weeks"
     },
     "weeklyCharts": {
       "title": "Weekly Charts",
@@ -279,6 +284,7 @@
       "totalPlays": "Total Plays",
       "fromLastWeek": "from last week",
       "newEntries": "New Entries",
+      "newEntriesLowercase": "new entries",
       "thisWeek": "This week",
       "biggestClimber": "Biggest Climber",
       "none": "None",
@@ -315,6 +321,7 @@
       "yourImpact": "Your Impact",
       "yourTotalContribution": "Your Total Contribution",
       "plays": "plays",
+      "entries": "entries",
       "vs": "VS",
       "ofGroup": "of group",
       "yourTasteMatch": "Your Taste Match",

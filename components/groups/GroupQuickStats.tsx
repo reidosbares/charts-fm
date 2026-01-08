@@ -71,7 +71,9 @@ export default function GroupQuickStats({ groupId }: GroupQuickStatsProps) {
       </div>
       <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm">
         <div className="text-xs md:text-sm text-gray-600 mb-1">{t('weeksTracked')}</div>
-        <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">{weeksTracked}</div>
+        <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">
+          {weeksTracked} <span className="text-base md:text-lg font-normal">{t('weeks')}</span>
+        </div>
       </div>
       <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm">
         <div className="text-xs md:text-sm text-gray-600 mb-1">{t('chartMode')}</div>
