@@ -22,8 +22,8 @@ export async function GET(
         select: { locale: true },
       })
       
-      if (user?.locale && routing.locales.includes(user.locale)) {
-        locale = user.locale
+      if (user?.locale && routing.locales.includes(user.locale as typeof routing.locales[number])) {
+        locale = user.locale as typeof routing.locales[number]
       }
     }
   } catch (error) {

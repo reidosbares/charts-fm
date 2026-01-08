@@ -98,7 +98,7 @@ export async function PATCH(request: Request) {
         { status: 400 }
       )
     }
-    if (!routing.locales.includes(locale)) {
+    if (!routing.locales.includes(locale as typeof routing.locales[number])) {
       return NextResponse.json(
         { error: `Locale must be one of: ${routing.locales.join(', ')}` },
         { status: 400 }

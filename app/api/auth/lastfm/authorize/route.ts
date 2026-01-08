@@ -24,8 +24,8 @@ export async function GET(request: Request) {
     try {
       const refererUrl = new URL(referer)
       const pathParts = refererUrl.pathname.split('/').filter(Boolean)
-      if (pathParts.length > 0 && routing.locales.includes(pathParts[0])) {
-        detectedLocale = pathParts[0]
+      if (pathParts.length > 0 && routing.locales.includes(pathParts[0] as typeof routing.locales[number])) {
+        detectedLocale = pathParts[0] as typeof routing.locales[number]
       }
     } catch (error) {
       // Invalid referer URL, use default

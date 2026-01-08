@@ -1,7 +1,7 @@
 import { requireGroupMembership } from '@/lib/group-auth'
 import { prisma } from '@/lib/prisma'
 import { getEntryChartHistory } from '@/lib/chart-deep-dive'
-import { notFound } from '@/i18n/routing'
+import { notFound } from 'next/navigation'
 import DeepDiveClient from '../../[type]/[slug]/DeepDiveClient'
 import DeepDiveHero from '@/components/charts/DeepDiveHero'
 import type { Metadata } from 'next'
@@ -45,7 +45,7 @@ export default async function AlbumDeepDivePage({
   // Find entry by slug, or fallback to entryKey if slug matches (for backward compatibility)
   let entry = await prisma.groupChartEntry.findFirst({
     where: {
-      groupId: group.id,
+      groupId: group!.id,
       chartType: 'albums',
       slug: params.slug,
     },
@@ -61,7 +61,7 @@ export default async function AlbumDeepDivePage({
     // Try to find entries where the slug would match the entryKey
     const allEntries = await prisma.groupChartEntry.findMany({
       where: {
-        groupId: group.id,
+        groupId: group!.id,
         chartType: 'albums',
       },
       orderBy: {
@@ -84,20 +84,20 @@ export default async function AlbumDeepDivePage({
   }
 
   // Get color theme
-  const colorTheme = (group.colorTheme || 'white') as string
+  const colorTheme = (group!.colorTheme || 'white') as string
   const themeClass = `theme-${colorTheme.replace('_', '-')}`
 
   // Get chart history (initial load)
-  const history = await getEntryChartHistory(group.id, 'albums', entry.entryKey)
+  const history = await getEntryChartHistory(group!.id, 'albums', entry!.entryKey)
 
   // Find artist entry to get slug for link
   let artistSlug: string | null = null
-  if (entry.artist) {
+  if (entry!.artist) {
     const artistEntry = await prisma.groupChartEntry.findFirst({
       where: {
-        groupId: group.id,
+        groupId: group!.id,
         chartType: 'artists',
-        entryKey: entry.artist.toLowerCase().trim(),
+        entryKey: entry!.artist.toLowerCase().trim(),
       },
       orderBy: {
         weekStart: 'desc',
@@ -117,28 +117,28 @@ export default async function AlbumDeepDivePage({
       <div className="max-w-7xl w-full mx-auto">
         <DeepDiveHero
           group={{
-            id: group.id,
-            name: group.name,
-            image: group.image,
+            id: group!.id,
+            name: group!.name,
+            image: group!.image,
           }}
           entry={{
-            name: entry.name,
-            artist: entry.artist,
+            name: entry!.name,
+            artist: entry!.artist,
           }}
           chartType="albums"
           artistSlug={artistSlug}
         />
 
         <DeepDiveClient
-          groupId={group.id}
+          groupId={group!.id}
           chartType="albums"
-          entryKey={entry.entryKey}
-          slug={entry.slug || params.slug}
-          entryName={entry.name}
-          entryArtist={entry.artist}
+          entryKey={entry!.entryKey}
+          slug={entry!.slug || params.slug}
+          entryName={entry!.name}
+          entryArtist={entry!.artist}
           artistSlug={artistSlug}
           initialHistory={history}
-          chartMode={group.chartMode || 'vs'}
+          chartMode={group!.chartMode || 'vs'}
           isArtist={false}
         />
       </div>

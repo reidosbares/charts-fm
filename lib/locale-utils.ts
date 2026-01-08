@@ -20,7 +20,7 @@ export async function detectLocale(request: Request): Promise<string> {
     const { cookies } = await import('next/headers')
     const cookieStore = await cookies()
     const localeCookie = cookieStore.get('lastfm_auth_locale')
-    if (localeCookie?.value && routing.locales.includes(localeCookie.value)) {
+    if (localeCookie?.value && routing.locales.includes(localeCookie.value as typeof routing.locales[number])) {
       return localeCookie.value
     }
   } catch (error) {
@@ -36,7 +36,7 @@ export async function detectLocale(request: Request): Promise<string> {
         select: { locale: true },
       })
       
-      if (user?.locale && routing.locales.includes(user.locale)) {
+      if (user?.locale && routing.locales.includes(user.locale as typeof routing.locales[number])) {
         return user.locale
       }
     }
@@ -51,7 +51,7 @@ export async function detectLocale(request: Request): Promise<string> {
     try {
       const refererUrl = new URL(referer)
       const pathParts = refererUrl.pathname.split('/').filter(Boolean)
-      if (pathParts.length > 0 && routing.locales.includes(pathParts[0])) {
+      if (pathParts.length > 0 && routing.locales.includes(pathParts[0] as typeof routing.locales[number])) {
         return pathParts[0]
       }
     } catch (error) {
@@ -72,7 +72,7 @@ export async function detectLocale(request: Request): Promise<string> {
     
     // Find first matching locale
     for (const lang of languages) {
-      if (routing.locales.includes(lang)) {
+      if (routing.locales.includes(lang as typeof routing.locales[number])) {
         return lang
       }
     }

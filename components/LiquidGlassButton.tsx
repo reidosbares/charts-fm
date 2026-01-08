@@ -113,7 +113,7 @@ LiquidGlassButton.displayName = 'LiquidGlassButton'
 export default LiquidGlassButton
 
 // Link version for navigation
-interface LiquidGlassLinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> {
+interface LiquidGlassLinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href' | 'popover'> {
   href: string
   variant?: 'primary' | 'secondary' | 'danger' | 'neutral'
   size?: 'sm' | 'md' | 'lg'

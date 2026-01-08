@@ -31,7 +31,7 @@ async function getUserLocale(email: string): Promise<string> {
       select: { locale: true },
     })
     
-    if (user?.locale && routing.locales.includes(user.locale)) {
+    if (user?.locale && routing.locales.includes(user.locale as typeof routing.locales[number])) {
       return user.locale
     }
   } catch (error) {

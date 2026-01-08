@@ -321,7 +321,7 @@ export async function calculateMemberContributions(
   })
 
   if (members.length < 3) {
-    return { topContributors: [], memberSpotlight: null }
+    return { topContributors: [], memberSpotlight: null, mostDiverseSpotlight: null }
   }
 
   // Get current week's chart entries

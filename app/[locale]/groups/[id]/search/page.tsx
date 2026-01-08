@@ -1,5 +1,5 @@
 import { requireGroupMembership } from '@/lib/group-auth'
-import { notFound } from '@/i18n/routing'
+import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import SearchResultsClient from './SearchResultsClient'
 import GroupPageHero from '@/components/groups/GroupPageHero'
@@ -122,11 +122,11 @@ export default async function SearchPage({
   }
 
   const searchTerm = searchParams.q || ''
-  const colorTheme = (group.colorTheme || 'yellow') as string
+  const colorTheme = (group!.colorTheme || 'yellow') as string
   const themeClass = `theme-${colorTheme.replace('_', '-')}`
 
   // Get initial results if search term is provided
-  const initialResults = await searchChartEntries(group.id, searchTerm)
+  const initialResults = await searchChartEntries(group!.id, searchTerm)
 
   return (
     <main 
@@ -135,20 +135,20 @@ export default async function SearchPage({
       <div className="max-w-6xl w-full mx-auto">
         <GroupPageHero
           group={{
-            id: group.id,
-            name: group.name,
-            image: group.image,
+            id: group!.id,
+            name: group!.name,
+            image: group!.image,
           }}
           breadcrumbs={[
             { label: 'Groups', href: '/groups' },
-            { label: group.name, href: `/groups/${group.id}` },
+            { label: group!.name, href: `/groups/${group!.id}` },
             { label: 'Search' },
           ]}
           subheader="Search Chart Entries"
         />
 
         <SearchResultsClient
-          groupId={group.id}
+          groupId={group!.id}
           initialSearchTerm={searchTerm}
           initialResults={initialResults}
         />
