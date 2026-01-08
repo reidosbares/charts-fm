@@ -220,8 +220,6 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
                     <div className="flex-1 min-w-0">
                       <Link
                         href={`/groups/${groupId}/charts/artist/${generateSlug(entryKey, 'artists')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="font-semibold text-gray-900 break-words hover:text-[var(--theme-primary)] transition-colors"
                       >
                         {artist.name}
@@ -255,8 +253,6 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
                     <div className="flex-1 min-w-0">
                       <Link
                         href={`/groups/${groupId}/charts/track/${generateSlug(entryKey, 'tracks')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="font-semibold text-gray-900 break-words hover:text-[var(--theme-primary)] transition-colors"
                       >
                         {track.name}
@@ -291,8 +287,6 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
                     <div className="flex-1 min-w-0">
                       <Link
                         href={`/groups/${groupId}/charts/album/${generateSlug(entryKey, 'albums')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="font-semibold text-gray-900 break-words hover:text-[var(--theme-primary)] transition-colors"
                       >
                         {album.name}

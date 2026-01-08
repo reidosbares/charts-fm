@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { faChartBar, faTrophy, faUsers, faFire, faSearch } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
@@ -27,7 +27,44 @@ export default function GroupTabs({
   pendingRequestsCount = 0
 }: GroupTabsProps) {
   const t = useSafeTranslations('groups.tabs')
-  const [activeTab, setActiveTab] = useState<Tab>(defaultTab)
+  
+  // Get tab from hash fragment (e.g., #charts)
+  const getTabFromHash = (): Tab | null => {
+    if (typeof window === 'undefined') return null
+    const hash = window.location.hash.slice(1) // Remove the #
+    const validTabs: Tab[] = ['charts', 'members', 'alltime', 'trends', 'search']
+    return validTabs.includes(hash as Tab) ? (hash as Tab) : null
+  }
+  
+  // Validate tab from URL, default to defaultTab if invalid
+  const validTabs: Tab[] = ['charts', 'members', 'alltime', 'trends', 'search']
+  const initialTab = getTabFromHash() || defaultTab
+  
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab)
+  
+  // Update active tab when hash changes (e.g., back button)
+  useEffect(() => {
+    const handleHashChange = () => {
+      const tabFromHash = getTabFromHash()
+      if (tabFromHash && tabFromHash !== activeTab) {
+        setActiveTab(tabFromHash)
+      } else if (!tabFromHash && activeTab !== defaultTab) {
+        // If hash is cleared, restore default tab
+        setActiveTab(defaultTab)
+      }
+    }
+    
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [activeTab, defaultTab])
+  
+  // Update hash when tab changes (no page refresh, preserves scroll position)
+  const handleTabChange = (tabId: string) => {
+    const tab = tabId as Tab
+    setActiveTab(tab)
+    // Update hash without causing page refresh or scroll
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${tab}`)
+  }
 
   const tabs: TabItem[] = useMemo(() => [
     { id: 'trends', label: t('trends'), icon: faFire },
@@ -44,7 +81,7 @@ export default function GroupTabs({
         <LiquidGlassTabs
           tabs={tabs}
           activeTab={activeTab}
-          onTabChange={(tabId) => setActiveTab(tabId as Tab)}
+          onTabChange={handleTabChange}
         />
       </div>
 

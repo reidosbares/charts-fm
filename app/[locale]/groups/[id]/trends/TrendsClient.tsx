@@ -166,10 +166,45 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
   const t = useSafeTranslations('groups.trends')
   const [personalizedStats, setPersonalizedStats] = useState<any>(null)
   const [isLoadingPersonal, setIsLoadingPersonal] = useState(true)
-  const [activeTab, setActiveTab] = useState<CategoryTab>('members')
+  
+  // Get tab from hash fragment (e.g., #artists)
+  const getTabFromHash = (): CategoryTab | null => {
+    if (typeof window === 'undefined') return null
+    const hash = window.location.hash.slice(1) // Remove the #
+    const validTabs: CategoryTab[] = ['members', 'artists', 'tracks', 'albums']
+    return validTabs.includes(hash as CategoryTab) ? (hash as CategoryTab) : null
+  }
+  
+  const defaultTab: CategoryTab = 'members'
+  const initialTab = getTabFromHash() || defaultTab
+  const [activeTab, setActiveTab] = useState<CategoryTab>(initialTab)
   const [longestStreaks, setLongestStreaks] = useState<any[]>([])
   const [comebacks, setComebacks] = useState<any[]>([])
   const [mostDiverseSpotlight, setMostDiverseSpotlight] = useState<any>(null)
+  
+  // Update active tab when hash changes (e.g., back button)
+  useEffect(() => {
+    const handleHashChange = () => {
+      const tabFromHash = getTabFromHash()
+      if (tabFromHash && tabFromHash !== activeTab) {
+        setActiveTab(tabFromHash)
+      } else if (!tabFromHash && activeTab !== defaultTab) {
+        // If hash is cleared, restore default tab
+        setActiveTab(defaultTab)
+      }
+    }
+    
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [activeTab])
+  
+  // Update hash when tab changes (no page refresh, preserves scroll position)
+  const handleTabChange = (tabId: string) => {
+    const tab = tabId as CategoryTab
+    setActiveTab(tab)
+    // Update hash without causing page refresh or scroll
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${tab}`)
+  }
 
   useEffect(() => {
     // Fetch personalized stats, longest streaks, comebacks, and most diverse spotlight asynchronously
@@ -284,8 +319,6 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
           <div className="flex-1 min-w-0">
             <Link
               href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-              target="_blank"
-              rel="noopener noreferrer"
               className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
             >
               {entry.name}
@@ -317,8 +350,6 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
           <div className="flex-1 min-w-0">
             <Link
               href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-              target="_blank"
-              rel="noopener noreferrer"
               className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
             >
               {entry.name}
@@ -363,8 +394,6 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
             <div className="flex-1 min-w-0">
               <Link
                 href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-                target="_blank"
-                rel="noopener noreferrer"
                 className={`font-semibold truncate block text-sm md:text-base ${isNumberOne ? 'text-yellow-900 hover:text-yellow-700' : 'text-gray-900 hover:text-[var(--theme-primary)]'} transition-colors`}
               >
                 {entry.name}
@@ -408,8 +437,6 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
             <div className="flex-1 min-w-0">
               <Link
                 href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-                target="_blank"
-                rel="noopener noreferrer"
                 className={`font-semibold truncate block text-sm md:text-base ${isPeakPosition ? 'text-blue-900 hover:text-blue-700' : 'text-gray-900 hover:text-[var(--theme-primary)]'} transition-colors`}
               >
                 {entry.name}
@@ -444,8 +471,6 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
           <div className="flex-1 min-w-0">
             <Link
               href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-              target="_blank"
-              rel="noopener noreferrer"
               className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
             >
               {entry.name}
@@ -479,8 +504,6 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
           <div className="flex-1 min-w-0">
             <Link
               href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-              target="_blank"
-              rel="noopener noreferrer"
               className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
             >
               {entry.name}
@@ -536,8 +559,6 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                             <div className="flex-1 min-w-0">
                               <Link
                                 href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
                                 className="text-xs font-medium text-gray-800 truncate hover:text-[var(--theme-primary)] transition-colors block"
                               >
                                 {entry.name}
@@ -777,8 +798,6 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                         <div className="flex-1 min-w-0">
                           <Link
                             href={`/groups/${groupId}/charts/${getChartTypePath(contribution.chartType)}/${generateSlug(contribution.entryKey, contribution.chartType as ChartType)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
                             className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
                           >
                             {contribution.name}
@@ -821,8 +840,6 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                         <div className="flex-1 min-w-0">
                           <Link
                             href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
                             className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
                           >
                             {entry.name}
@@ -865,8 +882,6 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                             <div className="flex-1 min-w-0">
                               <Link
                                 href={`/groups/${groupId}/charts/${getChartTypePath(mover.chartType)}/${generateSlug(mover.entryKey, mover.chartType as ChartType)}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
                                 className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
                               >
                                 {mover.name}
@@ -984,7 +999,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
           <LiquidGlassTabs
             tabs={tabs}
             activeTab={activeTab}
-            onTabChange={(tabId) => setActiveTab(tabId as CategoryTab)}
+            onTabChange={handleTabChange}
           />
         </div>
 

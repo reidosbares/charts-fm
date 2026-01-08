@@ -178,7 +178,7 @@ export default function RecordBlock({ title, record, value, groupId, isUser }: R
           variant="nested"
           userImage={isUser ? record.image : undefined}
           accentColor={colorScheme.accentColor}
-          openInNewTab={!isUser && !!link}
+          openInNewTab={false}
         >
           {isUser && description && (
             <Tooltip content={description} position="top">

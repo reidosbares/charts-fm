@@ -269,8 +269,6 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
               <div className="flex-1 min-w-0">
                 <Link
                   href={`/groups/${groupId}/charts/${biggestClimbers[0].chartType === 'artists' ? 'artist' : biggestClimbers[0].chartType === 'tracks' ? 'track' : 'album'}/${generateSlug(biggestClimbers[0].entryKey, biggestClimbers[0].chartType as ChartType)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className={`text-lg md:text-2xl font-bold mb-1 block truncate ${isPeakPosition ? 'text-blue-900 hover:text-blue-700' : 'text-gray-900 hover:text-[var(--theme-primary)]'} transition-colors`}
                 >
                   {biggestClimbers[0].name}
@@ -322,8 +320,6 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
                   <div className="flex-1 min-w-0">
                     <Link
                       href={`/groups/${groupId}/charts/${entry.chartType === 'artists' ? 'artist' : entry.chartType === 'tracks' ? 'track' : 'album'}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className={`font-semibold truncate block text-sm md:text-base ${isNumberOne ? 'text-yellow-900 hover:text-yellow-700' : 'text-gray-900 hover:text-[var(--theme-primary)]'} transition-colors`}
                     >
                       {entry.name}

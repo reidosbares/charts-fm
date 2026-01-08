@@ -121,7 +121,42 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
   const [isLoading, setIsLoading] = useState(false)
   const [previewData, setPreviewData] = useState<any>(null)
   const [isLoadingPreview, setIsLoadingPreview] = useState(true)
-  const [activeTab, setActiveTab] = useState<'artists' | 'tracks' | 'albums' | 'users'>('users')
+  
+  // Get tab from hash fragment (e.g., #artists)
+  const getTabFromHash = (): 'artists' | 'tracks' | 'albums' | 'users' | null => {
+    if (typeof window === 'undefined') return null
+    const hash = window.location.hash.slice(1) // Remove the #
+    const validTabs: ('artists' | 'tracks' | 'albums' | 'users')[] = ['artists', 'tracks', 'albums', 'users']
+    return validTabs.includes(hash as any) ? (hash as 'artists' | 'tracks' | 'albums' | 'users') : null
+  }
+  
+  const defaultTab: 'artists' | 'tracks' | 'albums' | 'users' = 'users'
+  const initialTab = getTabFromHash() || defaultTab
+  const [activeTab, setActiveTab] = useState<'artists' | 'tracks' | 'albums' | 'users'>(initialTab)
+  
+  // Update active tab when hash changes (e.g., back button)
+  useEffect(() => {
+    const handleHashChange = () => {
+      const tabFromHash = getTabFromHash()
+      if (tabFromHash && tabFromHash !== activeTab) {
+        setActiveTab(tabFromHash)
+      } else if (!tabFromHash && activeTab !== defaultTab) {
+        // If hash is cleared, restore default tab
+        setActiveTab(defaultTab)
+      }
+    }
+    
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [activeTab])
+  
+  // Update hash when tab changes (no page refresh, preserves scroll position)
+  const handleTabChange = (tabId: string) => {
+    const tab = tabId as 'artists' | 'tracks' | 'albums' | 'users'
+    setActiveTab(tab)
+    // Update hash without causing page refresh or scroll
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${tab}`)
+  }
   const [previewImages, setPreviewImages] = useState<{
     artist: string | null
     track: string | null
@@ -707,7 +742,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
           <LiquidGlassTabs
             tabs={tabs}
             activeTab={activeTab}
-            onTabChange={(tabId) => setActiveTab(tabId as typeof activeTab)}
+            onTabChange={handleTabChange}
           />
         </div>
 

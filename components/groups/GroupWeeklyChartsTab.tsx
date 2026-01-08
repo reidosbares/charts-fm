@@ -385,8 +385,6 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                     <div className="flex-1 min-w-0">
                       <Link
                         href={`/groups/${groupId}/charts/artist/${generateSlug(entryKey, 'artists')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="font-semibold text-xs md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 hover:text-[var(--theme-primary)] transition-colors min-w-0"
                       >
                         <span className="truncate">{artist.name}</span>
@@ -408,8 +406,6 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                         <li key={idx + 3} className="flex items-center gap-1 min-w-0">
                           <Link
                             href={`/groups/${groupId}/charts/artist/${generateSlug(entryKey, 'artists')}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
                             className="hover:text-[var(--theme-primary)] transition-colors truncate"
                           >
                             {artist.name}
@@ -472,8 +468,6 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                     <div className="flex-1 min-w-0">
                       <Link
                         href={`/groups/${groupId}/charts/track/${generateSlug(entryKey, 'tracks')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="font-semibold text-xs md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 hover:text-[var(--theme-primary)] transition-colors min-w-0"
                       >
                         <span className="truncate">{track.name}</span>
@@ -497,8 +491,6 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                           <span className="truncate">
                             <Link
                               href={`/groups/${groupId}/charts/track/${generateSlug(entryKey, 'tracks')}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
                               className="hover:text-[var(--theme-primary)] transition-colors"
                             >
                               {track.name}
@@ -563,8 +555,6 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                     <div className="flex-1 min-w-0">
                       <Link
                         href={`/groups/${groupId}/charts/album/${generateSlug(entryKey, 'albums')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="font-semibold text-xs md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 hover:text-[var(--theme-primary)] transition-colors min-w-0"
                       >
                         <span className="truncate">{album.name}</span>
@@ -588,8 +578,6 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
                           <span className="truncate">
                             <Link
                               href={`/groups/${groupId}/charts/album/${generateSlug(entryKey, 'albums')}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
                               className="hover:text-[var(--theme-primary)] transition-colors"
                             >
                               {album.name}
