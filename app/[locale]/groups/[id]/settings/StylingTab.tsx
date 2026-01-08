@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { useRouter } from '@/i18n/routing'
+import { routing } from '@/i18n/routing'
 import { THEME_NAMES, GROUP_THEMES, type ThemeName } from '@/lib/group-themes'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
@@ -65,7 +66,13 @@ export default function StylingTab({
       
       // Force a full page reload to ensure fresh data is fetched
       // This ensures the server component gets the updated colorTheme
-      window.location.href = `/groups/${groupId}`
+      // Extract locale from current pathname to include in redirect
+      const currentPath = window.location.pathname
+      const pathParts = currentPath.split('/').filter(Boolean)
+      const locale = pathParts[0] && routing.locales.includes(pathParts[0] as typeof routing.locales[number]) 
+        ? pathParts[0] 
+        : routing.defaultLocale
+      window.location.href = `/${locale}/groups/${groupId}`
     } catch (err) {
       setError(err instanceof Error ? err.message : t('failedToUpdate'))
       setIsLoading(false)
