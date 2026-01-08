@@ -1165,12 +1165,17 @@
     }
   },
   "footer": {
+    "about": "Sobre",
     "faq": "Perguntas Frequentes",
-    "copyright": "{year} ChartsFM"
+    "copyright": "⊘ {year} ChartsFM. Nenhum direito reservado."
   },
   "faq": {
     "title": "Perguntas Frequentes",
     "tableOfContents": "Índice"
+  },
+  "about": {
+    "title": "Sobre",
+    "viewOnGitHub": "Ver no GitHub"
   }
 }
 

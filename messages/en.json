@@ -1165,12 +1165,17 @@
     }
   },
   "footer": {
+    "about": "About",
     "faq": "FAQ",
-    "copyright": "© {year} ChartsFM. All rights reserved."
+    "copyright": "⊘ {year} ChartsFM. No rights reserved."
   },
   "faq": {
     "title": "Frequently Asked Questions",
     "tableOfContents": "Table of Contents"
+  },
+  "about": {
+    "title": "About",
+    "viewOnGitHub": "View on GitHub"
   }
 }
 
