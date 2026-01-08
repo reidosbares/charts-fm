@@ -301,11 +301,11 @@ function identifyBiggestMovers(
 /**
  * Calculate member contributions for the week
  */
-async function calculateMemberContributions(
+export async function calculateMemberContributions(
   groupId: string,
   weekStart: Date,
   chartMode: string
-): Promise<{ topContributors: MemberContribution[]; memberSpotlight: MemberSpotlight | null }> {
+): Promise<{ topContributors: MemberContribution[]; memberSpotlight: MemberSpotlight | null; mostDiverseSpotlight: MemberSpotlight | null }> {
   // Get all group members
   const members = await prisma.groupMember.findMany({
     where: { groupId },
@@ -388,19 +388,14 @@ async function calculateMemberContributions(
   // Find MVP (top contributor)
   const mvp = memberContributions[0]
   let memberSpotlight: MemberSpotlight | null = null
+  let mostDiverseSpotlight: MemberSpotlight | null = null
 
   if (mvp) {
     // Find most diverse listener (most unique entries)
     const mostDiverse = [...memberContributions].sort((a, b) => b.contributions.length - a.contributions.length)[0]
 
-    // Determine highlight
-    let highlight = `Most Active Listener`
-    if (mostDiverse.userId === mvp.userId) {
-      highlight = `MVP & Most Diverse Listener`
-    }
-
-    // Get top 3 contributions
-    const topContributions = mvp.contributions
+    // Create MVP spotlight
+    const mvpTopContributions = mvp.contributions
       .sort((a, b) => b.vs - a.vs)
       .slice(0, 3)
       .map((c) => ({
@@ -414,14 +409,36 @@ async function calculateMemberContributions(
     memberSpotlight = {
       userId: mvp.userId,
       name: mvp.name,
-      highlight,
-      topContributions,
+      highlight: mostDiverse.userId === mvp.userId ? `MVP & Most Diverse Listener` : `Most Active Listener`,
+      topContributions: mvpTopContributions,
+    }
+
+    // Create most diverse spotlight (only if different from MVP)
+    if (mostDiverse.userId !== mvp.userId) {
+      const diverseTopContributions = mostDiverse.contributions
+        .sort((a, b) => b.vs - a.vs)
+        .slice(0, 3)
+        .map((c) => ({
+          chartType: c.chartType,
+          name: c.name,
+          artist: c.artist,
+          position: c.position,
+          contribution: c.vs,
+        }))
+
+      mostDiverseSpotlight = {
+        userId: mostDiverse.userId,
+        name: mostDiverse.name,
+        highlight: `Most Diverse Listener`,
+        topContributions: diverseTopContributions,
+      }
     }
   }
 
   return {
     topContributors: memberContributions.slice(0, 5), // Top 5 contributors
     memberSpotlight,
+    mostDiverseSpotlight,
   }
 }
 
@@ -721,7 +738,7 @@ export async function calculateGroupTrends(
 
   // Calculate member contributions (if 3+ members)
   const memberContribStart = Date.now()
-  const { topContributors, memberSpotlight } = await calculateMemberContributions(
+  const { topContributors, memberSpotlight, mostDiverseSpotlight } = await calculateMemberContributions(
     groupId,
     normalizedWeekStart,
     chartMode

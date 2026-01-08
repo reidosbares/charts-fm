@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from '@/i18n/routing'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFire, faSpinner, faArrowUp, faArrowDown, faMusic, faMicrophone, faCompactDisc, faTrophy } from '@fortawesome/free-solid-svg-icons'
+import { faFire, faSpinner, faArrowUp, faArrowDown, faMusic, faMicrophone, faCompactDisc, faTrophy, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 import { generateSlug, ChartType } from '@/lib/chart-slugs'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
@@ -71,6 +71,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
   const biggestClimbers = (trends.biggestClimbers as any[]) || []
   const funFacts = (trends.funFacts as string[]) || []
   const memberSpotlight = trends.memberSpotlight as any
+  const mostDiverseSpotlight = data.mostDiverseSpotlight as any
 
   const getChartTypeIcon = (chartType: string) => {
     switch (chartType) {
@@ -236,10 +237,37 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
             <h3 className="text-xl font-bold text-[var(--theme-primary-dark)]">{t('thisWeeksMVP')}</h3>
           </div>
           <div className="text-2xl font-bold text-gray-900 mb-2">{memberSpotlight.name}</div>
-          <div className="text-lg text-gray-700 mb-4">{memberSpotlight.highlight}</div>
+          <div className="text-lg text-gray-700 mb-4">
+            {memberSpotlight.highlight === 'Most Active Listener' 
+              ? t('highlightMostActiveListener')
+              : memberSpotlight.highlight === 'MVP & Most Diverse Listener'
+              ? t('highlightMVPAndMostDiverse')
+              : memberSpotlight.highlight}
+          </div>
           {memberSpotlight.topContributions && memberSpotlight.topContributions.length > 0 && (
             <div className="text-sm text-gray-600">
               {t('topContributions', { contributions: memberSpotlight.topContributions.map((c: any) => c.name).join(', ') })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Most Diverse Listener */}
+      {mostDiverseSpotlight && (
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 mb-6 border border-theme shadow-sm">
+          <div className="flex items-center gap-3 mb-3">
+            <FontAwesomeIcon icon={faUsers} className="text-2xl text-[var(--theme-primary)]" />
+            <h3 className="text-xl font-bold text-[var(--theme-primary-dark)]">{t('highlightMostDiverseListener')}</h3>
+          </div>
+          <div className="text-2xl font-bold text-gray-900 mb-2">{mostDiverseSpotlight.name}</div>
+          <div className="text-lg text-gray-700 mb-4">
+            {mostDiverseSpotlight.highlight === 'Most Diverse Listener' 
+              ? t('highlightMostDiverseListener')
+              : mostDiverseSpotlight.highlight}
+          </div>
+          {mostDiverseSpotlight.topContributions && mostDiverseSpotlight.topContributions.length > 0 && (
+            <div className="text-sm text-gray-600">
+              {t('topContributions', { contributions: mostDiverseSpotlight.topContributions.map((c: any) => c.name).join(', ') })}
             </div>
           )}
         </div>

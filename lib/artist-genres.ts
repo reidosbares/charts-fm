@@ -1,6 +1,7 @@
 // Artist genre fetching and caching from Last.fm API
 
 import { prisma } from './prisma'
+import { acquireLastFMRateLimit } from './lastfm-rate-limiter'
 
 const LASTFM_API_BASE = 'https://ws.audioscrobbler.com/2.0/'
 const GENRE_CACHE_DAYS = 30
@@ -13,6 +14,9 @@ async function fetchArtistGenresFromLastFM(
   apiKey: string
 ): Promise<string[]> {
   try {
+    // Acquire rate limit token before making the request
+    await acquireLastFMRateLimit(1)
+    
     const queryParams = new URLSearchParams({
       method: 'artist.getInfo',
       artist: artistName,
@@ -21,6 +25,11 @@ async function fetchArtistGenresFromLastFM(
     })
 
     const response = await fetch(`${LASTFM_API_BASE}?${queryParams}`)
+    
+    // Handle rate limiting (HTTP 429)
+    if (response.status === 429) {
+      throw new Error(`Last.fm API rate limit exceeded: ${response.statusText}`)
+    }
     
     if (!response.ok) {
       throw new Error(`Last.fm API error: ${response.statusText}`)
@@ -143,7 +152,7 @@ export async function getArtistGenresBatch(
   // Fetch missing or stale artists from API
   const artistsToFetch = normalizedNames.filter(name => !cacheMap.has(name))
   
-  // Batch fetch with delay to respect rate limits
+  // Batch fetch - rate limiter will handle spacing between requests automatically
   for (const artistName of artistsToFetch) {
     // Find original name (case-sensitive) for API call
     const originalName = artistNames.find(name => name.toLowerCase().trim() === artistName)
@@ -165,9 +174,6 @@ export async function getArtistGenresBatch(
         lastFetched: now,
       },
     })
-
-    // Small delay to respect rate limits (5 requests per second recommended)
-    await new Promise(resolve => setTimeout(resolve, 200))
   }
 
   return result

@@ -3,8 +3,54 @@
 
 import { authenticatedLastFMCall } from './lastfm-auth'
 import { getWeekStart, getWeekEnd } from './weekly-utils'
+import { acquireLastFMRateLimit } from './lastfm-rate-limiter'
 
 const LASTFM_API_BASE = 'https://ws.audioscrobbler.com/2.0/'
+
+/**
+ * Retry a function with exponential backoff, handling rate limits
+ */
+async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  maxRetries: number = 4,
+  initialDelay: number = 2000
+): Promise<T> {
+  let lastError: Error | null = null
+  
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn()
+    } catch (error: any) {
+      lastError = error
+      
+      // Don't retry on certain errors (authentication, invalid parameters)
+      if (error.message?.includes('Invalid API key') || 
+          error.message?.includes('Invalid session key') ||
+          error.message?.includes('Invalid method') ||
+          error.message?.includes('Invalid parameters')) {
+        throw error
+      }
+      
+      // If this was the last attempt, throw the error
+      if (attempt === maxRetries) {
+        throw error
+      }
+      
+      // For rate limit errors (429), use much longer backoff
+      const isRateLimit = error.status === 429 || error.message?.includes('429') || error.message?.includes('rate limit')
+      const baseDelay = isRateLimit ? initialDelay * 2.5 : initialDelay
+      
+      // Calculate delay with exponential backoff:
+      // Normal errors: 2s, 4s, 8s, 16s
+      // Rate limit errors: 5s, 12.5s, 31.25s, 78.125s
+      const delay = baseDelay * Math.pow(2, attempt)
+      console.warn(`[Last.fm API] ⚠️  Call failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${(delay / 1000).toFixed(1)}s:`, error.message)
+      await new Promise(resolve => setTimeout(resolve, delay))
+    }
+  }
+  
+  throw lastError || new Error('Unknown error in retry logic')
+}
 
 export interface TopItem {
   name: string
@@ -44,20 +90,37 @@ export async function getWeeklyTopTracks(
       }
     )
   } else {
-    // Use unauthenticated call (limited data)
-    const params = new URLSearchParams({
-      method: 'user.getWeeklyTrackChart',
-      user: username,
-      api_key: apiKey,
-      from: from.toString(),
-      to: to.toString(),
-      format: 'json',
+    // Use unauthenticated call (limited data) with retry logic
+    // Acquire rate limit token before making the request
+    await acquireLastFMRateLimit(1)
+    
+    data = await retryWithBackoff(async () => {
+      const params = new URLSearchParams({
+        method: 'user.getWeeklyTrackChart',
+        user: username,
+        api_key: apiKey,
+        from: from.toString(),
+        to: to.toString(),
+        format: 'json',
+      })
+      const response = await fetch(`${LASTFM_API_BASE}?${params}`)
+      
+      // Handle rate limiting (HTTP 429)
+      if (response.status === 429) {
+        const error: any = new Error(`Last.fm API rate limit exceeded: ${response.statusText}`)
+        error.status = 429
+        throw error
+      }
+      
+      if (!response.ok) {
+        throw new Error(`Last.fm API error: ${response.statusText}`)
+      }
+      const responseData = await response.json()
+      if (responseData.error) {
+        throw new Error(`Last.fm API error: ${responseData.message || responseData.error}`)
+      }
+      return responseData
     })
-    const response = await fetch(`${LASTFM_API_BASE}?${params}`)
-    if (!response.ok) {
-      throw new Error(`Last.fm API error: ${response.statusText}`)
-    }
-    data = await response.json()
   }
 
   if (data.error) {
@@ -104,19 +167,37 @@ export async function getWeeklyTopArtists(
       }
     )
   } else {
-    const params = new URLSearchParams({
-      method: 'user.getWeeklyArtistChart',
-      user: username,
-      api_key: apiKey,
-      from: from.toString(),
-      to: to.toString(),
-      format: 'json',
+    // Use unauthenticated call with retry logic
+    // Acquire rate limit token before making the request
+    await acquireLastFMRateLimit(1)
+    
+    data = await retryWithBackoff(async () => {
+      const params = new URLSearchParams({
+        method: 'user.getWeeklyArtistChart',
+        user: username,
+        api_key: apiKey,
+        from: from.toString(),
+        to: to.toString(),
+        format: 'json',
+      })
+      const response = await fetch(`${LASTFM_API_BASE}?${params}`)
+      
+      // Handle rate limiting (HTTP 429)
+      if (response.status === 429) {
+        const error: any = new Error(`Last.fm API rate limit exceeded: ${response.statusText}`)
+        error.status = 429
+        throw error
+      }
+      
+      if (!response.ok) {
+        throw new Error(`Last.fm API error: ${response.statusText}`)
+      }
+      const responseData = await response.json()
+      if (responseData.error) {
+        throw new Error(`Last.fm API error: ${responseData.message || responseData.error}`)
+      }
+      return responseData
     })
-    const response = await fetch(`${LASTFM_API_BASE}?${params}`)
-    if (!response.ok) {
-      throw new Error(`Last.fm API error: ${response.statusText}`)
-    }
-    data = await response.json()
   }
 
   if (data.error) {
@@ -162,19 +243,37 @@ export async function getWeeklyTopAlbums(
       }
     )
   } else {
-    const params = new URLSearchParams({
-      method: 'user.getWeeklyAlbumChart',
-      user: username,
-      api_key: apiKey,
-      from: from.toString(),
-      to: to.toString(),
-      format: 'json',
+    // Use unauthenticated call with retry logic
+    // Acquire rate limit token before making the request
+    await acquireLastFMRateLimit(1)
+    
+    data = await retryWithBackoff(async () => {
+      const params = new URLSearchParams({
+        method: 'user.getWeeklyAlbumChart',
+        user: username,
+        api_key: apiKey,
+        from: from.toString(),
+        to: to.toString(),
+        format: 'json',
+      })
+      const response = await fetch(`${LASTFM_API_BASE}?${params}`)
+      
+      // Handle rate limiting (HTTP 429)
+      if (response.status === 429) {
+        const error: any = new Error(`Last.fm API rate limit exceeded: ${response.statusText}`)
+        error.status = 429
+        throw error
+      }
+      
+      if (!response.ok) {
+        throw new Error(`Last.fm API error: ${response.statusText}`)
+      }
+      const responseData = await response.json()
+      if (responseData.error) {
+        throw new Error(`Last.fm API error: ${responseData.message || responseData.error}`)
+      }
+      return responseData
     })
-    const response = await fetch(`${LASTFM_API_BASE}?${params}`)
-    if (!response.ok) {
-      throw new Error(`Last.fm API error: ${response.statusText}`)
-    }
-    data = await response.json()
   }
 
   if (data.error) {
@@ -194,6 +293,9 @@ export async function getWeeklyTopAlbums(
 /**
  * Fetch all weekly stats (tracks, artists, albums) for a user
  * Returns top 100 for each category
+ * 
+ * Note: Fetches sequentially to respect rate limits (instead of parallel)
+ * The rate limiter will handle spacing between requests automatically
  */
 export async function getWeeklyStats(
   username: string,
@@ -207,11 +309,19 @@ export async function getWeeklyStats(
   topArtists: TopItem[]
   topAlbums: TopItem[]
 }> {
-  const [topTracks, topArtists, topAlbums] = await Promise.all([
-    getWeeklyTopTracks(username, weekStart, apiKey, apiSecret, sessionKey),
-    getWeeklyTopArtists(username, weekStart, apiKey, apiSecret, sessionKey),
-    getWeeklyTopAlbums(username, weekStart, apiKey, apiSecret, sessionKey),
-  ])
+  // Fetch sequentially to respect rate limits
+  // The rate limiter will automatically space out requests
+  console.log(`[Last.fm API] 📡 Fetching weekly tracks for ${username}...`)
+  const topTracks = await getWeeklyTopTracks(username, weekStart, apiKey, apiSecret, sessionKey)
+  console.log(`[Last.fm API] ✅ Got ${topTracks.length} tracks for ${username}`)
+  
+  console.log(`[Last.fm API] 📡 Fetching weekly artists for ${username}...`)
+  const topArtists = await getWeeklyTopArtists(username, weekStart, apiKey, apiSecret, sessionKey)
+  console.log(`[Last.fm API] ✅ Got ${topArtists.length} artists for ${username}`)
+  
+  console.log(`[Last.fm API] 📡 Fetching weekly albums for ${username}...`)
+  const topAlbums = await getWeeklyTopAlbums(username, weekStart, apiKey, apiSecret, sessionKey)
+  console.log(`[Last.fm API] ✅ Got ${topAlbums.length} albums for ${username}`)
 
   return {
     topTracks: topTracks.slice(0, 100),

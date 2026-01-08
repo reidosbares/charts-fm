@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getSuperuser } from '@/lib/admin'
 
 // GET - Check if a user exists by Last.fm username
 export async function GET(request: Request) {
@@ -20,6 +21,10 @@ export async function GET(request: Request) {
     )
   }
 
+  // Check if the current user is a superuser
+  const superuser = await getSuperuser()
+  const isSuperuser = superuser !== null
+
   // Find user by Last.fm username (case-insensitive)
   // Use findFirst with case-insensitive comparison since findUnique requires exact match
   const user = await prisma.user.findFirst({
@@ -37,6 +42,16 @@ export async function GET(request: Request) {
   })
 
   if (!user) {
+    // If user doesn't exist but requester is a superuser, allow them to proceed
+    // The members endpoint will create the account
+    if (isSuperuser) {
+      return NextResponse.json({
+        exists: false,
+        canProceed: true,
+        error: 'User with this Last.fm username not found, but you can add them as a superuser',
+      })
+    }
+    
     return NextResponse.json(
       { exists: false, error: 'User with this Last.fm username not found' },
       { status: 404 }

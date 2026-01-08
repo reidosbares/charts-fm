@@ -169,9 +169,10 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
   const [activeTab, setActiveTab] = useState<CategoryTab>('members')
   const [longestStreaks, setLongestStreaks] = useState<any[]>([])
   const [comebacks, setComebacks] = useState<any[]>([])
+  const [mostDiverseSpotlight, setMostDiverseSpotlight] = useState<any>(null)
 
   useEffect(() => {
-    // Fetch personalized stats, longest streaks, and comebacks asynchronously
+    // Fetch personalized stats, longest streaks, comebacks, and most diverse spotlight asynchronously
     fetch(`/api/groups/${groupId}/trends?includePersonal=true`)
       .then((res) => res.json())
       .then((data) => {
@@ -183,6 +184,9 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
         }
         if (data.comebacks) {
           setComebacks(data.comebacks)
+        }
+        if (data.mostDiverseSpotlight) {
+          setMostDiverseSpotlight(data.mostDiverseSpotlight)
         }
         setIsLoadingPersonal(false)
       })
@@ -639,10 +643,10 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                     <h4 className="text-sm font-bold text-[var(--theme-primary-dark)] mb-1">{t('youVsMVP')}</h4>
                     <div className="text-base font-bold text-gray-900 mb-1">{personalizedStats.vsMVP.mvpName}</div>
                     <div className="text-sm text-[var(--theme-text)]">
-                      You: {personalizedStats.vsMVP.userTotal.toFixed(2)} {t('vs')}
+                      {t('you')}: {personalizedStats.vsMVP.userTotal.toFixed(2)} {t('vs')}
                     </div>
                     <div className="text-sm text-[var(--theme-text)]">
-                      MVP: {personalizedStats.vsMVP.mvpTotal.toFixed(2)} {t('vs')}
+                      {t('mvp')}: {personalizedStats.vsMVP.mvpTotal.toFixed(2)} {t('vs')}
                     </div>
                     <div className="text-xs text-gray-600 mt-1">
                       {personalizedStats.vsMVP.percentage.toFixed(1)}% {t('ofMVP')}
@@ -696,10 +700,37 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                 <h3 className="text-xl font-bold text-[var(--theme-text)]">{t('thisWeeksMVP')}</h3>
               </div>
               <div className="text-xl font-bold text-gray-900 mb-2">{memberSpotlight.name}</div>
-              <div className="text-base text-gray-700 mb-3">{memberSpotlight.highlight}</div>
+              <div className="text-base text-gray-700 mb-3">
+                {memberSpotlight.highlight === 'Most Active Listener' 
+                  ? t('highlightMostActiveListener')
+                  : memberSpotlight.highlight === 'MVP & Most Diverse Listener'
+                  ? t('highlightMVPAndMostDiverse')
+                  : memberSpotlight.highlight}
+              </div>
               {memberSpotlight.topContributions && memberSpotlight.topContributions.length > 0 && (
                 <div className="text-xs text-gray-600">
                   {t('topContributions', { contributions: memberSpotlight.topContributions.map((c: any) => c.name).join(', ') })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Most Diverse Listener Spotlight */}
+          {mostDiverseSpotlight && (
+            <div className="bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-background-to)] rounded-xl p-6 border border-[var(--theme-border)] shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <FontAwesomeIcon icon={faUsers} className="text-xl text-[var(--theme-primary)]" />
+                <h3 className="text-xl font-bold text-[var(--theme-text)]">{t('highlightMostDiverseListener')}</h3>
+              </div>
+              <div className="text-xl font-bold text-gray-900 mb-2">{mostDiverseSpotlight.name}</div>
+              <div className="text-base text-gray-700 mb-3">
+                {mostDiverseSpotlight.highlight === 'Most Diverse Listener' 
+                  ? t('highlightMostDiverseListener')
+                  : mostDiverseSpotlight.highlight}
+              </div>
+              {mostDiverseSpotlight.topContributions && mostDiverseSpotlight.topContributions.length > 0 && (
+                <div className="text-xs text-gray-600">
+                  {t('topContributions', { contributions: mostDiverseSpotlight.topContributions.map((c: any) => c.name).join(', ') })}
                 </div>
               )}
             </div>

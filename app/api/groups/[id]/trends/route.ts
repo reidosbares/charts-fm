@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { requireGroupMembership } from '@/lib/group-auth'
-import { getTrendsForGroup, calculatePersonalizedStats, calculateConsecutiveStreaks } from '@/lib/group-trends'
+import { getTrendsForGroup, calculatePersonalizedStats, calculateConsecutiveStreaks, calculateMemberContributions } from '@/lib/group-trends'
 import { getGroupWeeklyStats, getGroupChartEntriesForWeek } from '@/lib/group-queries'
 import { prisma } from '@/lib/prisma'
 
@@ -117,11 +117,31 @@ export async function GET(
       }
     }
 
+    // Calculate most diverse spotlight if not already included (for backward compatibility)
+    let mostDiverseSpotlight = null
+    if (trends) {
+      try {
+        const normalizedWeekStart = new Date(trends.weekStart)
+        normalizedWeekStart.setUTCHours(0, 0, 0, 0)
+        const chartMode = (group.chartMode || 'plays_only') as string
+        const { mostDiverseSpotlight: calculatedMostDiverse } = await calculateMemberContributions(
+          group.id,
+          normalizedWeekStart,
+          chartMode
+        )
+        mostDiverseSpotlight = calculatedMostDiverse
+      } catch (error) {
+        console.error('Error calculating most diverse spotlight:', error)
+        // Don't fail the request if this fails
+      }
+    }
+
     return NextResponse.json({
       trends,
       personalizedStats,
       longestStreaks,
       comebacks,
+      mostDiverseSpotlight,
     })
   } catch (error: any) {
     console.error('Error fetching trends:', error)

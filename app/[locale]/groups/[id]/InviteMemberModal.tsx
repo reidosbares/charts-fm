@@ -73,8 +73,10 @@ export default function InviteMemberModal({
         const response = await fetch(`/api/user/check-username?lastfmUsername=${encodeURIComponent(lastfmUsername.trim())}`)
         const data = await response.json()
 
-        if (response.ok && data.exists) {
-          setValidatedUsername(data.user.lastfmUsername)
+        if (response.ok && (data.exists || data.canProceed)) {
+          // If user exists, use their actual username with correct casing
+          // If canProceed (superuser), use the input as-is
+          setValidatedUsername(data.user?.lastfmUsername || lastfmUsername.trim())
           setError(null)
         } else {
           setValidatedUsername(null)
@@ -117,14 +119,21 @@ export default function InviteMemberModal({
         const checkResponse = await fetch(`/api/user/check-username?lastfmUsername=${encodeURIComponent(usernameToUse)}`)
         const checkData = await checkResponse.json()
 
-        if (!checkResponse.ok || !checkData.exists) {
+        // Allow superusers to proceed even if user doesn't exist (canProceed flag)
+        if (!checkResponse.ok && !checkData.canProceed) {
           setError(checkData.error || 'User with this Last.fm username not found')
           setIsLoading(false)
           return
         }
 
-        // Use the validated username with correct casing
-        const actualUsername = checkData.user.lastfmUsername
+        if (!checkData.exists && !checkData.canProceed) {
+          setError(checkData.error || 'User with this Last.fm username not found')
+          setIsLoading(false)
+          return
+        }
+
+        // Use the validated username with correct casing if user exists, otherwise use input
+        const actualUsername = checkData.user?.lastfmUsername || usernameToUse
         await sendInvite(actualUsername)
       } catch (err) {
         setError('Failed to validate username. Please try again.')
@@ -155,7 +164,11 @@ export default function InviteMemberModal({
 
       // Show success message with the invited username
       setSuccess(true)
-      setSuccessMessage(`Invite sent successfully to ${username}!`)
+      if (data.accountCreated) {
+        setSuccessMessage(`Account created and ${data.member ? 'added' : 'invite sent'} successfully for ${username}!`)
+      } else {
+        setSuccessMessage(`Invite sent successfully to ${username}!`)
+      }
       setLastfmUsername('')
       setValidatedUsername(null)
       setIsLoading(false)

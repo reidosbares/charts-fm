@@ -1,5 +1,7 @@
 // Last.fm API client utilities
 
+import { acquireLastFMRateLimit } from './lastfm-rate-limiter'
+
 const LASTFM_API_BASE = 'https://ws.audioscrobbler.com/2.0/'
 
 export interface LastFMTrack {
@@ -40,27 +42,84 @@ export interface LastFMResponse {
   }
 }
 
+/**
+ * Retry a function with exponential backoff, handling rate limits
+ */
+async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  maxRetries: number = 4,
+  initialDelay: number = 2000
+): Promise<T> {
+  let lastError: Error | null = null
+  
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn()
+    } catch (error: any) {
+      lastError = error
+      
+      // Don't retry on certain errors (authentication, invalid parameters)
+      if (error.message?.includes('Invalid API key') || 
+          error.message?.includes('Invalid session key') ||
+          error.message?.includes('Invalid method') ||
+          error.message?.includes('Invalid parameters')) {
+        throw error
+      }
+      
+      // If this was the last attempt, throw the error
+      if (attempt === maxRetries) {
+        throw error
+      }
+      
+      // For rate limit errors (429), use much longer backoff
+      const isRateLimit = error.status === 429 || error.message?.includes('429') || error.message?.includes('rate limit')
+      const baseDelay = isRateLimit ? initialDelay * 2.5 : initialDelay
+      
+      // Calculate delay with exponential backoff:
+      // Normal errors: 2s, 4s, 8s, 16s
+      // Rate limit errors: 5s, 12.5s, 31.25s, 78.125s
+      const delay = baseDelay * Math.pow(2, attempt)
+      console.warn(`[Last.fm API] ⚠️  Call failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${(delay / 1000).toFixed(1)}s:`, error.message)
+      await new Promise(resolve => setTimeout(resolve, delay))
+    }
+  }
+  
+  throw lastError || new Error('Unknown error in retry logic')
+}
+
 export async function fetchLastFMData(
   method: string,
   username: string,
   apiKey: string,
   params: Record<string, string> = {}
 ): Promise<LastFMResponse> {
-  const queryParams = new URLSearchParams({
-    method,
-    user: username,
-    api_key: apiKey,
-    format: 'json',
-    ...params,
-  })
-
-  const response = await fetch(`${LASTFM_API_BASE}?${queryParams}`)
+  // Acquire rate limit token before making the request
+  await acquireLastFMRateLimit(1)
   
-  if (!response.ok) {
-    throw new Error(`Last.fm API error: ${response.statusText}`)
-  }
+  return retryWithBackoff(async () => {
+    const queryParams = new URLSearchParams({
+      method,
+      user: username,
+      api_key: apiKey,
+      format: 'json',
+      ...params,
+    })
 
-  return response.json()
+    const response = await fetch(`${LASTFM_API_BASE}?${queryParams}`)
+    
+    // Handle rate limiting (HTTP 429)
+    if (response.status === 429) {
+      const error: any = new Error(`Last.fm API rate limit exceeded: ${response.statusText}`)
+      error.status = 429
+      throw error
+    }
+    
+    if (!response.ok) {
+      throw new Error(`Last.fm API error: ${response.statusText}`)
+    }
+
+    return response.json()
+  })
 }
 
 export async function getRecentTracks(
@@ -254,6 +313,9 @@ export async function getAlbumImage(
   apiKey: string
 ): Promise<string | null> {
   try {
+    // Acquire rate limit token before making the request
+    await acquireLastFMRateLimit(1)
+    
     const queryParams = new URLSearchParams({
       method: 'album.getInfo',
       artist,
@@ -263,6 +325,13 @@ export async function getAlbumImage(
     })
 
     const response = await fetch(`${LASTFM_API_BASE}?${queryParams}`)
+    
+    // Handle rate limiting (HTTP 429)
+    if (response.status === 429) {
+      // Wait a bit longer for rate limits, then return null
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      return null
+    }
     
     if (!response.ok) {
       return null

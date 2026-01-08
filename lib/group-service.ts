@@ -15,6 +15,63 @@ const API_KEY = process.env.LASTFM_API_KEY!
 const API_SECRET = process.env.LASTFM_API_SECRET!
 
 /**
+ * Process items in parallel with a concurrency limit
+ * This allows controlled parallelization while respecting rate limits
+ */
+async function processWithConcurrencyLimit<T, R>(
+  items: T[],
+  concurrency: number,
+  processor: (item: T, index: number, total: number) => Promise<R>,
+  itemLabel?: (item: T) => string
+): Promise<R[]> {
+  const results: R[] = new Array(items.length)
+  const executing: Array<Promise<void>> = []
+  let index = 0
+  let completed = 0
+  const startTime = Date.now()
+  
+  console.log(`[Parallel Processing] 🚀 Starting to process ${items.length} items with concurrency limit of ${concurrency}`)
+  
+  async function runNext(): Promise<void> {
+    if (index >= items.length) {
+      return
+    }
+    
+    const currentIndex = index++
+    const item = items[currentIndex]
+    const label = itemLabel ? itemLabel(item) : `item ${currentIndex + 1}`
+    
+    try {
+      console.log(`[Parallel Processing] ▶️  Starting ${label} (${currentIndex + 1}/${items.length})`)
+      const result = await processor(item, currentIndex, items.length)
+      results[currentIndex] = result
+      completed++
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
+      console.log(`[Parallel Processing] ✅ Completed ${label} (${completed}/${items.length}) - ${elapsed}s elapsed`)
+    } catch (error) {
+      completed++
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
+      console.error(`[Parallel Processing] ❌ Error processing ${label} (${completed}/${items.length}) - ${elapsed}s elapsed:`, error)
+      // Store error in results array
+      results[currentIndex] = error as any
+    }
+    
+    // Process next item
+    await runNext()
+  }
+  
+  // Start up to concurrency number of parallel workers
+  for (let i = 0; i < Math.min(concurrency, items.length); i++) {
+    executing.push(runNext())
+  }
+  
+  await Promise.all(executing)
+  const totalTime = ((Date.now() - startTime) / 1000).toFixed(1)
+  console.log(`[Parallel Processing] 🎉 Finished processing all ${items.length} items in ${totalTime}s`)
+  return results
+}
+
+/**
  * Get entry key for an item (same format as GroupChartEntry)
  */
 function getEntryKey(item: { name: string; artist?: string }, chartType: 'artists' | 'tracks' | 'albums'): string {
@@ -149,6 +206,7 @@ export async function fetchOrGetUserWeeklyStats(
         topAlbums: (existing.topAlbums as unknown as TopItem[]) || [],
       }
     : await (async () => {
+        console.log(`[User Stats] 🔄 Fetching fresh data from Last.fm for ${lastfmUsername} (week: ${weekStart.toISOString().split('T')[0]})`)
         const apiStart = Date.now()
         const result = await getWeeklyStats(
           lastfmUsername,
@@ -157,8 +215,14 @@ export async function fetchOrGetUserWeeklyStats(
           API_SECRET,
           sessionKey || undefined
         )
+        const apiTime = ((Date.now() - apiStart) / 1000).toFixed(1)
+        console.log(`[User Stats] ✅ Fetched data for ${lastfmUsername} in ${apiTime}s (tracks: ${result.topTracks.length}, artists: ${result.topArtists.length}, albums: ${result.topAlbums.length})`)
         return result
       })()
+  
+  if (existing) {
+    console.log(`[User Stats] 💾 Using cached data for ${lastfmUsername} (tracks: ${stats.topTracks.length}, artists: ${stats.topArtists.length}, albums: ${stats.topAlbums.length})`)
+  }
 
   // If stats were just fetched, store them
   if (!existing) {
@@ -295,6 +359,9 @@ export async function calculateGroupWeeklyStats(
   }>,
   skipTrends: boolean = false
 ): Promise<Array<{ entryKey: string; vibeScore: number | null; playcount: number; weekStart: Date; chartType: ChartType }>> {
+  const overallStart = Date.now()
+  console.log(`[Group Stats] 🎯 Starting group weekly stats calculation for week ${weekStart.toISOString().split('T')[0]}`)
+  
   // Get all group members (use provided members if available)
   let membersToUse = members
   if (!membersToUse) {
@@ -318,17 +385,25 @@ export async function calculateGroupWeeklyStats(
   }
 
   // Fetch or get stats for all members (this also calculates and stores VS automatically)
+  // Process in parallel with concurrency limit to respect rate limits while improving performance
+  // The rate limiter will handle spacing between requests automatically
   const fetchStatsStart = Date.now()
-  const userStatsArray = await Promise.all(
-    membersToUse.map((member) =>
-      fetchOrGetUserWeeklyStats(
+  console.log(`[Group Stats] 📊 Fetching weekly stats for ${membersToUse.length} members for week ${weekStart.toISOString().split('T')[0]}`)
+  const userStatsArray = await processWithConcurrencyLimit(
+    membersToUse,
+    3, // Process 3 members concurrently to avoid rate limits (each makes 3 API calls = 9 max concurrent)
+    async (member, index, total) => {
+      return await fetchOrGetUserWeeklyStats(
         member.user.id,
         member.user.lastfmUsername,
         member.user.lastfmSessionKey,
         weekStart
       )
-    )
+    },
+    (member) => `member ${member.user.lastfmUsername}`
   )
+  const fetchStatsTime = ((Date.now() - fetchStatsStart) / 1000).toFixed(1)
+  console.log(`[Group Stats] ✅ Fetched stats for all ${membersToUse.length} members in ${fetchStatsTime}s`)
 
   // Fetch pre-calculated VS data for all members
   const fetchVSStart = Date.now()
@@ -440,6 +515,9 @@ export async function calculateGroupWeeklyStats(
       }
     }
   }
+
+  const overallTime = ((Date.now() - overallStart) / 1000).toFixed(1)
+  console.log(`[Group Stats] 🎉 Completed group weekly stats calculation in ${overallTime}s`)
 
   return entriesForInvalidation
 }

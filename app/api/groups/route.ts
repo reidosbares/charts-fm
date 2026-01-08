@@ -66,10 +66,10 @@ export async function POST(request: Request) {
     )
   }
 
-  // Validate trackingDayOfWeek if provided
-  if (trackingDayOfWeek !== undefined && (Number(trackingDayOfWeek) < 0 || Number(trackingDayOfWeek) > 6)) {
+  // Validate trackingDayOfWeek if provided (only Sunday=0 and Wednesday=3 are allowed)
+  if (trackingDayOfWeek !== undefined && ![0, 3].includes(Number(trackingDayOfWeek))) {
     return NextResponse.json(
-      { error: 'Tracking day of week must be between 0 (Sunday) and 6 (Saturday)' },
+      { error: 'Tracking day of week must be either 0 (Sunday) or 3 (Wednesday)' },
       { status: 400 }
     )
   }

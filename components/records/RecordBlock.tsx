@@ -97,9 +97,38 @@ export default function RecordBlock({ title, record, value, groupId, isUser }: R
 
   const link = getLink()
   
+  // Map translated award title back to English key for color scheme lookup
+  const getAwardEnglishKey = (awardTitle: string): string | null => {
+    if (!isUser) return null
+    
+    // Map award titles to translation keys - check both English and translated versions
+    const awardKeys = ['vsVirtuoso', 'playPowerhouse', 'chartConnoisseur', 'hiddenGemHunter', 'consistencyChampion', 'tasteMaker']
+    
+    // Find the key that matches the title (works for both English and translated titles)
+    const matchingKey = awardKeys.find(key => tUserRecords(key) === awardTitle)
+    
+    return matchingKey || null
+  }
+  
+  // Get English title from the key (for color scheme lookup)
+  const getEnglishTitle = (key: string): string => {
+    // Use English translations directly
+    const englishTitles: Record<string, string> = {
+      'vsVirtuoso': 'VS Virtuoso',
+      'playPowerhouse': 'Play Powerhouse',
+      'chartConnoisseur': 'Chart Connoisseur',
+      'hiddenGemHunter': 'Hidden Gem Hunter',
+      'consistencyChampion': 'Consistency Champion',
+      'tasteMaker': 'Taste Maker',
+    }
+    return englishTitles[key] || ''
+  }
+  
   // Get color scheme for this award, or use default
-  const colorScheme = isUser && awardColorSchemes[title]
-    ? awardColorSchemes[title]
+  const awardKey = isUser ? getAwardEnglishKey(title) : null
+  const englishTitle = awardKey ? getEnglishTitle(awardKey) : null
+  const colorScheme = isUser && englishTitle && awardColorSchemes[englishTitle]
+    ? awardColorSchemes[englishTitle]
     : {
         bgGradient: 'from-white/80 to-white/80',
         borderColor: 'border-theme',

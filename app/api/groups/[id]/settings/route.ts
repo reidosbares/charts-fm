@@ -127,11 +127,11 @@ export async function PATCH(
     }
   }
 
-  // Validate trackingDayOfWeek
+  // Validate trackingDayOfWeek (only Sunday=0 and Wednesday=3 are allowed)
   if (trackingDayOfWeek !== undefined) {
-    if (typeof trackingDayOfWeek !== 'number' || trackingDayOfWeek < 0 || trackingDayOfWeek > 6) {
+    if (typeof trackingDayOfWeek !== 'number' || ![0, 3].includes(trackingDayOfWeek)) {
       return NextResponse.json(
-        { error: 'trackingDayOfWeek must be a number between 0 and 6' },
+        { error: 'trackingDayOfWeek must be either 0 (Sunday) or 3 (Wednesday)' },
         { status: 400 }
       )
     }
