@@ -98,6 +98,8 @@ model Group {
   updatedAt                 DateTime                       @updatedAt
   chartGenerationInProgress Boolean                        @default(false)
   chartGenerationStartedAt  DateTime?
+  lastChartGenerationFailedUsers Json?
+  lastChartGenerationAborted Boolean?
   dynamicIconCaption        String?
   shoutboxEnabled           Boolean                        @default(true)
   shoutboxRestrictiveMode   Boolean                        @default(false)

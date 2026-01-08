@@ -575,13 +575,14 @@
           "hiddenGems": "Vamos ver o que tem de melhor por aqui..."
         },
         "userFetchErrors": {
-          "title": "Problemas na Geração de Charts",
+          "title": "Problemas na geração de charts",
           "abortedTitle": "Geração de Charts Abortada",
-          "partialSuccessTitle": "Geração de Charts Concluída com Avisos",
-          "failedUsers": "Não foi possível recuperar dados para os seguintes usuários:",
-          "abortedMessage": "A geração de charts foi abortada porque muitos usuários falharam ao carregar. Por favor, tente novamente mais tarde.",
-          "partialSuccessMessage": "Os charts foram gerados com sucesso, mas alguns usuários não puderam ser incluídos.",
-          "lastfmOutageTip": "Se você não conseguir acessar o site do last.fm normalmente, isso sugere uma interrupção temporária. Por favor, tente novamente mais tarde quando o status do last.fm tiver normalizado.",
+          "partialSuccessTitle": "Charts Gerados com Erros Parciais",
+          "failedUsers": "Não foi possível buscar dados do Last.fm para os seguintes usuários:",
+          "abortedMessage": "A geração de charts foi abortada porque falhas ocorreram com muitos usuários. Por favor, tente novamente mais tarde.",
+          "partialSuccessMessage": "Os charts foram gerados com sucesso, mas os dados de alguns usuários não puderam ser incluídos por problemas de conexão com o Last.fm.",
+          "contributionsMissed": "Obs: os dados destes usuários não foram contabilizados nos últimos charts gerados. Se não se tratar de um problema permanente (por exemplo, o Last.fm estiver temporariamente offline), você pode tentar re-gerar os charts mais tarde pela página de configurações do grupo.",
+          "lastfmOutageTip": "Se o site do Last.fm também estiver indisponível, isso sugere que estão temporariamente offline. Por favor, tente novamente mais tarde quando o status do Last.fm tiver normalizado.",
           "close": "Fechar"
         }
       },

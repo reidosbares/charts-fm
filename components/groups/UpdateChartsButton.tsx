@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import ChartGenerationErrorModal from '@/components/ChartGenerationErrorModal'
 
 interface UpdateChartsButtonProps {
   groupId: string
@@ -16,6 +17,9 @@ interface UpdateChartsButtonProps {
 export default function UpdateChartsButton({ groupId, initialInProgress = false, onUpdateComplete }: UpdateChartsButtonProps) {
   const [isUpdating, setIsUpdating] = useState(initialInProgress)
   const [error, setError] = useState<string | null>(null)
+  const [showErrorModal, setShowErrorModal] = useState(false)
+  const [failedUsers, setFailedUsers] = useState<string[]>([])
+  const [aborted, setAborted] = useState(false)
   const router = useRouter()
   const t = useSafeTranslations('groups.weeklyCharts')
 
@@ -34,6 +38,14 @@ export default function UpdateChartsButton({ groupId, initialInProgress = false,
         if (!data.inProgress) {
           // Generation complete
           setIsUpdating(false)
+          
+          // Check for failed users info
+          if (data.failedUsers && Array.isArray(data.failedUsers) && data.failedUsers.length > 0) {
+            setFailedUsers(data.failedUsers)
+            setAborted(data.aborted || false)
+            setShowErrorModal(true)
+          }
+          
           // Refresh the page to update server components
           router.refresh()
           onUpdateComplete?.()
@@ -91,17 +103,26 @@ export default function UpdateChartsButton({ groupId, initialInProgress = false,
   }
 
   return (
-    <LiquidGlassButton
-      onClick={handleUpdate}
-      disabled={isUpdating}
-      variant="primary"
-      size="sm"
-      useTheme
-      className="w-full md:w-auto"
-      icon={isUpdating ? <FontAwesomeIcon icon={faSpinner} className="animate-spin" /> : undefined}
-    >
-      {isUpdating ? t('updatingCharts') : t('updateCharts')}
-    </LiquidGlassButton>
+    <>
+      <LiquidGlassButton
+        onClick={handleUpdate}
+        disabled={isUpdating}
+        variant="primary"
+        size="sm"
+        useTheme
+        className="w-full md:w-auto"
+        icon={isUpdating ? <FontAwesomeIcon icon={faSpinner} className="animate-spin" /> : undefined}
+      >
+        {isUpdating ? t('updatingCharts') : t('updateCharts')}
+      </LiquidGlassButton>
+      
+      <ChartGenerationErrorModal
+        isOpen={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        failedUsers={failedUsers}
+        aborted={aborted}
+      />
+    </>
   )
 }
 

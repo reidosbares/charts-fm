@@ -126,36 +126,39 @@ export default function GenerateChartsClient({
         body: JSON.stringify(body),
       })
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        // Check if this is an abort error with failed users info
-        if (data.failedUsers && Array.isArray(data.failedUsers)) {
-          setFailedUsers(data.failedUsers)
-          setAborted(data.aborted || false)
-          setShowErrorModal(true)
-          setIsLoading(false)
-          return
-        }
-        throw new Error(data.error || 'Failed to generate charts')
+      let data: any = {}
+      try {
+        data = await response.json()
+      } catch (jsonError) {
+        // If JSON parsing fails, try to get text
+        const text = await response.text()
+        throw new Error(text || 'Failed to parse response')
       }
 
-      // Check if there are failed users in the success response
+      // Check for failed users info in both success and error responses (check this FIRST)
       if (data.failedUsers && Array.isArray(data.failedUsers) && data.failedUsers.length > 0) {
         setFailedUsers(data.failedUsers)
         setAborted(data.aborted || false)
         setShowErrorModal(true)
+        setIsLoading(false)
+        // If it was a success response with warnings, also set success
+        if (response.ok) {
+          setSuccess(true)
+        }
+        return
+      }
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to generate charts')
       }
 
       setSuccess(true)
       setIsLoading(false)
       
-      // Redirect after a short delay (only if no errors to show)
-      if (!data.failedUsers || data.failedUsers.length === 0) {
-        setTimeout(() => {
-          router.push(`/groups/${groupId}`)
-        }, 1500)
-      }
+      // Redirect after a short delay
+      setTimeout(() => {
+        router.push(`/groups/${groupId}`)
+      }, 1500)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate charts')
       setIsLoading(false)

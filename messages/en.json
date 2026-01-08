@@ -579,9 +579,10 @@
           "abortedTitle": "Chart Generation Aborted",
           "partialSuccessTitle": "Chart Generation Completed with Warnings",
           "failedUsers": "Could not retrieve data for the following users:",
-          "abortedMessage": "Chart generation was aborted because too many users failed to load. Please try again later.",
+          "abortedMessage": "Chart generation was aborted because too many users' data failed to load from Last.fm. Please try again later.",
           "partialSuccessMessage": "Charts were generated successfully, but some users could not be included.",
-          "lastfmOutageTip": "If you cannot access last.fm's website normally, this suggests a temporary outage. Please try again later when last.fm's status has normalized.",
+          "contributionsMissed": "Note: The contributions from these users will be missed in the last week's charts. If this is not a permanent issue (e.g., there's a temporary Last.fm outage), you can try regenerating the charts again later from the group settings page.",
+          "lastfmOutageTip": "If you cannot access Last.fm's website normally, this suggests a temporary outage. Please try again later when Last.fm's status has normalized.",
           "close": "Close"
         }
       },

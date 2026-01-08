@@ -20,7 +20,25 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { user, group } = await requireGroupMembership(params.id)
+    const { user } = await requireGroupMembership(params.id)
+
+    // Fetch group with the new fields
+    const group = await prisma.group.findFirst({
+      where: {
+        id: params.id,
+        OR: [
+          { creatorId: user.id },
+          { members: { some: { userId: user.id } } },
+        ],
+      },
+      select: {
+        id: true,
+        trackingDayOfWeek: true,
+        chartGenerationInProgress: true,
+        lastChartGenerationFailedUsers: true,
+        lastChartGenerationAborted: true,
+      },
+    })
 
     if (!group) {
       return NextResponse.json({ error: 'Group not found' }, { status: 404 })
@@ -53,10 +71,33 @@ export async function GET(
     }
 
     const inProgress = group.chartGenerationInProgress || false
+    
+    // Get failed users info if generation just completed
+    let failedUsers: string[] = []
+    let aborted = false
+    if (!inProgress && group.lastChartGenerationFailedUsers) {
+      failedUsers = Array.isArray(group.lastChartGenerationFailedUsers) 
+        ? group.lastChartGenerationFailedUsers 
+        : []
+      aborted = group.lastChartGenerationAborted || false
+      
+      // Clear the failed users info after reading it
+      await prisma.group.update({
+        where: { id: group.id },
+        data: {
+          lastChartGenerationFailedUsers: null,
+          lastChartGenerationAborted: null,
+        },
+      }).catch((err) => {
+        console.error('Error clearing failed users info:', err)
+      })
+    }
 
     return NextResponse.json({
       inProgress,
       canUpdate: canUpdate && !inProgress,
+      failedUsers: failedUsers.length > 0 ? failedUsers : undefined,
+      aborted: failedUsers.length > 0 ? aborted : undefined,
     })
   } catch (error: any) {
     if (error.status === 401 || error.status === 403 || error.status === 404) {
@@ -290,10 +331,31 @@ async function generateChartsInBackground(
         await new Promise(resolve => setTimeout(resolve, 500))
       }
       
-      // If generation should be aborted, we've already logged it, just return
-      // The error will be handled by the outer catch block
+      // If generation should be aborted, store failed users info before throwing
       if (shouldAbortGeneration) {
+        await prisma.group.update({
+          where: { id: groupId },
+          data: {
+            lastChartGenerationFailedUsers: Array.from(allFailedUsers),
+            lastChartGenerationAborted: true,
+          },
+        }).catch((err) => {
+          console.error('Error storing failed users info:', err)
+        })
         throw new Error(`Chart generation aborted: Too many user failures (${allFailedUsers.size} users)`)
+      }
+      
+      // Store failed users info if there are any (even if not aborted)
+      if (allFailedUsers.size > 0) {
+        await prisma.group.update({
+          where: { id: groupId },
+          data: {
+            lastChartGenerationFailedUsers: Array.from(allFailedUsers),
+            lastChartGenerationAborted: false,
+          },
+        }).catch((err) => {
+          console.error('Error storing failed users info:', err)
+        })
       }
 
       // Recalculate all-time stats once after all weeks are processed
@@ -316,6 +378,19 @@ async function generateChartsInBackground(
       await lastfmLogger.logSummary().catch((err) => {
         console.error('Error writing Last.fm API log summary:', err)
       })
+      
+      // If we have failed users info, store it before handling the error
+      if (allFailedUsers && allFailedUsers.size > 0) {
+        await prisma.group.update({
+          where: { id: groupId },
+          data: {
+            lastChartGenerationFailedUsers: Array.from(allFailedUsers),
+            lastChartGenerationAborted: shouldAbortGeneration,
+          },
+        }).catch((err) => {
+          console.error('Error storing failed users info:', err)
+        })
+      }
       
       // Handle Prisma validation errors
       if (error.message && error.message.includes('did not match the expected pattern')) {
@@ -430,7 +505,7 @@ async function generateChartsInBackground(
       })
     }
 
-    // Release lock
+    // Release lock (failed users info already stored above if needed)
     await prisma.group.update({
       where: { id: groupId },
       data: {
@@ -440,7 +515,7 @@ async function generateChartsInBackground(
     })
   } catch (error) {
     console.error('Error in background chart generation:', error)
-    // Release lock on error
+    // Release lock on error (failed users info should already be stored in inner catch block)
     await prisma.group.update({
       where: { id: groupId },
       data: {
@@ -450,7 +525,7 @@ async function generateChartsInBackground(
     }).catch((err) => {
       console.error('Error releasing lock after error:', err)
     })
-    throw error
+    // Don't re-throw - we've already stored the error info and released the lock
   }
 }
 

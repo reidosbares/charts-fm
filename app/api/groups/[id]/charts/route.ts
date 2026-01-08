@@ -229,7 +229,8 @@ export async function POST(
   }> = []
   
   // Track failed users across all weeks - once a user fails, skip them for all subsequent weeks
-  const allFailedUsers = new Set<string>()
+  // Declare outside try block so it's accessible in catch block
+  let allFailedUsers = new Set<string>()
   let shouldAbortGeneration = false
   
   try {
@@ -408,21 +409,51 @@ export async function POST(
       console.error('Error releasing lock after error:', err)
     })
     
+    // Check if error has failed users information (from abort logic)
+    if (allFailedUsers && allFailedUsers.size > 0) {
+      await lastfmLogger.logSummary().catch((err) => {
+        console.error('Error writing Last.fm API log summary:', err)
+      })
+      
+      return NextResponse.json(
+        {
+          error: shouldAbortGeneration 
+            ? 'Chart generation aborted due to too many user failures'
+            : 'Chart generation completed with some user failures',
+          failedUsers: Array.from(allFailedUsers),
+          aborted: shouldAbortGeneration,
+        },
+        { status: shouldAbortGeneration ? 400 : 200 }
+      )
+    }
+    
     // Handle Prisma validation errors
     if (error.message && error.message.includes('did not match the expected pattern')) {
+      await lastfmLogger.logSummary().catch((err) => {
+        console.error('Error writing Last.fm API log summary:', err)
+      })
+      
       return NextResponse.json(
         { error: 'Invalid data format detected. Please check that all group members have valid Last.fm usernames and try again.' },
         { status: 400 }
       )
     }
     
-    // Log summary before re-throwing
+    // Log summary before returning error
     await lastfmLogger.logSummary().catch((err) => {
       console.error('Error writing Last.fm API log summary:', err)
     })
     
-    // Re-throw other errors
-    throw error
+    // Return error response instead of throwing (prevents 500)
+    // Always include failedUsers array (even if empty) so frontend can check for it
+    return NextResponse.json(
+      { 
+        error: error.message || 'Failed to generate charts',
+        failedUsers: allFailedUsers && allFailedUsers.size > 0 ? Array.from(allFailedUsers) : [],
+        aborted: allFailedUsers && allFailedUsers.size > 0 ? shouldAbortGeneration : false,
+      },
+      { status: 500 }
+    )
   }
 
   // Log summary on successful completion

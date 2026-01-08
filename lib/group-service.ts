@@ -504,7 +504,7 @@ export async function calculateGroupWeeklyStats(
   }
   
   if (shouldAbort) {
-    console.error(`[Group Stats] 🛑 Aborting chart generation: ${totalFailed}/${totalUsers} users failed (threshold exceeded)`)
+    console.error(`[Group Stats] 🛑 Aborting chart generation: ${totalFailedUniqueUsers}/${totalUsers} users failed (threshold exceeded)`)
     return {
       entries: [],
       failedUsers: allFailedUsernames,
