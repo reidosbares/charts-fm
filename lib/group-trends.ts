@@ -470,7 +470,35 @@ async function generateFunFacts(
   previousEntries: Array<{ entryKey: string; chartType: string }>,
   groupId: string
 ): Promise<string[]> {
-  const facts: string[] = []
+  // Helper to get fact type
+  const getFactType = (fact: string): string => {
+    if (fact.includes('comeback')) return 'comeback'
+    if (fact.includes('on fire')) return 'onFire'
+    if (fact.includes('Unstoppable')) return 'unstoppable'
+    if (fact.includes('New peak')) return 'newPeak'
+    if (fact.includes('First timer')) return 'firstTimer'
+    if (fact.includes('Welcome to the club')) return 'welcomeToClub'
+    if (fact.includes('is dominating')) return 'dominating'
+    if (fact.includes('Steady as a rock')) return 'steadyAsRock'
+    if (fact.includes('top 3 stayed strong')) return 'top3Stable'
+    if (fact.includes('was wild')) return 'wildWeek'
+    if (fact.includes('Close race')) return 'closeRace'
+    if (fact.includes("MVP:")) return 'mvp'
+    if (fact.includes('listened to')) return 'totalPlays'
+    return 'other'
+  }
+
+  // Helper to shuffle array
+  const shuffle = <T>(array: T[]): T[] => {
+    const shuffled = [...array]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    return shuffled
+  }
+
+  const allFacts: Array<{ fact: string; type: string; priority: number }> = []
 
   // Get historical entries to detect returns
   const normalizedWeekStart = new Date(groupStats.weekStart)
@@ -516,7 +544,7 @@ async function generateFunFacts(
                         prevAlbums.reduce((sum, a) => sum + a.playcount, 0)
   }
 
-  // RETURN/COMEBACK FACTS
+  // RETURN/COMEBACK FACTS (low priority)
   const previousEntryKeys = new Set(previousEntries.map(e => `${e.chartType}|${e.entryKey}`))
   const returnedEntries = currentEntries.filter(entry => {
     const key = `${entry.chartType}|${entry.entryKey}`
@@ -524,7 +552,9 @@ async function generateFunFacts(
   })
 
   if (returnedEntries.length > 0) {
-    for (const entry of returnedEntries.slice(0, 2)) {
+    // Shuffle to add randomness
+    const shuffledReturns = shuffle(returnedEntries)
+    for (const entry of shuffledReturns.slice(0, 3)) {
       const historicalForEntry = allHistoricalEntries
         .filter(e => e.entryKey === entry.entryKey && e.chartType === entry.chartType)
         .sort((a, b) => b.weekStart.getTime() - a.weekStart.getTime())
@@ -534,53 +564,79 @@ async function generateFunFacts(
         const weeksSince = Math.floor((normalizedWeekStart.getTime() - lastAppearance.weekStart.getTime()) / (7 * 24 * 60 * 60 * 1000))
         if (weeksSince > 1) {
           const typeLabel = entry.chartType === 'artists' ? 'Artist' : entry.chartType === 'tracks' ? 'Track' : 'Album'
-          facts.push(`${typeLabel} "${entry.name}"${entry.artist ? ` by ${entry.artist}` : ''} made a comeback! Returned to the top 10 after ${weeksSince} weeks away!`)
+          allFacts.push({
+            fact: `${typeLabel} "${entry.name}"${entry.artist ? ` by ${entry.artist}` : ''} made a comeback! Returned to the top 10 after ${weeksSince} weeks away!`,
+            type: 'comeback',
+            priority: 1 // Low priority
+          })
         }
       }
     }
   }
 
-  // STREAK FACTS
+  // STREAK FACTS (low priority)
   const longStreaks = currentEntries
     .filter(e => e.totalWeeksAppeared >= 3)
     .sort((a, b) => b.totalWeeksAppeared - a.totalWeeksAppeared)
-    .slice(0, 2)
 
-  for (const entry of longStreaks) {
+  // Shuffle for randomness
+  const shuffledStreaks = shuffle(longStreaks)
+  for (const entry of shuffledStreaks.slice(0, 3)) {
     if (entry.totalWeeksAppeared >= 5) {
       const typeLabel = entry.chartType === 'artists' ? 'Artist' : entry.chartType === 'tracks' ? 'Track' : 'Album'
-      facts.push(`${typeLabel} "${entry.name}"${entry.artist ? ` by ${entry.artist}` : ''} is on fire! ${entry.totalWeeksAppeared} weeks in a row in the top 10!`)
+      allFacts.push({
+        fact: `${typeLabel} "${entry.name}"${entry.artist ? ` by ${entry.artist}` : ''} is on fire! ${entry.totalWeeksAppeared} weeks in a row in the top 10!`,
+        type: 'onFire',
+        priority: 1 // Low priority
+      })
     } else if (entry.totalWeeksAppeared >= 3) {
       const typeLabel = entry.chartType === 'artists' ? 'Artist' : entry.chartType === 'tracks' ? 'Track' : 'Album'
-      facts.push(`Unstoppable! "${entry.name}"${entry.artist ? ` by ${entry.artist}` : ''} has been charting for ${entry.totalWeeksAppeared} consecutive weeks`)
+      allFacts.push({
+        fact: `Unstoppable! "${entry.name}"${entry.artist ? ` by ${entry.artist}` : ''} has been charting for ${entry.totalWeeksAppeared} consecutive weeks`,
+        type: 'unstoppable',
+        priority: 1 // Low priority
+      })
     }
   }
 
-  // PEAK POSITION FACTS
+  // PEAK POSITION FACTS (high priority)
   const newPeaks = currentEntries.filter(e => {
-    // Entry is at its highest position (current position equals highest position)
-    // and it's in top 5, and it's actually a new peak (not just maintaining)
     return e.position === e.highestPosition && e.position <= 5 && e.totalWeeksAppeared > 1
   })
   if (newPeaks.length > 0) {
-    const peak = newPeaks[0]
-    const typeLabel = peak.chartType === 'artists' ? 'Artist' : peak.chartType === 'tracks' ? 'Track' : 'Album'
-    facts.push(`New peak! "${peak.name}"${peak.artist ? ` by ${peak.artist}` : ''} reached #${peak.position}, their highest ever!`)
+    // Shuffle for randomness
+    const shuffledPeaks = shuffle(newPeaks)
+    for (const peak of shuffledPeaks.slice(0, 2)) {
+      const typeLabel = peak.chartType === 'artists' ? 'Artist' : peak.chartType === 'tracks' ? 'Track' : 'Album'
+      allFacts.push({
+        fact: `New peak! "${peak.name}"${peak.artist ? ` by ${peak.artist}` : ''} reached #${peak.position}, their highest ever!`,
+        type: 'newPeak',
+        priority: 3 // High priority
+      })
+    }
   }
 
-  // FIRST TIME FACTS
+  // FIRST TIME FACTS (high priority)
   const firstTimers = currentEntries.filter(e => e.totalWeeksAppeared === 1)
   if (firstTimers.length > 0) {
     if (firstTimers.length === 1) {
       const entry = firstTimers[0]
       const typeLabel = entry.chartType === 'artists' ? 'Artist' : entry.chartType === 'tracks' ? 'Track' : 'Album'
-      facts.push(`First timer! "${entry.name}"${entry.artist ? ` by ${entry.artist}` : ''} entered the charts for the very first time!`)
+      allFacts.push({
+        fact: `First timer! "${entry.name}"${entry.artist ? ` by ${entry.artist}` : ''} entered the charts for the very first time!`,
+        type: 'firstTimer',
+        priority: 3 // High priority
+      })
     } else {
-      facts.push(`Welcome to the club! ${firstTimers.length} entries are charting for the first time ever`)
+      allFacts.push({
+        fact: `Welcome to the club! ${firstTimers.length} entries are charting for the first time ever`,
+        type: 'welcomeToClub',
+        priority: 3 // High priority
+      })
     }
   }
 
-  // ARTIST DOMINANCE
+  // ARTIST DOMINANCE (medium priority)
   const artistCounts = new Map<string, number>()
   currentEntries.forEach(entry => {
     if (entry.artist) {
@@ -588,69 +644,141 @@ async function generateFunFacts(
     }
   })
   
-  for (const [artist, count] of artistCounts.entries()) {
-    if (count >= 2) {
-      facts.push(`${artist} is dominating with ${count} entries in the charts!`)
-      break // Only one dominance fact
-    }
+  const dominatingArtists = Array.from(artistCounts.entries())
+    .filter(([_, count]) => count >= 2)
+    .sort((a, b) => b[1] - a[1])
+  
+  // Shuffle for randomness
+  const shuffledDominating = shuffle(dominatingArtists)
+  for (const [artist, count] of shuffledDominating.slice(0, 2)) {
+    allFacts.push({
+      fact: `${artist} is dominating with ${count} entries in the charts!`,
+      type: 'dominating',
+      priority: 2 // Medium priority
+    })
   }
 
-
-  // STABILITY FACTS
+  // STABILITY FACTS (medium priority)
   const stableEntries = currentEntries.filter(e => e.positionChange === 0).length
   if (stableEntries >= 3) {
-    facts.push(`Steady as a rock! ${stableEntries} entries held their position this week`)
+    allFacts.push({
+      fact: `Steady as a rock! ${stableEntries} entries held their position this week`,
+      type: 'steadyAsRock',
+      priority: 2 // Medium priority
+    })
   }
 
-  // TOP 3 STABILITY
+  // TOP 3 STABILITY (high priority)
   const top3 = currentEntries.filter(e => e.position <= 3)
   const top3Stable = top3.filter(e => e.positionChange === 0).length
   if (top3Stable === 3) {
-    facts.push(`The top 3 stayed strong - no changes at the top!`)
+    allFacts.push({
+      fact: `The top 3 stayed strong - no changes at the top!`,
+      type: 'top3Stable',
+      priority: 3 // High priority
+    })
   }
 
-  // PERCENTAGE INCREASE
+  // PERCENTAGE INCREASE (medium priority)
   if (trends.totalPlaysChange !== null && trends.totalPlaysChange > 0 && previousTotalPlays > 0) {
     const percentIncrease = Math.round((trends.totalPlaysChange / previousTotalPlays) * 100)
     if (percentIncrease >= 20) {
-      facts.push(`This week was wild! ${trends.totalPlaysChange.toLocaleString()} more plays than last week - that's a ${percentIncrease}% increase!`)
+      allFacts.push({
+        fact: `This week was wild! ${trends.totalPlaysChange.toLocaleString()} more plays than last week - that's a ${percentIncrease}% increase!`,
+        type: 'wildWeek',
+        priority: 2 // Medium priority
+      })
     }
   }
 
-  // MEMBER FACTS (if 3+ members)
+  // MEMBER FACTS (high priority)
   if (trends.topContributors && trends.topContributors.length >= 3) {
     const topTwo = trends.topContributors.slice(0, 2)
     const difference = topTwo[0].totalPlays - topTwo[1].totalPlays
     if (difference < 50 && difference > 0) {
-      facts.push(`Close race! Top contributor only ${difference} plays ahead of second place`)
+      allFacts.push({
+        fact: `Close race! Top contributor only ${difference} plays ahead of second place`,
+        type: 'closeRace',
+        priority: 3 // High priority
+      })
     }
   }
 
-
-  // MVP FACT (enhanced)
+  // MVP FACT (medium priority)
   if (trends.topContributors && trends.topContributors.length > 0) {
     const mvp = trends.topContributors[0]
-    facts.push(`This week's MVP: ${mvp.name} with ${mvp.totalPlays.toLocaleString()} plays - absolute legend!`)
+    allFacts.push({
+      fact: `This week's MVP: ${mvp.name} with ${mvp.totalPlays.toLocaleString()} plays - absolute legend!`,
+      type: 'mvp',
+      priority: 2 // Medium priority
+    })
   }
 
-  // TOTAL PLAYS CELEBRATION
+  // TOTAL PLAYS CELEBRATION (medium priority)
   if (trends.totalPlays > 0) {
-    facts.push(`The group listened to ${trends.totalPlays.toLocaleString()} songs this week - that's dedication!`)
+    allFacts.push({
+      fact: `The group listened to ${trends.totalPlays.toLocaleString()} songs this week - that's dedication!`,
+      type: 'totalPlays',
+      priority: 2 // Medium priority
+    })
   }
 
-  // Return top facts (prioritize more interesting ones)
-  // Sort to prioritize comeback, streaks, peaks, first timers, then others
-  const prioritizedFacts = facts.sort((a, b) => {
-    const aScore = a.includes('comeback') || a.includes('on fire') || a.includes('Unstoppable') ? 3 :
-                   a.includes('New peak') || a.includes('First timer') ? 2 :
-                   a.includes('dominating') || a.includes('wild') ? 1 : 0
-    const bScore = b.includes('comeback') || b.includes('on fire') || b.includes('Unstoppable') ? 3 :
-                   b.includes('New peak') || b.includes('First timer') ? 2 :
-                   b.includes('dominating') || b.includes('wild') ? 1 : 0
-    return bScore - aScore
-  })
+  // Select facts avoiding duplicates, prioritizing higher priority facts
+  const selectedFacts: string[] = []
+  const usedTypes = new Set<string>()
+  
+  // First pass: select high priority facts (priority 3), avoiding duplicates
+  const highPriorityFacts = allFacts.filter(f => f.priority === 3)
+  const shuffledHigh = shuffle(highPriorityFacts)
+  for (const factObj of shuffledHigh) {
+    if (!usedTypes.has(factObj.type)) {
+      selectedFacts.push(factObj.fact)
+      usedTypes.add(factObj.type)
+    }
+  }
+  
+  // Second pass: select medium priority facts (priority 2), avoiding duplicates
+  const mediumPriorityFacts = allFacts.filter(f => f.priority === 2)
+  const shuffledMedium = shuffle(mediumPriorityFacts)
+  for (const factObj of shuffledMedium) {
+    if (!usedTypes.has(factObj.type)) {
+      selectedFacts.push(factObj.fact)
+      usedTypes.add(factObj.type)
+    }
+  }
+  
+  // Third pass: select low priority facts (priority 1) only if we need more and haven't used this type
+  const lowPriorityFacts = allFacts.filter(f => f.priority === 1)
+  const shuffledLow = shuffle(lowPriorityFacts)
+  for (const factObj of shuffledLow) {
+    if (!usedTypes.has(factObj.type)) {
+      selectedFacts.push(factObj.fact)
+      usedTypes.add(factObj.type)
+    }
+  }
+  
+  // Final pass: if we still need more facts and have exhausted unique types, allow duplicates
+  // but still prefer different types
+  if (selectedFacts.length < 10) {
+    const remainingFacts = shuffle(allFacts.filter(f => !selectedFacts.includes(f.fact)))
+    for (const factObj of remainingFacts) {
+      if (selectedFacts.length >= 10) break
+      // Prefer facts of types we haven't used yet
+      if (!usedTypes.has(factObj.type)) {
+        selectedFacts.push(factObj.fact)
+        usedTypes.add(factObj.type)
+      }
+    }
+    
+    // If still need more, allow duplicates
+    if (selectedFacts.length < 10) {
+      const allRemaining = shuffle(allFacts.map(f => f.fact).filter(f => !selectedFacts.includes(f)))
+      selectedFacts.push(...allRemaining.slice(0, 10 - selectedFacts.length))
+    }
+  }
 
-  return prioritizedFacts.slice(0, 10) // Return up to 10, UI will show top 3
+  // Final shuffle to add randomness to the order
+  return shuffle(selectedFacts).slice(0, 10)
 }
 
 /**

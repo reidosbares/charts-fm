@@ -294,7 +294,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
               )}
             </Link>
             <div className="text-xs md:text-sm text-gray-500">
-              #{entry.position} • {entry.currentStreak} {entry.currentStreak === 1 ? t('week') : t('weeks')} streak
+              #{entry.position} • {entry.currentStreak} {entry.currentStreak === 1 ? t('week') : t('weeks')} {t('streak')}
             </div>
           </div>
         </div>
@@ -372,7 +372,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                   <span className={`text-xs md:text-sm font-normal ${isNumberOne ? 'text-yellow-700' : 'text-gray-600'}`}> {t('by', { artist: entry.artist })}</span>
                 )}
               </Link>
-              <div className={`text-xs md:text-sm ${isNumberOne ? 'text-yellow-700 font-semibold' : 'text-gray-500'}`}>#{entry.position}</div>
+              <div className={`text-xs md:text-sm ${isNumberOne ? 'text-yellow-700 font-semibold' : 'text-gray-500'}`}>{t('debutedAt', { position: entry.position })}</div>
             </div>
           </div>
         )
@@ -547,12 +547,12 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                               </Link>
                               {entry.position && (
                                 <div className="text-xs text-gray-500">
-                                  #{entry.position}
+                                  {block.title === t('newEntries') ? t('debutedAt', { position: entry.position }) : `#${entry.position}`}
                                   {entry.weeksAway !== undefined && entry.weeksAway !== null && (
                                     <span className="ml-1">• {t('returnedAfter', { count: entry.weeksAway, unit: entry.weeksAway === 1 ? t('week') : t('weeks') })}</span>
                                   )}
                                   {entry.currentStreak !== undefined && entry.currentStreak !== null && (
-                                    <span className="ml-1">• {entry.currentStreak} {entry.currentStreak === 1 ? t('week') : t('weeks')} streak</span>
+                                    <span className="ml-1">• {entry.currentStreak} {entry.currentStreak === 1 ? t('week') : t('weeks')} {t('streak')}</span>
                                   )}
                                 </div>
                               )}
@@ -738,15 +738,22 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
         </div>
 
         {/* Detailed Personalized Stats Below */}
-        {personalizedStats && (
-          <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-4 md:p-6 border border-theme">
-            <h3 className="text-lg md:text-xl font-bold text-[var(--theme-primary-dark)] mb-3 md:mb-4 flex items-center gap-2">
-              <FontAwesomeIcon icon={faUser} className="text-base md:text-lg flex-shrink-0" />
-              {t('yourDetailedStats')}
-            </h3>
-            <div className="space-y-3 md:space-y-4">
-              {/* Top Contributions */}
-              {personalizedStats.topContributions && personalizedStats.topContributions.length > 0 && (
+        {personalizedStats && (() => {
+          const hasTopContributions = personalizedStats.topContributions && personalizedStats.topContributions.length > 0
+          const hasEntriesDriven = personalizedStats.entriesDriven && personalizedStats.entriesDriven.length > 0
+          const hasBiggestMovers = personalizedStats.biggestMovers && personalizedStats.biggestMovers.length > 0
+          const hasDataToShow = hasTopContributions || hasEntriesDriven || hasBiggestMovers
+
+          return (
+            <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-4 md:p-6 border border-theme">
+              <h3 className="text-lg md:text-xl font-bold text-[var(--theme-primary-dark)] mb-3 md:mb-4 flex items-center gap-2">
+                <FontAwesomeIcon icon={faUser} className="text-base md:text-lg flex-shrink-0" />
+                {t('yourDetailedStats')}
+              </h3>
+              {hasDataToShow ? (
+                <div className="space-y-3 md:space-y-4">
+                  {/* Top Contributions */}
+                  {hasTopContributions && (
                 <div>
                   <h4 className="text-base md:text-lg font-bold text-[var(--theme-primary-dark)] mb-2 md:mb-3 flex items-center gap-2">
                     {t('yourTopContributions')}
@@ -789,8 +796,8 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                 </div>
               )}
 
-              {/* Entries You Drove */}
-              {personalizedStats.entriesDriven && personalizedStats.entriesDriven.length > 0 && (
+                  {/* Entries You Drove */}
+                  {hasEntriesDriven && (
                 <div>
                   <h4 className="text-base md:text-lg font-bold text-[var(--theme-primary-dark)] mb-2 md:mb-3 flex items-center gap-2">
                     {t('entriesYouDrove')}
@@ -833,52 +840,58 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                 </div>
               )}
 
-              {/* Biggest Movers You Contributed To */}
-              {personalizedStats.biggestMovers && personalizedStats.biggestMovers.length > 0 && (
-                <div>
-                  <h4 className="text-base md:text-lg font-bold text-[var(--theme-primary-dark)] mb-2 md:mb-3 flex items-center gap-2">
-                    {t('yourBiggestMovers')}
-                    <Tooltip content={t('yourBiggestMoversTooltip')} position="right">
-                      <button
-                        type="button"
-                        className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-600 hover:text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 focus:ring-offset-1"
-                        aria-label={t('yourBiggestMoversTooltip')}
-                      >
-                        <FontAwesomeIcon icon={faQuestionCircle} className="text-xs md:text-sm flex-shrink-0" />
-                      </button>
-                    </Tooltip>
-                  </h4>
-                  <div className="space-y-2">
-                    {personalizedStats.biggestMovers.map((mover: any, idx: number) => (
-                      <div
-                        key={idx}
-                        className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 border border-[var(--theme-border)]"
-                      >
-                        <FontAwesomeIcon icon={faArrowUp} className="text-base md:text-lg text-green-600 flex-shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <Link
-                            href={`/groups/${groupId}/charts/${getChartTypePath(mover.chartType)}/${generateSlug(mover.entryKey, mover.chartType as ChartType)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
+                  {/* Biggest Movers You Contributed To */}
+                  {hasBiggestMovers && (
+                    <div>
+                      <h4 className="text-base md:text-lg font-bold text-[var(--theme-primary-dark)] mb-2 md:mb-3 flex items-center gap-2">
+                        {t('yourBiggestMovers')}
+                        <Tooltip content={t('yourBiggestMoversTooltip')} position="right">
+                          <button
+                            type="button"
+                            className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-600 hover:text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 focus:ring-offset-1"
+                            aria-label={t('yourBiggestMoversTooltip')}
                           >
-                            {mover.name}
-                            {mover.artist && (
-                              <span className="text-xs md:text-sm font-normal text-gray-600"> {t('by', { artist: mover.artist })}</span>
-                            )}
-                          </Link>
-                          <div className="text-xs md:text-sm text-green-600 font-semibold">
-                            ↑ {Math.abs(mover.positionChange)} {t('positions')} ({mover.oldPosition} → {mover.newPosition})
+                            <FontAwesomeIcon icon={faQuestionCircle} className="text-xs md:text-sm flex-shrink-0" />
+                          </button>
+                        </Tooltip>
+                      </h4>
+                      <div className="space-y-2">
+                        {personalizedStats.biggestMovers.map((mover: any, idx: number) => (
+                          <div
+                            key={idx}
+                            className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 border border-[var(--theme-border)]"
+                          >
+                            <FontAwesomeIcon icon={faArrowUp} className="text-base md:text-lg text-green-600 flex-shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <Link
+                                href={`/groups/${groupId}/charts/${getChartTypePath(mover.chartType)}/${generateSlug(mover.entryKey, mover.chartType as ChartType)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
+                              >
+                                {mover.name}
+                                {mover.artist && (
+                                  <span className="text-xs md:text-sm font-normal text-gray-600"> {t('by', { artist: mover.artist })}</span>
+                                )}
+                              </Link>
+                              <div className="text-xs md:text-sm text-green-600 font-semibold">
+                                ↑ {Math.abs(mover.positionChange)} {t('positions')} ({mover.oldPosition} → {mover.newPosition})
+                              </div>
+                            </div>
                           </div>
-                        </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-gray-500 text-center py-4 md:py-6 text-xs md:text-sm italic">
+                  {t('noEntriesToShow')}
                 </div>
               )}
             </div>
-          </div>
-        )}
+          )
+        })()}
       </div>
     )
   }

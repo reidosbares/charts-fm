@@ -12,6 +12,126 @@ interface GroupTrendsTabProps {
   groupId: string
 }
 
+// Helper function to translate fun facts
+function translateFunFact(fact: string, t: (key: string, values?: Record<string, any>) => string): string {
+  const tf = (key: string, values?: Record<string, any>) => t(`funFacts.${key}`, values)
+  
+  // Comeback: "Artist "name" by artist made a comeback! Returned to the top 10 after X weeks away!"
+  const comebackMatch = fact.match(/^(Artist|Track|Album) "([^"]+)"(?: by ([^!]+))? made a comeback! Returned to the top 10 after (\d+) weeks away!$/)
+  if (comebackMatch) {
+    const [, type, name, artist, weeks] = comebackMatch
+    const typeKey = type.toLowerCase() as 'artist' | 'track' | 'album'
+    return tf('comeback', {
+      type: tf(typeKey),
+      name,
+      byArtist: artist ? ` ${t('by', { artist: artist.trim() })}` : '',
+      weeks
+    })
+  }
+
+  // On fire: "Artist "name" by artist is on fire! X weeks in a row in the top 10!"
+  const onFireMatch = fact.match(/^(Artist|Track|Album) "([^"]+)"(?: by ([^!]+))? is on fire! (\d+) weeks in a row in the top 10!$/)
+  if (onFireMatch) {
+    const [, type, name, artist, weeks] = onFireMatch
+    const typeKey = type.toLowerCase() as 'artist' | 'track' | 'album'
+    return tf('onFire', {
+      type: tf(typeKey),
+      name,
+      byArtist: artist ? ` ${t('by', { artist: artist.trim() })}` : '',
+      weeks
+    })
+  }
+
+  // Unstoppable: "Unstoppable! "name" by artist has been charting for X consecutive weeks"
+  const unstoppableMatch = fact.match(/^Unstoppable! "([^"]+)"(?: by ([^!]+))? has been charting for (\d+) consecutive weeks$/)
+  if (unstoppableMatch) {
+    const [, name, artist, weeks] = unstoppableMatch
+    return tf('unstoppable', {
+      name,
+      byArtist: artist ? ` ${t('by', { artist: artist.trim() })}` : '',
+      weeks
+    })
+  }
+
+  // New peak: "New peak! "name" by artist reached #X, their highest ever!"
+  const newPeakMatch = fact.match(/^New peak! "([^"]+)"(?: by ([^!]+))? reached #(\d+), their highest ever!$/)
+  if (newPeakMatch) {
+    const [, name, artist, position] = newPeakMatch
+    return tf('newPeak', {
+      name,
+      byArtist: artist ? ` ${t('by', { artist: artist.trim() })}` : '',
+      position
+    })
+  }
+
+  // First timer: "First timer! "name" by artist entered the charts for the very first time!"
+  const firstTimerMatch = fact.match(/^First timer! "([^"]+)"(?: by ([^!]+))? entered the charts for the very first time!$/)
+  if (firstTimerMatch) {
+    const [, name, artist] = firstTimerMatch
+    return tf('firstTimer', {
+      name,
+      byArtist: artist ? ` ${t('by', { artist: artist.trim() })}` : ''
+    })
+  }
+
+  // Welcome to the club: "Welcome to the club! X entries are charting for the first time ever"
+  const welcomeMatch = fact.match(/^Welcome to the club! (\d+) entries are charting for the first time ever$/)
+  if (welcomeMatch) {
+    const [, count] = welcomeMatch
+    return tf('welcomeToClub', { count })
+  }
+
+  // Dominating: "Artist is dominating with X entries in the charts!"
+  const dominatingMatch = fact.match(/^(.+) is dominating with (\d+) entries in the charts!$/)
+  if (dominatingMatch) {
+    const [, artist, count] = dominatingMatch
+    return tf('dominating', { artist, count })
+  }
+
+  // Steady as a rock: "Steady as a rock! X entries held their position this week"
+  const steadyMatch = fact.match(/^Steady as a rock! (\d+) entries held their position this week$/)
+  if (steadyMatch) {
+    const [, count] = steadyMatch
+    return tf('steadyAsRock', { count })
+  }
+
+  // Top 3 stable: "The top 3 stayed strong - no changes at the top!"
+  if (fact === "The top 3 stayed strong - no changes at the top!") {
+    return tf('top3Stable')
+  }
+
+  // Wild week: "This week was wild! X more plays than last week - that's a Y% increase!"
+  const wildWeekMatch = fact.match(/^This week was wild! (.+) more plays than last week - that's a (\d+)% increase!$/)
+  if (wildWeekMatch) {
+    const [, plays, percent] = wildWeekMatch
+    return tf('wildWeek', { plays, percent })
+  }
+
+  // Close race: "Close race! Top contributor only X plays ahead of second place"
+  const closeRaceMatch = fact.match(/^Close race! Top contributor only (\d+) plays ahead of second place$/)
+  if (closeRaceMatch) {
+    const [, difference] = closeRaceMatch
+    return tf('closeRace', { difference })
+  }
+
+  // MVP: "This week's MVP: Name with X plays - absolute legend!"
+  const mvpMatch = fact.match(/^This week's MVP: (.+) with (.+) plays - absolute legend!$/)
+  if (mvpMatch) {
+    const [, name, plays] = mvpMatch
+    return tf('mvp', { name, plays })
+  }
+
+  // Total plays: "The group listened to X songs this week - that's dedication!"
+  const totalPlaysMatch = fact.match(/^The group listened to (.+) songs this week - that's dedication!$/)
+  if (totalPlaysMatch) {
+    const [, plays] = totalPlaysMatch
+    return tf('totalPlays', { plays })
+  }
+
+  // If no match, return original
+  return fact
+}
+
 export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
   const t = useSafeTranslations('groups.trends')
   const [data, setData] = useState<any>(null)
@@ -215,7 +335,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
                         <span className={`text-xs md:text-sm font-normal ${isNumberOne ? 'text-yellow-700' : 'text-gray-600'}`}> {t('by', { artist: entry.artist })}</span>
                       )}
                     </Link>
-                    <div className={`text-xs md:text-sm ${isNumberOne ? 'text-yellow-700 font-semibold' : 'text-gray-500'}`}>#{entry.position}</div>
+                    <div className={`text-xs md:text-sm ${isNumberOne ? 'text-yellow-700 font-semibold' : 'text-gray-500'}`}>{t('debutedAt', { position: entry.position })}</div>
                   </div>
                 </div>
               )
@@ -283,7 +403,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
           <div className="space-y-2 md:space-y-3">
             {funFacts.slice(0, 3).map((fact: string, idx: number) => (
               <div key={idx} className="text-base md:text-lg text-gray-700 p-2 md:p-3 rounded-lg bg-white/80 border border-[var(--theme-border)]">
-                {fact}
+                {translateFunFact(fact, t)}
               </div>
             ))}
           </div>

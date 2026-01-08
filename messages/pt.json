@@ -287,6 +287,7 @@
       "jumpedPositionsPlural": "Subiu {count} posições!",
       "newEntriesThisWeek": "Estreias da semana",
       "numberOneDebut": "ESTREOU EM #1",
+      "debutedAt": "Estreou em #{position}",
       "andMore": "...e mais {count}",
       "thisWeeksMVP": "MVP da Semana",
       "topContributions": "Principais contribuições: {contributions}",
@@ -304,6 +305,7 @@
       "exits": "Saídas",
       "week": "semana",
       "weeks": "semanas",
+      "streak": "consecutivas",
       "returnedAfter": "Voltou depois de {count} {unit}",
       "positions": "posições",
       "lastPosition": "Última posição",
@@ -336,14 +338,14 @@
       "seeHowWeekPlayedOut": "Passarinho, que som é esse?",
       "exploreCompleteCharts": "Explore os charts completos com todos os artistas, músicas e álbuns ranqueados desta semana.",
       "viewCharts": "Ver charts",
-      "memberTrends": "Trends dos Membros",
+      "memberTrends": "Membros",
       "artists": "Artistas",
       "tracks": "Músicas",
       "albums": "Álbuns",
       "funFactsTitle": "Curiosidades",
       "funFacts": {
-        "comeback": "\"{name}\"{byArtist} está de volta ao top 10 depois de {weeks} semanas fora!",
-        "onFire": "\"{name}\"{byArtist} está em alta! {weeks} semanas seguidas no top 10!",
+        "comeback": "{type} \"{name}\"{byArtist} está de volta ao top 10 depois de {weeks} semanas fora!",
+        "onFire": "{type} \"{name}\"{byArtist} está em alta! {weeks} semanas seguidas no top 10!",
         "unstoppable": "Trem sem freio! \"{name}\"{byArtist} está no chart há {weeks} semanas consecutivas",
         "newPeak": "Conta até {position} pra ver se não é muito! #{position} é a nova maior posição histórica de \"{name}\"{byArtist}!",
         "firstTimer": "Primeira vez! \"{name}\"{byArtist} entrou nos charts pela primeira vez!",
@@ -356,8 +358,8 @@
         "mvp": "O MVP da semana: {name} com {plays} plays. Lenda!",
         "totalPlays": "O grupo, no total, deu {plays} plays esta semana. Dedicação!",
         "artist": "Artista",
-        "track": "Música",
-        "album": "Álbum"
+        "track": "A música",
+        "album": "O álbum"
       }
     },
     "allTimeStats": {
