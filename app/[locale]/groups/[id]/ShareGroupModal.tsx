@@ -24,7 +24,7 @@ export default function ShareGroupModal({
   const [linkCopied, setLinkCopied] = useState(false)
   const [invitationCopied, setInvitationCopied] = useState(false)
   const [publicUrl, setPublicUrl] = useState('')
-  const [position, setPosition] = useState({ top: 0, right: 0 })
+  const [position, setPosition] = useState({ top: 0, right: 0, isMobile: false })
   const [mounted, setMounted] = useState(false)
   const [isPositioned, setIsPositioned] = useState(false)
 
@@ -36,10 +36,17 @@ export default function ShareGroupModal({
     if (buttonRef.current && typeof window !== 'undefined') {
       const rect = buttonRef.current.getBoundingClientRect()
       const scrollY = window.scrollY || window.pageYOffset
-      // Position bubble below the button (button bottom + gap)
-      const top = rect.bottom + scrollY + 12 // 12px gap
-      const right = window.innerWidth - rect.right
-      setPosition({ top, right })
+      const isMobile = window.innerWidth < 768 // md breakpoint
+      
+      if (isMobile) {
+        // On mobile, position at bottom center (we'll use bottom CSS property)
+        setPosition({ top: 0, right: 0, isMobile: true })
+      } else {
+        // On desktop, position bubble below the button
+        const top = rect.bottom + scrollY + 12 // 12px gap
+        const right = window.innerWidth - rect.right
+        setPosition({ top, right, isMobile: false })
+      }
       setIsPositioned(true)
     }
   }, [buttonRef])
@@ -49,9 +56,17 @@ export default function ShareGroupModal({
     if (isOpen && typeof window !== 'undefined' && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect()
       const scrollY = window.scrollY || window.pageYOffset
-      const top = rect.bottom + scrollY + 12
-      const right = window.innerWidth - rect.right
-      setPosition({ top, right })
+      const isMobile = window.innerWidth < 768 // md breakpoint
+      
+      if (isMobile) {
+        // On mobile, position at bottom center (we'll use bottom CSS property)
+        setPosition({ top: 0, right: 0, isMobile: true })
+      } else {
+        // On desktop, position bubble below the button
+        const top = rect.bottom + scrollY + 12
+        const right = window.innerWidth - rect.right
+        setPosition({ top, right, isMobile: false })
+      }
       setIsPositioned(true)
     } else if (!isOpen) {
       setIsPositioned(false)
@@ -147,20 +162,34 @@ export default function ShareGroupModal({
       />
       {/* Speech bubble positioned below share button */}
       <div 
-        className="absolute z-[9999] max-w-md w-full mx-4 transition-opacity duration-200 ease-out"
+        className="fixed md:absolute z-[9999] max-w-md w-full transition-opacity duration-200 ease-out"
         style={{
-          top: `${position.top}px`,
-          right: `${position.right}px`,
+          ...(position.isMobile
+            ? {
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                right: 'auto',
+                maxWidth: 'calc(100vw - 2rem)',
+                width: 'calc(100vw - 2rem)',
+              }
+            : {
+                top: `${position.top}px`,
+                right: `${position.right}px`,
+                marginRight: '1rem',
+                marginLeft: '1rem',
+              }
+          ),
           opacity: isPositioned ? 1 : 0,
           pointerEvents: isPositioned ? 'auto' : 'none',
-          maxHeight: '90vh',
+          maxHeight: position.isMobile ? 'calc(100vh - 2rem)' : '90vh',
           overflowY: 'auto',
         }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="bg-white rounded-lg shadow-2xl p-4 md:p-6 relative">
-          {/* Speech bubble tail pointing up to share button */}
-          <div className="absolute -top-3 right-4 w-6 h-6 bg-white transform rotate-45 shadow-lg"></div>
+          {/* Speech bubble tail pointing up to share button - hidden on mobile */}
+          <div className="hidden md:block absolute -top-3 right-4 w-6 h-6 bg-white transform rotate-45 shadow-lg"></div>
           
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg md:text-xl font-bold">{t('title')}</h2>
