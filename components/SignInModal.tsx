@@ -28,97 +28,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
     email: '',
     password: '',
   })
-  const [isMobile, setIsMobile] = useState(false)
-  const [dragY, setDragY] = useState(0)
-  const [isDragging, setIsDragging] = useState(false)
-  const [startY, setStartY] = useState(0)
-  const [startScrollTop, setStartScrollTop] = useState(0)
-  const [canDrag, setCanDrag] = useState(false)
   const modalRef = useRef<HTMLDivElement>(null)
-
-  // Detect mobile on mount
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
-
-  // Reset drag state when modal closes
-  useEffect(() => {
-    if (!isOpen) {
-      setDragY(0)
-      setIsDragging(false)
-      setCanDrag(false)
-    }
-  }, [isOpen])
-
-  // Handle drag start
-  const handleDragStart = (e: React.TouchEvent | React.MouseEvent, fromHandle: boolean = false) => {
-    if (!isMobile) return
-    
-    const target = e.currentTarget as HTMLElement
-    const modalContent = modalRef.current
-    if (!modalContent) return
-
-    const scrollTop = modalContent.scrollTop
-    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
-    
-    // Only allow drag if:
-    // 1. Starting from the drag handle, OR
-    // 2. Starting from top area AND content is scrolled to top
-    if (fromHandle || (scrollTop === 0 && (target === modalContent || target.closest('.drag-handle-area')))) {
-      setStartY(clientY)
-      setStartScrollTop(scrollTop)
-      setIsDragging(true)
-      setCanDrag(true)
-      e.preventDefault()
-    }
-  }
-
-  // Handle drag move
-  const handleDragMove = (e: React.TouchEvent | React.MouseEvent) => {
-    if (!isMobile || !isDragging || !canDrag) return
-    
-    const modalContent = modalRef.current
-    if (!modalContent) return
-
-    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
-    const deltaY = clientY - startY
-    
-    // Only allow dragging down
-    if (deltaY > 0) {
-      // Prevent scrolling while dragging
-      e.preventDefault()
-      setDragY(deltaY)
-    } else if (deltaY < -10) {
-      // If dragging up, cancel drag (user is trying to scroll)
-      setIsDragging(false)
-      setCanDrag(false)
-      setDragY(0)
-    }
-  }
-
-  // Handle drag end
-  const handleDragEnd = () => {
-    if (!isMobile || !isDragging || !canDrag) return
-    
-    const threshold = 100 // pixels to drag before dismissing
-    const velocity = dragY // simple velocity calculation
-    
-    if (dragY > threshold || velocity > 50) {
-      // Dismiss modal
-      onClose()
-    } else {
-      // Snap back
-      setDragY(0)
-    }
-    
-    setIsDragging(false)
-    setCanDrag(false)
-  }
 
   // Redirect to dashboard if already logged in
   useEffect(() => {
@@ -267,51 +177,24 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
       {/* Backdrop */}
       <div
         className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm transition-opacity"
-        style={{
-          opacity: isMobile && dragY > 0 ? Math.max(0, 0.5 - dragY / 300) : 1,
-        }}
         onClick={onClose}
       />
       
       {/* Modal */}
-      <div className="fixed inset-0 z-[9999] flex items-end md:items-center justify-center pointer-events-none">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none">
         <div
           ref={modalRef}
-          className="relative rounded-t-3xl md:rounded-2xl shadow-2xl max-w-md w-full p-5 md:p-8 max-h-[95vh] md:max-h-[90vh] overflow-y-auto pointer-events-auto"
+          className="relative rounded-2xl shadow-2xl max-w-md w-full p-5 md:p-8 max-h-[90vh] overflow-y-auto pointer-events-auto"
           style={{
-            animation: isDragging ? 'none' : 'fadeIn 0.2s ease-in-out',
-            transform: isMobile && dragY > 0 ? `translateY(${dragY}px)` : 'translateY(0)',
-            transition: isDragging ? 'none' : 'transform 0.3s ease-out',
-            background: isMobile 
-              ? 'rgba(255, 255, 255, 1)' 
-              : 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: isMobile ? 'none' : 'blur(20px) saturate(180%)',
-            WebkitBackdropFilter: isMobile ? 'none' : 'blur(20px) saturate(180%)',
-            border: isMobile ? 'none' : '1px solid rgba(255, 255, 255, 0.3)',
-            boxShadow: isMobile 
-              ? '0 -4px 20px 0 rgba(0, 0, 0, 0.15)' 
-              : '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
-            paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))',
-            opacity: isMobile && dragY > 0 ? Math.max(0.5, 1 - dragY / 300) : 1,
-            touchAction: isDragging ? 'none' : 'pan-y',
+            animation: 'fadeIn 0.2s ease-in-out',
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
           }}
           onClick={(e) => e.stopPropagation()}
-          onTouchStart={(e) => handleDragStart(e, false)}
-          onTouchMove={handleDragMove}
-          onTouchEnd={handleDragEnd}
         >
-          {/* Mobile drag handle area */}
-          <div 
-            className="drag-handle-area md:hidden flex justify-center mb-4 pt-2 cursor-grab active:cursor-grabbing touch-none select-none"
-            onTouchStart={(e) => {
-              e.stopPropagation()
-              handleDragStart(e, true)
-            }}
-            onTouchMove={handleDragMove}
-            onTouchEnd={handleDragEnd}
-          >
-            <div className="w-12 h-1.5 bg-gray-300 rounded-full"></div>
-          </div>
 
           <button
             onClick={onClose}
@@ -382,7 +265,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors text-base md:text-sm touch-manipulation"
+                className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors text-base md:text-sm text-gray-900 touch-manipulation"
                 placeholder={t('emailPlaceholder')}
                 disabled={isLoading}
                 autoFocus
@@ -414,7 +297,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
                 required
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors text-base md:text-sm touch-manipulation"
+                className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors text-base md:text-sm text-gray-900 touch-manipulation"
                 placeholder={t('passwordPlaceholder')}
                 disabled={isLoading}
                 autoComplete="current-password"
@@ -439,12 +322,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span 
-                className="px-2 text-gray-500"
-                style={{
-                  background: isMobile ? 'rgba(255, 255, 255, 1)' : 'transparent'
-                }}
-              >
+              <span className="px-2 text-gray-500 bg-transparent">
                 {t('or')}
               </span>
             </div>

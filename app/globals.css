@@ -73,6 +73,52 @@ body {
   }
 }
 
+/* Ensure input fields have dark, readable text on mobile devices (especially iOS Safari) */
+/* iOS Safari uses -webkit-text-fill-color which can override regular color */
+input[type="text"]:not([disabled]),
+input[type="email"]:not([disabled]),
+input[type="password"]:not([disabled]),
+input[type="number"]:not([disabled]),
+input[type="tel"]:not([disabled]),
+input[type="url"]:not([disabled]),
+input[type="search"]:not([disabled]),
+textarea:not([disabled]) {
+  -webkit-text-fill-color: rgb(17 24 39);
+}
+
+/* Ensure inputs with text-gray-900 class maintain dark text on iOS */
+input.text-gray-900,
+textarea.text-gray-900 {
+  -webkit-text-fill-color: rgb(17 24 39);
+}
+
+/* Keep placeholder text light on all browsers, including iOS Safari */
+input::placeholder,
+textarea::placeholder {
+  color: rgb(107 114 128); /* gray-500 */
+  opacity: 1;
+  -webkit-text-fill-color: rgb(107 114 128);
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: rgb(107 114 128);
+  opacity: 1;
+  -webkit-text-fill-color: rgb(107 114 128);
+}
+
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+  color: rgb(107 114 128);
+  opacity: 1;
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color: rgb(107 114 128);
+  opacity: 1;
+}
+
 @keyframes pulse-scale {
   0%, 100% {
     transform: scale(1);
