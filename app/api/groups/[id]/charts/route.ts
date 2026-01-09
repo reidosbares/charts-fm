@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { Prisma } from '@prisma/client'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getSuperuser } from '@/lib/admin'
@@ -300,7 +301,7 @@ export async function POST(
         data: {
           chartGenerationInProgress: false,
           chartGenerationStartedAt: null,
-          chartGenerationProgress: null,
+          chartGenerationProgress: Prisma.JsonNull,
         },
       }).catch((err) => {
         console.error('Error releasing lock after abort:', err)
@@ -444,7 +445,7 @@ export async function POST(
       data: {
         chartGenerationInProgress: false,
         chartGenerationStartedAt: null,
-        chartGenerationProgress: null,
+        chartGenerationProgress: Prisma.JsonNull,
       },
     }).catch((err) => {
       console.error('Error releasing lock after error:', err)
@@ -496,7 +497,7 @@ export async function POST(
     data: {
       chartGenerationInProgress: false,
       chartGenerationStartedAt: null,
-      chartGenerationProgress: null,
+      chartGenerationProgress: Prisma.JsonNull,
     },
   })
 

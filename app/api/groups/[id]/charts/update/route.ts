@@ -274,7 +274,7 @@ async function generateChartsInBackground(
         data: {
           chartGenerationInProgress: false,
           chartGenerationStartedAt: null,
-          chartGenerationProgress: null,
+          chartGenerationProgress: Prisma.JsonNull,
         },
       })
       return
@@ -569,7 +569,7 @@ async function generateChartsInBackground(
       data: {
         chartGenerationInProgress: false,
         chartGenerationStartedAt: null,
-        chartGenerationProgress: null,
+        chartGenerationProgress: Prisma.JsonNull,
       },
     })
   } catch (error) {
@@ -580,7 +580,7 @@ async function generateChartsInBackground(
       data: {
         chartGenerationInProgress: false,
         chartGenerationStartedAt: null,
-        chartGenerationProgress: null,
+        chartGenerationProgress: Prisma.JsonNull,
       },
     }).catch((err) => {
       console.error('Error releasing lock after error:', err)
