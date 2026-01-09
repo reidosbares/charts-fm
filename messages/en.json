@@ -757,8 +757,8 @@
     "public": {
       "notFoundDescription": "This group may not exist or may be private.",
       "viewAsMember": "View as Member",
-      "joinCommunityMessage": "Create your account or log in to join this community!",
-      "logIn": "Log In",
+      "joinCommunityMessage": "Create your account or sign in to join this community!",
+      "logIn": "Sign In",
       "createAccount": "Create Account",
       "totalPlaysThisWeek": "Total Plays This Week",
       "noChartsDescription": "This group hasn't generated any charts yet.",
@@ -1067,39 +1067,40 @@
     }
   },
   "landing": {
-    "titlePart1": "Your Music",
-    "titlePart2": "Together",
-    "subtitle": "Create groups with friends and build a shared listening history",
-    "description": "Track what you're listening to, discover trends, and explore your music taste through combined charts and stats",
-    "getStarted": "Get Started",
+    "titlePart1": "Your Music Got",
+    "titlePart2": "Company",
+    "subtitle": "Create music communities with your friends and build a shared listening history",
+    "description": "Discover what's most popular in the group, create weekly charts that represent your current favorites, and track the evolution of your collective music taste.",
+    "getStarted": "Start Here",
+    "alreadyAMember": "Already have an account?",
     "features": {
       "createGroups": {
-        "title": "Create Groups",
-        "description": "Start a group with friends and combine your listening histories. See what everyone's playing, find your shared favorites, and build a collective music history together."
+        "title": "Music Communities",
+        "description": "Create a group with friends and combine your listening habits. See what everyone is listening to, discover the group's favorites, and build a music history collectively."
       },
       "statsTrends": {
-        "title": "Stats & Trends",
-        "description": "Watch your favorite artists climb the charts, see what's trending in your group, and explore your listening patterns over time."
+        "title": "Statistics and Trends",
+        "description": "Watch your favorite artists climb the charts, discover what's trending in your circles, and explore the evolution of trends over time."
       },
       "shareTaste": {
         "title": "Share Your Taste",
-        "description": "See how your music taste compares with others, discover new artists through compatibility, and celebrate what makes your listening unique."
+        "description": "See how your music taste compares with others, discover who your musical match is, and what makes your way of listening unique."
       }
     },
     "cta": {
       "title": "Ready to get started?",
       "description": "Connect your Last.fm account and start building shared listening histories with your friends.",
-      "logIn": "Log In",
+      "logIn": "Sign In",
       "createAccount": "Create Account"
     }
   },
   "auth": {
     "login": {
-      "title": "Log In",
-      "subtitle": "Log in to your ChartsFM account",
-      "emailVerified": "Email verified successfully! You can now log in.",
-      "accountCreated": "Account created successfully! Please log in.",
-      "verifyEmail": "Please verify your email address before logging in. Check your inbox for the verification link.",
+      "title": "Sign In",
+      "subtitle": "Sign in to your ChartsFM account",
+      "emailVerified": "Email verified successfully! You can now sign in.",
+      "accountCreated": "Account created successfully! Please sign in.",
+      "verifyEmail": "Please verify your email address before signing in. Check your inbox for the verification link.",
       "invalidCredentials": "Invalid email or password",
       "error": "An error occurred. Please try again.",
       "enterEmail": "Please enter your email address",
@@ -1111,11 +1112,11 @@
       "passwordLabel": "Password",
       "forgotPassword": "Forgot password?",
       "passwordPlaceholder": "Enter your password",
-      "loggingIn": "Logging in...",
-      "logInButton": "Log In",
+      "loggingIn": "Signing in...",
+      "logInButton": "Sign In",
       "or": "Or",
       "redirecting": "Redirecting...",
-      "logInWithLastfm": "Log in with Last.fm",
+      "logInWithLastfm": "Sign in with Last.fm",
       "noAccount": "Don't have an account?",
       "signUp": "Sign up"
     },
@@ -1129,7 +1130,7 @@
       "redirecting": "Redirecting...",
       "redirectMessage": "You'll be redirected to Last.fm to authorize this application.",
       "alreadyHaveAccount": "Already have an account?",
-      "logIn": "Log in",
+      "logIn": "Sign in",
       "errors": {
         "noToken": "No authentication token received from Last.fm",
         "config": "Server configuration error. Please contact support.",
@@ -1156,7 +1157,7 @@
       "creatingAccount": "Creating Account...",
       "createAccount": "Create Account",
       "alreadyHaveAccount": "Already have an account?",
-      "logIn": "Log in",
+      "logIn": "Sign in",
       "errors": {
         "fillAllFields": "Please fill in all fields",
         "passwordsDontMatch": "Passwords do not match",
@@ -1171,8 +1172,8 @@
       "verifying": "Verifying Email...",
       "verifyingDescription": "Please wait while we verify your email address.",
       "successTitle": "Email Verified!",
-      "successDescription": "Your email has been successfully verified. You can now log in to your account.",
-      "goToLogin": "Go to Login",
+      "successDescription": "Your email has been successfully verified. You can now sign in to your account.",
+      "goToLogin": "Go to Sign In",
       "errorTitle": "Verification Failed",
       "checkEmailTitle": "Check Your Email",
       "checkEmailDescription": "We've sent a verification email to your address. Please check your inbox and click the verification link to activate your account.",
@@ -1183,9 +1184,9 @@
       "sending": "Sending...",
       "resendEmail": "Resend Verification Email",
       "emailSent": "Verification email sent! Please check your inbox.",
-      "backToLogin": "Back to Login",
+      "backToLogin": "Back to Sign In",
       "errors": {
-        "emailNotVerified": "Please verify your email address before logging in.",
+        "emailNotVerified": "Please verify your email address before signing in.",
         "missingToken": "No verification token provided.",
         "invalidToken": "Invalid or expired verification token. Please request a new one.",
         "serverError": "An error occurred. Please try again.",

@@ -92,7 +92,7 @@ export default function LandingPageClient() {
             <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-6 md:mb-8 lg:mb-10 max-w-2xl mx-auto font-inter px-4">
               {t('description')}
             </p>
-            <div className="flex justify-center">
+            <div className="flex flex-col justify-center items-center gap-3 md:gap-4">
               <LiquidGlassLink
                 href="/auth/signup"
                 variant="primary"
@@ -101,6 +101,15 @@ export default function LandingPageClient() {
               >
                 {t('getStarted')}
               </LiquidGlassLink>
+              <div className="text-sm md:text-base text-gray-600">
+                {t('alreadyAMember')}{' '}
+                <button
+                  onClick={() => setIsSignInModalOpen(true)}
+                  className="text-gray-600 hover:text-gray-900 underline transition-colors"
+                >
+                  {t('cta.logIn')} →
+                </button>
+              </div>
             </div>
           </div>
 

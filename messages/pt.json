@@ -1070,8 +1070,9 @@
     "titlePart1": "Sua Música Ganhou",
     "titlePart2": "Companhia",
     "subtitle": "Crie comunidades musicais com seus amigos e descubra as tendências entre vocês",
-    "description": "Descubra o que faz mais sucesso no grupo, e crie estatísticas que descrevem o seu gosto musical como um todo.",
+    "description": "Descubra o que faz mais sucesso no grupo, crie charts semanais que representam as músicas favoritas entre vocês e acompanhe a evolução do seu gosto musical coletivo.",
     "getStarted": "Comece Aqui",
+    "alreadyAMember": "Já tem uma conta?",
     "features": {
       "createGroups": {
         "title": "Comunidades Musicais",
