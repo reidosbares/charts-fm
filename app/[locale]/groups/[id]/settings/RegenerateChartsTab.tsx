@@ -41,45 +41,66 @@ export default function RegenerateChartsTab({
   const [showErrorModal, setShowErrorModal] = useState(false)
   const [failedUsers, setFailedUsers] = useState<string[]>([])
   const [aborted, setAborted] = useState(false)
+  const [progress, setProgress] = useState<{ currentWeek: number; totalWeeks: number; stage: string } | null>(null)
 
-  // Poll for completion if initially in progress
+  // Poll for completion and progress if initially in progress or currently loading
   useEffect(() => {
-    if (initialInProgress) {
-      const pollForCompletion = async () => {
-        const pollInterval = 2500 // 2.5 seconds
+    if (!isLoading) {
+      setProgress(null)
+      return
+    }
 
-        const poll = async () => {
-          try {
-            const response = await fetch(`/api/groups/${groupId}/charts/update`)
-            if (!response.ok) {
-              throw new Error('Failed to check generation status')
-            }
+    const pollInterval = 2500 // 2.5 seconds
+    let isPolling = true
 
-            const data = await response.json()
+    const poll = async () => {
+      if (!isPolling) return
 
-            if (!data.inProgress) {
-              // Generation complete
-              setIsLoading(false)
-              router.refresh()
-            } else {
-              // Still in progress, poll again
-              setTimeout(poll, pollInterval)
-            }
-          } catch (err) {
-            console.error('Error polling for completion:', err)
-            // Continue polling even on error (might be temporary)
-            setTimeout(poll, pollInterval)
-          }
+      try {
+        const response = await fetch(`/api/groups/${groupId}/charts/update`)
+        if (!response.ok) {
+          throw new Error('Failed to check generation status')
         }
 
-        // Start polling
-        setTimeout(poll, pollInterval)
-      }
+        const data = await response.json()
 
-      pollForCompletion()
+        // Update progress if available
+        if (data.progress) {
+          setProgress(data.progress)
+        }
+
+        if (!data.inProgress) {
+          // Generation complete
+          setIsLoading(false)
+          setProgress(null)
+          setSuccess(true)
+          // Refresh after showing success message
+          setTimeout(() => {
+            router.refresh()
+          }, 2000)
+        } else if (isPolling) {
+          // Still in progress, poll again
+          setTimeout(poll, pollInterval)
+        }
+      } catch (err) {
+        console.error('Error polling for completion:', err)
+        // Continue polling even on error (might be temporary)
+        if (isPolling) {
+          setTimeout(poll, pollInterval)
+        }
+      }
+    }
+
+    // Start polling after a short delay to allow synchronous completion to be handled first
+    const timeoutId = setTimeout(poll, 1000)
+
+    // Cleanup function to stop polling
+    return () => {
+      isPolling = false
+      clearTimeout(timeoutId)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialInProgress])
+  }, [isLoading, groupId])
 
   useEffect(() => {
     if (!isLoading) {
@@ -88,10 +109,10 @@ export default function RegenerateChartsTab({
       return
     }
 
-    // Show first message for 10 seconds, then start rotating
+    // Show first message for 5 seconds, then start rotating
     const firstMessageTimer = setTimeout(() => {
       setShowFirstMessage(false)
-    }, 10000)
+    }, 5000)
 
     // Rotate messages every 10 seconds (starting after first message) with random selection
     const rotationTimer = setInterval(() => {
@@ -117,6 +138,7 @@ export default function RegenerateChartsTab({
     setIsLoading(true)
     setShowFirstMessage(true)
     setCurrentMessageIndex(0)
+    setProgress(null)
 
     try {
       const body: { weeks?: number } = {}
@@ -147,6 +169,7 @@ export default function RegenerateChartsTab({
         setAborted(data.aborted || false)
         setShowErrorModal(true)
         setIsLoading(false)
+        setProgress(null)
         // If it was a success response with warnings, also set success
         if (response.ok) {
           setSuccess(true)
@@ -158,22 +181,69 @@ export default function RegenerateChartsTab({
         throw new Error(data.error || t('failedToGenerate'))
       }
 
-      setSuccess(true)
-      setIsLoading(false)
-      
-      // Refresh the page to show updated charts
-      router.refresh()
+      // Check if generation completed synchronously (POST route processes everything before returning)
+      // If weeklyStats is in the response, generation is complete
+      if (data.weeklyStats) {
+        // Generation completed synchronously - show success message briefly before refreshing
+        setSuccess(true)
+        setIsLoading(false)
+        setProgress(null)
+        // Refresh the page to show updated charts after showing success message
+        setTimeout(() => {
+          router.refresh()
+        }, 2000)
+      } else {
+        // Generation is happening in background, start polling for progress
+        // Keep isLoading true - polling effect will handle completion
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : t('failedToGenerate'))
       setIsLoading(false)
+      setProgress(null)
     }
   }
 
-  const getLoadingMessage = () => {
+  const getStatusMessage = () => {
+    if (progress) {
+      const { currentWeek, totalWeeks, stage } = progress
+      const percentage = totalWeeks > 0 ? Math.round((currentWeek / totalWeeks) * 100) : 0
+      
+      if (stage === 'initializing') {
+        return t('fetchingData')
+      } else if (stage === 'fetching') {
+        return t('fetchingData')
+      } else if (stage === 'processing') {
+        return t('processingWeek', { current: currentWeek, total: totalWeeks, percentage })
+      } else if (stage === 'finalizing') {
+        return t('finalizing')
+      }
+    }
+    
     if (showFirstMessage) {
       return t('fetchingData')
     }
-    return LOADING_MESSAGES[currentMessageIndex]
+    return t('fetchingData')
+  }
+
+  const getFunnyMessage = () => {
+    // Show funny messages when:
+    // 1. We have progress and we're processing or finalizing (show immediately)
+    // 2. OR we're past the first message period (after 5 seconds)
+    if (progress && (progress.stage === 'processing' || progress.stage === 'finalizing')) {
+      return LOADING_MESSAGES[currentMessageIndex]
+    }
+    
+    // Show after first message period even if no progress yet
+    if (!showFirstMessage) {
+      return LOADING_MESSAGES[currentMessageIndex]
+    }
+    
+    return null
+  }
+
+  const getProgressPercentage = () => {
+    if (!progress || progress.totalWeeks === 0) return 0
+    return Math.min(100, Math.round((progress.currentWeek / progress.totalWeeks) * 100))
   }
 
   return (
@@ -181,28 +251,59 @@ export default function RegenerateChartsTab({
       <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">{t('title')}</h2>
       
       {isLoading && (
-        <div className="mb-3 md:mb-4 p-3 md:p-4 bg-blue-100 border border-blue-400 text-blue-700 rounded-lg flex items-center gap-2 md:gap-3 text-sm md:text-base">
-          <svg
-            className="animate-spin h-4 w-4 md:h-5 md:w-5 text-blue-600 flex-shrink-0"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-          <span>{getLoadingMessage()}</span>
+        <div className="mb-3 md:mb-4 p-3 md:p-4 bg-blue-100 border border-blue-400 text-blue-700 rounded-lg text-sm md:text-base">
+          <div className="flex items-center gap-2 md:gap-3 mb-3">
+            <svg
+              className="animate-spin h-4 w-4 md:h-5 md:w-5 text-blue-600 flex-shrink-0"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <span className="font-medium">{getStatusMessage()}</span>
+          </div>
+          
+          {progress && progress.totalWeeks > 0 && (
+            <div className="mt-3">
+              <div className="flex justify-between items-center mb-1.5 text-xs text-blue-600">
+                <span>
+                  {progress.stage === 'processing' 
+                    ? `Week ${progress.currentWeek} of ${progress.totalWeeks}`
+                    : progress.stage === 'finalizing'
+                    ? 'Finalizing...'
+                    : 'Initializing...'}
+                </span>
+                <span>{getProgressPercentage()}%</span>
+              </div>
+              <div className="w-full bg-blue-200 rounded-full h-2.5 overflow-hidden">
+                <div
+                  className="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${getProgressPercentage()}%` }}
+                ></div>
+              </div>
+            </div>
+          )}
+
+          {getFunnyMessage() && (
+            <div className={`text-center ${progress && progress.totalWeeks > 0 ? 'mt-4' : 'mt-3'}`}>
+              <p className="font-serif text-sm md:text-base italic text-blue-600">
+                {getFunnyMessage()}
+              </p>
+            </div>
+          )}
         </div>
       )}
 

@@ -676,6 +676,8 @@
         "alreadyInProgress": "Chart generation is already in progress. Please wait for it to complete.",
         "generating": "Generating",
         "generateCharts": "Generate Charts",
+        "finalizing": "Finalizing charts...",
+        "processingWeek": "Processing week {current} of {total} ({percentage}%)",
         "loadingMessages": {
           "interestingTastes": "This group sure has some interesting tastes...",
           "unexpectedArtist": "Oh wow, THAT artist got #1? Interesting...",

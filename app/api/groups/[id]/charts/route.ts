@@ -144,26 +144,6 @@ export async function POST(
     }
   }
 
-  // Acquire lock
-  const updatedGroup = await prisma.group.update({
-    where: {
-      id: groupId,
-      chartGenerationInProgress: false, // Optimistic locking
-    },
-    data: {
-      chartGenerationInProgress: true,
-      chartGenerationStartedAt: now,
-    },
-  })
-
-  if (!updatedGroup) {
-    // Lock acquisition failed (another process got it)
-    return NextResponse.json(
-      { error: 'Chart generation is already in progress' },
-      { status: 409 }
-    )
-  }
-
   const chartSize = group.chartSize || 10
   const trackingDayOfWeek = group.trackingDayOfWeek ?? 0
   // @ts-ignore - Prisma client will be regenerated after migration
@@ -190,7 +170,33 @@ export async function POST(
 
   // Calculate stats for last N finished weeks using group's tracking day
   const weeks = getLastNFinishedWeeksForDay(numberOfWeeks, trackingDayOfWeek)
-  
+  const totalWeeks = weeks.length
+
+  // Acquire lock
+  const updatedGroup = await prisma.group.update({
+    where: {
+      id: groupId,
+      chartGenerationInProgress: false, // Optimistic locking
+    },
+    data: {
+      chartGenerationInProgress: true,
+      chartGenerationStartedAt: now,
+      chartGenerationProgress: {
+        currentWeek: 0,
+        totalWeeks: totalWeeks,
+        stage: 'initializing',
+      },
+    },
+  })
+
+  if (!updatedGroup) {
+    // Lock acquisition failed (another process got it)
+    return NextResponse.json(
+      { error: 'Chart generation is already in progress' },
+      { status: 409 }
+    )
+  }
+
   // Fetch group members once (to reuse across all weeks)
   const members = await prisma.groupMember.findMany({
     where: { groupId },
@@ -234,8 +240,37 @@ export async function POST(
   let shouldAbortGeneration = false
   
   try {
+    // Update progress to fetching stage
+    await prisma.group.update({
+      where: { id: groupId },
+      data: {
+        chartGenerationProgress: {
+          currentWeek: 0,
+          totalWeeks: totalWeeks,
+          stage: 'fetching',
+        },
+      },
+    })
+
     for (let i = 0; i < weeksInOrder.length; i++) {
       const weekStart = weeksInOrder[i]
+      const currentWeekNumber = i + 1
+      
+      // Update progress to show current week being processed
+      await prisma.group.update({
+        where: { id: groupId },
+        data: {
+          chartGenerationProgress: {
+            currentWeek: currentWeekNumber,
+            totalWeeks: totalWeeks,
+            stage: 'processing',
+          },
+        },
+      }).catch((err) => {
+        console.error('Error updating progress:', err)
+        // Continue even if progress update fails
+      })
+      
       const result = await calculateGroupWeeklyStats(
         groupId,
         weekStart,
@@ -270,6 +305,7 @@ export async function POST(
         data: {
           chartGenerationInProgress: false,
           chartGenerationStartedAt: null,
+          chartGenerationProgress: null,
         },
       }).catch((err) => {
         console.error('Error releasing lock after abort:', err)
@@ -289,6 +325,20 @@ export async function POST(
         { status: 400 }
       )
     }
+
+    // Update progress to finalizing stage
+    await prisma.group.update({
+      where: { id: groupId },
+      data: {
+        chartGenerationProgress: {
+          currentWeek: totalWeeks,
+          totalWeeks: totalWeeks,
+          stage: 'finalizing',
+        },
+      },
+    }).catch((err) => {
+      console.error('Error updating progress:', err)
+    })
 
     // Recalculate all-time stats once after all weeks are processed
     await recalculateAllTimeStats(groupId)
@@ -404,6 +454,7 @@ export async function POST(
       data: {
         chartGenerationInProgress: false,
         chartGenerationStartedAt: null,
+        chartGenerationProgress: null,
       },
     }).catch((err) => {
       console.error('Error releasing lock after error:', err)
@@ -476,6 +527,7 @@ export async function POST(
     data: {
       chartGenerationInProgress: false,
       chartGenerationStartedAt: null,
+      chartGenerationProgress: null,
     },
   })
 

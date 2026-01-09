@@ -36,6 +36,7 @@ export async function GET(
         id: true,
         trackingDayOfWeek: true,
         chartGenerationInProgress: true,
+        chartGenerationProgress: true,
         lastChartGenerationFailedUsers: true,
         lastChartGenerationAborted: true,
       },
@@ -94,11 +95,29 @@ export async function GET(
       })
     }
 
+    // Parse progress information
+    let progress: { currentWeek: number; totalWeeks: number; stage: string } | null = null
+    if (group.chartGenerationProgress) {
+      try {
+        const progressData = group.chartGenerationProgress as any
+        if (progressData && typeof progressData.currentWeek === 'number' && typeof progressData.totalWeeks === 'number') {
+          progress = {
+            currentWeek: progressData.currentWeek,
+            totalWeeks: progressData.totalWeeks,
+            stage: progressData.stage || 'processing',
+          }
+        }
+      } catch (err) {
+        console.error('Error parsing progress:', err)
+      }
+    }
+
     return NextResponse.json({
       inProgress,
       canUpdate: canUpdate && !inProgress,
       failedUsers: failedUsers.length > 0 ? failedUsers : undefined,
       aborted: failedUsers.length > 0 ? aborted : undefined,
+      progress,
     })
   } catch (error: any) {
     if (error.status === 401 || error.status === 403 || error.status === 404) {
@@ -154,7 +173,7 @@ export async function POST(
       }
     }
 
-    // Acquire lock
+    // Acquire lock (we'll set progress after calculating weeks)
     const updatedGroup = await prisma.group.update({
       where: {
         id: groupId,
@@ -261,10 +280,25 @@ async function generateChartsInBackground(
         data: {
           chartGenerationInProgress: false,
           chartGenerationStartedAt: null,
+          chartGenerationProgress: null,
         },
       })
       return
     }
+
+    const totalWeeks = weeksToGenerate.length
+
+    // Initialize progress
+    await prisma.group.update({
+      where: { id: groupId },
+      data: {
+        chartGenerationProgress: {
+          currentWeek: 0,
+          totalWeeks: totalWeeks,
+          stage: 'initializing',
+        },
+      },
+    })
 
     // Fetch group members once (to reuse across all weeks)
     const members = await prisma.groupMember.findMany({
@@ -298,9 +332,37 @@ async function generateChartsInBackground(
     let shouldAbortGeneration = false
     
     try {
+      // Update progress to fetching stage
+      await prisma.group.update({
+        where: { id: groupId },
+        data: {
+          chartGenerationProgress: {
+            currentWeek: 0,
+            totalWeeks: totalWeeks,
+            stage: 'fetching',
+          },
+        },
+      })
+
       for (let weekIndex = 0; weekIndex < weeksToGenerate.length; weekIndex++) {
         const weekStart = weeksToGenerate[weekIndex]
         const weekEnd = getWeekEndForDay(weekStart, trackingDayOfWeek)
+        const currentWeekNumber = weekIndex + 1
+        
+        // Update progress to show current week being processed
+        await prisma.group.update({
+          where: { id: groupId },
+          data: {
+            chartGenerationProgress: {
+              currentWeek: currentWeekNumber,
+              totalWeeks: totalWeeks,
+              stage: 'processing',
+            },
+          },
+        }).catch((err) => {
+          console.error('Error updating progress:', err)
+          // Continue even if progress update fails
+        })
         
         // Delete overlapping charts (handles tracking date changes automatically)
         await deleteOverlappingCharts(groupId, weekStart, weekEnd)
@@ -358,6 +420,20 @@ async function generateChartsInBackground(
           console.error('Error storing failed users info:', err)
         })
       }
+
+      // Update progress to finalizing stage
+      await prisma.group.update({
+        where: { id: groupId },
+        data: {
+          chartGenerationProgress: {
+            currentWeek: totalWeeks,
+            totalWeeks: totalWeeks,
+            stage: 'finalizing',
+          },
+        },
+      }).catch((err) => {
+        console.error('Error updating progress:', err)
+      })
 
       // Recalculate all-time stats once after all weeks are processed
       await recalculateAllTimeStats(groupId)
@@ -512,6 +588,7 @@ async function generateChartsInBackground(
       data: {
         chartGenerationInProgress: false,
         chartGenerationStartedAt: null,
+        chartGenerationProgress: null,
       },
     })
   } catch (error) {
@@ -522,6 +599,7 @@ async function generateChartsInBackground(
       data: {
         chartGenerationInProgress: false,
         chartGenerationStartedAt: null,
+        chartGenerationProgress: null,
       },
     }).catch((err) => {
       console.error('Error releasing lock after error:', err)

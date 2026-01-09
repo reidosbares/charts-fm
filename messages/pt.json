@@ -676,6 +676,8 @@
         "alreadyInProgress": "A geração de charts já está em andamento. Por favor, aguarde a conclusão.",
         "generating": "Gerando",
         "generateCharts": "Gerar charts",
+        "finalizing": "Finalizando charts...",
+        "processingWeek": "Processando semana {current} de {total} ({percentage}%)",
         "loadingMessages": {
           "interestingTastes": "Essa comunidade tem uns gostos bem interessantes...",
           "unexpectedArtist": "Nossa, ESSE artista aí ficou em #1? Interessante...",

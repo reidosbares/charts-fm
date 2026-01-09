@@ -98,6 +98,7 @@ model Group {
   updatedAt                 DateTime                       @updatedAt
   chartGenerationInProgress Boolean                        @default(false)
   chartGenerationStartedAt  DateTime?
+  chartGenerationProgress   Json?
   lastChartGenerationFailedUsers Json?
   lastChartGenerationAborted Boolean?
   dynamicIconCaption        String?
