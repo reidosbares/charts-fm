@@ -237,7 +237,7 @@ export default function DiscoverGroupsClient({
                 )}
               </div>
               <div className="text-xs md:text-sm text-gray-600 flex items-center gap-2 md:gap-4 flex-wrap">
-                <span className="truncate">{t('owner')}: <span className="font-semibold">{group.creator.name || group.creator.lastfmUsername}</span></span>
+                <span className="flex items-center gap-1 min-w-0">{t('owner')}: <span className="font-semibold truncate max-w-[120px] md:max-w-[200px]">{group.creator.name || group.creator.lastfmUsername}</span></span>
                 <span className="flex items-center gap-1 flex-shrink-0">
                   <FontAwesomeIcon icon={faUsers} className="text-xs" />
                   <span>{group._count.members} {group._count.members === 1 ? t('member') : t('members')}</span>
@@ -283,9 +283,9 @@ export default function DiscoverGroupsClient({
               )}
             </div>
             <div className="text-xs md:text-sm text-gray-600 space-y-1">
-              <p className="flex items-center gap-2 flex-wrap">
+              <p className="flex items-center gap-2 flex-wrap min-w-0">
                 <span>{t('owner')}:</span>
-                <span className="font-semibold text-gray-900 truncate">{group.creator.name || group.creator.lastfmUsername}</span>
+                <span className="font-semibold text-gray-900 truncate max-w-[120px] md:max-w-[200px]">{group.creator.name || group.creator.lastfmUsername}</span>
               </p>
               <p className="flex items-center gap-2">
                 <FontAwesomeIcon icon={faUsers} className="text-[var(--theme-primary)] font-medium text-xs md:text-sm" />
