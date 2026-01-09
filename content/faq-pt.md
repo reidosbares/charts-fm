@@ -6,18 +6,23 @@ O Vibe Score (VS) é um sistema de pontuação usado pra gerar os charts. Ele to
 
 O VS é calculado para cada item (faixa, artista ou álbum) com base em sua posição no gráfico semanal **pessoal** de cada usuário.
 
-Para as 100 principais itens de cada usuário, a fórmula é:
+Para as 100 principais itens de cada usuário, o VS usa um sistema de três níveis:
 
-```
-VS = 1.00 - (1.00 × (posição - 1) / 100)
-```
+1. **Posição 1**: Recebe peso especial de **2,00 VS**
+2. **Posições 2-21**: Redução linear de 0,05 por posição
+   - Fórmula: `VS = 2,00 - (0,05 × (posição - 1))`
+   - A posição 21 atinge 1,00 VS
+3. **Posições 22-100**: Interpolação linear de 1,00 a 0,00
+   - Fórmula: `VS = 1,00 × (1 - ((posição - 21) / 80))`
+4. **Posição 101+**: `0,00` (itens além das 100 principais não recebem VS)
 
 **Exemplos:**
-- Posição 1: `1,00 - (1,00 × 0 / 100) = 1,00`
-- Posição 2: `1,00 - (1,00 × 1 / 100) = 0,99`
-- Posição 10: `1,00 - (1,00 × 9 / 100) = 0,91`
-- Posição 50: `1,00 - (1,00 × 49 / 100) = 0,51`
-- Posição 100: `1,00 - (1,00 × 99 / 100) = 0,01`
+- Posição 1: `2,00 VS` (peso especial)
+- Posição 2: `2,00 - (0,05 × 1) = 1,95 VS`
+- Posição 10: `2,00 - (0,05 × 9) = 1,55 VS`
+- Posição 21: `2,00 - (0,05 × 20) = 1,00 VS`
+- Posição 50: `1,00 × (1 - 29/80) = 0,64 VS`
+- Posição 100: `1,00 × (1 - 79/80) = 0,01 VS`
 - Posição 101+: `0,00` (itens além das 100 principais não recebem VS)
 
 Ou seja: suponha que João e Maria estejam num mesmo comunidades. João escutou Lady Gaga 500 vezes em uma semana, o que a tornou asua artista mais escutada naquela semana. Maria escutou Ariana Grande apenas 50 vezes, mas ela foi a sua mais escutada daquela semana.
@@ -34,9 +39,9 @@ Você não precisa usar este sistema para calcular seus charts, se não quiser. 
 Soma os pontos de VS de todos os usuários para cada item. Esse é o melhor sistema para comunidades com hábitos variados, onde você quer representar igualmente os favoritos de cada membro.
 
 **Exemplo:**
-- A música #1 do Usuário A recebe 1.00 VS
-- A música #5 do Usuário B recebe 0.96 VS
-- Se ambos os usuários ouviram a mesma música, VS total = 1.96
+- A música #1 do Usuário A recebe 2,00 VS
+- A música #5 do Usuário B recebe 1,80 VS (2,00 - 0,20)
+- Se ambos os usuários ouviram a mesma música, VS total = 3,80
 
 #### 2. Modo VS Ponderado
 Neste modo, multiplicamos o VS de cada usuário por sua contagem de plays, depois somamos entre os usuários. Esse método equilibra a importância da classificação com o volume de escuta: além dos itens precisarem receber posições altas entre os membros da comunidade para entrar nos charts, também se leva em consideração a contagem de plays.
@@ -44,9 +49,9 @@ Neste modo, multiplicamos o VS de cada usuário por sua contagem de plays, depoi
 **Fórmula:** `Soma(VS × contagem de plays)` para cada item
 
 **Exemplo:**
-- Faixa #1 do Usuário A (1.00 VS) com 28 plays = 28.00 de contribuição
-- Faixa #1 do Usuário B (1.00 VS) com 5 plays = 5.00 de contribuição
-- VS total = 33.00
+- Faixa #1 do Usuário A (2,00 VS) com 28 plays = 56,00 de contribuição
+- Faixa #1 do Usuário B (2,00 VS) com 5 plays = 10,00 de contribuição
+- VS total = 66,00
 
 #### 3. Modo Apenas Plays
 Modo tradicional - soma as contagens de plays de todos os usuários. Por consistência, o VS nesse modo será igual à contagem de plays. Este é melhor para comunidades que preferem um sistema simples e tradicional.

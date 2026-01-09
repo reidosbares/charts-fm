@@ -16,24 +16,29 @@ The Vibe Score system allows group owners to choose how charts are calculated an
 
 ### Vibe Score (VS)
 
-VS is a score calculated for each item (track, artist, or album) based on its position in each user's personal weekly chart. The score ranges from 0.00 to 1.00, with higher positions receiving higher scores.
+VS is a score calculated for each item (track, artist, or album) based on its position in each user's personal weekly chart. The score ranges from 0.00 to 2.00, with position 1 receiving special weighting of 2.00 VS.
 
 ### Calculation Formula
 
 VS is now **standardized to always use top 100 entries** per user, regardless of group chart size. This makes VS user-specific and reusable across all groups.
 
-For each user's top 100 items:
+For each user's top 100 items, VS uses a **three-tier system**:
 
-```
-VS = 1.00 - (1.00 × (position - 1) / 100)
-```
+1. **Position 1**: Gets special weighting of **2.00 VS**
+2. **Positions 2-21**: Linear reduction by 0.05 per position
+   - Formula: `VS = 2.00 - (0.05 × (position - 1))`
+   - Position 21 reaches 1.00 VS
+3. **Positions 22-100**: Linear interpolation from 1.00 to 0.00
+   - Formula: `VS = 1.00 × (1 - ((position - 21) / 80))`
+4. **Position 101+**: `0.00` (items beyond top 100 receive no VS)
 
 **Examples:**
-- Position 1: `1.00 - (1.00 × 0 / 100) = 1.00`
-- Position 2: `1.00 - (1.00 × 1 / 100) = 0.99`
-- Position 10: `1.00 - (1.00 × 9 / 100) = 0.91`
-- Position 50: `1.00 - (1.00 × 49 / 100) = 0.51`
-- Position 100: `1.00 - (1.00 × 99 / 100) = 0.01`
+- Position 1: `2.00 VS` (special weighting)
+- Position 2: `2.00 - (0.05 × 1) = 1.95 VS`
+- Position 10: `2.00 - (0.05 × 9) = 1.55 VS`
+- Position 21: `2.00 - (0.05 × 20) = 1.00 VS`
+- Position 50: `1.00 × (1 - 29/80) = 0.64 VS`
+- Position 100: `1.00 × (1 - 79/80) = 0.01 VS`
 - Position 101+: `0.00` (items beyond top 100 receive no VS)
 
 ### Standardization Benefits
@@ -54,9 +59,9 @@ Group owners can choose from three calculation modes:
 **How it works:** Sums VS scores across all users for each item.
 
 **Example:**
-- User A's #1 track gets 1.00 VS
-- User B's #5 track gets 0.96 VS (position 5 in top 100)
-- If both users listened to the same track, total VS = 1.96
+- User A's #1 track gets 2.00 VS
+- User B's #5 track gets 1.80 VS (2.00 - 0.20)
+- If both users listened to the same track, total VS = 3.80
 
 **Best for:** Groups with diverse listening habits where you want to emphasize what's important to each member equally.
 
@@ -67,9 +72,9 @@ Group owners can choose from three calculation modes:
 **Formula:** `Sum(VS × playcount)` for each item
 
 **Example:**
-- User A's #1 track (1.00 VS) with 28 plays = 28.00 contribution
-- User B's #1 track (1.00 VS) with 5 plays = 5.00 contribution
-- Total VS = 33.00
+- User A's #1 track (2.00 VS) with 28 plays = 56.00 contribution
+- User B's #1 track (2.00 VS) with 5 plays = 10.00 contribution
+- Total VS = 66.00
 
 **Best for:** Balancing ranking importance with listening volume. Rewards both high position and high play count.
 
@@ -171,7 +176,10 @@ model UserChartEntryVS {
    ↓
 2. Calculate VS per User (Automatic)
    - Take top 100 items (standardized, not based on group chartSize)
-   - Calculate VS based on position (1.00 - (position - 1) / 100)
+   - Calculate VS based on three-tier system:
+     * Position 1: 2.00 VS
+     * Positions 2-21: 2.00 - (0.05 × (position - 1))
+     * Positions 22-100: 1.00 × (1 - ((position - 21) / 80))
    - Items beyond position 100 get 0.00 VS
    - Store in UserChartEntryVS (user-specific, no groupId)
    ↓
@@ -292,20 +300,20 @@ npx prisma generate
 - Mode: `vs`
 
 **User A's Top Tracks (VS calculated from top 100):**
-1. "Carnaval" - 28 plays → 1.00 VS (position 1 in top 100)
-2. "Bad Romance" - 19 plays → 0.99 VS (position 2 in top 100)
-3. "Alejandro" - 18 plays → 0.98 VS (position 3 in top 100)
+1. "Carnaval" - 28 plays → 2.00 VS (position 1 in top 100)
+2. "Bad Romance" - 19 plays → 1.95 VS (position 2 in top 100)
+3. "Alejandro" - 18 plays → 1.90 VS (position 3 in top 100)
 ...
 100. "Berghain" - 4 plays → 0.01 VS (position 100 in top 100)
 
 **User B's Top Tracks (VS calculated from top 100):**
-1. "Bad Romance" - 15 plays → 1.00 VS (position 1 in top 100)
-2. "Carnaval" - 12 plays → 0.99 VS (position 2 in top 100)
+1. "Bad Romance" - 15 plays → 2.00 VS (position 1 in top 100)
+2. "Carnaval" - 12 plays → 1.95 VS (position 2 in top 100)
 
 **Result:**
-- "Carnaval": 1.00 (User A) + 0.99 (User B) = **1.99 VS**
-- "Bad Romance": 0.99 (User A) + 1.00 (User B) = **1.99 VS**
-- "Alejandro": 0.98 (User A) = **0.98 VS**
+- "Carnaval": 2.00 (User A) + 1.95 (User B) = **3.95 VS**
+- "Bad Romance": 1.95 (User A) + 2.00 (User B) = **3.95 VS**
+- "Alejandro": 1.90 (User A) = **1.90 VS**
 
 Both "Carnaval" and "Bad Romance" tie at 1.99 VS, ranked by playcount as tiebreaker. The top 20 items (based on group chartSize) appear in the final chart.
 
@@ -314,10 +322,10 @@ Both "Carnaval" and "Bad Romance" tie at 1.99 VS, ranked by playcount as tiebrea
 **Same users, VS Weighted mode:**
 
 **Result:**
-- "Carnaval": (1.00 × 28) + (0.95 × 12) = 28.00 + 11.40 = **39.40 VS**
-- "Bad Romance": (0.95 × 19) + (1.00 × 15) = 18.05 + 15.00 = **33.05 VS**
+- "Carnaval": (2.00 × 28) + (1.95 × 12) = 56.00 + 23.40 = **79.40 VS**
+- "Bad Romance": (1.95 × 19) + (2.00 × 15) = 37.05 + 30.00 = **67.05 VS**
 
-"Carnaval" wins because User A's high play count (28) multiplied by high VS (1.00) creates a larger contribution.
+"Carnaval" wins because User A's high play count (28) multiplied by high VS (2.00) creates a larger contribution.
 
 ## Testing Considerations
 

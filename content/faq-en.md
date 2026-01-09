@@ -6,18 +6,23 @@ Vibe Score (VS) is a scoring system used to generate charts. It makes charts mor
 
 VS is calculated for each item (track, artist, or album) based on its position in each user's **personal** weekly chart.
 
-For the top 100 items of each user, the formula is:
+For the top 100 items of each user, VS uses a three-tier system:
 
-```
-VS = 1.00 - (1.00 × (position - 1) / 100)
-```
+1. **Position 1**: Gets special weighting of **2.00 VS**
+2. **Positions 2-21**: Linear reduction by 0.05 per position
+   - Formula: `VS = 2.00 - (0.05 × (position - 1))`
+   - Position 21 reaches 1.00 VS
+3. **Positions 22-100**: Linear interpolation from 1.00 to 0.00
+   - Formula: `VS = 1.00 × (1 - ((position - 21) / 80))`
+4. **Position 101+**: `0.00` (items beyond the top 100 receive no VS)
 
 **Examples:**
-- Position 1: `1.00 - (1.00 × 0 / 100) = 1.00`
-- Position 2: `1.00 - (1.00 × 1 / 100) = 0.99`
-- Position 10: `1.00 - (1.00 × 9 / 100) = 0.91`
-- Position 50: `1.00 - (1.00 × 49 / 100) = 0.51`
-- Position 100: `1.00 - (1.00 × 99 / 100) = 0.01`
+- Position 1: `2.00 VS` (special weighting)
+- Position 2: `2.00 - (0.05 × 1) = 1.95 VS`
+- Position 10: `2.00 - (0.05 × 9) = 1.55 VS`
+- Position 21: `2.00 - (0.05 × 20) = 1.00 VS`
+- Position 50: `1.00 × (1 - 29/80) = 0.64 VS`
+- Position 100: `1.00 × (1 - 79/80) = 0.01 VS`
 - Position 101+: `0.00` (items beyond the top 100 receive no VS)
 
 In other words: suppose Joseph and Adam are members of the same group. Joseph listened to Lady Gaga 500 times in a week, making her his most listened artist that week. Adam listened to Ariana Grande only 50 times, but she was his most listened artist that week.
@@ -34,9 +39,9 @@ You don't need to use this system to calculate your charts if you don't want to.
 Sums the VS points of all users for each item. This is the best system for groups with varied habits, where you want to equally represent each member's favorites.
 
 **Example:**
-- User A's #1 track receives 1.00 VS
-- User B's #5 track receives 0.96 VS
-- If both users listened to the same track, total VS = 1.96
+- User A's #1 track receives 2.00 VS
+- User B's #5 track receives 1.80 VS (2.00 - 0.20)
+- If both users listened to the same track, total VS = 3.80
 
 #### 2. VS Weighted Mode
 In this mode, we multiply each user's VS by their play count, then sum across users. This method balances the importance of ranking with listening volume: in addition to items needing to receive high positions among group members to enter the charts, play count is also taken into consideration.
@@ -44,9 +49,9 @@ In this mode, we multiply each user's VS by their play count, then sum across us
 **Formula:** `Sum(VS × play count)` for each item
 
 **Example:**
-- User A's #1 track (1.00 VS) with 28 plays = 28.00 contribution
-- User B's #1 track (1.00 VS) with 5 plays = 5.00 contribution
-- Total VS = 33.00
+- User A's #1 track (2.00 VS) with 28 plays = 56.00 contribution
+- User B's #1 track (2.00 VS) with 5 plays = 10.00 contribution
+- Total VS = 66.00
 
 #### 3. Plays Only Mode
 Traditional mode - sums play counts from all users. For consistency, VS in this mode will equal play count. This is best for groups that prefer a simple and traditional system.
