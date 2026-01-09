@@ -69,10 +69,10 @@ export default function GroupDetailsTab({
   }
 
   // Check if current image is from uploaded storage
-  const isUploadedImage = imageUrl && (
+  const isUploadedImage = !!(imageUrl && (
     imageUrl.startsWith('/uploads/group-pictures/') ||
     imageUrl.includes('blob.vercel-storage.com')
-  )
+  ))
 
   // If group becomes private, disable allowFreeJoin
   const handlePrivateChange = (newIsPrivate: boolean) => {

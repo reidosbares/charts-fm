@@ -130,10 +130,10 @@ export default function ProfilePage() {
   const displayImage = previewUrl || formData.image || getDefaultGroupImage()
   
   // Check if current image is from uploaded storage
-  const isUploadedImage = formData.image && (
+  const isUploadedImage = !!(formData.image && (
     formData.image.startsWith('/uploads/profile-pictures/') ||
     formData.image.includes('blob.vercel-storage.com')
-  )
+  ))
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
