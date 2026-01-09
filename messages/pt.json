@@ -249,7 +249,8 @@
       "vibeScoreWeighted": "Vibe Score Ponderado",
       "playsOnly": "Apenas Plays",
       "plays": "plays",
-      "weeks": "semanas"
+      "weeks": "semanas",
+      "whatIsVS": "O que é VS?"
     },
     "weeklyCharts": {
       "title": "Charts Semanais",
@@ -525,11 +526,12 @@
         "top": "Top {size}",
         "chartMode": "Modo de cálculo",
         "chartModeDescription": "Como os charts são calculados e, os itens, ranqueados. Alterar isso afeta apenas os charts futuros.",
+        "chartModeFAQLink": "Para saber mais sobre os modos e como o VS é calculado, <link>consulte as perguntas frequentes</link> →",
         "previousMode": "Modo anterior",
         "nextMode": "Próximo modo",
         "selectMode": "Selecionar {mode}",
         "trackingDayOfWeek": "Dia dos charts",
-        "trackingDayOfWeekDescription": "O dia da semana que marca o início de cada chart semanal. Cada semana vai deste dia até o dia antes da próxima ocorrência (ex: se definido como segunda-feira, os charts vão de segunda a domingo). Os charts são liberados para serem calculados depois do fim de cada semana, o que acontece no dia escolhido.",
+        "trackingDayOfWeekDescription": "O dia da semana que marca o início de cada chart semanal. Cada semana vai deste dia até o dia antes da próxima ocorrência (ex: se definido como domingo, os charts vão de domingo a sábado). Os charts são liberados para serem calculados depois do fim de cada semana, o que acontece no dia escolhido.",
         "saving": "Salvando...",
         "saveSettings": "Salvar configurações",
         "cancel": "Cancelar",
@@ -1001,6 +1003,7 @@
       "tasteMaker": "Hitmaker",
       "entry": "item",
       "entries": "itens",
+      "memberAwardsFAQLink": "Para saber mais sobre como estes prêmios são definidos, <link>consulte as perguntas frequentes</link> →",
       "awardDescriptions": {
         "vsVirtuoso": "O membro que contribuiu com mais Vibe Score (VS) total para os charts do grupo. Ele é a alma do grupo.",
         "playPowerhouse": "Este é o usuário que deu mais plays para os charts do grupo. Ele é o que mais escuta.",

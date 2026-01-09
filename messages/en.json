@@ -249,7 +249,8 @@
       "vibeScoreWeighted": "Vibe Score Weighted",
       "playsOnly": "Plays Only",
       "plays": "plays",
-      "weeks": "weeks"
+      "weeks": "weeks",
+      "whatIsVS": "What is VS?"
     },
     "weeklyCharts": {
       "title": "Weekly Charts",
@@ -525,11 +526,12 @@
         "top": "Top {size}",
         "chartMode": "Chart Mode",
         "chartModeDescription": "How charts are calculated and ranked. Changing this only affects future charts.",
+        "chartModeFAQLink": "To learn more about the chart modes and how VS is calculated, <link>check the FAQ page</link> →",
         "previousMode": "Previous mode",
         "nextMode": "Next mode",
         "selectMode": "Select {mode}",
         "trackingDayOfWeek": "Tracking Day of Week",
-        "trackingDayOfWeekDescription": "The day of the week that marks the start of each tracking period. Each week runs from this day through the day before the next occurrence (e.g., if set to Monday, weeks run from Monday to Sunday). Charts can be calculated after each week ends, and this can be done on the day selected below.",
+        "trackingDayOfWeekDescription": "The day of the week that marks the start of each tracking period. Each week runs from this day through the day before the next occurrence (e.g., if set to Sunday, weeks run from Sunday to Saturday). Charts can be calculated after each week ends, and this can be done on the day selected below.",
         "saving": "Saving...",
         "saveSettings": "Save Settings",
         "cancel": "Cancel",
@@ -1001,6 +1003,7 @@
       "tasteMaker": "Taste Maker",
       "entry": "entry",
       "entries": "entries",
+      "memberAwardsFAQLink": "To learn more about how member awards are given, <link>check the FAQ page</link> →",
       "awardDescriptions": {
         "vsVirtuoso": "The member who contributed the most total Vibe Score (VS) to this group's charts. They're the life of the group.",
         "playPowerhouse": "This is the member with the most total plays across all their contributions. They really love scrobbling.",

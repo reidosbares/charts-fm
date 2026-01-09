@@ -9,6 +9,7 @@ import { Link } from '@/i18n/routing'
 import { generateSlug } from '@/lib/chart-slugs'
 import SafeImage from '@/components/SafeImage'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import { useTranslations } from 'next-intl'
 
 // Image cache helpers (same as GroupWeeklyChartsTab)
 const IMAGE_CACHE_PREFIX = 'chartsfm_image_cache_'
@@ -115,6 +116,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
   const tPreview = useSafeTranslations('records.preview')
   const tChartRecords = useSafeTranslations('records.chartRecords')
   const tUserRecords = useSafeTranslations('records.userRecords')
+  const tUserRecordsRich = useTranslations('records.userRecords')
   const tStatus = useSafeTranslations('records.status')
   const tTabs = useSafeTranslations('records.tabs')
   const [records, setRecords] = useState<any>(initialRecords)
@@ -781,18 +783,34 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
             <p className="text-sm md:text-base text-gray-600">{tStatus('noRecordsForCategory')}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-            {currentRecords.map((record, idx) => (
-              <RecordBlock
-                key={idx}
-                title={record.title}
-                record={record.record}
-                value={record.value}
-                groupId={groupId}
-                isUser={record.isUser}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+              {currentRecords.map((record, idx) => (
+                <RecordBlock
+                  key={idx}
+                  title={record.title}
+                  record={record.record}
+                  value={record.value}
+                  groupId={groupId}
+                  isUser={record.isUser}
+                />
+              ))}
+            </div>
+            {activeTab === 'users' && (
+              <p className="text-xs md:text-sm text-gray-500 mt-4 md:mt-6">
+                {tUserRecordsRich.rich('memberAwardsFAQLink', {
+                  link: (chunks) => (
+                    <Link
+                      href="/faq#how-are-member-awards-decided"
+                      className="text-[var(--theme-primary)] hover:underline transition-colors duration-200"
+                    >
+                      {chunks}
+                    </Link>
+                  )
+                })}
+              </p>
+            )}
+          </>
         )}
       </div>
     </div>

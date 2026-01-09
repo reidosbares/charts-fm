@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { useRouter } from '@/i18n/routing'
+import { useRouter, Link } from '@/i18n/routing'
 import CustomSelect, { SelectOption } from '@/components/CustomSelect'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import { useTranslations } from 'next-intl'
 
 interface GroupSettingsFormProps {
   groupId: string
@@ -22,6 +23,7 @@ export default function GroupSettingsForm({
 }: GroupSettingsFormProps) {
   const router = useRouter()
   const t = useSafeTranslations('groups.settings.chartCreation')
+  const tRich = useTranslations('groups.settings.chartCreation')
   const tDays = useSafeTranslations('groups.settings.chartCreation.daysOfWeek')
   const tModes = useSafeTranslations('groups.settings.chartCreation.modes')
   const tCommon = useSafeTranslations('common')
@@ -252,6 +254,20 @@ export default function GroupSettingsForm({
               className="sr-only"
             />
           </div>
+          
+          {/* FAQ Link */}
+          <p className="text-xs md:text-sm text-gray-500 mt-3 md:mt-4">
+            {tRich.rich('chartModeFAQLink', {
+              link: (chunks) => (
+                <Link
+                  href="/faq#what-is-the-vibe-score-vs"
+                  className="text-[var(--theme-primary)] hover:underline transition-colors duration-200"
+                >
+                  {chunks}
+                </Link>
+              )
+            })}
+          </p>
         </div>
 
         <div>

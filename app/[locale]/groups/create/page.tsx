@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import { useRouter } from '@/i18n/routing'
+import { useRouter, Link } from '@/i18n/routing'
 import CustomSelect from '@/components/CustomSelect'
 import Toggle from '@/components/Toggle'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import { useTranslations } from 'next-intl'
 
 const CHART_SIZES = [10, 20, 50]
 
@@ -12,6 +13,7 @@ export default function CreateGroupPage() {
   const router = useRouter()
   const t = useSafeTranslations('groups.create')
   const tChart = useSafeTranslations('groups.settings.chartCreation')
+  const tChartRich = useTranslations('groups.settings.chartCreation')
   const tGroupDetails = useSafeTranslations('groups.settings.groupDetails')
   const tDays = useSafeTranslations('groups.settings.chartCreation.daysOfWeek')
   const tModes = useSafeTranslations('groups.settings.chartCreation.modes')
@@ -487,6 +489,20 @@ export default function CreateGroupPage() {
             className="sr-only"
           />
         </div>
+        
+        {/* FAQ Link */}
+        <p className="text-xs md:text-sm text-gray-500 mt-3 md:mt-4">
+          {tChartRich.rich('chartModeFAQLink', {
+            link: (chunks) => (
+              <Link
+                href="/faq#what-is-the-vibe-score-vs"
+                className="text-[var(--theme-primary)] hover:underline transition-colors duration-200"
+              >
+                {chunks}
+              </Link>
+            )
+          })}
+        </p>
       </div>
     </div>
   )

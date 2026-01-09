@@ -48,7 +48,7 @@ Neste modo, multiplicamos o VS de cada usuário por sua contagem de plays, depoi
 - Faixa #1 do Usuário B (1.00 VS) com 5 plays = 5.00 de contribuição
 - VS total = 33.00
 
-#### 3. Modo Apenas Plays (`plays_only`)
+#### 3. Modo Apenas Plays
 Modo tradicional - soma as contagens de plays de todos os usuários. Por consistência, o VS nesse modo será igual à contagem de plays. Este é melhor para comunidades que preferem um sistema simples e tradicional.
 
 **Exemplo:**

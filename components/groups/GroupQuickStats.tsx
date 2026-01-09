@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import { Link } from '@/i18n/routing'
 
 interface GroupQuickStatsProps {
   groupId: string
@@ -75,11 +76,19 @@ export default function GroupQuickStats({ groupId }: GroupQuickStatsProps) {
           {weeksTracked} <span className="text-base md:text-lg font-normal">{t('weeks')}</span>
         </div>
       </div>
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm">
+      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm relative">
         <div className="text-xs md:text-sm text-gray-600 mb-1">{t('chartMode')}</div>
         <div className="text-base md:text-lg font-bold text-[var(--theme-text)] capitalize">
           {chartMode === 'vs' ? t('vibeScore') : chartMode === 'vs_weighted' ? t('vibeScoreWeighted') : t('playsOnly')}
         </div>
+        {(chartMode === 'vs' || chartMode === 'vs_weighted') && (
+          <Link
+            href="/faq#what-is-the-vibe-score-vs"
+            className="absolute top-2 right-2 text-xs text-gray-500 hover:text-[var(--theme-primary)] transition-colors underline"
+          >
+            {t('whatIsVS')}
+          </Link>
+        )}
       </div>
     </div>
   )

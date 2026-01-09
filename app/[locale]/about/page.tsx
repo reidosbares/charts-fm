@@ -35,22 +35,22 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   }
 
   return (
-    <main className="flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 relative">
+    <main className="flex min-h-screen flex-col pt-4 sm:pt-6 md:pt-8 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 relative">
       <div className="max-w-4xl w-full mx-auto relative z-10">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 sm:mb-6 md:mb-8">
           {t('title')}
         </h1>
-        <div className="bg-white rounded-lg p-6 md:p-8 shadow-sm">
+        <div className="bg-white rounded-lg p-4 sm:p-6 md:p-8 shadow-sm">
           <AboutContent content={markdownContent} />
-          <div className="mt-8 pt-6 border-t border-gray-200">
+          <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
             <a
               href="https://github.com/reidosbares/charts-fm"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-6 py-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-full transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95"
+              className="inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-900 hover:bg-gray-800 text-white text-sm sm:text-base font-semibold rounded-full transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95 w-full sm:w-auto justify-center"
             >
               <svg
-                className="w-5 h-5"
+                className="w-4 h-4 sm:w-5 sm:h-5"
                 fill="currentColor"
                 viewBox="0 0 24 24"
                 aria-hidden="true"

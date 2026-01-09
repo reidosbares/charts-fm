@@ -24,33 +24,35 @@ export default function Footer() {
         boxShadow: '0 -8px 32px 0 rgba(0, 0, 0, 0.2)',
       }}
     >
-      <div className="w-full py-4 px-4 md:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-sm text-white">
+      <div className="w-full py-3 sm:py-4 px-4 sm:px-6 md:px-8">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
+          <div className="text-xs sm:text-sm text-white text-center sm:text-left">
             {t('copyright', { year: currentYear })}
           </div>
-          <div className="flex gap-4 items-center">
-            <Link
-              href="/about"
-              className="text-sm text-white hover:text-gray-200 transition-colors duration-200 font-semibold"
-            >
-              {t('about')}
-            </Link>
-            <span className="text-white/50">|</span>
-            <Link
-              href="/faq"
-              className="text-sm text-white hover:text-gray-200 transition-colors duration-200 font-semibold"
-            >
-              {t('faq')}
-            </Link>
-            <span className="text-white/50">|</span>
-            <div className="flex gap-2 items-center">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center">
+            <div className="flex gap-2 sm:gap-3 items-center">
+              <Link
+                href="/about"
+                className="text-xs sm:text-sm text-white hover:text-gray-200 transition-colors duration-200 font-semibold py-1 px-2 sm:px-0"
+              >
+                {t('about')}
+              </Link>
+              <span className="text-white/50 hidden sm:inline">|</span>
+              <Link
+                href="/faq"
+                className="text-xs sm:text-sm text-white hover:text-gray-200 transition-colors duration-200 font-semibold py-1 px-2 sm:px-0"
+              >
+                {t('faq')}
+              </Link>
+            </div>
+            <span className="text-white/50 hidden sm:inline">|</span>
+            <div className="flex gap-1.5 sm:gap-2 items-center">
               {routing.locales.map((loc, index) => (
-                <span key={loc} className="flex items-center gap-2">
+                <span key={loc} className="flex items-center gap-1.5 sm:gap-2">
                   <Link
                     href={pathname}
                     locale={loc}
-                    className={`text-sm transition-colors duration-200 font-semibold ${
+                    className={`text-xs sm:text-sm transition-colors duration-200 font-semibold py-1 px-2 sm:px-0 ${
                       locale === loc
                         ? 'text-white'
                         : 'text-white/60 hover:text-white/80'

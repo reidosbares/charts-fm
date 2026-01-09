@@ -48,7 +48,7 @@ In this mode, we multiply each user's VS by their play count, then sum across us
 - User B's #1 track (1.00 VS) with 5 plays = 5.00 contribution
 - Total VS = 33.00
 
-#### 3. Plays Only Mode (`plays_only`)
+#### 3. Plays Only Mode
 Traditional mode - sums play counts from all users. For consistency, VS in this mode will equal play count. This is best for groups that prefer a simple and traditional system.
 
 **Example:**
