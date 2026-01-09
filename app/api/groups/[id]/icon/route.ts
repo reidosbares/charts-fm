@@ -42,6 +42,30 @@ export async function PATCH(
     )
   }
 
+  // Validate image URL if provided
+  if (image !== undefined && image !== null) {
+    if (typeof image !== 'string') {
+      return NextResponse.json(
+        { error: 'Image must be a string' },
+        { status: 400 }
+      )
+    }
+    const trimmedImage = image.trim()
+    if (trimmedImage.length > 500) {
+      return NextResponse.json(
+        { error: 'Image URL cannot exceed 500 characters' },
+        { status: 400 }
+      )
+    }
+    // Basic URL validation - allow blob URLs from Vercel Blob
+    if (trimmedImage && !trimmedImage.match(/^https?:\/\/.+/i) && !trimmedImage.startsWith('/') && !trimmedImage.startsWith('blob:')) {
+      return NextResponse.json(
+        { error: 'Image must be a valid URL or path' },
+        { status: 400 }
+      )
+    }
+  }
+
   const updatedGroup = await prisma.group.update({
     where: { id: groupId },
     data: {

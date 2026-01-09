@@ -594,6 +594,31 @@
         "groupIcon": "Group Icon",
         "iconUrlPlaceholder": "https://example.com/icon.png",
         "iconUrlDescription": "Enter a URL to an image for your group icon",
+        "upload": {
+          "selectFile": "Choose a file to upload",
+          "upload": "Upload",
+          "uploading": "Uploading...",
+          "or": "OR",
+          "helpText": "Upload an image file or enter a URL to an image for your group icon",
+          "urlDisabledPlaceholder": "Remove uploaded image to enter URL",
+          "urlDisabledMessage": "You have an uploaded image. Please remove it first if you want to use a URL instead.",
+          "invalidFileType": "Invalid file type. Only JPEG, PNG, WebP, and GIF images are allowed.",
+          "fileTooLarge": "File size exceeds 5MB limit. Please choose a smaller image.",
+          "failed": "Failed to upload group picture. Please try again."
+        },
+        "removePicture": {
+          "title": "Remove Group Picture",
+          "button": "Remove Picture",
+          "removing": "Removing...",
+          "confirm": "Are you sure you want to remove your group picture?",
+          "warning": "This action will permanently delete the image from storage and cannot be undone.",
+          "failed": "Failed to remove group picture. Please try again."
+        },
+        "errors": {
+          "invalidImageUrl": "Image must be a valid URL",
+          "imageTooLong": "Image URL cannot exceed 500 characters",
+          "imageMustBeString": "Image must be a string"
+        },
         "privacySettings": "Privacy Settings",
         "privateGroup": "Private Group",
         "privateGroupDescription": "Private groups are not viewable publicly and require approval to join",

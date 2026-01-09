@@ -594,6 +594,31 @@
         "groupIcon": "Imagem de capa",
         "iconUrlPlaceholder": "https://example.com/icon.png",
         "iconUrlDescription": "Digite uma URL para servir como imagem de capa da sua comunidade",
+        "upload": {
+          "selectFile": "Escolher foto",
+          "upload": "Enviar",
+          "uploading": "Enviando...",
+          "or": "OU",
+          "helpText": "Envie um arquivo de imagem ou insira uma URL de uma imagem para ser a imagem de capa da sua comunidade",
+          "urlDisabledPlaceholder": "Remova a foto para inserir uma URL",
+          "urlDisabledMessage": "Você tem uma foto de capa. Por favor, remova-a primeiro se quiser usar uma URL.",
+          "invalidFileType": "Tipo de arquivo inválido. Apenas imagens JPEG, PNG, WebP e GIF são permitidas.",
+          "fileTooLarge": "O tamanho do arquivo excede o limite de 5MB. Por favor, escolha uma imagem menor.",
+          "failed": "Falha ao enviar foto de capa. Por favor, tente novamente."
+        },
+        "removePicture": {
+          "title": "Remover Foto de Capa",
+          "button": "Remover Foto",
+          "removing": "Removendo...",
+          "confirm": "Tem certeza que deseja remover a foto de capa da sua comunidade?",
+          "warning": "Esta ação excluirá permanentemente a imagem do armazenamento e não pode ser desfeita.",
+          "failed": "Falha ao remover foto de capa. Por favor, tente novamente."
+        },
+        "errors": {
+          "invalidImageUrl": "A imagem deve ser uma URL válida",
+          "imageTooLong": "A URL da imagem não pode exceder 500 caracteres",
+          "imageMustBeString": "A imagem deve ser uma string"
+        },
         "privacySettings": "Privacidade",
         "privateGroup": "Comunidade privada",
         "privateGroupDescription": "Comunidades privadas não visíveis publicamente e necessitam de aprovação para entrar",

@@ -5,6 +5,7 @@ import { useRouter } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
 import { THEME_NAMES, GROUP_THEMES, type ThemeName } from '@/lib/group-themes'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import Toast from '@/components/Toast'
 
 interface StylingTabProps {
   groupId: string
@@ -80,18 +81,22 @@ export default function StylingTab({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
-      {success && (
-        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-green-100 border border-green-400 text-green-700 rounded text-sm md:text-base">
-          {t('updatedSuccessfully')}
-        </div>
-      )}
+    <>
+      {/* Toast notifications */}
+      <Toast
+        message={t('updatedSuccessfully')}
+        type="success"
+        isVisible={success}
+        onClose={() => setSuccess(false)}
+      />
+      <Toast
+        message={error || ''}
+        type="error"
+        isVisible={!!error}
+        onClose={() => setError(null)}
+      />
 
-      {error && (
-        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-red-100 border border-red-400 text-red-700 rounded text-sm md:text-base">
-          {error}
-        </div>
-      )}
+      <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
 
       <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
         <div>
@@ -197,6 +202,7 @@ export default function StylingTab({
           </button>
         </div>
       </form>
-    </div>
+      </div>
+    </>
   )
 }

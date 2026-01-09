@@ -14,7 +14,8 @@ export interface UploadResult {
 export async function uploadFile(
   fileName: string,
   file: File | Buffer,
-  contentType: string
+  contentType: string,
+  folder: 'profile-pictures' | 'group-pictures' = 'profile-pictures'
 ): Promise<UploadResult> {
   // Check if we should use local storage
   const useLocalStorage = 
@@ -22,9 +23,9 @@ export async function uploadFile(
     (!process.env.BLOB_READ_WRITE_TOKEN && process.env.NODE_ENV !== 'production')
 
   if (useLocalStorage) {
-    return uploadToLocal(fileName, file, contentType)
+    return uploadToLocal(fileName, file, contentType, folder)
   } else {
-    return uploadToBlob(fileName, file, contentType)
+    return uploadToBlob(fileName, file, contentType, folder)
   }
 }
 
@@ -34,9 +35,10 @@ export async function uploadFile(
 async function uploadToLocal(
   fileName: string,
   file: File | Buffer,
-  contentType: string
+  contentType: string,
+  folder: 'profile-pictures' | 'group-pictures' = 'profile-pictures'
 ): Promise<UploadResult> {
-  const uploadsDir = join(process.cwd(), 'public', 'uploads', 'profile-pictures')
+  const uploadsDir = join(process.cwd(), 'public', 'uploads', folder)
   
   // Ensure base directory exists
   if (!existsSync(uploadsDir)) {
@@ -47,7 +49,7 @@ async function uploadToLocal(
   const lastSlashIndex = filePath.lastIndexOf('/')
   const fileDir = lastSlashIndex > 0 ? filePath.substring(0, lastSlashIndex) : uploadsDir
   
-  // Ensure subdirectory exists (for user-specific folders)
+  // Ensure subdirectory exists (for user/group-specific folders)
   if (fileDir !== uploadsDir && !existsSync(fileDir)) {
     await mkdir(fileDir, { recursive: true })
   }
@@ -61,7 +63,7 @@ async function uploadToLocal(
   await writeFile(filePath, buffer)
 
   // Return public URL (Next.js serves files from /public)
-  const url = `/uploads/profile-pictures/${fileName}`
+  const url = `/uploads/${folder}/${fileName}`
   
   return { url }
 }
@@ -72,21 +74,25 @@ async function uploadToLocal(
 async function uploadToBlob(
   fileName: string,
   file: File | Buffer,
-  contentType: string
+  contentType: string,
+  folder: 'profile-pictures' | 'group-pictures' = 'profile-pictures'
 ): Promise<UploadResult> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     throw new Error('BLOB_READ_WRITE_TOKEN is required for blob storage')
   }
 
-  // Convert File to Buffer if needed
-  const buffer = file instanceof File 
-    ? Buffer.from(await file.arrayBuffer())
-    : file
-
   // Use the same path structure for blob storage
-  const blobFileName = `profile-pictures/${fileName}`
+  const blobFileName = `${folder}/${fileName}`
   
-  const blob = await put(blobFileName, buffer, {
+  // Convert File to ArrayBuffer if needed, otherwise use Buffer as-is
+  let body: ArrayBuffer | Buffer
+  if (file instanceof File) {
+    body = await file.arrayBuffer()
+  } else {
+    body = file
+  }
+  
+  const blob = await put(blobFileName, body as any, {
     access: 'public',
     contentType,
   })
@@ -98,14 +104,27 @@ async function uploadToBlob(
  * Delete a file from storage based on its URL
  * Supports both local filesystem and Vercel Blob
  */
-export async function deleteFile(fileUrl: string): Promise<void> {
+export async function deleteFile(
+  fileUrl: string,
+  folder?: 'profile-pictures' | 'group-pictures'
+): Promise<void> {
+  // Auto-detect folder from URL if not provided
+  if (!folder) {
+    if (fileUrl.includes('/uploads/group-pictures/') || 
+        (fileUrl.includes('blob.vercel-storage.com') && fileUrl.includes('group-pictures'))) {
+      folder = 'group-pictures'
+    } else {
+      folder = 'profile-pictures'
+    }
+  }
+
   // Check if we should use local storage
   const useLocalStorage = 
     process.env.STORAGE_TYPE === 'local' ||
     (!process.env.BLOB_READ_WRITE_TOKEN && process.env.NODE_ENV !== 'production')
 
   if (useLocalStorage) {
-    await deleteFromLocal(fileUrl)
+    await deleteFromLocal(fileUrl, folder)
   } else {
     await deleteFromBlob(fileUrl)
   }
@@ -114,16 +133,20 @@ export async function deleteFile(fileUrl: string): Promise<void> {
 /**
  * Delete from local filesystem
  */
-async function deleteFromLocal(fileUrl: string): Promise<void> {
+async function deleteFromLocal(
+  fileUrl: string,
+  folder: 'profile-pictures' | 'group-pictures' = 'profile-pictures'
+): Promise<void> {
   // Extract file path from URL (e.g., /uploads/profile-pictures/userId/filename.jpg)
-  if (!fileUrl.startsWith('/uploads/profile-pictures/')) {
+  const expectedPrefix = `/uploads/${folder}/`
+  if (!fileUrl.startsWith(expectedPrefix)) {
     // Not a local file, might be external URL - skip deletion
     console.warn(`Skipping deletion of non-local file: ${fileUrl}`)
     return
   }
 
-  const fileName = fileUrl.replace('/uploads/profile-pictures/', '')
-  const filePath = join(process.cwd(), 'public', 'uploads', 'profile-pictures', fileName)
+  const fileName = fileUrl.replace(expectedPrefix, '')
+  const filePath = join(process.cwd(), 'public', 'uploads', folder, fileName)
 
   if (existsSync(filePath)) {
     await unlink(filePath)

@@ -7,6 +7,11 @@ import { getDefaultGroupImage } from '@/lib/default-images'
 import CustomSelect from '@/components/CustomSelect'
 import Toggle from '@/components/Toggle'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSpinner, faUpload, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons'
+import LiquidGlassButton from '@/components/LiquidGlassButton'
+import RemovePictureModal from '@/components/RemovePictureModal'
+import Toast from '@/components/Toast'
 
 interface GroupDetailsTabProps {
   groupId: string
@@ -46,6 +51,28 @@ export default function GroupDetailsTab({
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [isRemoving, setIsRemoving] = useState(false)
+  const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false)
+
+  // Map API error messages to translation keys
+  const translateError = (errorMessage: string): string => {
+    const errorMap: Record<string, string> = {
+      'Image must be a valid URL or path': t('errors.invalidImageUrl'),
+      'Image URL cannot exceed 500 characters': t('errors.imageTooLong'),
+      'Image must be a string': t('errors.imageMustBeString'),
+    }
+    return errorMap[errorMessage] || errorMessage
+  }
+
+  // Check if current image is from uploaded storage
+  const isUploadedImage = imageUrl && (
+    imageUrl.startsWith('/uploads/group-pictures/') ||
+    imageUrl.includes('blob.vercel-storage.com')
+  )
 
   // If group becomes private, disable allowFreeJoin
   const handlePrivateChange = (newIsPrivate: boolean) => {
@@ -103,7 +130,8 @@ export default function GroupDetailsTab({
 
         if (!iconResponse.ok) {
           const iconData = await iconResponse.json()
-          throw new Error(iconData.error || t('failedToUpdate'))
+          const translatedError = translateError(iconData.error || '')
+          throw new Error(translatedError || t('failedToUpdate'))
         }
       }
 
@@ -115,24 +143,172 @@ export default function GroupDetailsTab({
       // Redirect immediately
       router.push(`/groups/${groupId}`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('failedToUpdate'))
+      const errorMessage = err instanceof Error ? err.message : t('failedToUpdate')
+      setError(translateError(errorMessage))
       setIsLoading(false)
     }
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
-      {success && (
-        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-green-100 border border-green-400 text-green-700 rounded text-sm md:text-base">
-          {t('updatedSuccessfully')}
-        </div>
-      )}
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
 
-      {error && (
-        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-red-100 border border-red-400 text-red-700 rounded text-sm md:text-base">
-          {error}
-        </div>
-      )}
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
+    if (!validTypes.includes(file.type)) {
+      setError(t('upload.invalidFileType'))
+      return
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError(t('upload.fileTooLarge'))
+      return
+    }
+
+    setSelectedFile(file)
+    setError(null)
+
+    // Create preview URL
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setPreviewUrl(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleFileUpload = async () => {
+    if (!selectedFile) return
+
+    setIsUploading(true)
+    setError(null)
+    setUploadProgress(0)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', selectedFile)
+
+      const response = await fetch(`/api/groups/${groupId}/icon/upload`, {
+        method: 'POST',
+        body: formData,
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || t('upload.failed'))
+      }
+
+      // Update imageUrl with the uploaded image URL
+      setImageUrl(data.url || '')
+      
+      // Disable dynamic icon when an image is uploaded
+      setDynamicIconEnabled(false)
+      
+      setSuccess(true)
+      
+      // Clear file selection
+      setSelectedFile(null)
+      setPreviewUrl(null)
+      
+      // Reset file input
+      const fileInput = document.getElementById('group-file-upload') as HTMLInputElement
+      if (fileInput) fileInput.value = ''
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('upload.failed'))
+    } finally {
+      setIsUploading(false)
+      setUploadProgress(0)
+    }
+  }
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null)
+    setPreviewUrl(null)
+    const fileInput = document.getElementById('group-file-upload') as HTMLInputElement
+    if (fileInput) fileInput.value = ''
+  }
+
+  const handleRemovePicture = async () => {
+    if (!imageUrl) return
+
+    setIsRemoving(true)
+    setError(null)
+
+    try {
+      const response = await fetch(`/api/groups/${groupId}/icon/picture`, {
+        method: 'DELETE',
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || t('removePicture.failed'))
+      }
+
+      // Clear image URL
+      setImageUrl('')
+      setSuccess(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('removePicture.failed'))
+    } finally {
+      setIsRemoving(false)
+    }
+  }
+
+  const handleDynamicIconChange = async (enabled: boolean) => {
+    if (enabled) {
+      // If enabling dynamic icon, delete the current image if it exists
+      if (imageUrl) {
+        const isUploadedImage = 
+          imageUrl.startsWith('/uploads/group-pictures/') ||
+          (imageUrl.includes('blob.vercel-storage.com') && imageUrl.includes('group-pictures'))
+        
+        if (isUploadedImage) {
+          // Delete the image from storage
+          try {
+            await fetch(`/api/groups/${groupId}/icon/picture`, {
+              method: 'DELETE',
+            })
+          } catch (err) {
+            // Log error but continue - we still want to enable dynamic icon
+            console.error('Error deleting image when enabling dynamic icon:', err)
+          }
+        }
+        
+        // Clear the image URL
+        setImageUrl('')
+      }
+    }
+    
+    setDynamicIconEnabled(enabled)
+  }
+
+  const displayImage = previewUrl || imageUrl || getDefaultGroupImage()
+
+  return (
+    <>
+      {/* Toast notifications */}
+      <Toast
+        message={t('updatedSuccessfully')}
+        type="success"
+        isVisible={success}
+        onClose={() => setSuccess(false)}
+      />
+      <Toast
+        message={error || ''}
+        type="error"
+        isVisible={!!error}
+        onClose={() => setError(null)}
+      />
+
+      <RemovePictureModal
+        isOpen={isRemoveModalOpen}
+        onClose={() => setIsRemoveModalOpen(false)}
+        onConfirm={handleRemovePicture}
+      />
+
+      <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
 
       <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
         <div>
@@ -154,30 +330,135 @@ export default function GroupDetailsTab({
           <label htmlFor="groupIcon" className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
             {t('groupIcon')}
           </label>
-          <input
-            type="url"
-            id="groupIcon"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            className="w-full px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-            placeholder={t('iconUrlPlaceholder')}
-            disabled={isLoading}
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            {t('iconUrlDescription')}
-          </p>
-          {imageUrl && (
-            <div className="mt-3 md:mt-4 flex justify-center">
-              <div className="relative w-24 h-24 md:w-32 md:h-32">
-                <SafeImage
-                  src={imageUrl}
-                  alt="Preview"
-                  className="rounded-lg object-cover w-full h-full"
-                  defaultImage={getDefaultGroupImage()}
+          
+          {/* Preview */}
+          {displayImage && (
+            <div className="mb-4 flex flex-col items-center">
+              <div className="relative w-24 h-24 md:w-32 md:h-32 mb-3">
+                <img
+                  src={displayImage}
+                  alt="Group icon preview"
+                  className="rounded-lg object-cover w-full h-full border-2 border-gray-200"
+                  onError={(e) => {
+                    e.currentTarget.src = getDefaultGroupImage()
+                  }}
                 />
               </div>
+              {imageUrl && (
+                <button
+                  type="button"
+                  onClick={() => setIsRemoveModalOpen(true)}
+                  disabled={isRemoving || isLoading || isUploading}
+                  className="flex items-center gap-2 px-3 py-1.5 text-xs md:text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                  <span>{t('removePicture.button')}</span>
+                </button>
+              )}
             </div>
           )}
+
+          {/* File Upload Section */}
+          <div className="mb-4">
+            <label
+              htmlFor="group-file-upload"
+              className="flex items-center justify-center w-full px-4 py-3 text-sm md:text-base rounded-lg border-2 border-dashed border-gray-300 cursor-pointer hover:border-yellow-500 transition-colors"
+            >
+              <FontAwesomeIcon icon={faUpload} className="mr-2 text-gray-500" />
+              <span className="text-gray-700">{t('upload.selectFile')}</span>
+              <input
+                id="group-file-upload"
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                className="hidden"
+                onChange={handleFileSelect}
+                disabled={isLoading || isUploading}
+              />
+            </label>
+            
+            {selectedFile && (
+              <div className="mt-3 p-3 rounded-lg border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden bg-gray-100">
+                      {previewUrl && (
+                        <img
+                          src={previewUrl}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {selectedFile.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {!isUploading && (
+                      <>
+                        <LiquidGlassButton
+                          type="button"
+                          onClick={handleFileUpload}
+                          variant="primary"
+                          size="sm"
+                          disabled={isLoading || isUploading}
+                        >
+                          {t('upload.upload')}
+                        </LiquidGlassButton>
+                        <button
+                          type="button"
+                          onClick={handleRemoveFile}
+                          className="p-2 text-gray-500 hover:text-red-600 transition-colors"
+                          disabled={isLoading || isUploading}
+                        >
+                          <FontAwesomeIcon icon={faTimes} />
+                        </button>
+                      </>
+                    )}
+                    {isUploading && (
+                      <div className="flex items-center gap-2">
+                        <FontAwesomeIcon icon={faSpinner} className="animate-spin text-yellow-500" />
+                        <span className="text-sm text-gray-600">{t('upload.uploading')}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* URL Input (Alternative) */}
+          <div className="relative">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="flex-1 h-px bg-gray-300"></div>
+              <span className="text-xs text-gray-500 px-2">{t('upload.or')}</span>
+              <div className="flex-1 h-px bg-gray-300"></div>
+            </div>
+            <input
+              type="text"
+              id="groupIcon"
+              value={isUploadedImage ? '' : imageUrl}
+              onChange={(e) => {
+                const newUrl = e.target.value
+                setImageUrl(newUrl)
+                // Disable dynamic icon when a URL is entered
+                if (newUrl.trim() && dynamicIconEnabled) {
+                  setDynamicIconEnabled(false)
+                }
+              }}
+              className="w-full px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              placeholder={isUploadedImage ? t('upload.urlDisabledPlaceholder') : t('iconUrlPlaceholder')}
+              disabled={isLoading || isUploading || isUploadedImage}
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              {t('iconUrlDescription')}
+            </p>
+          </div>
         </div>
 
         <div>
@@ -226,7 +507,7 @@ export default function GroupDetailsTab({
             <Toggle
               id="dynamicIconEnabled"
               checked={dynamicIconEnabled}
-              onChange={setDynamicIconEnabled}
+              onChange={handleDynamicIconChange}
               disabled={isLoading}
               label={t('enableDynamicIcon')}
             />
@@ -267,7 +548,8 @@ export default function GroupDetailsTab({
           </button>
         </div>
       </form>
-    </div>
+      </div>
+    </>
   )
 }
 
