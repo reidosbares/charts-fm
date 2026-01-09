@@ -72,10 +72,12 @@ export default function RemoveMemberModal({
       {/* Modal content centered */}
       <div className="fixed inset-0 flex items-center justify-center z-[9999] pointer-events-none p-4">
         <div 
-          className="bg-white rounded-lg shadow-xl p-4 md:p-6 max-w-md w-full pointer-events-auto max-h-[90vh] overflow-y-auto"
+          className="bg-white rounded-lg shadow-xl p-4 md:p-6 pointer-events-auto max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
           style={{
-            maxWidth: 'calc(100vw - 2rem)',
+            maxWidth: 'min(480px, calc(100vw - 2rem))',
+            width: 'fit-content',
+            minWidth: '280px',
           }}
         >
           <div className="flex justify-between items-center mb-4">

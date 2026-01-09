@@ -103,73 +103,89 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
           {members.map((member: any) => (
             <div
               key={member.id}
-              className="flex items-center justify-between p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-theme shadow-sm hover:shadow transition-all hover:bg-[var(--theme-primary-lighter)]/30"
+              className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-theme shadow-sm hover:shadow transition-all hover:bg-[var(--theme-primary-lighter)]/30"
             >
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div className="relative w-12 h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden">
-                  <SafeImage
-                    src={member.user.image}
-                    alt={member.user.name || member.user.lastfmUsername}
-                    className="object-cover w-full h-full"
-                  />
+              <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden">
+                <SafeImage
+                  src={member.user.image}
+                  alt={member.user.name || member.user.lastfmUsername}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+              <div className="flex-1 min-w-0 overflow-hidden pr-1 md:pr-2">
+                <div className="flex items-center gap-1.5 md:gap-2 min-w-0">
+                  <p className="font-semibold text-gray-900 truncate flex-1 min-w-0 text-sm md:text-base">
+                    {member.user.name || member.user.lastfmUsername}
+                  </p>
+                  {member.user.id === creatorId && (
+                    <span className="flex-shrink-0 text-xs bg-[var(--theme-primary)] text-[var(--theme-button-text)] px-1.5 md:px-2 py-0.5 rounded-full font-bold shadow-sm whitespace-nowrap">
+                      {t('owner')}
+                    </span>
+                  )}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="font-semibold text-gray-900 truncate">
-                      {member.user.name || member.user.lastfmUsername}
-                    </p>
-                    {member.user.id === creatorId && (
-                      <span className="flex-shrink-0 text-xs bg-[var(--theme-primary)] text-[var(--theme-button-text)] px-2 py-0.5 rounded-full font-bold shadow-sm">
-                        {t('owner')}
-                      </span>
-                    )}
+                <p className="text-xs md:text-sm text-gray-600 truncate">@{member.user.lastfmUsername}</p>
+              </div>
+              {isOwner && member.user.id !== creatorId && (
+                <div className="flex items-center flex-shrink-0">
+                  <div className="hidden md:block">
+                    <RemoveMemberButton
+                      groupId={groupId}
+                      userId={member.user.id}
+                      memberName={member.user.name || member.user.lastfmUsername}
+                    />
                   </div>
-                  <p className="text-sm text-gray-600 truncate">@{member.user.lastfmUsername}</p>
+                  <div className="md:hidden">
+                    <RemoveMemberButton
+                      groupId={groupId}
+                      userId={member.user.id}
+                      memberName={member.user.name || member.user.lastfmUsername}
+                      compact={true}
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-2 ml-2">
-                {isOwner && member.user.id !== creatorId && (
-                  <RemoveMemberButton
-                    groupId={groupId}
-                    userId={member.user.id}
-                    memberName={member.user.name || member.user.lastfmUsername}
-                  />
-                )}
-              </div>
+              )}
             </div>
           ))}
           {/* Display invited users */}
           {isOwner && pendingInvites.map((invite: any) => (
             <div
               key={invite.id}
-              className="flex items-center justify-between p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-theme shadow-sm hover:shadow transition-all hover:bg-[var(--theme-primary-lighter)]/30"
+              className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-theme shadow-sm hover:shadow transition-all hover:bg-[var(--theme-primary-lighter)]/30"
             >
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div className="relative w-12 h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden">
-                  <SafeImage
-                    src={invite.user.image}
-                    alt={invite.user.name || invite.user.lastfmUsername}
-                    className="object-cover w-full h-full"
+              <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden">
+                <SafeImage
+                  src={invite.user.image}
+                  alt={invite.user.name || invite.user.lastfmUsername}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+              <div className="flex-1 min-w-0 overflow-hidden">
+                <div className="flex items-center gap-1.5 md:gap-2 min-w-0">
+                  <p className="font-semibold text-gray-900 truncate flex-1 min-w-0 text-sm md:text-base">
+                    {invite.user.name || invite.user.lastfmUsername}
+                  </p>
+                  <span className="flex-shrink-0 text-xs bg-[var(--theme-primary)] text-[var(--theme-button-text)] px-1.5 md:px-2 py-0.5 rounded-full font-bold shadow-sm whitespace-nowrap">
+                    {t('invited')}
+                  </span>
+                </div>
+                <p className="text-xs md:text-sm text-gray-600 truncate">@{invite.user.lastfmUsername}</p>
+              </div>
+              <div className="flex items-center flex-shrink-0">
+                <div className="hidden md:block">
+                  <RevokeInviteButton
+                    groupId={groupId}
+                    inviteId={invite.id}
+                    userName={invite.user.name || invite.user.lastfmUsername}
                   />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="font-semibold text-gray-900 truncate">
-                      {invite.user.name || invite.user.lastfmUsername}
-                    </p>
-                    <span className="flex-shrink-0 text-xs bg-[var(--theme-primary)] text-[var(--theme-button-text)] px-2 py-0.5 rounded-full font-bold shadow-sm">
-                      {t('invited')}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 truncate">@{invite.user.lastfmUsername}</p>
+                <div className="md:hidden">
+                  <RevokeInviteButton
+                    groupId={groupId}
+                    inviteId={invite.id}
+                    userName={invite.user.name || invite.user.lastfmUsername}
+                    compact={true}
+                  />
                 </div>
-              </div>
-              <div className="flex items-center gap-2 ml-2">
-                <RevokeInviteButton
-                  groupId={groupId}
-                  inviteId={invite.id}
-                  userName={invite.user.name || invite.user.lastfmUsername}
-                />
               </div>
             </div>
           ))}

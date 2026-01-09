@@ -374,3 +374,90 @@ export async function GET(
     )
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { user, group } = await requireGroupCreator(params.id)
+
+    if (!group) {
+      return NextResponse.json({ error: 'Group not found' }, { status: 404 })
+    }
+
+    // Get userId from query parameters
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId')
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'User ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Prevent removing the creator
+    if (userId === group.creatorId) {
+      return NextResponse.json(
+        { error: 'Cannot remove the group creator' },
+        { status: 400 }
+      )
+    }
+
+    // Check if the member exists
+    const member = await prisma.groupMember.findUnique({
+      where: {
+        groupId_userId: {
+          groupId: group.id,
+          userId: userId,
+        },
+      },
+    })
+
+    if (!member) {
+      return NextResponse.json(
+        { error: 'Member not found in this group' },
+        { status: 404 }
+      )
+    }
+
+    // Remove the member
+    await prisma.groupMember.delete({
+      where: {
+        groupId_userId: {
+          groupId: group.id,
+          userId: userId,
+        },
+      },
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (error: any) {
+    if (error.status === 401 || error.status === 403 || error.status === 404) {
+      return NextResponse.json({ error: error.message }, { status: error.status })
+    }
+    console.error('Error removing member:', error)
+    
+    // Handle Prisma validation errors
+    if (error.code === 'P2025') {
+      return NextResponse.json(
+        { error: 'Member not found' },
+        { status: 404 }
+      )
+    }
+    
+    // Handle Prisma invalid ID format errors
+    if (error.message && error.message.includes('did not match the expected pattern')) {
+      return NextResponse.json(
+        { error: 'Invalid group ID or user ID format' },
+        { status: 400 }
+      )
+    }
+    
+    return NextResponse.json(
+      { error: error.message || 'Failed to remove member' },
+      { status: 500 }
+    )
+  }
+}
