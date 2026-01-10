@@ -1076,7 +1076,8 @@
       "entry": "Item",
       "value": "Valor",
       "noEntries": "Nenhum item encontrada para este tipo de recorde.",
-      "error": "Falha ao carregar itens. Por favor, tente novamente mais tarde."
+      "error": "Falha ao carregar itens. Por favor, tente novamente mais tarde.",
+      "by": "de"
     }
   },
   "landing": {

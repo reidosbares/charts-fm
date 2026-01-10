@@ -216,8 +216,8 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
                           {entry.name}
                         </Link>
                         {entry.artist && (
-                          <div className="text-gray-500 text-xs mt-0.5 sm:mt-1 truncate" title={`by ${entry.artist}`}>
-                            by {entry.artist}
+                          <div className="text-gray-500 text-xs mt-0.5 sm:mt-1 truncate" title={`${t('by')} ${entry.artist}`}>
+                            {t('by')} {entry.artist}
                           </div>
                         )}
                       </div>
