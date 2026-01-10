@@ -298,6 +298,10 @@
       "plays": "{count} plays",
       "vs": "VS",
       "failedToLoad": "Failed to load charts",
+      "theNumberOnes": "The #1s",
+      "numberOneArtists": "#1 Artists",
+      "numberOneTracks": "#1 Tracks",
+      "numberOneAlbums": "#1 Albums",
       "public": {
         "totalPlaysThisWeek": "Total Plays This Week",
         "noChartsDescription": "This group hasn't generated any charts yet."
@@ -1233,6 +1237,22 @@
     "about": "About",
     "faq": "FAQ",
     "copyright": "⊘ {year} ChartsFM. No rights reserved."
+  },
+  "chartToppers": {
+    "title": "Chart Toppers",
+    "subheader": "All #1 entries week-by-week",
+    "week": "Week",
+    "entry": "Entry",
+    "plays": "Plays",
+    "value": "VS",
+    "noEntries": "No #1 entries found",
+    "error": "Failed to load chart toppers",
+    "notFound": "Group not found",
+    "tabs": {
+      "artists": "Artists",
+      "tracks": "Tracks",
+      "albums": "Albums"
+    }
   },
   "faq": {
     "title": "Frequently Asked Questions",

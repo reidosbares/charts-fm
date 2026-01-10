@@ -298,6 +298,10 @@
       "plays": "{count} plays",
       "vs": "VS",
       "failedToLoad": "Falha ao carregar charts",
+      "theNumberOnes": "Todos os #1s",
+      "numberOneArtists": "Artistas",
+      "numberOneTracks": "Músicas",
+      "numberOneAlbums": "Álbuns",
       "public": {
         "totalPlaysThisWeek": "Total de plays esta semana",
         "noChartsDescription": "Esta comunidade ainda não gerou nenhum chart."
@@ -1233,6 +1237,22 @@
     "about": "Sobre",
     "faq": "Perguntas Frequentes",
     "copyright": "⊘ {year} ChartsFM. Nenhum direito reservado."
+  },
+  "chartToppers": {
+    "title": "Chart Toppers",
+    "subheader": "Todos os #1s semana a semana",
+    "week": "Semana",
+    "entry": "Entrada",
+    "plays": "Plays",
+    "value": "VS",
+    "noEntries": "Nenhum #1 encontrado",
+    "error": "Falha ao carregar chart toppers",
+    "notFound": "Comunidade não encontrada",
+    "tabs": {
+      "artists": "Artistas",
+      "tracks": "Músicas",
+      "albums": "Álbuns"
+    }
   },
   "faq": {
     "title": "Perguntas Frequentes",

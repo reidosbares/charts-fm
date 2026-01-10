@@ -600,6 +600,39 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
             </div>
           </div>
         </div>
+
+      {/* The #1s Section */}
+      <div className="mt-6 md:mt-8">
+        <h3 className="text-xl md:text-2xl font-bold text-[var(--theme-primary-dark)] mb-4 md:mb-6">
+          {t('theNumberOnes')}
+        </h3>
+        <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+          <LiquidGlassLink
+            href={`/groups/${groupId}/chart-toppers#artists`}
+            variant="primary"
+            useTheme
+            className="flex-1"
+          >
+            {t('numberOneArtists')}
+          </LiquidGlassLink>
+          <LiquidGlassLink
+            href={`/groups/${groupId}/chart-toppers#tracks`}
+            variant="primary"
+            useTheme
+            className="flex-1"
+          >
+            {t('numberOneTracks')}
+          </LiquidGlassLink>
+          <LiquidGlassLink
+            href={`/groups/${groupId}/chart-toppers#albums`}
+            variant="primary"
+            useTheme
+            className="flex-1"
+          >
+            {t('numberOneAlbums')}
+          </LiquidGlassLink>
+        </div>
+      </div>
     </div>
   )
 }
