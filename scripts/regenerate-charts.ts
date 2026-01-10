@@ -297,6 +297,16 @@ async function regenerateChartsForGroup(
     }
   }
 
+  // Invalidate record detail caches
+  try {
+    const { invalidateRecordDetailCaches } = await import('../lib/group-records')
+    await invalidateRecordDetailCaches(groupId)
+    console.log(`      ✓ Record detail caches invalidated`)
+  } catch (error: any) {
+    console.error(`      ⚠️  Error invalidating record detail caches: ${error.message}`)
+    // Don't throw - cache invalidation is not critical
+  }
+
   // Calculate trends for the latest week
   if (weeksInOrder.length > 0) {
     const latestWeek = weeksInOrder[weeksInOrder.length - 1]

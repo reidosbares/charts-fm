@@ -1647,3 +1647,20 @@ export function getRecordTypeDisplayName(recordType: string): string {
   return displayNames[recordType] || recordType
 }
 
+/**
+ * Invalidate all record detail caches for a group
+ * Called when charts are regenerated to ensure caches are fresh
+ */
+export async function invalidateRecordDetailCaches(groupId: string): Promise<void> {
+  try {
+    await prisma.groupRecordDetailCache.deleteMany({
+      where: {
+        groupId,
+      },
+    })
+  } catch (error) {
+    // Log but don't fail - cache invalidation is best-effort
+    console.error(`Failed to invalidate record detail caches for group ${groupId}:`, error)
+  }
+}
+

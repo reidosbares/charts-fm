@@ -725,6 +725,10 @@ export async function initializeGroupWithHistory(groupId: string): Promise<void>
     await invalidateEntryStatsCacheBatch(groupId, allEntriesForInvalidation)
   }
 
+  // Invalidate record detail caches since charts have been regenerated
+  const { invalidateRecordDetailCaches } = await import('./group-records')
+  await invalidateRecordDetailCaches(groupId)
+
   // Calculate trends only for the latest week
   if (weeksInOrder.length > 0) {
     const latestWeek = weeksInOrder[weeksInOrder.length - 1] // Last week is the latest

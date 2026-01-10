@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMicrophone, faMusic, faCompactDisc, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
@@ -62,6 +62,45 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
   const [entries, setEntries] = useState<RankedEntry[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
+  // Browser cache: stores entries by entryType (or null for artist-specific)
+  // Using ref to avoid dependency issues in useEffect
+  const entriesCacheRef = useRef<Map<string | null, RankedEntry[]>>(new Map())
+  
+  // Get cache key for current request
+  const getCacheKey = (): string | null => {
+    return isArtistSpecific ? null : activeTab
+  }
+  
+  // Get cache key for sessionStorage
+  const getStorageKey = (entryType: string | null): string => {
+    return `record-detail-${groupId}-${recordType}-${entryType ?? 'artists'}`
+  }
+  
+  // Load from sessionStorage on mount - populate cache ref
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    
+    const cache = new Map<string | null, RankedEntry[]>()
+    const entryTypes = isArtistSpecific ? [null] : ['artists', 'tracks', 'albums']
+    
+    entryTypes.forEach(entryType => {
+      try {
+        const storageKey = getStorageKey(entryType)
+        const cached = sessionStorage.getItem(storageKey)
+        if (cached) {
+          const parsed = JSON.parse(cached) as RankedEntry[]
+          cache.set(entryType, parsed)
+        }
+      } catch (error) {
+        // Ignore errors reading from sessionStorage
+      }
+    })
+    
+    if (cache.size > 0) {
+      entriesCacheRef.current = cache
+    }
+  }, [groupId, recordType, isArtistSpecific]) // Include dependencies for getStorageKey
 
   const tabs: TabItem[] = isArtistSpecific ? [] : [
     { id: 'artists', label: tTabs('artists'), icon: faMicrophone },
@@ -115,6 +154,35 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
 
   useEffect(() => {
     const fetchEntries = async () => {
+      const cacheKey = getCacheKey()
+      
+      // Check in-memory cache first
+      const cachedEntries = entriesCacheRef.current.get(cacheKey)
+      if (cachedEntries) {
+        setEntries(cachedEntries)
+        setIsLoading(false)
+        return
+      }
+      
+      // Check sessionStorage as fallback
+      if (typeof window !== 'undefined') {
+        try {
+          const storageKey = getStorageKey(cacheKey)
+          const cached = sessionStorage.getItem(storageKey)
+          if (cached) {
+            const parsed = JSON.parse(cached) as RankedEntry[]
+            // Update in-memory cache
+            entriesCacheRef.current.set(cacheKey, parsed)
+            setEntries(parsed)
+            setIsLoading(false)
+            return
+          }
+        } catch (error) {
+          // Ignore errors reading from sessionStorage
+        }
+      }
+      
+      // Cache miss - fetch from API
       setIsLoading(true)
       setError(null)
       
@@ -133,7 +201,22 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
         const data = await response.json()
         // Filter out entries with value 0
         const filteredEntries = (data.entries || []).filter((entry: RankedEntry) => entry.value > 0)
+        
+        // Update state
         setEntries(filteredEntries)
+        
+        // Update in-memory cache
+        entriesCacheRef.current.set(cacheKey, filteredEntries)
+        
+        // Store in sessionStorage for persistence across page refreshes
+        if (typeof window !== 'undefined') {
+          try {
+            const storageKey = getStorageKey(cacheKey)
+            sessionStorage.setItem(storageKey, JSON.stringify(filteredEntries))
+          } catch (error) {
+            // Ignore errors writing to sessionStorage (e.g., quota exceeded)
+          }
+        }
       } catch (err) {
         console.error('Error fetching entries:', err)
         setError(t('error'))

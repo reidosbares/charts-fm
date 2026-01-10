@@ -114,6 +114,7 @@ model Group {
   members                   GroupMember[]
   recommendationRejections  GroupRecommendationRejection[]
   records                   GroupRecords?
+  recordDetailCaches        GroupRecordDetailCache[]
   shoutboxPermissions       GroupShoutboxPermission[]
   trends                    GroupTrends?
   weeklyStats               GroupWeeklyStats[]
@@ -437,4 +438,20 @@ model GroupRecords {
   group                Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@map("group_records")
+}
+
+model GroupRecordDetailCache {
+  id          String    @id @default(cuid())
+  groupId     String
+  recordType  String
+  entryType   String?   // null for artist-specific records
+  entries     Json      // Array of top 100 ranked entries
+  lastUpdated DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  group       Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, recordType, entryType])
+  @@index([groupId, recordType])
+  @@map("group_record_detail_cache")
 }

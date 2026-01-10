@@ -19,7 +19,48 @@ export async function GET(
 
     // Handle artist-specific record types
     if (isArtistSpecificRecordType(params.recordType)) {
+      // Check cache first
+      const cached = await prisma.groupRecordDetailCache.findUnique({
+        where: {
+          groupId_recordType_entryType: {
+            groupId: group.id,
+            recordType: params.recordType,
+            entryType: null, // Artist-specific records use null for entryType
+          },
+        },
+      })
+
+      if (cached) {
+        return NextResponse.json({
+          recordType: params.recordType,
+          entryType: 'artists',
+          entries: cached.entries as any,
+        })
+      }
+
+      // Cache miss - calculate and store
       const entries = await getArtistAggregationRecords(group.id, params.recordType, 100)
+      
+      // Store in cache
+      await prisma.groupRecordDetailCache.upsert({
+        where: {
+          groupId_recordType_entryType: {
+            groupId: group.id,
+            recordType: params.recordType,
+            entryType: null,
+          },
+        },
+        create: {
+          groupId: group.id,
+          recordType: params.recordType,
+          entryType: null,
+          entries: entries as any,
+        },
+        update: {
+          entries: entries as any,
+          lastUpdated: new Date(),
+        },
+      })
       
       return NextResponse.json({
         recordType: params.recordType,
@@ -40,6 +81,25 @@ export async function GET(
     
     if (!chartTypes.includes(entryType as ChartType)) {
       return NextResponse.json({ error: 'Invalid entry type' }, { status: 400 })
+    }
+
+    // Check cache first
+    const cached = await prisma.groupRecordDetailCache.findUnique({
+      where: {
+        groupId_recordType_entryType: {
+          groupId: group.id,
+          recordType: params.recordType,
+          entryType: entryType,
+        },
+      },
+    })
+
+    if (cached) {
+      return NextResponse.json({
+        recordType: params.recordType,
+        entryType,
+        entries: cached.entries as any,
+      })
     }
 
     // First, get a rough estimate of top entries (even if stats are stale)
@@ -196,6 +256,27 @@ export async function GET(
         ...entry,
         rank: index + 1,
       }))
+
+    // Store in cache
+    await prisma.groupRecordDetailCache.upsert({
+      where: {
+        groupId_recordType_entryType: {
+          groupId: group.id,
+          recordType: params.recordType,
+          entryType: entryType,
+        },
+      },
+      create: {
+        groupId: group.id,
+        recordType: params.recordType,
+        entryType: entryType,
+        entries: rankedEntries as any,
+      },
+      update: {
+        entries: rankedEntries as any,
+        lastUpdated: new Date(),
+      },
+    })
 
     return NextResponse.json({
       recordType: params.recordType,
