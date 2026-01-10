@@ -27,15 +27,15 @@ Para as 100 principais itens de cada usuário, o VS usa um sistema de três nív
 
 ![Gráfico de Cálculo VS](/icons/VS_graph.png)
 
-Ou seja: suponha que João e Maria estejam num mesmo comunidades. João escutou Lady Gaga 500 vezes em uma semana, o que a tornou asua artista mais escutada naquela semana. Maria escutou Ariana Grande apenas 50 vezes, mas ela foi a sua mais escutada daquela semana.
+Ou seja: suponha que João e Maria estejam numa mesmoa comunidade. João escutou Lady Gaga 500 vezes em uma semana, o que a tornou asua artista mais escutada naquela semana. Maria escutou Ariana Grande apenas 50 vezes, mas ela foi a sua mais escutada daquela semana.
 
 Mesmo que João tenha escutado Lady Gaga muito mais vezes do que Maria escutou Ariana Grande, ambas as cantoras vão receber a mesma quantidade de cada um dos ouvintes: **as duas receberão 2,00 VS**.
 
-De forma simples, o que conta para a pontuação não é quantas vezes você escutou um artista, mas a posição dele entre os seus favoritos. A vantagem é que João, que ouve muito mais música do que todos os seus amigos, não vai dominar os charts de todos os comunidades em que está simplesmente por escutar muito mais música, e os charts serão uma representação dos favoritos de todos!
+De forma simples, o que conta para a pontuação não é quantas vezes você escutou um artista, mas a posição dele entre os seus favoritos. A vantagem é que João, que ouve muito mais música do que todos os seus amigos, não vai dominar os charts de todas as comunidades em que está simplesmente por escutar muito mais música, e os charts serão uma representação dos favoritos de todos!
 
 ### Modos de Charts
 
-Você não precisa usar este sistema para calcular seus charts, se não quiser. Os donos dos comunidades podem escolher entre três modos de cálculo:
+Você não precisa usar este sistema para calcular seus charts, se não quiser. Os donos das comunidades podem escolher entre três modos de cálculo:
 
 #### 1. Modo VS
 Soma os pontos de VS de todos os usuários para cada item. Esse é o melhor sistema para comunidades com hábitos variados, onde você quer representar igualmente os favoritos de cada membro.
