@@ -77,13 +77,14 @@ function CompleteSignUpPageContent() {
     }
 
     try {
+      const emailLower = formData.email.toLowerCase().trim()
       const response = await fetch('/api/auth/signup/complete', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: formData.email,
+          email: emailLower,
           name: formData.name,
           password: formData.password,
         }),
@@ -96,7 +97,7 @@ function CompleteSignUpPageContent() {
       }
 
       // Account created successfully, redirect to verification page
-      router.push('/auth/verify-email?email=' + encodeURIComponent(formData.email))
+      router.push('/auth/verify-email?email=' + encodeURIComponent(emailLower))
     } catch (err) {
       setError(err instanceof Error ? err.message : t('errors.createFailed'))
       setIsSubmitting(false)

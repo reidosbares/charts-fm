@@ -27,9 +27,10 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check if email already exists
+    // Check if email already exists (case insensitive)
+    const emailLower = email.toLowerCase().trim()
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { email: emailLower },
     })
 
     if (existingUser) {
@@ -79,7 +80,7 @@ export async function POST(request: Request) {
     // Create user (admin-created users are verified by default)
     const user = await prisma.user.create({
       data: {
-        email,
+        email: emailLower,
         name: name || null,
         password: hashedPassword || null,
         lastfmUsername,

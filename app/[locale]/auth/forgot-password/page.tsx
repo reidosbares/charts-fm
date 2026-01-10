@@ -29,12 +29,13 @@ export default function ForgotPasswordPage() {
     }
 
     try {
+      const emailLower = email.toLowerCase().trim()
       const response = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: emailLower }),
       })
 
       const data = await response.json()

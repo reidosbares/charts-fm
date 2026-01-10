@@ -56,9 +56,10 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check if email already exists
+    // Check if email already exists (case insensitive)
+    const emailLower = email.toLowerCase().trim()
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { email: emailLower },
     })
 
     if (existingUser) {
@@ -91,7 +92,7 @@ export async function POST(request: Request) {
     // Create user with emailVerified: false
     const user = await prisma.user.create({
       data: {
-        email,
+        email: emailLower,
         name,
         password: hashedPassword,
         lastfmUsername,
@@ -107,7 +108,7 @@ export async function POST(request: Request) {
     try {
       // Detect locale from request for new users
       const locale = await detectLocale(request)
-      await sendVerificationEmail(email, verificationToken, name, locale)
+      await sendVerificationEmail(emailLower, verificationToken, name, locale)
     } catch (error) {
       console.error('Failed to send verification email:', error)
       // Continue even if email fails - user can request resend
