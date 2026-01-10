@@ -798,6 +798,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
                   value={record.value}
                   groupId={groupId}
                   isUser={record.isUser}
+                  activeTab={activeTab}
                 />
               ))}
             </div>

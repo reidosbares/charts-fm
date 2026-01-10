@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faQuestionCircle, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 import { Link } from '@/i18n/routing'
-import { isRecordTypeSupported } from '@/lib/group-records'
+import { isRecordTypeSupported, isArtistSpecificRecordType } from '@/lib/group-records'
 
 interface RecordBlockProps {
   title: string
@@ -22,6 +22,7 @@ interface RecordBlockProps {
   value: string
   groupId: string
   isUser?: boolean
+  activeTab?: 'artists' | 'tracks' | 'albums' | 'users'
 }
 
 // Color schemes for each user award
@@ -98,7 +99,7 @@ function getRecordTypeFromTitle(title: string, tChartRecords: (key: string) => s
   return titleToType[title] || null
 }
 
-export default function RecordBlock({ title, record, value, groupId, isUser }: RecordBlockProps) {
+export default function RecordBlock({ title, record, value, groupId, isUser, activeTab }: RecordBlockProps) {
   const tAwardDescriptions = useSafeTranslations('records.userRecords.awardDescriptions')
   const tUserRecords = useSafeTranslations('records.userRecords')
   const tChartRecords = useSafeTranslations('records.chartRecords')
@@ -123,7 +124,19 @@ export default function RecordBlock({ title, record, value, groupId, isUser }: R
   const link = getLink()
   const recordType = getRecordTypeFromTitle(title, tChartRecords)
   const hasDetailPage = recordType && isRecordTypeSupported(recordType)
-  const detailPageLink = hasDetailPage ? `/groups/${groupId}/records/${recordType}` : null
+  
+  // Build detail page link with hash fragment if applicable
+  let detailPageLink: string | null = null
+  if (hasDetailPage) {
+    const baseLink = `/groups/${groupId}/records/${recordType}`
+    // Only add hash for non-artist-specific records and when activeTab is artists/tracks/albums
+    if (recordType && !isArtistSpecificRecordType(recordType) && activeTab && 
+        (activeTab === 'artists' || activeTab === 'tracks' || activeTab === 'albums')) {
+      detailPageLink = `${baseLink}#${activeTab}`
+    } else {
+      detailPageLink = baseLink
+    }
+  }
   
   // Map translated award title back to English key for color scheme lookup
   const getAwardEnglishKey = (awardTitle: string): string | null => {
