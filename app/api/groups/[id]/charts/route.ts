@@ -309,6 +309,10 @@ export async function POST(
       await invalidateEntryStatsCacheBatch(groupId, allEntriesForInvalidation)
     }
 
+    // Invalidate record detail caches since charts have been regenerated
+    const { invalidateRecordDetailCaches } = await import('@/lib/group-records')
+    await invalidateRecordDetailCaches(groupId)
+
     // Calculate trends only for the latest week
     if (weeksInOrder.length > 0) {
       const latestWeek = weeksInOrder[weeksInOrder.length - 1] // Last week is the latest

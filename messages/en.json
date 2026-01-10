@@ -1076,7 +1076,8 @@
       "entry": "Entry",
       "value": "Value",
       "noEntries": "No entries found for this record type.",
-      "error": "Failed to load entries. Please try again later."
+      "error": "Failed to load entries. Please try again later.",
+      "by": "by"
     }
   },
   "landing": {

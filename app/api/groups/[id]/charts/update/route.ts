@@ -437,6 +437,10 @@ async function generateChartsInBackground(
         await invalidateEntryStatsCacheBatch(groupId, allEntriesForInvalidation)
       }
 
+      // Invalidate record detail caches since charts have been regenerated
+      const { invalidateRecordDetailCaches } = await import('@/lib/group-records')
+      await invalidateRecordDetailCaches(groupId)
+
       // Calculate trends only for the latest week (all previous calculations were wasted)
       if (weeksToGenerate.length > 0) {
         const latestWeek = weeksToGenerate[weeksToGenerate.length - 1] // Last week is the latest
