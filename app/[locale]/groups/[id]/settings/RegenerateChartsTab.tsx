@@ -154,13 +154,14 @@ export default function RegenerateChartsTab({
         body: JSON.stringify(body),
       })
 
+      // Read response as text first to avoid "body is disturbed or locked" error
+      const responseText = await response.text()
       let data: any = {}
       try {
-        data = await response.json()
+        data = JSON.parse(responseText)
       } catch (jsonError) {
-        // If JSON parsing fails, try to get text
-        const text = await response.text()
-        throw new Error(text || 'Failed to parse response')
+        // If JSON parsing fails, use the text as error message
+        throw new Error(responseText || 'Failed to parse response')
       }
 
       // Check for failed users info in both success and error responses (check this FIRST)
