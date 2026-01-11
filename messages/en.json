@@ -674,7 +674,7 @@
         "fetchingData": "Fetching data from last.fm. This may take a few minutes...",
         "generatedSuccessfully": "Charts generated successfully!",
         "failedToGenerate": "Failed to generate charts",
-        "description": "This will fetch the latest listening data from Last.fm for all group members and generate weekly charts for the last {weeks} weeks. This may take a few moments.",
+        "description": "This will connect to Last.fm and regenerate chart data for the last {weeks} weeks using your group's current configuration. The charts from the last {weeks} weeks will be overwritten and replaced. Use this when you want to recalculate past charts with updated group membership — for example, if someone recently joined and you'd like to see how the historical charts would look with their listening data included.",
         "weeksToGenerate": "Number of weeks to generate (Superuser only)",
         "weeksToGenerateDescription": "Enter the number of weeks in the past to generate charts for (1-52)",
         "alreadyInProgress": "Chart generation is already in progress. Please wait for it to complete.",

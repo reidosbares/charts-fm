@@ -674,7 +674,7 @@
         "fetchingData": "Buscando dados do last.fm. Isso pode levar alguns minutos...",
         "generatedSuccessfully": "Charts gerados com sucesso!",
         "failedToGenerate": "Falha ao gerar charts",
-        "description": "Esta ação buscará os dados mais recentes do Last.fm para todos os membros do grupo e gerará os charts semanais das últimas {weeks} semanas. Isto pode levar alguns momentos.",
+        "description": "Esta ação irá buscar dados do Last.fm e gerar novamente os dados dos charts das últimas {weeks} semanas usando as configurações atuais. Os charts existentes das últimas {weeks} semanas serão sobrescritos e substituídos. Use isto quando quiser recalcular charts passados com a composição atualizada da comunidade — por exemplo, se alguém entrou recentemente e você gostaria de ver como os charts anteriores ficariam com os dados dessa pessoa incluídos.",
         "weeksToGenerate": "Número de semanas para gerar (apenas Superusuário)",
         "weeksToGenerateDescription": "Digite o número de semanas no passado para gerar charts (1-52)",
         "alreadyInProgress": "A geração de charts já está em andamento. Por favor, aguarde a conclusão.",
