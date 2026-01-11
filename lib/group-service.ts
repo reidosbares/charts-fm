@@ -303,7 +303,8 @@ export async function getLastChartWeek(groupId: string): Promise<Date | null> {
 
 /**
  * Check if charts can be updated for a group
- * Charts can be updated if it's at least the next day of the week since the last chart was generated
+ * Charts can be updated if it's already the next occurrence of the tracking day
+ * since the last chart week ended
  * @param lastChartWeek - The week start of the last chart (null if no charts exist)
  * @param trackingDayOfWeek - The day of week the group tracks (0=Sunday, 1=Monday, ..., 6=Saturday)
  * @param now - Current date (defaults to new Date())
@@ -319,12 +320,31 @@ export function canUpdateCharts(
     return true
   }
 
-  // Calculate the end of the last chart's week (lastChartWeek + 7 days)
+  // Get the end of the last chart week
   const lastChartWeekEnd = getWeekEndForDay(lastChartWeek, trackingDayOfWeek)
   
-  // Charts can be updated if we're past the end of the last chart's week
-  // This means it's at least the next day of the week since the last chart was generated
-  return now >= lastChartWeekEnd
+  // Get the next occurrence of the tracking day after the end of the last chart week,
+  // not counting the day immediately after it
+  // Start from the day after lastChartWeekEnd, then find the next tracking day
+  const dayAfterLastChartWeekEnd = new Date(lastChartWeekEnd)
+  dayAfterLastChartWeekEnd.setUTCDate(dayAfterLastChartWeekEnd.getUTCDate() + 1)
+  dayAfterLastChartWeekEnd.setUTCHours(0, 0, 0, 0)
+  
+  // Find the next occurrence of the tracking day after dayAfterLastChartWeekEnd
+  const dateCanGenerateCharts = new Date(dayAfterLastChartWeekEnd)
+  const currentDayOfWeek = dateCanGenerateCharts.getUTCDay()
+  
+  // Calculate days to add to get to the next tracking day
+  let daysToAdd = trackingDayOfWeek - currentDayOfWeek
+  if (daysToAdd <= 0) {
+    daysToAdd += 7 // Move to next week
+  }
+  
+  dateCanGenerateCharts.setUTCDate(dateCanGenerateCharts.getUTCDate() + daysToAdd)
+  dateCanGenerateCharts.setUTCHours(0, 0, 0, 0)
+  
+  // Check if today is equal to or after the dateCanGenerateCharts
+  return now >= dateCanGenerateCharts
 }
 
 /**
