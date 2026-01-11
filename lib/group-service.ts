@@ -302,6 +302,32 @@ export async function getLastChartWeek(groupId: string): Promise<Date | null> {
 }
 
 /**
+ * Check if charts can be updated for a group
+ * Charts can be updated if it's at least the next day of the week since the last chart was generated
+ * @param lastChartWeek - The week start of the last chart (null if no charts exist)
+ * @param trackingDayOfWeek - The day of week the group tracks (0=Sunday, 1=Monday, ..., 6=Saturday)
+ * @param now - Current date (defaults to new Date())
+ * @returns true if charts can be updated, false otherwise
+ */
+export function canUpdateCharts(
+  lastChartWeek: Date | null,
+  trackingDayOfWeek: number,
+  now: Date = new Date()
+): boolean {
+  // If no charts exist, can always update
+  if (!lastChartWeek) {
+    return true
+  }
+
+  // Calculate the end of the last chart's week (lastChartWeek + 7 days)
+  const lastChartWeekEnd = getWeekEndForDay(lastChartWeek, trackingDayOfWeek)
+  
+  // Charts can be updated if we're past the end of the last chart's week
+  // This means it's at least the next day of the week since the last chart was generated
+  return now >= lastChartWeekEnd
+}
+
+/**
  * Delete charts that overlap with a given week range
  * Optimized to use direct database queries instead of fetching all charts
  */

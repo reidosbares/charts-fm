@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { checkGroupAccessForAPI } from '@/lib/group-auth'
 import { prisma } from '@/lib/prisma'
 import { getWeekStartForDay, getWeekEndForDay, formatWeekLabel } from '@/lib/weekly-utils'
-import { getLastChartWeek } from '@/lib/group-service'
+import { getLastChartWeek, canUpdateCharts } from '@/lib/group-service'
 
 export async function GET(
   request: Request,
@@ -49,30 +49,14 @@ export async function GET(
     const daysUntilNextChart = Math.ceil((nextChartDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
 
     // Check if charts can be updated (only for members)
-    let canUpdateCharts = false
+    let canUpdateChartsValue = false
     if (isMember) {
       const lastChartWeek = await getLastChartWeek(group.id)
-      
-      if (!lastChartWeek) {
-        // No charts exist, can update
-        canUpdateCharts = true
-      } else {
-        // Check if current week has finished (currentWeekEnd is in the past)
-        if (currentWeekEnd < now) {
-          // Check if we need to generate the current finished week
-          const nextExpectedWeek = new Date(lastChartWeek)
-          nextExpectedWeek.setUTCDate(nextExpectedWeek.getUTCDate() + 7)
-          
-          // If next expected week is before or equal to current finished week, we can update
-          if (nextExpectedWeek <= currentWeekStart) {
-            canUpdateCharts = true
-          }
-        }
-      }
-
       const chartGenerationInProgress = group.chartGenerationInProgress || false
-      // Can only update if not already in progress
-      canUpdateCharts = canUpdateCharts && !chartGenerationInProgress
+      
+      // Charts can be updated if it's at least the next day of the week since the last chart was generated
+      // and generation is not already in progress
+      canUpdateChartsValue = canUpdateCharts(lastChartWeek, trackingDayOfWeek, now) && !chartGenerationInProgress
     }
 
     // Get caption from stored data (set when icon is updated)
@@ -109,7 +93,7 @@ export async function GET(
       })),
       daysUntilNextChart,
       nextChartDateFormatted,
-      canUpdateCharts,
+      canUpdateCharts: canUpdateChartsValue,
       chartGenerationInProgress: group.chartGenerationInProgress || false,
       imageCaption,
     })

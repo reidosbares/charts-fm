@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
-import { calculateGroupWeeklyStats, deleteOverlappingCharts, updateGroupIconFromChart, getLastChartWeek } from '@/lib/group-service'
+import { calculateGroupWeeklyStats, deleteOverlappingCharts, updateGroupIconFromChart, getLastChartWeek, canUpdateCharts } from '@/lib/group-service'
 import { getWeekStartForDay, getWeekEndForDay, getLastNFinishedWeeksForDay } from '@/lib/weekly-utils'
 import { recalculateAllTimeStats } from '@/lib/group-alltime-stats'
 import { invalidateEntryStatsCacheBatch } from '@/lib/chart-deep-dive'
@@ -56,6 +56,7 @@ export async function POST(
 
     // Get last chart week
     const lastChartWeek = await getLastChartWeek(groupId)
+    const now = new Date()
     
     let weeksToGenerate: Date[] = []
 
@@ -64,25 +65,32 @@ export async function POST(
       weeksToGenerate = getLastNFinishedWeeksForDay(10, trackingDayOfWeek)
       console.log(`[Chart Generate] No previous charts found. Generated ${weeksToGenerate.length} weeks to process.`)
     } else {
-      // Calculate missing weeks
-      const now = new Date()
-      const currentWeekStart = getWeekStartForDay(now, trackingDayOfWeek)
-      const currentWeekEnd = getWeekEndForDay(currentWeekStart, trackingDayOfWeek)
-      
-      // Only generate if current week has finished
-      if (currentWeekEnd < now) {
-        // Calculate next expected week (last chart + 7 days)
-        const nextExpectedWeek = new Date(lastChartWeek)
-        nextExpectedWeek.setUTCDate(nextExpectedWeek.getUTCDate() + 7)
+      // Check if charts can be updated (at least next day of week since last chart)
+      if (canUpdateCharts(lastChartWeek, trackingDayOfWeek, now)) {
+        // Calculate next expected week (last chart week end = last chart + 7 days)
+        const lastChartWeekEnd = getWeekEndForDay(lastChartWeek, trackingDayOfWeek)
+        const nextExpectedWeek = new Date(lastChartWeekEnd)
         nextExpectedWeek.setUTCHours(0, 0, 0, 0)
         
-        // Generate weeks from nextExpectedWeek to currentWeekStart (inclusive)
+        // Get the most recent finished week
+        const currentWeekStart = getWeekStartForDay(now, trackingDayOfWeek)
+        const currentWeekEnd = getWeekEndForDay(currentWeekStart, trackingDayOfWeek)
+        
+        // Most recent finished week is currentWeekStart if current week has finished,
+        // otherwise it's the previous week (currentWeekStart - 7 days)
+        const mostRecentFinishedWeek = new Date(currentWeekEnd < now ? currentWeekStart : currentWeekStart)
+        if (currentWeekEnd >= now) {
+          mostRecentFinishedWeek.setUTCDate(mostRecentFinishedWeek.getUTCDate() - 7)
+        }
+        mostRecentFinishedWeek.setUTCHours(0, 0, 0, 0)
+        
+        // Generate weeks from nextExpectedWeek to mostRecentFinishedWeek (inclusive)
         // But limit to maximum 10 weeks
         const weeks: Date[] = []
-        let weekToCheck = new Date(currentWeekStart)
+        let weekToCheck = new Date(mostRecentFinishedWeek)
         weekToCheck.setUTCHours(0, 0, 0, 0)
         
-        // Work backwards from current week, collecting up to 10 weeks
+        // Work backwards from most recent finished week, collecting up to 10 weeks
         while (weeks.length < 10 && weekToCheck >= nextExpectedWeek) {
           weeks.push(new Date(weekToCheck))
           // Move back 7 days

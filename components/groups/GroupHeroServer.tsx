@@ -2,7 +2,7 @@ import { Link } from '@/i18n/routing'
 import SafeImage from '@/components/SafeImage'
 import { prisma } from '@/lib/prisma'
 import { getWeekStartForDay, getWeekEndForDay, formatWeekLabel } from '@/lib/weekly-utils'
-import { getLastChartWeek } from '@/lib/group-service'
+import { getLastChartWeek, canUpdateCharts as canUpdateChartsHelper } from '@/lib/group-service'
 import UpdateChartsButton from './UpdateChartsButton'
 import ShareGroupButton from '@/app/[locale]/groups/[id]/ShareGroupButton'
 import QuickAccessButton from '@/app/[locale]/groups/[id]/QuickAccessButton'
@@ -86,28 +86,11 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme, is
 
   // Check if charts can be updated
   const lastChartWeek = await getLastChartWeek(groupId)
-  let canUpdateCharts = false
-  
-  if (!lastChartWeek) {
-    // No charts exist, can update
-    canUpdateCharts = true
-  } else {
-    // Check if current week has finished (currentWeekEnd is in the past)
-    if (currentWeekEnd < now) {
-      // Check if we need to generate the current finished week
-      const nextExpectedWeek = new Date(lastChartWeek)
-      nextExpectedWeek.setUTCDate(nextExpectedWeek.getUTCDate() + 7)
-      
-      // If next expected week is before or equal to current finished week, we can update
-      if (nextExpectedWeek <= currentWeekStart) {
-        canUpdateCharts = true
-      }
-    }
-  }
-
   const chartGenerationInProgress = group.chartGenerationInProgress || false
-  // Can only update if not already in progress
-  canUpdateCharts = canUpdateCharts && !chartGenerationInProgress
+  
+  // Charts can be updated if it's at least the next day of the week since the last chart was generated
+  // and generation is not already in progress
+  let canUpdateCharts = canUpdateChartsHelper(lastChartWeek, trackingDayOfWeek, now) && !chartGenerationInProgress
 
   // Check for pending request/invite for non-members
   let hasPendingRequest = false

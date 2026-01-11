@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
 import { requireGroupMembership } from '@/lib/group-auth'
-import { getLastChartWeek } from '@/lib/group-service'
+import { getLastChartWeek, canUpdateCharts } from '@/lib/group-service'
 import { getWeekStartForDay, getWeekEndForDay } from '@/lib/weekly-utils'
 
 const LOCK_TIMEOUT_MS = 30 * 60 * 1000 // 30 minutes
@@ -40,31 +40,14 @@ export async function GET(
 
     const trackingDayOfWeek = group.trackingDayOfWeek ?? 0
     const now = new Date()
-    const currentWeekStart = getWeekStartForDay(now, trackingDayOfWeek)
-    const currentWeekEnd = getWeekEndForDay(currentWeekStart, trackingDayOfWeek)
     
     // Check if there are missing weeks
     const lastChartWeek = await getLastChartWeek(group.id)
-    let canUpdate = false
-    
-    if (!lastChartWeek) {
-      // No charts exist, can update
-      canUpdate = true
-    } else {
-      // Check if current week has finished (currentWeekEnd is in the past)
-      if (currentWeekEnd < now) {
-        // Check if we need to generate the current finished week
-        const nextExpectedWeek = new Date(lastChartWeek)
-        nextExpectedWeek.setUTCDate(nextExpectedWeek.getUTCDate() + 7)
-        
-        // If next expected week is before or equal to current finished week, we can update
-        if (nextExpectedWeek <= currentWeekStart) {
-          canUpdate = true
-        }
-      }
-    }
-
     const inProgress = group.chartGenerationInProgress || false
+    
+    // Charts can be updated if it's at least the next day of the week since the last chart was generated
+    // and generation is not already in progress
+    const canUpdate = canUpdateCharts(lastChartWeek, trackingDayOfWeek, now) && !inProgress
     
     // Get failed users info if generation just completed
     let failedUsers: string[] = []

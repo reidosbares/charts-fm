@@ -46,9 +46,15 @@ export default function UpdateChartsButton({ groupId, initialInProgress = false,
             setShowErrorModal(true)
           }
           
-          // Refresh the page to update server components
-          router.refresh()
+          // Call the callback first (if provided)
           onUpdateComplete?.()
+          
+          // Refresh the page to update server components
+          // Use a small delay to ensure server state is updated before refreshing
+          setTimeout(() => {
+            // Do a full page reload to ensure all data is fresh
+            window.location.reload()
+          }, 500)
         } else {
           // Still in progress, poll again
           setTimeout(poll, pollInterval)
