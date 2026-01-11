@@ -20,14 +20,12 @@ export async function GET(
     // Handle artist-specific record types
     if (isArtistSpecificRecordType(params.recordType)) {
       // Check cache first
-      // Prisma's generated types don't properly handle nullable fields in composite unique constraints
-      const cached = await prisma.groupRecordDetailCache.findUnique({
+      // Use findFirst because Prisma doesn't allow null in composite unique constraints with findUnique
+      const cached = await prisma.groupRecordDetailCache.findFirst({
         where: {
-          groupId_recordType_entryType: {
-            groupId: group.id,
-            recordType: params.recordType,
-            entryType: null,
-          } as any,
+          groupId: group.id,
+          recordType: params.recordType,
+          entryType: null,
         },
       })
 
@@ -43,26 +41,33 @@ export async function GET(
       const entries = await getArtistAggregationRecords(group.id, params.recordType, 100)
       
       // Store in cache
-      // Prisma's generated types don't properly handle nullable fields in composite unique constraints
-      await prisma.groupRecordDetailCache.upsert({
+      // Use findFirst + create/update because Prisma doesn't allow null in composite unique constraints with upsert
+      const existing = await prisma.groupRecordDetailCache.findFirst({
         where: {
-          groupId_recordType_entryType: {
-            groupId: group.id,
-            recordType: params.recordType,
-            entryType: null,
-          } as any,
-        },
-        create: {
           groupId: group.id,
           recordType: params.recordType,
           entryType: null,
-          entries: entries as any,
-        },
-        update: {
-          entries: entries as any,
-          lastUpdated: new Date(),
         },
       })
+
+      if (existing) {
+        await prisma.groupRecordDetailCache.update({
+          where: { id: existing.id },
+          data: {
+            entries: entries as any,
+            lastUpdated: new Date(),
+          },
+        })
+      } else {
+        await prisma.groupRecordDetailCache.create({
+          data: {
+            groupId: group.id,
+            recordType: params.recordType,
+            entryType: null,
+            entries: entries as any,
+          },
+        })
+      }
       
       return NextResponse.json({
         recordType: params.recordType,
