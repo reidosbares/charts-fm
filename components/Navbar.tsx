@@ -252,14 +252,14 @@ export default function Navbar() {
           <div className="flex items-center space-x-4 md:space-x-8">
             <Link 
               href="/" 
-              className={`transition-all ${isLoading ? 'animate-pulse-scale' : ''}`}
+              className={`transition-all cursor-pointer select-none ${isLoading ? 'animate-pulse-scale' : ''}`}
             >
               <Image
                 src="/logo-transparent.png"
                 alt="ChartsFM"
                 width={180}
                 height={60}
-                className="h-8 md:h-10 w-auto"
+                className="h-10 md:h-12 w-auto select-none"
                 priority
               />
             </Link>

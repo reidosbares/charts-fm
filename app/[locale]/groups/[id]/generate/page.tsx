@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { Link } from '@/i18n/routing'
 import GenerateChartsClient from './GenerateChartsClient'
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string; locale: string }> }): Promise<Metadata> {
   const { id, locale } = await params;

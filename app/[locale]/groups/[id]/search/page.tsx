@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import SearchResultsClient from './SearchResultsClient'
 import GroupPageHero from '@/components/groups/GroupPageHero'
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string; locale: string }> }): Promise<Metadata> {
   const { id, locale } = await params;
