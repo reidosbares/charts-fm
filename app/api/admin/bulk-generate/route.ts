@@ -104,7 +104,7 @@ export async function POST(request: Request) {
         // Random settings
         const chartSize = CHART_SIZES[Math.floor(Math.random() * CHART_SIZES.length)]
         const chartMode = CHART_MODES[Math.floor(Math.random() * CHART_MODES.length)]
-        const trackingDayOfWeek = [0, 3][Math.floor(Math.random() * 2)] // Only Sunday (0) or Wednesday (3)
+        const trackingDayOfWeek = [0, 5][Math.floor(Math.random() * 2)] // Only Sunday (0) or Friday (5)
         const isPrivate = Math.random() > 0.5
         const allowFreeJoin = !isPrivate && Math.random() > 0.7
         const dynamicIconEnabled = Math.random() > 0.6

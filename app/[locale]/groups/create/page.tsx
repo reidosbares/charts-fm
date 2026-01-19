@@ -21,7 +21,7 @@ export default function CreateGroupPage() {
   
   const DAYS_OF_WEEK = useMemo(() => [
     { value: 0, label: tDays('sunday') },
-    { value: 3, label: tDays('wednesday') },
+    { value: 5, label: tDays('friday') },
   ], [tDays])
 
   const CHART_MODES = useMemo(() => [
