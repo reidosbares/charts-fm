@@ -163,6 +163,25 @@ export default async function PublicGroupHeroServer({ groupId, colorTheme }: Pub
                 </div>
               </div>
               
+              {/* Tags - Only shown on public pages */}
+              {Array.isArray((group as any).tags) && (group as any).tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 md:gap-2 mb-3 md:mb-4">
+                  {(group as any).tags.map((tag: string, index: number) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-xs md:text-sm font-medium border"
+                      style={{
+                        backgroundColor: 'var(--theme-primary-lighter)',
+                        color: 'var(--theme-primary-dark)',
+                        borderColor: 'var(--theme-primary)',
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+              
               {isMember && (
                 <div className="mb-3 md:mb-4">
                   <Link 

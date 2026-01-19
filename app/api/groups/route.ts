@@ -41,7 +41,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json()
-  const { name, image, chartSize, trackingDayOfWeek, chartMode, isPrivate, allowFreeJoin, dynamicIconEnabled, dynamicIconSource } = body
+  const { name, image, chartSize, trackingDayOfWeek, chartMode, isPrivate, allowFreeJoin, dynamicIconEnabled, dynamicIconSource, tags } = body
 
   if (!name || typeof name !== 'string' || name.trim().length === 0) {
     return NextResponse.json(
@@ -98,6 +98,50 @@ export async function POST(request: Request) {
     }
   }
 
+  // Validate and process tags
+  let processedTags: string[] = []
+  if (tags !== undefined) {
+    if (typeof tags === 'string') {
+      // If tags is a string, split by space and process
+      processedTags = tags
+        .split(/\s+/)
+        .map(tag => tag.trim())
+        .filter(tag => tag.length > 0)
+    } else if (Array.isArray(tags)) {
+      processedTags = tags
+        .map(tag => String(tag).trim())
+        .filter(tag => tag.length > 0)
+    } else {
+      return NextResponse.json(
+        { error: 'Tags must be a string or an array' },
+        { status: 400 }
+      )
+    }
+
+    // Validate each tag: no whitespace, max 10 tags
+    for (const tag of processedTags) {
+      if (/\s/.test(tag)) {
+        return NextResponse.json(
+          { error: 'Tags cannot contain whitespace' },
+          { status: 400 }
+        )
+      }
+    }
+
+    if (processedTags.length > 10) {
+      return NextResponse.json(
+        { error: 'Maximum of 10 tags allowed' },
+        { status: 400 }
+      )
+    }
+
+    // Remove duplicates (case-insensitive)
+    const uniqueTags = Array.from(
+      new Map(processedTags.map(tag => [tag.toLowerCase(), tag])).values()
+    )
+    processedTags = uniqueTags
+  }
+
   // Create group
   const group = await prisma.group.create({
     data: {
@@ -110,13 +154,14 @@ export async function POST(request: Request) {
       allowFreeJoin: isPrivate === true ? false : (allowFreeJoin === true), // Only allow free join for public groups
       dynamicIconEnabled: dynamicIconEnabled === true,
       dynamicIconSource: dynamicIconEnabled === true ? dynamicIconSource : null,
+      ...(processedTags.length > 0 && { tags: processedTags }),
       creatorId: user.id,
       members: {
         create: {
           userId: user.id, // Creator is automatically a member
         },
       },
-    },
+    } as any,
     include: {
       creator: {
         select: {

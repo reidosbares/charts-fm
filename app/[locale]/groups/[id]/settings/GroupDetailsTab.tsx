@@ -21,6 +21,7 @@ interface GroupDetailsTabProps {
   initialAllowFreeJoin: boolean
   initialDynamicIconEnabled: boolean
   initialDynamicIconSource: string | null
+  initialTags?: string[]
 }
 
 export default function GroupDetailsTab({
@@ -31,6 +32,7 @@ export default function GroupDetailsTab({
   initialAllowFreeJoin,
   initialDynamicIconEnabled,
   initialDynamicIconSource,
+  initialTags = [],
 }: GroupDetailsTabProps) {
   const router = useRouter()
   const t = useSafeTranslations('groups.settings.groupDetails')
@@ -48,6 +50,7 @@ export default function GroupDetailsTab({
   const [allowFreeJoin, setAllowFreeJoin] = useState(initialAllowFreeJoin)
   const [dynamicIconEnabled, setDynamicIconEnabled] = useState(initialDynamicIconEnabled)
   const [dynamicIconSource, setDynamicIconSource] = useState(initialDynamicIconSource || 'top_album')
+  const [tags, setTags] = useState(initialTags.join(' '))
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -88,7 +91,8 @@ export default function GroupDetailsTab({
     isPrivate !== initialIsPrivate ||
     allowFreeJoin !== initialAllowFreeJoin ||
     dynamicIconEnabled !== initialDynamicIconEnabled ||
-    (dynamicIconEnabled && dynamicIconSource !== initialDynamicIconSource)
+    (dynamicIconEnabled && dynamicIconSource !== initialDynamicIconSource) ||
+    tags !== initialTags.join(' ')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -109,6 +113,7 @@ export default function GroupDetailsTab({
           allowFreeJoin: isPrivate ? false : allowFreeJoin, // Only allow free join for public groups
           dynamicIconEnabled,
           dynamicIconSource: dynamicIconEnabled ? dynamicIconSource : null,
+          tags: tags,
         }),
       })
 
@@ -527,6 +532,49 @@ export default function GroupDetailsTab({
               <p className="text-xs text-gray-500 mt-1">
                 {t('iconSourceDescription')}
               </p>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="tags" className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
+            {t('tags')}
+          </label>
+          <input
+            type="text"
+            id="tags"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            className="w-full px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+            placeholder={t('tagsPlaceholder')}
+            disabled={isLoading}
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            {t('tagsDescription')}
+          </p>
+          {tags && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {tags
+                .split(/\s+/)
+                .filter(tag => tag.trim().length > 0)
+                .slice(0, 10)
+                .map((tag, index) => (
+                  <span
+                    key={index}
+                    className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+                      /\s/.test(tag)
+                        ? 'bg-red-100 text-red-800'
+                        : 'bg-yellow-100 text-yellow-800'
+                    }`}
+                  >
+                    {tag.trim()}
+                  </span>
+                ))}
+              {tags.split(/\s+/).filter(tag => tag.trim().length > 0).length > 10 && (
+                <span className="text-xs text-red-600 self-center">
+                  {t('maxTagsReached')}
+                </span>
+              )}
             </div>
           )}
         </div>

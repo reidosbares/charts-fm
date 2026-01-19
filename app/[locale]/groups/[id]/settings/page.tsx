@@ -120,6 +120,7 @@ export default async function GroupSettingsPage({ params }: { params: { id: stri
               initialAllowFreeJoin={group.allowFreeJoin ?? false}
               initialDynamicIconEnabled={(group as any).dynamicIconEnabled ?? false}
               initialDynamicIconSource={(group as any).dynamicIconSource}
+              initialTags={Array.isArray((group as any).tags) ? (group as any).tags : []}
             />
           }
           stylingContent={

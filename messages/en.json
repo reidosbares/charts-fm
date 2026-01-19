@@ -640,6 +640,10 @@
           "topArtist": "Top Artist",
           "topTrackArtist": "Artist of Top Track"
         },
+        "tags": "Tags",
+        "tagsPlaceholder": "indie pop jazz (separated by space)",
+        "tagsDescription": "Add up to 10 tags to describe your group's music taste.",
+        "maxTagsReached": "Maximum 10 tags allowed",
         "saving": "Saving...",
         "saveChanges": "Save Changes",
         "cancel": "Cancel"
@@ -852,7 +856,11 @@
         "add": "Add",
         "invites": "Invites ({count})",
         "remove": "Remove",
-        "noInvitesYet": "No invites added yet. You can skip this step and invite users later."
+        "noInvitesYet": "No invites added yet. You can skip this step and invite users later.",
+        "tags": "Tags",
+        "tagsPlaceholder": "indie pop jazz (separated by space)",
+        "tagsDescription": "Add up to 10 tags to describe your group's music taste.",
+        "maxTagsReached": "Maximum 10 tags allowed"
       }
     },
     "discover": {
@@ -860,6 +868,8 @@
       "searchPlaceholder": "Search groups...",
       "hideFilters": "Hide Filters",
       "showFilters": "Show Filters",
+      "tags": "Tags",
+      "tagsPlaceholder": "indie pop jazz",
       "freeJoinOnly": "Free Join Only",
       "minMembers": "Min Members",
       "maxMembers": "Max Members",

@@ -66,8 +66,9 @@ export default function CreateGroupPage() {
     chartSize: 10,
     trackingDayOfWeek: 0,
     chartMode: 'vs', // Default to VS
-    // Step 3: Invites
+    // Step 3: Invites and Tags
     invites: [] as string[],
+    tags: '',
   })
   const [inviteInput, setInviteInput] = useState('')
   const [inviteErrors, setInviteErrors] = useState<Record<number, string>>({})
@@ -198,6 +199,7 @@ export default function CreateGroupPage() {
           chartMode: formData.chartMode,
           isPrivate: formData.isPrivate,
           allowFreeJoin: formData.isPrivate ? false : formData.allowFreeJoin,
+          tags: formData.tags,
         }),
       })
 
@@ -631,6 +633,49 @@ export default function CreateGroupPage() {
           {t('step3.noInvitesYet')}
         </div>
       )}
+
+      <div>
+        <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-2">
+          {t('step3.tags')}
+        </label>
+        <input
+          type="text"
+          id="tags"
+          value={formData.tags}
+          onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+          className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-base"
+          placeholder={t('step3.tagsPlaceholder')}
+          disabled={isLoading}
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          {t('step3.tagsDescription')}
+        </p>
+        {formData.tags && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {formData.tags
+              .split(/\s+/)
+              .filter(tag => tag.trim().length > 0)
+              .slice(0, 10)
+              .map((tag, index) => (
+                <span
+                  key={index}
+                  className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+                    /\s/.test(tag)
+                      ? 'bg-red-100 text-red-800'
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}
+                >
+                  {tag.trim()}
+                </span>
+              ))}
+            {formData.tags.split(/\s+/).filter(tag => tag.trim().length > 0).length > 10 && (
+              <span className="text-xs text-red-600 self-center">
+                {t('step3.maxTagsReached')}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   )
 

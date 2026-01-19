@@ -22,6 +22,7 @@ export async function GET(request: Request) {
   const search = searchParams.get('search')?.trim() || ''
   const allowFreeJoinParam = searchParams.get('allowFreeJoin')
   const minMembersParam = searchParams.get('minMembers')
+  const tagsParam = searchParams.get('tags')?.trim() || ''
   const sort = searchParams.get('sort') || 'newest'
   // Validate and parse page and limit
   const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1)
@@ -38,6 +39,20 @@ export async function GET(request: Request) {
     where.name = {
       contains: search,
       mode: 'insensitive',
+    }
+  }
+
+  // Tags filter
+  if (tagsParam) {
+    const searchTags = tagsParam
+      .split(/\s+/)
+      .map(tag => tag.trim().toLowerCase())
+      .filter(tag => tag.length > 0)
+    
+    if (searchTags.length > 0) {
+      // Filter groups that have at least one matching tag (case-insensitive)
+      // Since tags is stored as JSON, we need to filter after fetching
+      // We'll add this filter in post-processing
     }
   }
 
@@ -76,7 +91,14 @@ export async function GET(request: Request) {
   // Get paginated public groups with member counts
   const groups = await prisma.group.findMany({
     where,
-    include: {
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      colorTheme: true,
+      allowFreeJoin: true,
+      createdAt: true,
+      tags: true,
       creator: {
         select: {
           id: true,
@@ -127,6 +149,11 @@ export async function GET(request: Request) {
         }),
       ])
 
+      // Get tags from group (stored as JSON)
+      const groupTags = Array.isArray((group as any).tags) 
+        ? (group as any).tags.map((tag: string) => String(tag).toLowerCase())
+        : []
+
       return {
         id: group.id,
         name: group.name,
@@ -138,12 +165,30 @@ export async function GET(request: Request) {
         _count: group._count,
         lastChartUpdate: latestChart?.updatedAt.toISOString() || null,
         weekCount,
+        tags: groupTags,
       }
     })
   )
 
+  // Filter by tags if specified
+  let tagFilteredGroups = groupsWithActivity
+  if (tagsParam) {
+    const searchTags = tagsParam
+      .split(/\s+/)
+      .map(tag => tag.trim().toLowerCase())
+      .filter(tag => tag.length > 0)
+    
+    if (searchTags.length > 0) {
+      tagFilteredGroups = groupsWithActivity.filter((group: any) => {
+        const groupTags = group.tags || []
+        // Check if any of the search tags matches any of the group's tags
+        return searchTags.some(searchTag => groupTags.includes(searchTag))
+      })
+    }
+  }
+
   // Sort groups
-  let sortedGroups = groupsWithActivity
+  let sortedGroups = tagFilteredGroups
   switch (sort) {
     case 'newest':
       sortedGroups.sort((a, b) => 

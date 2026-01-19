@@ -28,6 +28,7 @@ interface Group {
   }
   lastChartUpdate?: string | null
   weekCount?: number
+  tags?: string[]
 }
 
 interface DiscoverGroupsClientProps {
@@ -52,6 +53,8 @@ export default function DiscoverGroupsClient({
   const [groups, setGroups] = useState<Group[]>(initialGroups)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [tagsQuery, setTagsQuery] = useState('')
+  const [debouncedTags, setDebouncedTags] = useState('')
   const [allowFreeJoin, setAllowFreeJoin] = useState<boolean | null>(null)
   const [minMembers, setMinMembers] = useState<number | null>(null)
   const [maxMembers, setMaxMembers] = useState<number | null>(null)
@@ -74,6 +77,15 @@ export default function DiscoverGroupsClient({
 
     return () => clearTimeout(timer)
   }, [searchQuery])
+
+  // Debounce tags query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedTags(tagsQuery)
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [tagsQuery])
 
   // Fetch groups from API
   const fetchGroups = useCallback(async (page: number, reset: boolean = false) => {
@@ -100,6 +112,10 @@ export default function DiscoverGroupsClient({
 
       if (minMembers !== null && minMembers > 0) {
         params.append('minMembers', minMembers.toString())
+      }
+
+      if (debouncedTags.trim()) {
+        params.append('tags', debouncedTags.trim())
       }
 
       const response = await fetch(`/api/groups/discover?${params.toString()}`)
@@ -148,7 +164,7 @@ export default function DiscoverGroupsClient({
       setIsLoading(false)
       setIsLoadingMore(false)
     }
-  }, [debouncedSearch, allowFreeJoin, minMembers, maxMembers, activityLevel, sortBy])
+  }, [debouncedSearch, debouncedTags, allowFreeJoin, minMembers, maxMembers, activityLevel, sortBy])
 
   // Reset and fetch when filters change
   useEffect(() => {
@@ -156,7 +172,7 @@ export default function DiscoverGroupsClient({
     setHasMore(true)
     fetchGroups(1, true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearch, allowFreeJoin, minMembers, sortBy, maxMembers, activityLevel])
+  }, [debouncedSearch, debouncedTags, allowFreeJoin, minMembers, sortBy, maxMembers, activityLevel])
 
   // Infinite scroll observer
   useEffect(() => {
@@ -248,6 +264,29 @@ export default function DiscoverGroupsClient({
                   </span>
                 )}
               </div>
+              {/* Tags */}
+              {group.tags && group.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1 md:gap-1.5 mt-2">
+                  {group.tags.slice(0, 3).map((tag: string, index: number) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] md:text-xs font-medium border"
+                      style={{
+                        backgroundColor: 'var(--theme-primary-lighter)',
+                        color: 'var(--theme-primary-dark)',
+                        borderColor: 'var(--theme-primary)',
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                  {group.tags.length > 3 && (
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] md:text-xs font-medium text-gray-500">
+                      +{group.tags.length - 3}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </Link>
@@ -297,6 +336,29 @@ export default function DiscoverGroupsClient({
                 </p>
               )}
             </div>
+            {/* Tags */}
+            {group.tags && group.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1 md:gap-1.5 mt-2 md:mt-3">
+                {group.tags.slice(0, 5).map((tag: string, index: number) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs font-medium border"
+                    style={{
+                      backgroundColor: 'var(--theme-primary-lighter)',
+                      color: 'var(--theme-primary-dark)',
+                      borderColor: 'var(--theme-primary)',
+                    }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+                {group.tags.length > 5 && (
+                  <span className="inline-flex items-center px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs font-medium text-gray-500">
+                    +{group.tags.length - 5}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </Link>
@@ -338,7 +400,21 @@ export default function DiscoverGroupsClient({
 
           {/* Filters Panel */}
           <div className={`flex-1 ${filtersExpanded ? 'block' : 'hidden lg:block'}`}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
+              {/* Tags Filter */}
+              <div>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
+                  {t('tags')}
+                </label>
+                <input
+                  type="text"
+                  placeholder={t('tagsPlaceholder')}
+                  value={tagsQuery}
+                  onChange={(e) => setTagsQuery(e.target.value)}
+                  className="w-full px-3 md:px-4 py-2 text-sm md:text-base border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                />
+              </div>
+
               {/* Free Join Toggle */}
               <div>
                 <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">

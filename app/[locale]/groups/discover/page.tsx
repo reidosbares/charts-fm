@@ -100,6 +100,7 @@ export default async function DiscoverGroupsPage({
           _count: group._count,
           lastChartUpdate: latestChart?.updatedAt.toISOString() || null,
           weekCount,
+          tags: Array.isArray((group as any).tags) ? (group as any).tags : [],
         }
       })
     )
