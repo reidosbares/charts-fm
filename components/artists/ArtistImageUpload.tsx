@@ -90,6 +90,10 @@ export default function ArtistImageUpload({
 
       if (!response.ok) {
         const data = await response.json()
+        // Check for daily limit error (429 status code)
+        if (response.status === 429) {
+          throw new Error(t('errors.dailyLimitReached'))
+        }
         throw new Error(data.error || t('errors.uploadFailed'))
       }
 

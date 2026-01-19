@@ -92,6 +92,29 @@ export async function POST(
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
+    // Check daily upload limit (10 images per day)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+
+    const todayUploadCount = await prisma.artistImage.count({
+      where: {
+        uploadedBy: user.id,
+        uploadedAt: {
+          gte: today,
+          lt: tomorrow,
+        },
+      },
+    })
+
+    if (todayUploadCount >= 10) {
+      return NextResponse.json(
+        { error: 'Daily upload limit reached. You can upload a maximum of 10 images per day.' },
+        { status: 429 }
+      )
+    }
+
     const { slug } = await params
     const artistName = await getArtistNameFromSlug(slug)
 

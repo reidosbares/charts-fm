@@ -1314,7 +1314,8 @@
       "uploadFailed": "Failed to upload image. Please try again.",
       "voteFailed": "Failed to vote on image. Please try again.",
       "deleteFailed": "Failed to delete image. Please try again.",
-      "reportFailed": "Failed to report image. Please try again."
+      "reportFailed": "Failed to report image. Please try again.",
+      "dailyLimitReached": "Daily upload limit reached. You can upload a maximum of 10 images per day."
     }
   }
 }

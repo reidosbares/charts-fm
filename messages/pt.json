@@ -1314,7 +1314,8 @@
       "uploadFailed": "Falha ao enviar imagem. Por favor, tente novamente.",
       "voteFailed": "Falha ao votar na imagem. Por favor, tente novamente.",
       "deleteFailed": "Falha ao excluir imagem. Por favor, tente novamente.",
-      "reportFailed": "Falha ao reportar imagem. Por favor, tente novamente."
+      "reportFailed": "Falha ao reportar imagem. Por favor, tente novamente.",
+      "dailyLimitReached": "Limite diário de envio atingido. Você pode enviar no máximo 10 imagens por dia."
     }
   }
 }
