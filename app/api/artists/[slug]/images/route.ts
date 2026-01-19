@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { uploadFile, deleteFile } from '@/lib/storage'
 import { prisma } from '@/lib/prisma'
 import { normalizeArtistName, getArtistImages } from '@/lib/artist-images'
+import { compressImage } from '@/lib/image-compression'
 
 // Maximum file size: 5MB
 const MAX_FILE_SIZE = 5 * 1024 * 1024
@@ -156,14 +157,36 @@ export async function POST(
       )
     }
 
-    // Generate a unique filename
-    const fileExtension = fileName.substring(fileName.lastIndexOf('.'))
+    // Compress the image before uploading
+    let compressedFile: Buffer
+    let contentType: string
+    try {
+      const compressed = await compressImage(file, {
+        maxWidth: 1920,
+        maxHeight: 1920,
+        quality: 85,
+        format: 'webp', // Convert to WebP for better compression
+      })
+      compressedFile = compressed.buffer
+      contentType = compressed.contentType
+    } catch (error) {
+      console.error('Error compressing image:', error)
+      // If compression fails, fall back to original file
+      compressedFile = Buffer.from(await file.arrayBuffer())
+      contentType = file.type
+    }
+
+    // Generate a unique filename with appropriate extension based on compressed format
+    const extension = contentType === 'image/webp' ? '.webp' 
+      : contentType === 'image/jpeg' ? '.jpg'
+      : contentType === 'image/png' ? '.png'
+      : fileName.substring(fileName.lastIndexOf('.'))
     const timestamp = Date.now()
     const randomString = Math.random().toString(36).substring(2, 15)
-    const uniqueFileName = `${normalizeArtistName(artistName).replace(/[^a-z0-9]/g, '-')}/${timestamp}-${randomString}${fileExtension}`
+    const uniqueFileName = `${normalizeArtistName(artistName).replace(/[^a-z0-9]/g, '-')}/${timestamp}-${randomString}${extension}`
 
-    // Upload file (uses local storage in dev, Vercel Blob in production)
-    const result = await uploadFile(uniqueFileName, file, file.type, 'artist-images')
+    // Upload compressed file (uses local storage in dev, Vercel Blob in production)
+    const result = await uploadFile(uniqueFileName, compressedFile, contentType, 'artist-images')
 
     // Create ArtistImage record and automatically add an upvote from the uploader
     const image = await prisma.artistImage.create({
