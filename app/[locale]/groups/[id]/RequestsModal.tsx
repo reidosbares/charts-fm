@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -45,13 +45,7 @@ export default function RequestsModal({
     return () => setMounted(false)
   }, [])
 
-  useEffect(() => {
-    if (isOpen) {
-      fetchRequests()
-    }
-  }, [isOpen, groupId])
-
-  const fetchRequests = async () => {
+  const fetchRequests = useCallback(async () => {
     setIsLoading(true)
     setError(null)
 
@@ -69,7 +63,13 @@ export default function RequestsModal({
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [groupId, t])
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchRequests()
+    }
+  }, [isOpen, fetchRequests])
 
   const handleAccept = async (requestId: string) => {
     setProcessingId(requestId)

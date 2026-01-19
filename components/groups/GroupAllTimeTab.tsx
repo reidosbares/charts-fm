@@ -52,7 +52,7 @@ export default function GroupAllTimeTab({ groupId, isOwner }: GroupAllTimeTabPro
         setPreviewLoading(false)
         console.error('Error fetching records preview:', err)
       })
-  }, [groupId])
+  }, [groupId, t])
 
   if (isLoading) {
     return (

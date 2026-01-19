@@ -302,7 +302,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
         setIsLoading(false)
         console.error('Error fetching weekly charts:', err)
       })
-  }, [groupId])
+  }, [groupId, t])
 
   if (isLoading) {
     return (

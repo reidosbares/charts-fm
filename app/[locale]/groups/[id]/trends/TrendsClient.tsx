@@ -615,7 +615,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
         })}
       </div>
     )
-  }, [categoryData, longestStreaks, comebacks, groupId, getChartTypeIcon, getChartTypePath, isLoadingPersonal])
+  }, [categoryData, longestStreaks, comebacks, groupId, getChartTypeIcon, getChartTypePath, isLoadingPersonal, t])
 
   const renderMembersContent = () => {
     return (

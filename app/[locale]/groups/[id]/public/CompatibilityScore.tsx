@@ -59,7 +59,7 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
         setIsChecking(false)
         console.error('Error checking compatibility score:', err)
       })
-  }, [groupId])
+  }, [groupId, t])
 
   const handleCalculate = async () => {
     setIsLoading(true)

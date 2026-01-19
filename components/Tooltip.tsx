@@ -169,7 +169,7 @@ export default function Tooltip({
       window.removeEventListener('scroll', updatePosition, true)
       window.removeEventListener('resize', updatePosition)
     }
-  }, [isVisible, position, isMobile])
+  }, [isVisible, position, isMobile, viewportWidth])
 
   // Close tooltip when clicking outside on mobile
   useEffect(() => {

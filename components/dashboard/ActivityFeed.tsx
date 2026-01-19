@@ -65,7 +65,7 @@ export default function ActivityFeed() {
         setIsLoading(false)
         console.error('Error fetching activity:', err)
       })
-  }, [])
+  }, [t])
 
   const glassStyle = {
     background: 'rgba(255, 255, 255, 0.6)',

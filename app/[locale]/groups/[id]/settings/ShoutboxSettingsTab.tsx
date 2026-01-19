@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from '@/i18n/routing'
 import Toggle from '@/components/Toggle'
 import SafeImage from '@/components/SafeImage'
@@ -39,11 +39,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
   const [silencingUserId, setSilencingUserId] = useState<string | null>(null)
   const [unsilencingUserId, setUnsilencingUserId] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchSettings()
-  }, [groupId])
-
-  const fetchSettings = async () => {
+  const fetchSettings = useCallback(async () => {
     setIsLoading(true)
     try {
       const res = await fetch(`/api/groups/${groupId}/shoutbox/settings`)
@@ -63,7 +59,11 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [groupId, t])
+
+  useEffect(() => {
+    fetchSettings()
+  }, [fetchSettings])
 
   const searchUser = async () => {
     if (!searchUsername.trim()) return

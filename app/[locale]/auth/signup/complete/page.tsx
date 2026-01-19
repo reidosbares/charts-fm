@@ -42,7 +42,7 @@ function CompleteSignUpPageContent() {
         setError(t('verifyFailed'))
         setIsLoading(false)
       })
-  }, [])
+  }, [t])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

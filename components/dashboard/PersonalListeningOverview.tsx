@@ -44,7 +44,7 @@ export default function PersonalListeningOverview() {
         setIsLoading(false)
         console.error('Error fetching personal stats:', err)
       })
-  }, [])
+  }, [t])
 
   // All hooks must be called before any conditional returns
   const currentWeek = stats?.currentWeek ?? null
@@ -65,7 +65,7 @@ export default function PersonalListeningOverview() {
       ? ((change / previousWeek.totalPlays) * 100).toFixed(1)
       : null
     return { playsChange: change, playsChangePercent: percent }
-  }, [currentWeek?.totalPlays, previousWeek?.totalPlays])
+  }, [currentWeek, previousWeek])
 
   // Memoize top items lists - safe to call even if data is null
   const topArtists = useMemo(() => {

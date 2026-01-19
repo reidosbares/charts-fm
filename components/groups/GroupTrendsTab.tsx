@@ -154,7 +154,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
         setIsLoading(false)
         console.error('Error fetching trends:', err)
       })
-  }, [groupId])
+  }, [groupId, t])
 
   if (isLoading) {
     return (

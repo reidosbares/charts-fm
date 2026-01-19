@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, Suspense, useCallback } from 'react'
 import { useRouter } from '@/i18n/routing'
 import { useSearchParams } from 'next/navigation'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
@@ -20,6 +20,39 @@ function VerifyEmailPageContent() {
   useEffect(() => {
     document.title = `ChartsFM - ${t('title')}`
   }, [t])
+
+  const verifyToken = useCallback(async (token: string) => {
+    try {
+      // Call the verification API (without redirect parameter for JSON response)
+      const response = await fetch(`/api/auth/verify-email?token=${encodeURIComponent(token)}`, {
+        method: 'GET',
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setStatus('error')
+        const errorMessages: Record<string, string> = {
+          'No verification token provided': t('errors.missingToken'),
+          'Invalid or expired verification token': t('errors.invalidToken'),
+          'An error occurred during verification': t('errors.serverError'),
+        }
+        setError(errorMessages[data.error] || data.error || t('errors.verificationError'))
+        return
+      }
+
+      // Success!
+      setStatus('success')
+      // Redirect to home page after a short delay
+      setTimeout(() => {
+        router.push('/?verified=true')
+      }, 1500)
+    } catch (err) {
+      console.error('Verification error:', err)
+      setStatus('error')
+      setError(t('errors.verifyFailed'))
+    }
+  }, [t, router])
 
   useEffect(() => {
     const token = searchParams?.get('token')
@@ -52,7 +85,7 @@ function VerifyEmailPageContent() {
       // No token, show pending state
       setStatus('pending')
     }
-  }, [searchParams])
+  }, [searchParams, t, verifyToken])
 
   // Check if verification was successful (from redirect)
   useEffect(() => {
@@ -61,39 +94,6 @@ function VerifyEmailPageContent() {
       setStatus('success')
     }
   }, [searchParams])
-
-  const verifyToken = async (token: string) => {
-    try {
-      // Call the verification API (without redirect parameter for JSON response)
-      const response = await fetch(`/api/auth/verify-email?token=${encodeURIComponent(token)}`, {
-        method: 'GET',
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        setStatus('error')
-        const errorMessages: Record<string, string> = {
-          'No verification token provided': t('errors.missingToken'),
-          'Invalid or expired verification token': t('errors.invalidToken'),
-          'An error occurred during verification': t('errors.serverError'),
-        }
-        setError(errorMessages[data.error] || data.error || t('errors.verificationError'))
-        return
-      }
-
-      // Success!
-      setStatus('success')
-      // Redirect to home page after a short delay
-      setTimeout(() => {
-        router.push('/?verified=true')
-      }, 1500)
-    } catch (err) {
-      console.error('Verification error:', err)
-      setStatus('error')
-      setError(t('errors.verifyFailed'))
-    }
-  }
 
   const handleResend = async () => {
     if (!email) {

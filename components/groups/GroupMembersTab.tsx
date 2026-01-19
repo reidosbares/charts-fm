@@ -40,7 +40,7 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
     } finally {
       setIsLoading(false)
     }
-  }, [groupId])
+  }, [groupId, t])
 
   useEffect(() => {
     fetchMembers()

@@ -42,7 +42,7 @@ export default function QuickActionsPanel() {
         setIsLoading(false)
         console.error('Error fetching quick actions:', err)
       })
-  }, [])
+  }, [t])
 
   if (isLoading) {
     return (

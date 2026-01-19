@@ -45,6 +45,15 @@ export default function GroupTabs({
   
   // Check hash fragment on mount and when hash changes
   useEffect(() => {
+    const getTabFromHash = (): Tab | null => {
+      if (typeof window === 'undefined') return null
+      const hash = window.location.hash.slice(1) // Remove the #
+      const validTabs: Tab[] = isMember 
+        ? ['charts', 'members', 'alltime', 'trends', 'search']
+        : ['charts', 'alltime', 'trends', 'search']
+      return validTabs.includes(hash as Tab) ? (hash as Tab) : null
+    }
+    
     const tabFromHash = getTabFromHash()
     if (tabFromHash) {
       setActiveTab(tabFromHash)
@@ -62,7 +71,7 @@ export default function GroupTabs({
     
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
-  }, [activeTab, defaultTab])
+  }, [activeTab, defaultTab, isMember])
   
   // Update hash when tab changes (no page refresh, preserves scroll position)
   const handleTabChange = (tabId: string) => {

@@ -130,7 +130,7 @@ export default function RegenerateChartsTab({
       clearTimeout(firstMessageTimer)
       clearInterval(rotationTimer)
     }
-  }, [isLoading])
+  }, [isLoading, LOADING_MESSAGES.length])
 
   const handleGenerate = async () => {
     setError(null)

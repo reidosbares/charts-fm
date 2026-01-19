@@ -90,7 +90,7 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
     } finally {
       setIsLoading(false)
     }
-  }, [groupId])
+  }, [groupId, t])
 
   const checkCanPost = useCallback(async () => {
     try {
@@ -102,7 +102,7 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
       // If there's an error, assume we can post (will show error on actual submit)
       setCanPost(true)
     }
-  }, [groupId])
+  }, [])
 
   useEffect(() => {
     setMounted(true)

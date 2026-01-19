@@ -57,6 +57,14 @@ export default function ArtistImageCarousel({
 
   const currentImage = images[currentIndex]
 
+  const handlePrevious = useCallback(() => {
+    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))
+  }, [images.length])
+
+  const handleNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))
+  }, [images.length])
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -72,15 +80,7 @@ export default function ArtistImageCarousel({
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [currentIndex, images.length])
-
-  const handlePrevious = useCallback(() => {
-    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))
-  }, [images.length])
-
-  const handleNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))
-  }, [images.length])
+  }, [currentIndex, images.length, handleNext, handlePrevious])
 
   const handleVote = async (voteType: 'up' | 'down') => {
     if (!userId || !currentImage) return

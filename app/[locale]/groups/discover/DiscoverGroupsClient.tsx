@@ -164,7 +164,7 @@ export default function DiscoverGroupsClient({
       setIsLoading(false)
       setIsLoadingMore(false)
     }
-  }, [debouncedSearch, debouncedTags, allowFreeJoin, minMembers, maxMembers, activityLevel, sortBy])
+  }, [debouncedSearch, debouncedTags, allowFreeJoin, minMembers, maxMembers, activityLevel, sortBy, t])
 
   // Reset and fetch when filters change
   useEffect(() => {

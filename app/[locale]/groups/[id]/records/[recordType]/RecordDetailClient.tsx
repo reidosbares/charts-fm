@@ -86,7 +86,7 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
     
     entryTypes.forEach(entryType => {
       try {
-        const storageKey = getStorageKey(entryType)
+        const storageKey = `record-detail-${groupId}-${recordType}-${entryType ?? 'artists'}`
         const cached = sessionStorage.getItem(storageKey)
         if (cached) {
           const parsed = JSON.parse(cached) as RankedEntry[]
@@ -100,7 +100,7 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
     if (cache.size > 0) {
       entriesCacheRef.current = cache
     }
-  }, [groupId, recordType, isArtistSpecific]) // Include dependencies for getStorageKey
+  }, [groupId, recordType, isArtistSpecific])
 
   const tabs: TabItem[] = isArtistSpecific ? [] : [
     { id: 'artists', label: tTabs('artists'), icon: faMicrophone },
@@ -111,15 +111,28 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
   // Initialize tab from hash on mount - only for non-artist-specific records
   useEffect(() => {
     if (isArtistSpecific) return
+    const getTabFromHash = (): ChartType | null => {
+      if (typeof window === 'undefined' || isArtistSpecific) return null
+      const hash = window.location.hash.slice(1) // Remove the #
+      const validTabs: ChartType[] = ['artists', 'tracks', 'albums']
+      return validTabs.includes(hash as ChartType) ? (hash as ChartType) : null
+    }
     const tabFromHash = getTabFromHash()
     if (tabFromHash) {
       setActiveTab(tabFromHash)
     }
-  }, [isArtistSpecific]) // Only run on mount or when isArtistSpecific changes
+  }, [isArtistSpecific])
 
   // Handle hash changes from external sources (browser back/forward, direct links) - only for non-artist-specific records
   useEffect(() => {
     if (isArtistSpecific) return
+    
+    const getTabFromHash = (): ChartType | null => {
+      if (typeof window === 'undefined' || isArtistSpecific) return null
+      const hash = window.location.hash.slice(1) // Remove the #
+      const validTabs: ChartType[] = ['artists', 'tracks', 'albums']
+      return validTabs.includes(hash as ChartType) ? (hash as ChartType) : null
+    }
     
     const handleHashChange = () => {
       const tabFromHash = getTabFromHash()
@@ -133,7 +146,7 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
     
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
-  }, [activeTab, isArtistSpecific])
+  }, [activeTab, isArtistSpecific, defaultTab])
 
   // Update hash when tab changes (but only if hash doesn't already match) - only for non-artist-specific records
   const handleTabChange = (tabId: string) => {
@@ -154,7 +167,7 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
 
   useEffect(() => {
     const fetchEntries = async () => {
-      const cacheKey = getCacheKey()
+      const cacheKey = isArtistSpecific ? null : activeTab
       
       // Check in-memory cache first
       const cachedEntries = entriesCacheRef.current.get(cacheKey)
@@ -167,7 +180,7 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
       // Check sessionStorage as fallback
       if (typeof window !== 'undefined') {
         try {
-          const storageKey = getStorageKey(cacheKey)
+          const storageKey = `record-detail-${groupId}-${recordType}-${cacheKey ?? 'artists'}`
           const cached = sessionStorage.getItem(storageKey)
           if (cached) {
             const parsed = JSON.parse(cached) as RankedEntry[]
@@ -211,7 +224,7 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
         // Store in sessionStorage for persistence across page refreshes
         if (typeof window !== 'undefined') {
           try {
-            const storageKey = getStorageKey(cacheKey)
+            const storageKey = `record-detail-${groupId}-${recordType}-${cacheKey ?? 'artists'}`
             sessionStorage.setItem(storageKey, JSON.stringify(filteredEntries))
           } catch (error) {
             // Ignore errors writing to sessionStorage (e.g., quota exceeded)

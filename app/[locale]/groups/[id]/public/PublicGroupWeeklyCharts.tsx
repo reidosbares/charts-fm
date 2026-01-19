@@ -60,7 +60,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
         setIsLoading(false)
         console.error('Error fetching public weekly charts:', err)
       })
-  }, [groupId])
+  }, [groupId, t])
 
   if (isLoading) {
     return (

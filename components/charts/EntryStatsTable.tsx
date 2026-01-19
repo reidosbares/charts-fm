@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useMemo } from 'react'
+import { memo, useMemo, useCallback } from 'react'
 import { EntryStats } from '@/lib/chart-deep-dive'
 import { formatWeekLabel } from '@/lib/weekly-utils'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
@@ -11,7 +11,7 @@ interface EntryStatsTableProps {
 
 function EntryStatsTable({ stats }: EntryStatsTableProps) {
   const t = useSafeTranslations('deepDive.entryStats')
-  const formatDaysAgo = (date: Date | null): string => {
+  const formatDaysAgo = useCallback((date: Date | null): string => {
     if (!date) return t('never')
     
     const now = new Date()
@@ -21,16 +21,16 @@ function EntryStatsTable({ stats }: EntryStatsTableProps) {
     if (diffDays === 0) return t('today')
     if (diffDays === 1) return t('dayAgo')
     return t('daysAgo', { count: diffDays })
-  }
+  }, [t])
 
-  const formatDate = (date: Date | null): string => {
+  const formatDate = useCallback((date: Date | null): string => {
     if (!date) return t('notAvailable')
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     })
-  }
+  }, [t])
 
   const calculateWeeksAgo = (date: Date | null): number | null => {
     if (!date) return null
@@ -40,7 +40,7 @@ function EntryStatsTable({ stats }: EntryStatsTableProps) {
     return diffWeeks
   }
 
-  const formatDebutDate = (date: Date | null) => {
+  const formatDebutDate = useCallback((date: Date | null) => {
     const formattedDate = formatDate(date)
     const weeksAgo = calculateWeeksAgo(date)
     
@@ -58,7 +58,7 @@ function EntryStatsTable({ stats }: EntryStatsTableProps) {
         )}
       </>
     )
-  }
+  }, [t, formatDate])
 
   const formatStreakDates = (startDate: Date | null, endDate: Date | null): string | null => {
     if (!startDate || !endDate) return null
@@ -118,7 +118,7 @@ function EntryStatsTable({ stats }: EntryStatsTableProps) {
       label: t('latestAppearance'),
       value: stats.currentlyCharting ? t('currentlyCharting') : formatDaysAgo(stats.latestAppearance),
     },
-  ], [stats, t])
+  ], [stats, t, formatDaysAgo, formatDebutDate])
 
   return (
     <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
