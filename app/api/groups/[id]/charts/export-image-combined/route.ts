@@ -119,7 +119,7 @@ export async function GET(
     const filename = `${groupName}_combined_${weekStr}.png`
 
     // Return PNG file
-    return new NextResponse(pngBuffer, {
+    return new NextResponse(pngBuffer as unknown as BodyInit, {
       headers: {
         'Content-Type': 'image/png',
         'Content-Disposition': `attachment; filename="${filename}"`,

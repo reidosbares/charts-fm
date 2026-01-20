@@ -551,7 +551,7 @@ export async function GET(
     
     // Import Playwright-core and Chromium binary dynamically (only when needed)
     let chromium
-    let chromiumBinary
+    let chromiumBinary: any = null
     try {
       chromium = (await import('playwright-core')).chromium
       console.log('Playwright-core imported successfully')
@@ -560,9 +560,12 @@ export async function GET(
       const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME
       if (isServerless) {
         console.log('Detected serverless environment, using @sparticuz/chromium')
-        chromiumBinary = await import('@sparticuz/chromium')
-        // Optimize Chromium for serverless
-        chromiumBinary.setGraphicsMode(false)
+        const chromiumModule = await import('@sparticuz/chromium')
+        chromiumBinary = chromiumModule.default || chromiumModule
+        // Optimize Chromium for serverless (if method exists)
+        if (chromiumBinary && typeof chromiumBinary.setGraphicsMode === 'function') {
+          chromiumBinary.setGraphicsMode(false)
+        }
       } else {
         console.log('Local environment detected, using system Chromium')
       }
@@ -599,7 +602,7 @@ export async function GET(
       if (chromiumBinary) {
         const executablePath = await chromiumBinary.executablePath()
         launchOptions.executablePath = executablePath
-        launchOptions.args = chromiumBinary.args
+        launchOptions.args = chromiumBinary.args || launchOptions.args
         console.log('Using serverless-optimized Chromium binary')
       }
       
@@ -695,7 +698,7 @@ export async function GET(
       const filename = `${groupName}_artists_${weekStr}.png`
       
       // Return PNG file (Playwright screenshot returns Buffer)
-      return new NextResponse(screenshot, {
+      return new NextResponse(screenshot as unknown as BodyInit, {
         headers: {
           'Content-Type': 'image/png',
           'Content-Disposition': `attachment; filename="${filename}"`,
