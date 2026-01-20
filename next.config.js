@@ -10,7 +10,7 @@ const nextConfig = {
     serverComponentsExternalPackages: [
       'playwright-core',
       'chromium-bidi',
-      '@sparticuz/chromium',
+      '@sparticuz/chromium-min',
     ],
   },
   webpack: (config, { isServer }) => {
@@ -20,7 +20,7 @@ const nextConfig = {
       config.externals.push({
         'playwright-core': 'commonjs playwright-core',
         'chromium-bidi': 'commonjs chromium-bidi',
-        '@sparticuz/chromium': 'commonjs @sparticuz/chromium',
+        '@sparticuz/chromium-min': 'commonjs @sparticuz/chromium-min',
       })
     }
     return config

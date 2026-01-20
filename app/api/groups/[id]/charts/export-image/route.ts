@@ -559,8 +559,8 @@ export async function GET(
       // Use lightweight Chromium for serverless (Vercel), full Playwright for local dev
       const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME
       if (isServerless) {
-        console.log('Detected serverless environment, using @sparticuz/chromium')
-        const chromiumModule = await import('@sparticuz/chromium')
+        console.log('Detected serverless environment, using @sparticuz/chromium-min')
+        const chromiumModule = await import('@sparticuz/chromium-min')
         chromiumBinary = chromiumModule.default || chromiumModule
         // Optimize Chromium for serverless (if method exists)
         if (chromiumBinary && typeof chromiumBinary.setGraphicsMode === 'function') {
@@ -573,7 +573,7 @@ export async function GET(
       console.error('Failed to import playwright-core or chromium:', importError)
       return NextResponse.json(
         { 
-          error: 'Playwright dependencies not installed. Please run: npm install playwright-core @sparticuz/chromium',
+          error: 'Playwright dependencies not installed. Please run: npm install playwright-core @sparticuz/chromium-min',
           details: process.env.NODE_ENV === 'development' ? (importError instanceof Error ? importError.message : String(importError)) : undefined
         },
         { status: 500 }
@@ -600,10 +600,20 @@ export async function GET(
       
       // Use lightweight Chromium binary in serverless environment
       if (chromiumBinary) {
-        const executablePath = await chromiumBinary.executablePath()
-        launchOptions.executablePath = executablePath
-        launchOptions.args = chromiumBinary.args || launchOptions.args
-        console.log('Using serverless-optimized Chromium binary')
+        try {
+          const executablePath = await chromiumBinary.executablePath()
+          launchOptions.executablePath = executablePath
+          // Merge args - chromiumBinary.args should be used, but keep our essential ones
+          const chromiumArgs = chromiumBinary.args || []
+          launchOptions.args = [...chromiumArgs, ...launchOptions.args.filter((arg: string) => 
+            !chromiumArgs.includes(arg)
+          )]
+          console.log('Using serverless-optimized Chromium binary')
+        } catch (execPathError) {
+          console.error('Failed to get Chromium executable path:', execPathError)
+          // Fallback: try without explicit executable path (might work if bundled)
+          console.log('Falling back to system Chromium')
+        }
       }
       
       browser = await chromium.launch(launchOptions)
@@ -720,7 +730,7 @@ export async function GET(
       
       // Specific error handling
       if (error.message.includes('Cannot find module') || error.message.includes('playwright') || error.message.includes('chromium')) {
-        errorMessage = 'Playwright dependencies not installed. Please run: npm install playwright-core @sparticuz/chromium'
+        errorMessage = 'Playwright dependencies not installed. Please run: npm install playwright-core @sparticuz/chromium-min'
       } else if (error.message.includes('timeout')) {
         errorMessage = 'Image generation timed out. Please try again.'
       } else if (error.message.includes('Navigation')) {
