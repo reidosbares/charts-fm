@@ -4,6 +4,27 @@ const withNextIntl = createNextIntlPlugin('./i18n.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Externalize server-only packages to avoid bundling issues
+  // For Next.js 14, use experimental.serverComponentsExternalPackages
+  experimental: {
+    serverComponentsExternalPackages: [
+      'playwright-core',
+      'chromium-bidi',
+      '@sparticuz/chromium',
+    ],
+  },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      // Externalize playwright-core and related packages for server-side
+      config.externals = config.externals || []
+      config.externals.push({
+        'playwright-core': 'commonjs playwright-core',
+        'chromium-bidi': 'commonjs chromium-bidi',
+        '@sparticuz/chromium': 'commonjs @sparticuz/chromium',
+      })
+    }
+    return config
+  },
   images: {
     // Cache images for 31 days to reduce cache writes and transformations
     // Images from Last.fm/Spotify don't change frequently

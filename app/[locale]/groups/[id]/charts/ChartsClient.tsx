@@ -5,6 +5,8 @@ import WeekSelector from './WeekSelector'
 import ChartDisplay from './ChartDisplay'
 import { EnrichedChartItem } from '@/lib/group-chart-metrics'
 import WeeklyChartDownloadButton from '@/components/charts/WeeklyChartDownloadButton'
+import ChartImageDownloadButton from '@/components/charts/ChartImageDownloadButton'
+import CombinedChartImageDownloadButton from '@/components/charts/CombinedChartImageDownloadButton'
 
 type ChartType = 'artists' | 'tracks' | 'albums'
 
@@ -17,6 +19,7 @@ interface ChartsClientProps {
   tracks: EnrichedChartItem[]
   albums: EnrichedChartItem[]
   groupId: string
+  isSuperuser?: boolean
 }
 
 export default function ChartsClient({
@@ -28,8 +31,10 @@ export default function ChartsClient({
   tracks,
   albums,
   groupId,
+  isSuperuser = false,
 }: ChartsClientProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [currentChartType, setCurrentChartType] = useState<ChartType>(initialType)
 
   return (
     <div className="grid grid-cols-12 gap-6">
@@ -42,11 +47,21 @@ export default function ChartsClient({
             onWeekChange={() => setIsLoading(true)}
           />
         </div>
-        <div className="flex justify-center">
-          <WeeklyChartDownloadButton
-            groupId={groupId}
-            weekStart={currentWeek}
-          />
+        <div className="space-y-3">
+          <div className="flex justify-center">
+            <WeeklyChartDownloadButton
+              groupId={groupId}
+              weekStart={currentWeek}
+            />
+          </div>
+          {isSuperuser && currentChartType === 'artists' && (
+            <div className="flex justify-center">
+              <ChartImageDownloadButton
+                groupId={groupId}
+                weekStart={currentWeek}
+              />
+            </div>
+          )}
         </div>
       </div>
       <div className="col-span-12 md:col-span-9">
@@ -58,6 +73,7 @@ export default function ChartsClient({
           isLoading={isLoading}
           onLoadingChange={setIsLoading}
           groupId={groupId}
+          onTypeChange={setCurrentChartType}
         />
       </div>
     </div>

@@ -16,10 +16,11 @@ interface ChartDisplayProps {
   albums: EnrichedChartItem[]
   isLoading?: boolean
   onLoadingChange?: (loading: boolean) => void
+  onTypeChange?: (type: ChartType) => void
   groupId: string
 }
 
-export default function ChartDisplay({ initialType, artists, tracks, albums, isLoading = false, onLoadingChange, groupId }: ChartDisplayProps) {
+export default function ChartDisplay({ initialType, artists, tracks, albums, isLoading = false, onLoadingChange, onTypeChange, groupId }: ChartDisplayProps) {
   const [currentType, setCurrentType] = useState<ChartType>(initialType)
   const searchParams = useSearchParams()
   const isInternalChange = useRef(false)
@@ -63,6 +64,7 @@ export default function ChartDisplay({ initialType, artists, tracks, albums, isL
 
   const handleTypeChange = (type: ChartType) => {
     setCurrentType(type)
+    onTypeChange?.(type)
     isInternalChange.current = true
     requestAnimationFrame(() => {
       const params = new URLSearchParams(window.location.search)

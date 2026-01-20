@@ -14,6 +14,7 @@ import { prisma } from '@/lib/prisma'
 import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
 import { withDefaultOgImage, getDefaultOgImage, defaultOgImage } from '@/lib/metadata'
+import { getSuperuser } from '@/lib/admin'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string; locale: string }> }): Promise<Metadata> {
   const { id, locale } = await params;
@@ -80,6 +81,10 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
   const colorTheme = (group.colorTheme || 'yellow') as string
   const themeClass = `theme-${colorTheme.replace('_', '-')}`
 
+  // Check if user is superuser
+  const superuser = await getSuperuser()
+  const isSuperuser = superuser !== null
+
   // Get pending request count for group owner
   let pendingRequestsCount = 0
   if (isOwner) {
@@ -107,7 +112,7 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
           defaultTab="trends"
           pendingRequestsCount={pendingRequestsCount}
           chartsContent={
-            <GroupWeeklyChartsTab groupId={group.id} isOwner={isOwner || false} />
+            <GroupWeeklyChartsTab groupId={group.id} isOwner={isOwner || false} isSuperuser={isSuperuser} />
           }
           allTimeContent={
             <GroupAllTimeTab groupId={group.id} isOwner={isOwner || false} />

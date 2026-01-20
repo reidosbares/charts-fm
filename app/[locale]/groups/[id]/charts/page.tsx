@@ -8,6 +8,7 @@ import GroupPageHero from '@/components/groups/GroupPageHero'
 import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
 import { getGroupImageUrl } from '@/lib/group-image-utils'
+import { getSuperuser } from '@/lib/admin'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string; locale: string }> }): Promise<Metadata> {
   const { id, locale } = await params;
@@ -74,6 +75,10 @@ export default async function ChartsPage({
   // @ts-ignore - Prisma client will be regenerated after migration
   const colorTheme = (group?.colorTheme || 'white') as string
   const themeClass = `theme-${colorTheme.replace('_', '-')}`
+
+  // Check if user is superuser
+  const superuser = await getSuperuser()
+  const isSuperuser = superuser !== null
 
   if (!group) {
     return (
@@ -177,6 +182,7 @@ export default async function ChartsPage({
           tracks={tracks}
           albums={albums}
           groupId={group.id}
+          isSuperuser={isSuperuser}
         />
       </div>
     </main>

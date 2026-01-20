@@ -9,10 +9,12 @@ import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 import { generateSlug, ChartType } from '@/lib/chart-slugs'
 import SafeImage from '@/components/SafeImage'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import ChartImageDownloadButton from '@/components/charts/ChartImageDownloadButton'
 
 interface GroupWeeklyChartsTabProps {
   groupId: string
   isOwner: boolean
+  isSuperuser?: boolean
 }
 
 // Image cache helpers
@@ -173,7 +175,7 @@ function formatDisplayValue(
   return t('plays', { count: item.playcount })
 }
 
-export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyChartsTabProps) {
+export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = false }: GroupWeeklyChartsTabProps) {
   const t = useSafeTranslations('groups.weeklyCharts')
   const [data, setData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -349,18 +351,31 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner }: GroupWeeklyCh
   const positionChangeMapObj = positionChangeMap || {}
   const entryTypeMapObj = entryTypeMap || {}
 
+  // Get weekStart Date from latestWeek.weekStart (ISO string)
+  const weekStartDate = latestWeek.weekStart ? new Date(latestWeek.weekStart) : new Date()
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
         <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
-        <LiquidGlassLink
-          href={`/groups/${groupId}/charts`}
-          variant="primary"
-          useTheme
-        >
-          {t('exploreCharts')}
-        </LiquidGlassLink>
+        <div className="flex flex-col sm:flex-row gap-2 items-center">
+          <LiquidGlassLink
+            href={`/groups/${groupId}/charts`}
+            variant="primary"
+            useTheme
+          >
+            {t('exploreCharts')}
+          </LiquidGlassLink>
+        </div>
       </div>
+      {isSuperuser && (
+        <div className="mb-4 md:mb-6 flex flex-wrap gap-2">
+          <ChartImageDownloadButton
+            groupId={groupId}
+            weekStart={weekStartDate}
+          />
+        </div>
+      )}
       <div className="mb-4 md:mb-6">
         <h3 className="text-lg md:text-2xl font-bold text-gray-900">
           {t('weekOf', { date: latestWeek.weekStartFormatted })}
