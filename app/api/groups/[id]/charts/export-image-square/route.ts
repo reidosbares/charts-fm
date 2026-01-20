@@ -8,34 +8,38 @@ import { getArtistImage, getAlbumImage } from '@/lib/lastfm'
 import fs from 'fs'
 import path from 'path'
 
-// Chart HTML template configuration
-interface ChartHTMLConfig {
+// Chart HTML template configuration for square format
+interface SquareChartHTMLConfig {
   groupName: string
   weekLabel: string
-  chartType: 'artists' | 'tracks' | 'albums'
   entries: Array<{ position: number; name: string; playcount: number; vibeScore: number | null; artist?: string | null }>
   themeColors: typeof GROUP_THEMES.white
   showVS: boolean
   itemImages: Array<{ name: string; imageBase64: string | null }>
   logoBase64: string
+  overlayType: 'position' | 'plays' | 'vs' | 'none'
+  showName: boolean
+  gridSize: '3x3' | '4x3' | '5x3'
 }
 
-// Generate HTML template for chart export (vertical format)
-async function generateChartHTML(config: ChartHTMLConfig): Promise<string> {
+// Generate HTML template for square chart export (1800x1800)
+async function generateSquareChartHTML(config: SquareChartHTMLConfig): Promise<string> {
   const {
     groupName,
     weekLabel,
-    chartType,
     entries,
     themeColors,
     showVS,
     itemImages,
     logoBase64,
+    overlayType,
+    showName,
+    gridSize,
   } = config
 
-  // Instagram Stories aspect ratio: 9:16 (1080x1920)
-  const width = 1080
-  const height = 1920
+  const width = 1800
+  const height = 1800
+  const headerHeight = 60
   const footerHeight = 50
 
   // Escape HTML
@@ -48,189 +52,118 @@ async function generateChartHTML(config: ChartHTMLConfig): Promise<string> {
       .replace(/'/g, '&#039;')
   }
 
-  // Convert RGB to RGBA
-  const rgbToRgba = (rgb: string, alpha: number): string => {
-    const match = rgb.match(/rgb\((\d+)\s+(\d+)\s+(\d+)\)/)
-    if (match) {
-      return `rgba(${match[1]}, ${match[2]}, ${match[3]}, ${alpha})`
-    }
-    const match2 = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/)
-    if (match2) {
-      return `rgba(${match2[1]}, ${match2[2]}, ${match2[3]}, ${alpha})`
-    }
-    return rgb
-  }
+  // Parse grid size
+  const [gridCols, gridRows] = gridSize.split('x').map(Number)
+  const totalItems = gridCols * gridRows
+  
+  const availableWidth = width
+  const availableHeight = height - headerHeight - footerHeight
+  
+  // Calculate image size to fill available space
+  const imageWidth = availableWidth / gridCols
+  const imageHeight = availableHeight / gridRows
 
-  const headerTextColor = themeColors.buttonText === 'white' ? 'white' : themeColors.primaryDark
+  // Generate image grid HTML
+  const imagesHTML = entries.slice(0, totalItems).map((entry, index) => {
+    const row = Math.floor(index / gridCols)
+    const col = index % gridCols
+    const x = col * imageWidth
+    const y = headerHeight + (row * imageHeight)
 
-  // Generate entries HTML
-  const entriesHTML = entries.map((entry, index) => {
-    const isFirst = index === 0
-    const fontSize = isFirst ? '56px' : '40px'
-    const badgeSize = isFirst ? '96px' : '80px'
-    const badgeFontSize = isFirst ? '40px' : '32px'
-    // Reduce padding for tracks/albums to accommodate "by <artist>" text
-    // Reduced padding for artists only to make chart more compact; tracks/albums keep original padding
-    const needsArtistSubheader = chartType !== 'artists' && entry.artist
-    const padding = isFirst 
-      ? (needsArtistSubheader ? '36px 0' : '38px 0')
-      : (needsArtistSubheader ? '28px 0' : '30px 0')
+    const image = itemImages[index]
+    const imageBase64 = image?.imageBase64 || null
+    const hasImage = imageBase64 !== null
+
+    // Determine overlay value based on overlayType
+    let overlayValue = ''
+    let showOverlay = overlayType !== 'none'
     
-    const value = showVS && entry.vibeScore !== null 
-      ? entry.vibeScore.toFixed(2) 
-      : entry.playcount.toString()
-    const valueLabel = showVS && entry.vibeScore !== null ? 'VS' : 'Plays'
-    const valueFontSize = isFirst ? '44px' : '34px'
+    if (overlayType === 'position') {
+      overlayValue = `#${entry.position}`
+    } else if (overlayType === 'plays') {
+      overlayValue = `${entry.playcount} plays`
+    } else if (overlayType === 'vs') {
+      if (showVS && entry.vibeScore !== null) {
+        overlayValue = `${entry.vibeScore.toFixed(2)} VS`
+      } else {
+        overlayValue = `${entry.playcount} plays` // Fallback to plays if no VS
+      }
+    }
 
     return `
       <div style="
-        display: flex;
-        align-items: center;
-        padding: ${padding};
-        border-bottom: ${index < entries.length - 1 ? `1px solid ${themeColors.border}30` : 'none'};
+        position: absolute;
+        left: ${x}px;
+        top: ${y}px;
+        width: ${imageWidth}px;
+        height: ${imageHeight}px;
+        overflow: hidden;
       ">
-        <div style="
-          width: ${badgeSize};
-          height: ${badgeSize};
-          border-radius: 50%;
-          background: ${themeColors.primary};
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          font-size: ${badgeFontSize};
-          color: ${headerTextColor};
-          flex-shrink: 0;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), 0 0 0 3px ${rgbToRgba(themeColors.primaryLight, 0.5)};
-        ">${entry.position}</div>
-        <div style="flex: 1; margin-left: 32px; min-width: 0;">
+        ${hasImage ? `
+          <img 
+            src="${escapeHtml(imageBase64)}" 
+            alt="${escapeHtml(entry.name)}"
+            style="width: 100%; height: 100%; object-fit: cover;"
+          />
+        ` : `
           <div style="
-            font-size: ${fontSize};
-            font-weight: bold;
-            color: ${themeColors.primaryDark};
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            letter-spacing: ${isFirst ? '-1px' : '-0.6px'};
-            line-height: 1.2;
-          ">${escapeHtml(entry.name)}</div>
-          ${chartType !== 'artists' && entry.artist ? `
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, ${themeColors.primaryLighter} 0%, ${themeColors.primaryLight} 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          ">
             <div style="
-              font-size: ${isFirst ? '28px' : '22px'};
-              color: ${themeColors.text};
-              margin-top: ${isFirst ? '6px' : '4px'};
-              margin-left: 16px;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-              line-height: 1.2;
-            ">
-              <span style="opacity: 0.7; font-size: ${isFirst ? '32px' : '26px'}; font-weight: bold;">by </span>
-              <span style="opacity: 0.85; font-size: ${isFirst ? '32px' : '26px'}; font-weight: bold;">${escapeHtml(entry.artist)}</span>
-            </div>
-          ` : ''}
-        </div>
-        <div style="text-align: right; margin-left: 48px; flex-shrink: 0; min-width: 140px;">
-          <div style="
-            font-size: ${valueFontSize};
-            font-weight: bold;
-            color: ${themeColors.primaryDark};
-            margin-bottom: 4px;
-          ">${value}</div>
-          <div style="
-            font-size: ${isFirst ? '24px' : '22px'};
-            color: ${themeColors.text};
-            font-weight: 500;
-          ">${valueLabel}</div>
-        </div>
+              font-size: ${imageWidth * 0.1}px;
+              font-weight: bold;
+              color: ${themeColors.primaryDark};
+              opacity: 0.6;
+              text-align: center;
+              padding: 20px;
+            ">${escapeHtml(entry.name)}</div>
+          </div>
+        `}
+        ${showName ? `
+        <!-- Item Name (top left) -->
+        <div style="
+          position: absolute;
+          top: 8px;
+          left: 8px;
+          font-size: ${imageWidth * 0.035}px;
+          font-weight: 500;
+          color: white;
+          text-shadow: 
+            0 1px 3px rgba(0, 0, 0, 0.9),
+            0 1px 1px rgba(0, 0, 0, 0.8),
+            0 0 2px rgba(0, 0, 0, 0.7);
+          max-width: 70%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          line-height: 1.2;
+        ">${escapeHtml(entry.name)}</div>
+        ` : ''}
+        
+        ${showOverlay ? `
+        <!-- Overlay Number (top right) -->
+        <div style="
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          font-size: ${imageWidth * 0.035}px;
+          font-weight: bold;
+          color: white;
+          text-shadow: 
+            0 1px 3px rgba(0, 0, 0, 0.9),
+            0 1px 1px rgba(0, 0, 0, 0.8),
+            0 0 2px rgba(0, 0, 0, 0.7);
+          letter-spacing: 0.5px;
+        ">${escapeHtml(overlayValue)}</div>
+        ` : ''}
       </div>
     `
   }).join('')
-
-  // Chart type labels
-  const chartTypeLabels = {
-    artists: 'Top Artists',
-    tracks: 'Top Tracks',
-    albums: 'Top Albums',
-  }
-  const chartTitle = chartTypeLabels[chartType]
-
-  // Calculate dynamic font size for group name based on length
-  // Dynamically calculate optimal font size to maximize use of available space
-  // Available width is approximately: 1080px - 50px (left padding) - 360px (right padding if images) - 40px (margin)
-  const hasImages = itemImages.length > 0
-  const availableWidth = hasImages ? 1080 - 50 - 360 - 40 : 1080 - 50 - 40 - 40
-  const maxFontSize = 100 // Maximum font size to prevent excessive vertical space usage
-  const minFontSize = 64
-  const avgCharWidthRatio = 0.52 // Character width ratio (52% of font size) - more conservative to prevent truncation
-  const widthBuffer = 20 // Buffer to ensure text doesn't get cut off
-  
-  // Calculate optimal font size to fill available space
-  // For shorter names, use larger font; for longer names, scale down proportionally
-  const calculatedFontSize = Math.floor(((availableWidth - widthBuffer) / groupName.length) / avgCharWidthRatio)
-  
-  // Cap at maxFontSize to prevent vertical space issues (line-height 1.2 + margin = significant vertical space)
-  let groupNameFontSize = Math.min(maxFontSize, Math.max(minFontSize, calculatedFontSize))
-  let displayGroupName = groupName
-  
-  // If calculated size is at minimum and name is still too long, truncate with ellipsis
-  if (groupNameFontSize <= minFontSize) {
-    const maxCharsAtMinSize = Math.floor((availableWidth / minFontSize) / avgCharWidthRatio)
-    if (groupName.length > maxCharsAtMinSize * 1.3) {
-      const maxDisplayLength = Math.floor(maxCharsAtMinSize * 1.2)
-      displayGroupName = groupName.length > maxDisplayLength 
-        ? groupName.substring(0, maxDisplayLength - 3) + '...'
-        : groupName
-    }
-  }
-
-  // Item images section - positioned on the right, all vertically stacked
-  // #1 is large (280x280), #2-10 are smaller (150x150 each) with staggered horizontal positioning
-  const generateItemImage = (index: number, top: number, right: number, size: number) => {
-    if (!itemImages[index]?.imageBase64) return ''
-    
-    const borderRadius = index === 0 ? 32 : 20
-    const borderWidth = index === 0 ? 4 : 2
-    const shadowIntensity = index === 0 ? '0 20px 40px rgba(0, 0, 0, 0.3)' : '0 8px 16px rgba(0, 0, 0, 0.2)'
-    const blurIntensity = index === 0 ? '10px' : '6px'
-    
-    return `
-      <!-- #${index + 1} ${chartTitle.slice(4)} -->
-      <div style="
-        position: absolute;
-        top: ${top}px;
-        right: ${right}px;
-        width: ${size}px;
-        height: ${size}px;
-        border-radius: ${borderRadius}px;
-        overflow: hidden;
-        box-shadow: ${shadowIntensity}, 0 0 0 ${borderWidth}px ${rgbToRgba(themeColors.primary, index === 0 ? 0.5 : 0.3)};
-        border: ${borderWidth}px solid ${themeColors.primary};
-        background: ${themeColors.primaryLighter};
-        backdrop-filter: blur(${blurIntensity});
-        -webkit-backdrop-filter: blur(${blurIntensity});
-      ">
-        <img 
-          src="${escapeHtml(itemImages[index].imageBase64)}" 
-          alt="${escapeHtml(itemImages[index].name)}"
-          style="width: 100%; height: 100%; object-fit: cover;"
-        />
-      </div>
-    `
-  }
-  
-  const itemImagesSection = itemImages.length > 0 ? `
-    ${generateItemImage(0, 80, 40, 280)}
-    ${generateItemImage(1, 380, 80, 150)}
-    ${generateItemImage(2, 545, 20, 150)}
-    ${generateItemImage(3, 710, 70, 150)}
-    ${generateItemImage(4, 875, 15, 150)}
-    ${generateItemImage(5, 1040, 75, 150)}
-    ${generateItemImage(6, 1205, 25, 150)}
-    ${generateItemImage(7, 1370, 65, 150)}
-    ${generateItemImage(8, 1535, 10, 150)}
-    ${generateItemImage(9, 1700, 60, 150)}
-  ` : ''
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -249,65 +182,46 @@ async function generateChartHTML(config: ChartHTMLConfig): Promise<string> {
       height: ${height}px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
       overflow: hidden;
-      background: 
-        radial-gradient(circle at 20% 30%, ${rgbToRgba(themeColors.primaryLighter, 0.4)}, transparent 50%),
-        radial-gradient(circle at 80% 70%, ${rgbToRgba(themeColors.primaryLight, 0.3)}, transparent 50%),
-        linear-gradient(135deg, ${themeColors.backgroundFrom} 0%, ${rgbToRgba(themeColors.primaryLighter, 0.2)} 25%, ${themeColors.backgroundTo} 50%, ${rgbToRgba(themeColors.primaryLighter, 0.15)} 75%, ${themeColors.backgroundFrom} 100%);
+      background: #000000;
       position: relative;
     }
   </style>
 </head>
 <body>
-  <!-- Content Area -->
+  <!-- Header Bar -->
+  <div style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: ${headerHeight}px;
+    background: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    z-index: 10;
+  ">
+    <div style="
+      font-size: 32px;
+      font-weight: bold;
+      color: ${themeColors.primary};
+    ">${escapeHtml(groupName)}</div>
+    <div style="
+      font-size: 32px;
+      font-weight: bold;
+      color: ${themeColors.primary};
+    ">Week of ${escapeHtml(weekLabel)}</div>
+  </div>
+  
+  <!-- Image Grid -->
   <div style="
     position: relative;
-    height: ${height - footerHeight}px;
-    overflow: visible;
-    padding: 80px ${itemImages.length > 0 ? '360px' : '40px'} 40px 50px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
   ">
-    ${itemImagesSection}
-    
-    <!-- Title with Gradient Text -->
-    <div style="
-      margin-bottom: 40px;
-      padding-bottom: 0.1em;
-      text-align: left;
-    ">
-      <h1 style="
-        font-size: ${groupNameFontSize}px;
-        font-weight: bold;
-        line-height: 1.2;
-        background-image: linear-gradient(to right, ${themeColors.primaryDarker}, ${themeColors.primary}, ${themeColors.primaryLight});
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 16px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        letter-spacing: ${groupNameFontSize >= 90 ? '-2.5px' : groupNameFontSize >= 75 ? '-2px' : groupNameFontSize >= 65 ? '-1.5px' : '-1px'};
-        max-width: 100%;
-      ">${escapeHtml(displayGroupName)}</h1>
-      <div style="
-        font-size: 42px;
-        color: ${themeColors.text};
-        font-weight: 600;
-        margin-bottom: 10px;
-      ">${escapeHtml(chartTitle)}</div>
-      <div style="
-        font-size: 28px;
-        color: ${themeColors.text};
-        opacity: 0.85;
-        font-weight: 500;
-      ">Week of ${escapeHtml(weekLabel)}</div>
-    </div>
-    
-    <!-- Chart Entries (no bubble/card, displayed over gradient) -->
-    <div style="
-      max-width: 100%;
-    ">
-      ${entriesHTML}
-    </div>
+    ${imagesHTML}
   </div>
 
   <!-- Footer -->
@@ -322,6 +236,7 @@ async function generateChartHTML(config: ChartHTMLConfig): Promise<string> {
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
+    z-index: 10;
   ">
     <div style="
       width: 160px;
@@ -427,6 +342,23 @@ export async function GET(
     const { searchParams } = new URL(request.url)
     const weekStartParam = searchParams.get('weekStart')
     const chartTypeParam = searchParams.get('chartType') || 'artists'
+    const overlayTypeParam = searchParams.get('overlayType') || 'position'
+    const showNameParam = searchParams.get('showName')
+    const showName = showNameParam !== null ? showNameParam === 'true' : true // Default to true
+    const gridSizeParam = searchParams.get('gridSize') || '4x3'
+    
+    // Validate grid size
+    const validGridSizes: Array<'3x3' | '4x3' | '5x3'> = ['3x3', '4x3', '5x3']
+    if (!validGridSizes.includes(gridSizeParam as any)) {
+      return NextResponse.json({ error: 'Invalid gridSize. Must be one of: 3x3, 4x3, 5x3' }, { status: 400 })
+    }
+    const gridSize = gridSizeParam as '3x3' | '4x3' | '5x3'
+    
+    // Validate grid size against chart size
+    const chartSize = (group as any).chartSize || 20
+    if (chartSize === 10 && gridSize !== '3x3') {
+      return NextResponse.json({ error: 'Only 3x3 grid is available for Top 10 charts' }, { status: 400 })
+    }
     
     if (!weekStartParam) {
       return NextResponse.json({ error: 'weekStart parameter is required' }, { status: 400 })
@@ -438,6 +370,13 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid chartType. Must be one of: artists, tracks, albums' }, { status: 400 })
     }
     const chartType = chartTypeParam as 'artists' | 'tracks' | 'albums'
+
+    // Validate overlay type
+    const validOverlayTypes: Array<'position' | 'plays' | 'vs' | 'none'> = ['position', 'plays', 'vs', 'none']
+    if (!validOverlayTypes.includes(overlayTypeParam as any)) {
+      return NextResponse.json({ error: 'Invalid overlayType. Must be one of: position, plays, vs, none' }, { status: 400 })
+    }
+    const overlayType = overlayTypeParam as 'position' | 'plays' | 'vs' | 'none'
 
     // Parse date string as UTC (YYYY-MM-DD format)
     const [year, month, day] = weekStartParam.split('-').map(Number)
@@ -462,7 +401,7 @@ export async function GET(
     const normalizedWeekStart = new Date(weeklyStats.weekStart)
     normalizedWeekStart.setUTCHours(0, 0, 0, 0)
 
-    // Get chart entries for the specified chart type (top 10)
+    // Get chart entries for the specified chart type
     const chartEntries = await getGroupChartEntries(
       group.id,
       normalizedWeekStart,
@@ -473,8 +412,10 @@ export async function GET(
       return NextResponse.json({ error: 'No chart entries found' }, { status: 404 })
     }
 
-    // Get top 10 entries
-    const topEntries = chartEntries.slice(0, 10).map(entry => ({
+    // Get entries based on grid size
+    const [gridCols, gridRows] = gridSize.split('x').map(Number)
+    const totalItems = gridCols * gridRows
+    const topEntries = chartEntries.slice(0, totalItems).map(entry => ({
       position: entry.position,
       name: entry.name,
       playcount: entry.playcount,
@@ -490,14 +431,14 @@ export async function GET(
     const chartMode = (group.chartMode || 'plays_only') as string
     const showVS = chartMode === 'vs' || chartMode === 'vs_weighted'
 
-    // Get images for top 10 entries and convert to base64
+    // Get images for entries and convert to base64
     const apiKey = process.env.LASTFM_API_KEY || ''
     const itemImages: Array<{ name: string; imageBase64: string | null }> = []
     
     // Fetch images in batches to respect rate limits
     // Process in batches of 5 to avoid overwhelming the rate limiter
     const batchSize = 5
-    const entriesToProcess = topEntries.slice(0, 10)
+    const entriesToProcess = topEntries.slice(0, totalItems)
     
     for (let i = 0; i < entriesToProcess.length; i += batchSize) {
       const batch = entriesToProcess.slice(i, i + batchSize)
@@ -567,10 +508,9 @@ export async function GET(
     // Generate HTML
     let html: string
     try {
-      html = await generateChartHTML({
+      html = await generateSquareChartHTML({
         groupName: group.name,
         weekLabel,
-        chartType,
         entries: topEntries.map(entry => ({
           position: entry.position,
           name: entry.name,
@@ -582,6 +522,9 @@ export async function GET(
         showVS,
         itemImages,
         logoBase64,
+        overlayType,
+        showName,
+        gridSize,
       })
       console.log('HTML generated successfully, length:', html.length)
       console.log('HTML contains image tag:', html.includes('<img'))
@@ -708,10 +651,10 @@ export async function GET(
       console.log('Creating new page...')
       const page = await browser.newPage()
       
-      // Set viewport to match our image dimensions (Instagram Stories: 1080x1920)
+      // Set viewport to match our image dimensions (square: 1800x1800)
       await page.setViewportSize({
-        width: 1080,
-        height: 1920,
+        width: 1800,
+        height: 1800,
       })
       console.log('Viewport set')
       
@@ -760,25 +703,23 @@ export async function GET(
       await page.waitForTimeout(500)
       console.log('Taking screenshot...')
       
-      // Take screenshot with higher DPI (deviceScaleFactor: 2 for retina quality)
+      // Take screenshot
       const screenshot = await page.screenshot({
         type: 'png',
         fullPage: false,
         clip: {
           x: 0,
           y: 0,
-          width: 1080,
-          height: 1920, // Instagram Stories aspect ratio
+          width: 1800,
+          height: 1800,
         },
-        // Note: Playwright doesn't have deviceScaleFactor in screenshot options
-        // The viewport size determines the screenshot size
       })
       console.log('Screenshot taken successfully')
       
       // Create filename
       const weekStr = weekStartParam
       const groupNameSlug = group.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
-      const filename = `${groupNameSlug}_${chartType}_${weekStr}.png`
+      const filename = `${groupNameSlug}_${chartType}_${weekStr}_square.png`
       
       // Return PNG file (Playwright screenshot returns Buffer)
       return new NextResponse(screenshot as unknown as BodyInit, {
@@ -791,10 +732,10 @@ export async function GET(
       await browser.close()
     }
   } catch (error) {
-    console.error('Error generating chart image export:', error)
+    console.error('Error generating square chart image export:', error)
     
     // Provide detailed error message
-    let errorMessage = 'Failed to generate chart image export'
+    let errorMessage = 'Failed to generate square chart image export'
     let errorDetails = ''
     
     if (error instanceof Error) {
