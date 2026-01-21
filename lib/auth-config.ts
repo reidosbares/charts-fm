@@ -107,7 +107,8 @@ export const authOptions: NextAuthOptions = {
               id: true,
               email: true,
               name: true,
-              image: true
+              image: true,
+              lastAccessedAt: true
             }
           })
           
@@ -118,6 +119,23 @@ export const authOptions: NextAuthOptions = {
               ...session,
               user: null as any,
             }
+          }
+          
+          // Update last accessed time (throttled to avoid excessive DB writes)
+          // Only update if it's been more than 5 minutes since last update
+          const now = new Date()
+          const shouldUpdate = !user.lastAccessedAt || 
+            (now.getTime() - user.lastAccessedAt.getTime()) > 5 * 60 * 1000 // 5 minutes
+          
+          if (shouldUpdate) {
+            // Update in background (don't await to avoid slowing down session)
+            prisma.user.update({
+              where: { id: token.id as string },
+              data: { lastAccessedAt: now }
+            }).catch(err => {
+              // Silently fail - don't break session if update fails
+              console.error('Failed to update lastAccessedAt:', err)
+            })
           }
           
           // Update session with current user data from database

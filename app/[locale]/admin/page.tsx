@@ -4,6 +4,7 @@ import AdminTabs from './AdminTabs'
 import CreateUserForm from './users/create/CreateUserForm'
 import BulkGenerateForm from './bulk-generate/BulkGenerateForm'
 import CleanupTab from './CleanupTab'
+import UserListTab from './UserListTab'
 
 export const metadata: Metadata = {
   title: 'Admin Panel',
@@ -24,6 +25,7 @@ export default async function AdminPage() {
           createUserContent={<CreateUserForm />}
           bulkGenerateContent={<BulkGenerateForm />}
           cleanupContent={<CleanupTab />}
+          userListContent={<UserListTab />}
         />
       </div>
     </main>
