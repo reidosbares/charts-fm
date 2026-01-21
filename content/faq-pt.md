@@ -133,6 +133,10 @@ O usuário que contribuiu para os charts o longo de mais semanas. Este prêmio r
 ### Hitmaker
 O membro que trouxe mais itens que, ao decorrer do tempo, chegaram na posição #1 nos charts. Esse prêmio reconhece aqueles membros que trazem música nova pra comunidade e que se torna popular.
 
+### Como os Prêmios de Membro são Calculados
+
+**Importante:** Todos os prêmios são calculados usando uma **janela móvel de 10 semanas**. Isso significa que os prêmios refletem as contribuições das últimas 10 semanas de dados dos charts, não todos os dados desde o início. Isso garante que os prêmios permaneçam relevantes de acordo com a atividade recente da comunidade, e permite que novos membros também sejam premiados.
+
 **Nota:** Os prêmios são calculados automaticamente após a geração dos charts ser concluída. O cálculo é executado em segundo plano, e pode levar alguns momentos para ser concluído.
 
 ---

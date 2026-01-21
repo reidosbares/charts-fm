@@ -133,6 +133,10 @@ The user who contributed to charts over the most weeks. This award recognizes th
 ### Taste Maker
 The member who brought the most items that, over time, reached #1 on the charts. This award recognizes those members who bring new music to the group and it becomes popular.
 
+### How Member Awards are Calculated
+
+**Important:** All member awards are calculated using a **rolling 10-week window**. This means that awards reflect contributions from the last 10 weeks of chart data, not all-time contributions. This ensures that awards stay current and relevant to recent group activity, and new members can also earn awards in groups that they've recently joined.
+
 **Note:** Awards are calculated automatically after chart generation is completed. The calculation runs in the background, and may take a few moments to complete.
 
 ---

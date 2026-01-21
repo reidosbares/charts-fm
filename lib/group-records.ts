@@ -2,6 +2,17 @@
 import { prisma } from './prisma'
 import { ChartType, generateSlug } from './chart-slugs'
 
+/**
+ * Calculate the cutoff date for rolling 10-week metrics
+ * Returns the weekStart date that is 10 weeks ago (normalized to start of day UTC)
+ */
+function getTenWeekCutoffDate(): Date {
+  const cutoffDate = new Date()
+  cutoffDate.setUTCDate(cutoffDate.getUTCDate() - (10 * 7))
+  cutoffDate.setUTCHours(0, 0, 0, 0)
+  return cutoffDate
+}
+
 export interface RecordHolder {
   entryKey: string
   chartType: ChartType
@@ -730,6 +741,7 @@ async function calculatePhase3Records(
 
 /**
  * Phase 4: User contributions - Most popular entry
+ * Uses rolling 10-week window for UserChartEntryVS data
  */
 async function calculatePhase4Records(
   groupId: string
@@ -740,6 +752,7 @@ async function calculatePhase4Records(
   }
 
   const chartTypes: ChartType[] = ['artists', 'tracks', 'albums']
+  const tenWeekCutoff = getTenWeekCutoffDate()
 
   for (const chartType of chartTypes) {
     const result = await prisma.$queryRaw<Array<{
@@ -757,6 +770,7 @@ async function calculatePhase4Records(
       INNER JOIN "group_members" gm ON ucvs."userId" = gm."userId"
       WHERE gm."groupId" = ${groupId}::text
         AND ucvs."chartType" = ${chartType}
+        AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
       GROUP BY ucvs."entryKey"
       ORDER BY distinct_users DESC, total_vs DESC NULLS LAST, total_plays DESC
       LIMIT 1
@@ -1002,6 +1016,7 @@ async function calculatePhase5Records(
 
 /**
  * Phase 6: User records
+ * Uses rolling 10-week window for UserChartEntryVS data
  */
 async function calculatePhase6Records(
   groupId: string
@@ -1043,6 +1058,7 @@ async function calculatePhase6Records(
 
   const userIds = members.map(m => m.user.id)
   const userMap = new Map(members.map(m => [m.user.id, m.user]))
+  const tenWeekCutoff = getTenWeekCutoffDate()
 
   // Most VS
   const mostVSResult = await prisma.$queryRaw<Array<{
@@ -1061,6 +1077,7 @@ async function calculatePhase6Records(
       gce."weekStart" = ucvs."weekStart"
     WHERE gm."groupId" = ${groupId}::text
       AND ucvs."userId" IS NOT NULL
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
     GROUP BY ucvs."userId"
     ORDER BY total_vs DESC NULLS LAST
     LIMIT 1
@@ -1094,6 +1111,7 @@ async function calculatePhase6Records(
       gce."weekStart" = ucvs."weekStart"
     WHERE gm."groupId" = ${groupId}::text
       AND ucvs."userId" IS NOT NULL
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
     GROUP BY ucvs."userId"
     ORDER BY total_plays DESC
     LIMIT 1
@@ -1127,6 +1145,7 @@ async function calculatePhase6Records(
       gce."weekStart" = ucvs."weekStart"
     WHERE gm."groupId" = ${groupId}::text
       AND ucvs."userId" IS NOT NULL
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
     GROUP BY ucvs."userId"
     ORDER BY distinct_entries DESC
     LIMIT 1
@@ -1160,6 +1179,7 @@ async function calculatePhase6Records(
       gce."weekStart" = ucvs."weekStart"
     WHERE gm."groupId" = ${groupId}::text
       AND ucvs."userId" IS NOT NULL
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
     GROUP BY ucvs."userId"
     HAVING COUNT(DISTINCT CONCAT(ucvs."entryKey", '|', ucvs."chartType")) >= 1
     ORDER BY distinct_entries ASC
@@ -1195,6 +1215,7 @@ async function calculatePhase6Records(
       gce.position = 1
     WHERE gm."groupId" = ${groupId}::text
       AND ucvs."userId" IS NOT NULL
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
     GROUP BY ucvs."userId"
     ORDER BY number_ones DESC
     LIMIT 1
@@ -1229,6 +1250,7 @@ async function calculatePhase6Records(
       gce."entryKey" = ucvs."entryKey"
     WHERE gm."groupId" = ${groupId}::text
       AND ucvs."userId" IS NOT NULL
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
     GROUP BY ucvs."userId"
     ORDER BY distinct_weeks DESC
     LIMIT 1
@@ -1248,6 +1270,7 @@ async function calculatePhase6Records(
   // Taste Maker - user who introduced most entries that later reached #1
   // This requires tracking which user first introduced each entry
   // Simplified: count distinct entries that reached #1 where user contributed in first week
+  // Note: Only considers entries that first appeared within the 10-week window
   const tasteMakerResult = await prisma.$queryRaw<Array<{
     userId: string
     taste_maker_count: bigint
@@ -1259,6 +1282,7 @@ async function calculatePhase6Records(
         MIN("weekStart") as first_week
       FROM "group_chart_entries"
       WHERE "groupId" = ${groupId}::text
+        AND "weekStart" >= ${tenWeekCutoff}::timestamp
       GROUP BY "entryKey", "chartType"
     ),
     number_ones AS (
@@ -1266,6 +1290,7 @@ async function calculatePhase6Records(
       FROM "group_chart_entries"
       WHERE "groupId" = ${groupId}::text
         AND position = 1
+        AND "weekStart" >= ${tenWeekCutoff}::timestamp
     )
     SELECT 
       ucvs."userId",
@@ -1281,6 +1306,7 @@ async function calculatePhase6Records(
     INNER JOIN "group_members" gm ON ucvs."userId" = gm."userId"
     WHERE gm."groupId" = ${groupId}::text
       AND ucvs."userId" IS NOT NULL
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
     GROUP BY ucvs."userId"
     ORDER BY taste_maker_count DESC
     LIMIT 1
@@ -1316,6 +1342,7 @@ async function calculatePhase6Records(
       gce."weekStart" = ucvs."weekStart"
     WHERE gm."groupId" = ${groupId}::text
       AND ucvs."userId" IS NOT NULL
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
     GROUP BY ucvs."userId"
     HAVING COUNT(DISTINCT CONCAT(ucvs."entryKey", '|', ucvs."chartType")) >= 5
     ORDER BY avg_vs DESC
