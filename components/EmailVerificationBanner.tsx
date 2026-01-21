@@ -13,6 +13,34 @@ export default function EmailVerificationBanner() {
   const [emailVerified, setEmailVerified] = useState<boolean | null>(null)
 
   useEffect(() => {
+    const checkVerificationStatus = async () => {
+      if (!session?.user?.email) return
+
+      try {
+        const response = await fetch('/api/auth/check-verification', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: session.user.email }),
+        })
+
+        const data = await response.json()
+        
+        if (data.exists && !data.verified) {
+          setEmailVerified(false)
+          setIsVisible(true)
+        } else {
+          setEmailVerified(true)
+          setIsVisible(false)
+        }
+      } catch (error) {
+        console.error('Error checking verification status:', error)
+        // On error, don't show banner
+        setIsVisible(false)
+      }
+    }
+
     // Only check verification status if user is logged in
     if (session?.user?.email) {
       checkVerificationStatus()
@@ -21,34 +49,6 @@ export default function EmailVerificationBanner() {
       setEmailVerified(null)
     }
   }, [session])
-
-  const checkVerificationStatus = async () => {
-    if (!session?.user?.email) return
-
-    try {
-      const response = await fetch('/api/auth/check-verification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: session.user.email }),
-      })
-
-      const data = await response.json()
-      
-      if (data.exists && !data.verified) {
-        setEmailVerified(false)
-        setIsVisible(true)
-      } else {
-        setEmailVerified(true)
-        setIsVisible(false)
-      }
-    } catch (error) {
-      console.error('Error checking verification status:', error)
-      // On error, don't show banner
-      setIsVisible(false)
-    }
-  }
 
   // Don't render if not visible or user is not logged in
   if (!isVisible || !session?.user || emailVerified === true) {

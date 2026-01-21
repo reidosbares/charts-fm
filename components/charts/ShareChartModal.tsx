@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMicrophone, faMusic, faCompactDisc, faXmark, faSpinner, faCheck, faRotateRight, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
@@ -171,6 +171,7 @@ export default function ShareChartModal({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [cachedBlob, setCachedBlob] = useState<Blob | null>(null)
   const [copySuccess, setCopySuccess] = useState(false)
+  const previewUrlRef = useRef<string | null>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -207,8 +208,9 @@ export default function ShareChartModal({
     if (!isOpen) {
       setIsLoading(false)
       // Cleanup preview URL
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl)
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current)
+        previewUrlRef.current = null
         setPreviewUrl(null)
       }
       setCachedBlob(null)
@@ -218,17 +220,19 @@ export default function ShareChartModal({
       const cached = loadFromCache(cacheKey)
       if (cached) {
         // Cleanup old preview URL if exists
-        if (previewUrl) {
-          URL.revokeObjectURL(previewUrl)
+        if (previewUrlRef.current) {
+          URL.revokeObjectURL(previewUrlRef.current)
         }
         setCachedBlob(cached)
         const url = URL.createObjectURL(cached)
+        previewUrlRef.current = url
         setPreviewUrl(url)
       } else {
         // Cleanup old preview URL if exists
-        if (previewUrl) {
-          URL.revokeObjectURL(previewUrl)
+        if (previewUrlRef.current) {
+          URL.revokeObjectURL(previewUrlRef.current)
         }
+        previewUrlRef.current = null
         setCachedBlob(null)
         setPreviewUrl(null)
       }
@@ -238,11 +242,11 @@ export default function ShareChartModal({
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl)
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current)
       }
     }
-  }, [previewUrl])
+  }, [])
 
   const fetchChartImage = async (): Promise<Blob> => {
     const weekStartStr = weekStart.toISOString().split('T')[0]
@@ -272,6 +276,7 @@ export default function ShareChartModal({
       // Set preview
       setCachedBlob(blob)
       const url = URL.createObjectURL(blob)
+      previewUrlRef.current = url
       setPreviewUrl(url)
     } catch (error) {
       console.error('Error generating image:', error)
@@ -287,8 +292,9 @@ export default function ShareChartModal({
     removeFromCache(cacheKey)
     
     // Cleanup preview URL
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl)
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current)
+      previewUrlRef.current = null
     }
     
     setCachedBlob(null)
