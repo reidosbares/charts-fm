@@ -14,7 +14,7 @@ import {
   faLock,
   faUnlock,
   faPalette,
-  faTrendingUp,
+  faArrowTrendUp,
   faTrophy,
   faHeart,
   faSpinner,
@@ -229,7 +229,7 @@ export default function MetricsTab() {
           <MetricCard
             title="Groups with Trends"
             value={metrics.groupsWithTrends.toLocaleString()}
-            icon={faTrendingUp}
+            icon={faArrowTrendUp}
           />
           <MetricCard
             title="Total Comments"

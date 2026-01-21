@@ -39,10 +39,48 @@ interface CreatedGroup {
 export default function BulkGenerateForm() {
   const [lastfmUsernames, setLastfmUsernames] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isFetchingRandom, setIsFetchingRandom] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [createdUsers, setCreatedUsers] = useState<CreatedUser[]>([])
   const [createdGroups, setCreatedGroups] = useState<CreatedGroup[]>([])
   const [errors, setErrors] = useState<string[]>([])
+
+  const handleFetchRandomUsernames = async () => {
+    setIsFetchingRandom(true)
+    setError(null)
+
+    try {
+      const response = await fetch('/api/admin/random-lastfm-usernames?count=20')
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch random usernames')
+      }
+
+      const fetchedUsernames = data.usernames || []
+      if (fetchedUsernames.length === 0) {
+        setError('No usernames were fetched. Please try again.')
+        return
+      }
+
+      // Get existing usernames from textarea
+      const existingUsernames = lastfmUsernames
+        .split('\n')
+        .map(u => u.trim())
+        .filter(u => u.length > 0)
+
+      // Combine and remove duplicates
+      const allUsernames = [...existingUsernames, ...fetchedUsernames]
+      const uniqueUsernames = Array.from(new Set(allUsernames))
+
+      // Update textarea with combined usernames
+      setLastfmUsernames(uniqueUsernames.join('\n'))
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while fetching usernames')
+    } finally {
+      setIsFetchingRandom(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -96,9 +134,19 @@ export default function BulkGenerateForm() {
       <div className="bg-white rounded-lg shadow-md p-6 mb-8">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="usernames" className="block text-sm font-bold text-gray-700 mb-2">
-              Last.fm Usernames (one per line)
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label htmlFor="usernames" className="block text-sm font-bold text-gray-700">
+                Last.fm Usernames (one per line)
+              </label>
+              <button
+                type="button"
+                onClick={handleFetchRandomUsernames}
+                disabled={isLoading || isFetchingRandom}
+                className="px-4 py-2 text-sm bg-blue-500 hover:bg-blue-400 text-white rounded-lg transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isFetchingRandom ? 'Fetching...' : 'Fetch Random Usernames'}
+              </button>
+            </div>
             <textarea
               id="usernames"
               value={lastfmUsernames}
