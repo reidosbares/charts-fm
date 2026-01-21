@@ -17,6 +17,7 @@ import { faImage } from '@fortawesome/free-solid-svg-icons'
 // Image cache helpers (same as GroupWeeklyChartsTab)
 const IMAGE_CACHE_PREFIX = 'chartsfm_image_cache_'
 const CACHE_EXPIRY_DAYS = 30
+const ARTIST_CACHE_EXPIRY_HOURS = 1 // Artist images expire after 1 hour
 const IMAGE_CACHE_VERSION_KEY = 'chartsfm_image_cache_version'
 
 interface CachedImage {
@@ -44,7 +45,10 @@ function getCachedImage(type: 'artist' | 'album', identifier: string): string | 
     
     const data: CachedImage = JSON.parse(cached)
     const now = Date.now()
-    const expiryTime = data.timestamp + (CACHE_EXPIRY_DAYS * 24 * 60 * 60 * 1000)
+    // Artist images expire after 1 hour, album images after 30 days
+    const expiryTime = type === 'artist'
+      ? data.timestamp + (ARTIST_CACHE_EXPIRY_HOURS * 60 * 60 * 1000)
+      : data.timestamp + (CACHE_EXPIRY_DAYS * 24 * 60 * 60 * 1000)
     
     if (now > expiryTime) {
       localStorage.removeItem(cacheKey)
