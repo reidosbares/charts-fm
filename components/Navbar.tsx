@@ -612,34 +612,19 @@ export default function Navbar() {
                         {t('profile')}
                       </Link>
                       {userData?.isSuperuser && (
-                        <>
-                          <Link
-                            href="/admin/users/create"
-                            className="block px-4 py-2 text-sm font-semibold text-gray-200 hover:text-white transition-all duration-200"
-                            onClick={() => setIsDropdownOpen(false)}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.background = 'transparent'
-                            }}
-                          >
-                            {t('createUser')}
-                          </Link>
-                          <Link
-                            href="/admin/bulk-generate"
-                            className="block px-4 py-2 text-sm font-semibold text-gray-200 hover:text-white transition-all duration-200"
-                            onClick={() => setIsDropdownOpen(false)}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.background = 'transparent'
-                            }}
-                          >
-                            {t('bulkGenerate')}
-                          </Link>
-                        </>
+                        <Link
+                          href="/admin"
+                          className="block px-4 py-2 text-sm font-semibold text-gray-200 hover:text-white transition-all duration-200"
+                          onClick={() => setIsDropdownOpen(false)}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'transparent'
+                          }}
+                        >
+                          Admin Panel
+                        </Link>
                       )}
                       <button
                         onClick={handleLogout}
@@ -822,22 +807,13 @@ export default function Navbar() {
                   
                   {/* Admin Links */}
                   {userData?.isSuperuser && (
-                    <>
-                      <Link
-                        href="/admin/users/create"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="block px-4 py-3 rounded-lg text-base font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-all"
-                      >
-                        {t('createUser')}
-                      </Link>
-                      <Link
-                        href="/admin/bulk-generate"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="block px-4 py-3 rounded-lg text-base font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-all"
-                      >
-                        {t('bulkGenerate')}
-                      </Link>
-                    </>
+                    <Link
+                      href="/admin"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-4 py-3 rounded-lg text-base font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-all"
+                    >
+                      Admin Panel
+                    </Link>
                   )}
                   
                   {/* Sign Out */}

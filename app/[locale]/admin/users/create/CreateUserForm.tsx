@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from '@/i18n/routing'
-import { Link } from '@/i18n/routing'
 
 export default function CreateUserForm() {
   const router = useRouter()
@@ -91,7 +90,7 @@ export default function CreateUserForm() {
 
       // Optionally redirect after a delay
       setTimeout(() => {
-        router.push('/admin/users/create')
+        router.push('/admin?tab=create-user')
       }, 2000)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create user')
@@ -110,13 +109,7 @@ export default function CreateUserForm() {
   return (
     <div className="max-w-2xl mx-auto w-full">
       <div className="mb-8">
-        <Link 
-          href="/dashboard" 
-          className="text-yellow-600 hover:text-yellow-700 mb-4 inline-block"
-        >
-          ← Back to Dashboard
-        </Link>
-        <h1 className="text-3xl font-bold mb-2">Create New User</h1>
+        <h2 className="text-3xl font-bold mb-2">Create New User</h2>
         <p className="text-gray-600">Superuser-only page for creating users manually</p>
       </div>
 
