@@ -91,15 +91,11 @@ export async function GET(request: Request) {
     }
 
     // User doesn't exist - proceed with signup flow
-    // But only if mode is 'signup' (or default). If mode is 'signin' and user doesn't exist, show error
-    if (mode === 'signin') {
-      // User tried to sign in but account doesn't exist
-      const signupPath = `/auth/signup?error=user_not_found&lastfm_username=${encodeURIComponent(username)}`
-      const signupUrl = getLocalizedPath(signupPath, locale)
-      return NextResponse.redirect(new URL(signupUrl, request.url))
-    }
-
-    // Signup flow - store session info temporarily in a cookie
+    // If the user tried to sign in but doesn't have an account yet, send them directly
+    // to the account creation form with the session pre-filled (cookie-based).
+    //
+    // This avoids a confusing dead-end where "Login with Last.fm" fails even though
+    // the user successfully authenticated with Last.fm.
     const cookieStore = await cookies()
     cookieStore.set('lastfm_session', JSON.stringify({ sessionKey, username }), {
       httpOnly: true,
@@ -110,7 +106,12 @@ export async function GET(request: Request) {
     })
 
     // Redirect to account completion page
-    const completePath = getLocalizedPath('/auth/signup/complete', locale)
+    const completePath = getLocalizedPath(
+      mode === 'signin'
+        ? `/auth/signup/complete?source=signin&lastfm_username=${encodeURIComponent(username)}`
+        : '/auth/signup/complete',
+      locale
+    )
     return NextResponse.redirect(new URL(completePath, request.url))
   } catch (error) {
     console.error('Last.fm callback error:', error)
