@@ -138,7 +138,6 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme, is
   const lastChartWeek = await getLastChartWeek(groupId)
   const chartGenerationInProgress = group.chartGenerationInProgress || false
   const hasCharts = !!lastChartWeek
-  // @ts-expect-error Prisma client typing may be stale if schema changed without regenerating/migrating
   const isSolo = Boolean((group as any).isSolo)
   
   // Charts can be updated if it's at least the next day of the week since the last chart was generated
