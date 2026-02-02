@@ -52,6 +52,9 @@
       "profilePublic": "Tornar meu perfil público",
       "showStats": "Mostrar minhas estatísticas",
       "showGroups": "Mostrar minhas comunidades",
+      "highlightedGroup": "Comunidade em destaque",
+      "highlightedGroupHelp": "Escolha uma comunidade para exibir no topo do seu perfil público com o tema dela.",
+      "highlightedGroupNone": "Nenhuma",
       "viewPublicProfileLabel": "Link do perfil público",
       "viewPublicProfileLink": "Ver meu perfil público"
     },
@@ -115,6 +118,8 @@
   "profilePublic": {
     "viewOnLastfm": "Ver no Last.fm",
     "groupsTitle": "Comunidades",
+    "highlightedGroupSection": "Comunidade em destaque",
+    "viewGroup": "Ver comunidade",
     "noGroups": "Nenhuma comunidade para mostrar.",
     "privateGroupBadge": "Privada",
     "noBio": "Sem bio ainda."

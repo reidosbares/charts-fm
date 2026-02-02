@@ -31,7 +31,9 @@ export default function ProfilePage() {
     profilePublic: true,
     showProfileStats: true,
     showProfileGroups: true,
+    highlightedGroupId: '' as string | null,
   })
+  const [profileGroups, setProfileGroups] = useState<{ id: string; name: string }[]>([])
   const [originalLocale, setOriginalLocale] = useState<string>('en')
   const [lastfmUsername, setLastfmUsername] = useState<string | null>(null)
   const [originalEmail, setOriginalEmail] = useState<string>('')
@@ -63,7 +65,9 @@ export default function ProfilePage() {
             profilePublic: data.user.profilePublic ?? true,
             showProfileStats: data.user.showProfileStats ?? true,
             showProfileGroups: data.user.showProfileGroups ?? true,
+            highlightedGroupId: data.user.highlightedGroupId || null,
           })
+          setProfileGroups(data.groups || [])
           setOriginalLocale(userLocale)
           setOriginalEmail(data.user.email || '')
           setLastfmUsername(data.user.lastfmUsername || null)
@@ -646,6 +650,25 @@ export default function ProfilePage() {
                         className="h-5 w-5 accent-yellow-500"
                       />
                     </label>
+
+                    {formData.profilePublic && formData.showProfileGroups && profileGroups.length > 0 && (
+                      <div className="pt-2 border-t border-gray-200">
+                        <label htmlFor="highlightedGroupId" className="block text-sm text-gray-800 font-medium mb-1.5">
+                          {t('publicProfile.highlightedGroup')}
+                        </label>
+                        <p className="text-xs text-gray-600 mb-2">{t('publicProfile.highlightedGroupHelp')}</p>
+                        <CustomSelect
+                          id="highlightedGroupId"
+                          options={[
+                            { value: '', label: t('publicProfile.highlightedGroupNone') },
+                            ...profileGroups.map((g) => ({ value: g.id, label: g.name })),
+                          ]}
+                          value={formData.highlightedGroupId ?? ''}
+                          onChange={(value) => setFormData({ ...formData, highlightedGroupId: value || null })}
+                          disabled={isSaving || isUploading}
+                        />
+                      </div>
+                    )}
 
                     {lastfmUsername && formData.profilePublic && (
                       <div className="pt-2 border-t border-gray-200">

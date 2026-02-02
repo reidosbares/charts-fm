@@ -52,6 +52,9 @@
       "profilePublic": "Make my profile public",
       "showStats": "Show my listening stats",
       "showGroups": "Show my groups",
+      "highlightedGroup": "Highlighted group",
+      "highlightedGroupHelp": "Choose one group to display at the top of your public profile with its theme.",
+      "highlightedGroupNone": "None",
       "viewPublicProfileLabel": "Public profile link",
       "viewPublicProfileLink": "View my public profile"
     },
@@ -115,6 +118,8 @@
   "profilePublic": {
     "viewOnLastfm": "View on Last.fm",
     "groupsTitle": "Groups",
+    "highlightedGroupSection": "Highlighted group",
+    "viewGroup": "View group",
     "noGroups": "No groups to show.",
     "privateGroupBadge": "Private",
     "noBio": "No bio yet."

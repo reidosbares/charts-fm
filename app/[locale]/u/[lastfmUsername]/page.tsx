@@ -74,6 +74,7 @@ export default async function PublicUserProfilePage({
       profilePublic: true,
       showProfileStats: true,
       showProfileGroups: true,
+      highlightedGroupId: true,
     },
   })
 
@@ -82,7 +83,15 @@ export default async function PublicUserProfilePage({
   const groups = user.showProfileGroups
     ? await prisma.group.findMany({
         where: { OR: [{ creatorId: user.id }, { members: { some: { userId: user.id } } }] },
-        select: { id: true, name: true, image: true, isPrivate: true, creatorId: true, updatedAt: true },
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          isPrivate: true,
+          creatorId: true,
+          updatedAt: true,
+          colorTheme: true,
+        },
         orderBy: { updatedAt: 'desc' },
       })
     : []
@@ -113,6 +122,11 @@ export default async function PublicUserProfilePage({
     return viewerPrivateGroupIdSet.has(g.id)
   })
 
+  const highlightedGroup =
+    user.highlightedGroupId && user.showProfileGroups
+      ? visibleGroups.find((g) => g.id === user.highlightedGroupId) ?? null
+      : null
+
   const lastfmUrl = `https://www.last.fm/user/${encodeURIComponent(user.lastfmUsername)}`
 
   const glassStyle = {
@@ -120,6 +134,14 @@ export default async function PublicUserProfilePage({
     backdropFilter: 'blur(12px) saturate(180%)',
     WebkitBackdropFilter: 'blur(12px) saturate(180%)',
   } as const
+
+  const themeClass = highlightedGroup
+    ? `theme-${(highlightedGroup.colorTheme || 'white').toString().replace(/_/g, '-')}`
+    : ''
+
+  const otherGroups = highlightedGroup
+    ? visibleGroups.filter((g) => g.id !== highlightedGroup.id)
+    : visibleGroups
 
   return (
     <main className="flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 relative">
@@ -164,11 +186,52 @@ export default async function PublicUserProfilePage({
           {user.showProfileGroups && (
             <section>
               <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">{t('groupsTitle')}</h2>
-              {visibleGroups.length === 0 ? (
+              {highlightedGroup && (
+                <section
+                  className={`mb-6 rounded-3xl overflow-hidden border-2 shadow-lg ${themeClass}`}
+                  style={{
+                    background: 'linear-gradient(135deg, var(--theme-background-from), var(--theme-background-to))',
+                    borderColor: 'var(--theme-border)',
+                  }}
+                >
+                  <Link
+                    href={`/groups/${highlightedGroup.id}`}
+                    className="block p-6 md:p-8 hover:opacity-95 transition-opacity"
+                  >
+                    <p className="text-xs md:text-sm font-semibold uppercase tracking-wide mb-2" style={{ color: 'var(--theme-text)' }}>
+                      {t('highlightedGroupSection')}
+                    </p>
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden flex-shrink-0 border-2 shadow-md" style={{ borderColor: 'var(--theme-border)' }}>
+                        <SafeImage
+                          src={highlightedGroup.image}
+                          alt={highlightedGroup.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <h2 className="text-xl md:text-2xl font-bold truncate" style={{ color: 'var(--theme-primary-dark)' }}>
+                          {highlightedGroup.name}
+                        </h2>
+                        <span
+                          className="inline-block mt-2 px-4 py-2 rounded-xl font-bold text-sm"
+                          style={{
+                            backgroundColor: 'var(--theme-primary)',
+                            color: 'var(--theme-button-text)',
+                          }}
+                        >
+                          {t('viewGroup')}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                </section>
+              )}
+              {otherGroups.length === 0 ? (
                 <p className="text-sm text-gray-600">{t('noGroups')}</p>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {visibleGroups.map((g) => (
+                  {otherGroups.map((g) => (
                     <Link
                       key={g.id}
                       href={`/groups/${g.id}`}

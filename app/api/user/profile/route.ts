@@ -26,6 +26,7 @@ export async function GET() {
       profilePublic: true,
       showProfileStats: true,
       showProfileGroups: true,
+      highlightedGroupId: true,
       locale: true,
       emailVerified: true,
     },
@@ -35,7 +36,14 @@ export async function GET() {
     return NextResponse.json({ error: 'User not found' }, { status: 404 })
   }
 
-  return NextResponse.json({ user })
+  // Fetch user's groups for highlighted group selector (creator or member)
+  const groups = await prisma.group.findMany({
+    where: { OR: [{ creatorId: session.user.id }, { members: { some: { userId: session.user.id } } }] },
+    select: { id: true, name: true },
+    orderBy: { name: 'asc' },
+  })
+
+  return NextResponse.json({ user, groups })
 }
 
 // PATCH - Update user profile (including image)
@@ -56,7 +64,7 @@ export async function PATCH(request: Request) {
   }
 
   const body = await request.json()
-  const { name, email, image, locale, bio, profilePublic, showProfileStats, showProfileGroups } = body
+  const { name, email, image, locale, bio, profilePublic, showProfileStats, showProfileGroups, highlightedGroupId } = body
 
   // Validate name if provided
   if (name !== undefined) {
@@ -140,6 +148,26 @@ export async function PATCH(request: Request) {
   const showProfileGroupsErr = validateBoolean(showProfileGroups, 'showProfileGroups')
   if (showProfileGroupsErr) return showProfileGroupsErr
 
+  // Validate highlightedGroupId if provided (must be a group the user is in)
+  if (highlightedGroupId !== undefined) {
+    if (highlightedGroupId !== null && typeof highlightedGroupId !== 'string') {
+      return NextResponse.json({ error: 'highlightedGroupId must be a string or null' }, { status: 400 })
+    }
+    const trimmed = typeof highlightedGroupId === 'string' ? highlightedGroupId.trim() : null
+    if (trimmed) {
+      const group = await prisma.group.findFirst({
+        where: {
+          id: trimmed,
+          OR: [{ creatorId: user.id }, { members: { some: { userId: user.id } } }],
+        },
+        select: { id: true },
+      })
+      if (!group) {
+        return NextResponse.json({ error: 'Group not found or you are not a member' }, { status: 400 })
+      }
+    }
+  }
+
   // Validate email if provided
   let emailChanged = false
   let newEmail = user.email
@@ -198,6 +226,7 @@ export async function PATCH(request: Request) {
     profilePublic?: boolean
     showProfileStats?: boolean
     showProfileGroups?: boolean
+    highlightedGroupId?: string | null
     emailVerified?: boolean
     emailVerificationToken?: string | null
     emailVerificationTokenExpires?: Date | null
@@ -210,6 +239,9 @@ export async function PATCH(request: Request) {
     ...(profilePublic !== undefined && profilePublic !== null && { profilePublic }),
     ...(showProfileStats !== undefined && showProfileStats !== null && { showProfileStats }),
     ...(showProfileGroups !== undefined && showProfileGroups !== null && { showProfileGroups }),
+    ...(highlightedGroupId !== undefined && {
+      highlightedGroupId: typeof highlightedGroupId === 'string' && highlightedGroupId.trim() ? highlightedGroupId.trim() : null,
+    }),
   }
 
   // If email changed, reset verification and generate new token

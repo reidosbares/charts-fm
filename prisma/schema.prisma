@@ -23,6 +23,7 @@ model User {
   createdAt                     DateTime                       @default(now())
   updatedAt                     DateTime                       @updatedAt
   quickAccessGroupId            String?
+  highlightedGroupId           String?
   emailVerificationToken        String?
   emailVerificationTokenExpires DateTime?
   emailVerified                 Boolean                        @default(false)
@@ -51,6 +52,7 @@ model User {
   commentBans                   UserCommentBan?                @relation("UserCommentBans")
   weeklyStats                   UserWeeklyStats[]
   quickAccessGroup              Group?                         @relation("QuickAccessGroup", fields: [quickAccessGroupId], references: [id])
+  highlightedGroup              Group?                         @relation("HighlightedGroup", fields: [highlightedGroupId], references: [id])
   artistImagesUploaded          ArtistImage[]
   artistImageVotes              ArtistImageVote[]
   artistImageReports            ArtistImageReport[]
@@ -130,6 +132,7 @@ model Group {
   weeklyStats                    GroupWeeklyStats[]
   creator                        User?                          @relation("GroupCreator", fields: [creatorId], references: [id])
   quickAccessUsers               User[]                         @relation("QuickAccessGroup")
+  highlightedByUsers             User[]                         @relation("HighlightedGroup")
 
   @@map("groups")
 }
