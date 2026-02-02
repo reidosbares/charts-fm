@@ -106,13 +106,26 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
               key={member.id}
               className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-theme shadow-sm hover:shadow transition-all hover:bg-[var(--theme-primary-lighter)]/30"
             >
-              <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden">
-                <SafeImage
-                  src={member.user.image}
-                  alt={member.user.name || member.user.lastfmUsername}
-                  className="object-cover w-full h-full"
-                />
-              </div>
+              {member.user.lastfmUsername ? (
+                <Link
+                  href={`/u/${encodeURIComponent(member.user.lastfmUsername)}`}
+                  className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden block hover:opacity-90 transition-opacity"
+                >
+                  <SafeImage
+                    src={member.user.image}
+                    alt={member.user.name || member.user.lastfmUsername}
+                    className="object-cover w-full h-full"
+                  />
+                </Link>
+              ) : (
+                <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden">
+                  <SafeImage
+                    src={member.user.image}
+                    alt={member.user.name || member.user.lastfmUsername}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+              )}
               <div className="flex-1 min-w-0 overflow-hidden pr-1 md:pr-2">
                 <div className="flex items-center gap-1.5 md:gap-2 min-w-0">
                   <p className="font-semibold text-gray-900 truncate flex-1 min-w-0 text-sm md:text-base">
@@ -159,13 +172,26 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
               key={invite.id}
               className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-theme shadow-sm hover:shadow transition-all hover:bg-[var(--theme-primary-lighter)]/30"
             >
-              <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden">
-                <SafeImage
-                  src={invite.user.image}
-                  alt={invite.user.name || invite.user.lastfmUsername}
-                  className="object-cover w-full h-full"
-                />
-              </div>
+              {invite.user.lastfmUsername ? (
+                <Link
+                  href={`/u/${encodeURIComponent(invite.user.lastfmUsername)}`}
+                  className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden block hover:opacity-90 transition-opacity"
+                >
+                  <SafeImage
+                    src={invite.user.image}
+                    alt={invite.user.name || invite.user.lastfmUsername}
+                    className="object-cover w-full h-full"
+                  />
+                </Link>
+              ) : (
+                <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden">
+                  <SafeImage
+                    src={invite.user.image}
+                    alt={invite.user.name || invite.user.lastfmUsername}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+              )}
               <div className="flex-1 min-w-0 overflow-hidden">
                 <div className="flex items-center gap-1.5 md:gap-2 min-w-0">
                   <p className="font-semibold text-gray-900 truncate flex-1 min-w-0 text-sm md:text-base">

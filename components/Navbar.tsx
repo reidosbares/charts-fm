@@ -588,7 +588,11 @@ export default function Navbar() {
                     }}
                   >
                     <div className="py-1">
-                      <div className="px-4 py-2 border-b border-gray-700/50 min-w-0">
+                      <Link
+                        href={userData?.lastfmUsername ? `/u/${encodeURIComponent(userData.lastfmUsername)}` : '/profile'}
+                        className="block px-4 py-2 border-b border-gray-700/50 min-w-0 hover:bg-white/5 transition-colors"
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
                         <p className="text-sm font-bold text-white truncate">
                           {userData?.name || session?.user?.name || t('user')}
                         </p>
@@ -597,7 +601,7 @@ export default function Navbar() {
                             @{userData.lastfmUsername}
                           </p>
                         )}
-                      </div>
+                      </Link>
                       <Link
                         href="/profile"
                         className="block px-4 py-2 text-sm font-semibold text-gray-200 hover:text-white transition-all duration-200"
@@ -609,23 +613,8 @@ export default function Navbar() {
                           e.currentTarget.style.background = 'transparent'
                         }}
                       >
-                        {t('profile')}
+                        {t('editProfile')}
                       </Link>
-                      {userData?.lastfmUsername && (
-                        <Link
-                          href={`/u/${encodeURIComponent(userData.lastfmUsername)}`}
-                          className="block px-4 py-2 text-sm font-semibold text-gray-200 hover:text-white transition-all duration-200"
-                          onClick={() => setIsDropdownOpen(false)}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent'
-                          }}
-                        >
-                          {t('publicProfile')}
-                        </Link>
-                      )}
                       {userData?.isSuperuser && (
                         <Link
                           href="/admin"
@@ -817,18 +806,8 @@ export default function Navbar() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="block px-4 py-3 rounded-lg text-base font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-all"
                   >
-                    {t('profile')}
+                    {t('editProfile')}
                   </Link>
-
-                  {userData?.lastfmUsername && (
-                    <Link
-                      href={`/u/${encodeURIComponent(userData.lastfmUsername)}`}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="block px-4 py-3 rounded-lg text-base font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-all"
-                    >
-                      {t('publicProfile')}
-                    </Link>
-                  )}
                   
                   {/* Admin Links */}
                   {userData?.isSuperuser && (
