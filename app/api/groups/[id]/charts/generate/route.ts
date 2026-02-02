@@ -7,6 +7,7 @@ import { recalculateAllTimeStats } from '@/lib/group-alltime-stats'
 import { invalidateEntryStatsCacheBatch } from '@/lib/chart-deep-dive'
 import { calculateGroupTrends } from '@/lib/group-trends'
 import { calculateGroupRecords, getGroupRecords } from '@/lib/group-records'
+import { accumulateMemberGroupStats } from '@/lib/member-group-stats'
 import { ChartType } from '@/lib/chart-slugs'
 
 /**
@@ -223,6 +224,11 @@ export async function POST(
         
         // Collect entries for batch invalidation at the end
         allEntriesForInvalidation.push(...result.entries)
+        
+        // Accumulate member group stats (total VS, debuts, weeks at #1, weeks as MVP)
+        accumulateMemberGroupStats(groupId, weekStart).catch((err) => {
+          console.error('[Chart Generate] accumulateMemberGroupStats failed:', err)
+        })
         
         // Small delay between weeks
         await new Promise(resolve => setTimeout(resolve, 500))

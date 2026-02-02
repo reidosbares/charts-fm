@@ -61,7 +61,7 @@ export default function ChartEntryCard({
   }
   
   // Render icon or user image
-  const iconElement = chartType === 'user' && userImage ? (
+  const iconContent = chartType === 'user' ? (
     <div className={`relative w-10 h-10 rounded-full ring-2 ${getRingColor()} bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden`}>
       <SafeImage
         src={userImage}
@@ -75,6 +75,18 @@ export default function ChartEntryCard({
       className={`text-lg ${iconColorClass}`}
     />
   )
+  
+  // Wrap icon/avatar in link if href is provided and it's a user
+  const iconElement = href && chartType === 'user' ? (
+    <Link
+      href={href}
+      target={openInNewTab ? "_blank" : undefined}
+      rel={openInNewTab ? "noopener noreferrer" : undefined}
+      className="flex-shrink-0 hover:opacity-80 transition-opacity"
+    >
+      {iconContent}
+    </Link>
+  ) : iconContent
 
   const baseClasses = 'flex items-center gap-3 p-3 rounded-lg transition-all'
   const variantClasses = variant === 'nested'
@@ -113,8 +125,8 @@ export default function ChartEntryCard({
             {value}
           </div>
         )}
-        {children}
       </div>
+      {children}
     </div>
   )
 

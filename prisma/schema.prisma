@@ -41,6 +41,7 @@ model User {
   groupInvites                  GroupInvite[]
   groupJoinRequests             GroupJoinRequest[]
   groupMemberships              GroupMember[]
+  memberGroupStats              MemberGroupStats[]
   recommendationCache           GroupRecommendationCache?
   groupRecommendationRejections GroupRecommendationRejection[]
   shoutboxPermissionsGranted    GroupShoutboxPermission[]      @relation("ShoutboxPermissionsGranted")
@@ -124,6 +125,7 @@ model Group {
   invites                        GroupInvite[]
   joinRequests                   GroupJoinRequest[]
   members                        GroupMember[]
+  memberGroupStats               MemberGroupStats[]
   recommendationRejections       GroupRecommendationRejection[]
   records                        GroupRecords?
   recordDetailCaches             GroupRecordDetailCache[]
@@ -147,6 +149,31 @@ model GroupMember {
 
   @@unique([groupId, userId])
   @@map("group_members")
+}
+
+/// Long-running per-member-per-group stats (all-time). Updated each week when charts are generated.
+model MemberGroupStats {
+  id                          String   @id @default(cuid())
+  groupId                     String
+  userId                      String
+  totalVS                     Float    @default(0)
+  totalPlays                  Int      @default(0)
+  entriesHelpedDebutArtists   Int      @default(0)
+  entriesHelpedDebutTracks    Int      @default(0)
+  entriesHelpedDebutAlbums    Int      @default(0)
+  weeksAtOneContributedArtists Int     @default(0)
+  weeksAtOneContributedTracks  Int     @default(0)
+  weeksAtOneContributedAlbums  Int     @default(0)
+  weeksAsMVP                   Int     @default(0)
+  lastUpdated                 DateTime @updatedAt
+  createdAt                   DateTime @default(now())
+  group                       Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user                        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@index([groupId])
+  @@index([userId])
+  @@map("member_group_stats")
 }
 
 model UserWeeklyStats {

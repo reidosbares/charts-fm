@@ -43,19 +43,24 @@ export async function GET(
         }
       })
       
-      // Fetch user images
+      // Fetch user data (image, name, lastfmUsername)
       if (userIds.size > 0) {
         const users = await prisma.user.findMany({
           where: { id: { in: Array.from(userIds) } },
-          select: { id: true, image: true },
+          select: { id: true, image: true, name: true, lastfmUsername: true },
         })
         
-        const userImageMap = new Map(users.map(u => [u.id, u.image]))
+        const userDataMap = new Map(users.map(u => [u.id, u]))
         
-        // Enrich user records with images
+        // Enrich user records with fresh user data
         userRecordFields.forEach((field) => {
           if (recordsData[field]?.userId) {
-            recordsData[field].image = userImageMap.get(recordsData[field].userId) || null
+            const userData = userDataMap.get(recordsData[field].userId)
+            if (userData) {
+              recordsData[field].image = userData.image || null
+              recordsData[field].name = userData.name || userData.lastfmUsername
+              recordsData[field].lastfmUsername = userData.lastfmUsername
+            }
           }
         })
       }

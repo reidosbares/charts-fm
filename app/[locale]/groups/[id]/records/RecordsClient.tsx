@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMusic, faMicrophone, faCompactDisc, faUsers, faSpinner, faMedal } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
 import RecordBlock from '@/components/records/RecordBlock'
+import MyContributionCard from '@/components/records/MyContributionCard'
 import { Link } from '@/i18n/routing'
 import { generateSlug } from '@/lib/chart-slugs'
 import SafeImage from '@/components/SafeImage'
@@ -135,9 +136,11 @@ interface RecordsClientProps {
   groupId: string
   initialRecords: any
   memberCount: number
+  isMember?: boolean
+  userId?: string | null
 }
 
-export default function RecordsClient({ groupId, initialRecords, memberCount }: RecordsClientProps) {
+export default function RecordsClient({ groupId, initialRecords, memberCount, isMember = false, userId = null }: RecordsClientProps) {
   const t = useSafeTranslations('records')
   const tPreview = useSafeTranslations('records.preview')
   const tChartRecords = useSafeTranslations('records.chartRecords')
@@ -815,6 +818,12 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
           </div>
         ) : (
           <>
+            {activeTab === 'users' && (
+              <div className="mb-4">
+                <h3 className="text-lg md:text-xl font-bold text-gray-900">{tUserRecords('sectionTitle')}</h3>
+                <p className="text-sm text-gray-500">{tUserRecords('sectionSubtitle')}</p>
+              </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
               {currentRecords.map((record, idx) => (
                 <RecordBlock
@@ -841,6 +850,10 @@ export default function RecordsClient({ groupId, initialRecords, memberCount }: 
                   )
                 })}
               </p>
+            )}
+            {/* My contribution - at bottom of Members tab */}
+            {activeTab === 'users' && isMember && userId && (
+              <MyContributionCard groupId={groupId} userId={userId} />
             )}
           </>
         )}

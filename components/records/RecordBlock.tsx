@@ -16,6 +16,7 @@ interface RecordBlockProps {
     artist?: string | null
     slug?: string
     userId?: string
+    lastfmUsername?: string
     value: number
     image?: string | null
   } | null
@@ -109,8 +110,8 @@ export default function RecordBlock({ title, record, value, groupId, isUser, act
   }
 
   const getLink = () => {
-    if (isUser) {
-      return null // Users don't have drill-down pages yet
+    if (isUser && record.lastfmUsername) {
+      return `/u/${encodeURIComponent(record.lastfmUsername)}`
     }
 
     if (record.entryKey && record.chartType) {

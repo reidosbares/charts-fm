@@ -1138,6 +1138,8 @@
       "members": "members"
     },
     "userRecords": {
+      "sectionTitle": "Member awards",
+      "sectionSubtitle": "Based on the last 10 weeks of activity",
       "comingSoon": "Member Records Coming Soon",
       "unlockMessage": "This group currently has {count} {memberOrMembers}. Invite {inviteCount} to unlock member records!",
       "inviteCountOne": "1 more",
@@ -1160,6 +1162,30 @@
         "consistencyChampion": "The member who contributed to charts for the most weeks. They show up every time.",
         "tasteMaker": "This is the member who introduced the most entries that later became #1 hits. They have that magic touch."
       }
+    },
+    "myContribution": {
+      "title": "My impact",
+      "you": "You",
+      "memberContribution": "{name}'s impact",
+      "sectionTitle": "Impact per member",
+      "selectMember": "Select member",
+      "filterMembers": "Filter members…",
+      "totalVS": "Total VS contributed",
+      "totalPlays": "Total plays contributed",
+      "weeksAsMVP": "Weeks as MVP",
+      "byChartType": "By chart type",
+      "entriesHelpedDebut": "Entries helped onto charts (debut)",
+      "weeksAtOneContributed": "Weeks at #1 contributed",
+      "entriesAsMainDriver": "Entries as main driver",
+      "driverEntriesList": "Entries you drive",
+      "noStats": "No stats for this member.",
+      "chartTypeBreakdown": "Breakdown by type",
+      "debuts": "Entries introduced to charts",
+      "debutsDesc": "New entries helped chart",
+      "atNumberOne": "Weeks listening to the #1",
+      "atNumberOneDesc": "Contributed to #1 entries",
+      "asDriver": "Driving",
+      "asDriverDesc": "Entries as main driver"
     },
     "detail": {
       "rank": "Rank",

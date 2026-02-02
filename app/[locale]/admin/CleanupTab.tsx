@@ -7,12 +7,20 @@ interface CleanupResult {
   cutoffDate: string
 }
 
+interface RecalculateResult {
+  groupsProcessed: number
+  totalWeeksProcessed: number
+  details: Array<{ groupId: string; groupName: string; weeksProcessed: number }>
+}
+
 type CleanupType = 'userChartEntryVS' | 'userWeeklyStats' | null
 
 export default function CleanupTab() {
   const [isLoading, setIsLoading] = useState(false)
+  const [isRecalculating, setIsRecalculating] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<{ type: CleanupType; result: CleanupResult } | null>(null)
+  const [recalculateSuccess, setRecalculateSuccess] = useState<RecalculateResult | null>(null)
 
   const handleCleanup = async (type: 'userChartEntryVS' | 'userWeeklyStats') => {
     const typeName = type === 'userChartEntryVS' ? 'UserChartEntryVS' : 'UserWeeklyStats'
@@ -22,6 +30,7 @@ export default function CleanupTab() {
 
     setError(null)
     setSuccess(null)
+    setRecalculateSuccess(null)
     setIsLoading(true)
 
     try {
@@ -47,6 +56,38 @@ export default function CleanupTab() {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleRecalculateMemberStats = async () => {
+    if (!confirm('Are you sure you want to recalculate member impact stats for all groups? This may take a while for groups with many weeks of data.')) {
+      return
+    }
+
+    setError(null)
+    setSuccess(null)
+    setRecalculateSuccess(null)
+    setIsRecalculating(true)
+
+    try {
+      const response = await fetch('/api/admin/recalculate-member-stats', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to recalculate member stats')
+      }
+
+      setRecalculateSuccess(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setIsRecalculating(false)
     }
   }
 
@@ -80,6 +121,27 @@ export default function CleanupTab() {
             Deleted {success.result.deletedCount.toLocaleString()} {success.type === 'userChartEntryVS' ? 'UserChartEntryVS' : 'UserWeeklyStats'} 
             {' '}entries older than {success.result.cutoffDate}.
           </p>
+        </div>
+      )}
+
+      {recalculateSuccess && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+          <p className="font-semibold mb-2">Recalculation completed successfully!</p>
+          <p className="mb-2">
+            Processed {recalculateSuccess.groupsProcessed} groups, {recalculateSuccess.totalWeeksProcessed} total weeks.
+          </p>
+          {recalculateSuccess.details.length > 0 && (
+            <details className="mt-2">
+              <summary className="cursor-pointer text-sm font-medium">View details</summary>
+              <ul className="mt-2 text-sm space-y-1 max-h-48 overflow-y-auto">
+                {recalculateSuccess.details.map((d) => (
+                  <li key={d.groupId}>
+                    {d.groupName}: {d.weeksProcessed} weeks
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
         </div>
       )}
 
@@ -138,6 +200,37 @@ export default function CleanupTab() {
               className="w-full bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Cleaning up...' : 'Cleanup UserWeeklyStats Entries'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Recalculate Member Impact Stats */}
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Recalculate Member Impact Stats</h3>
+            <p className="text-sm text-gray-600 mb-3">
+              Rebuild the all-time member contribution statistics (MemberGroupStats) for all groups 
+              from scratch. This recalculates total VS, entries helped debut, weeks at #1 contributed, 
+              and weeks as MVP for every member.
+            </p>
+            <ul className="list-disc list-inside space-y-1 text-gray-600 text-sm">
+              <li>Deletes existing stats and recomputes from historical chart data</li>
+              <li>Use after fixing bugs in accumulation logic or after data migrations</li>
+              <li>May take a while for groups with many weeks of chart history</li>
+              <li>Safe to run at any time - does not affect chart data</li>
+            </ul>
+          </div>
+
+          <div className="pt-4 border-t border-gray-200">
+            <button
+              type="button"
+              onClick={handleRecalculateMemberStats}
+              disabled={isRecalculating || isLoading}
+              className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isRecalculating ? 'Recalculating...' : 'Recalculate All Member Stats'}
             </button>
           </div>
         </div>

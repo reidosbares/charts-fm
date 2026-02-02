@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 }
 
 export default async function RecordsPage({ params }: { params: { id: string; locale: string } }) {
-  const { user, group } = await getGroupAccess(params.id)
+  const { user, group, isMember } = await getGroupAccess(params.id)
   const t = await getTranslations('records')
   const tGroups = await getTranslations('groups')
 
@@ -141,6 +141,8 @@ export default async function RecordsPage({ params }: { params: { id: string; lo
           groupId={group.id}
           initialRecords={records}
           memberCount={memberCount}
+          isMember={!!isMember}
+          userId={user?.id ?? null}
         />
       </div>
     </main>
