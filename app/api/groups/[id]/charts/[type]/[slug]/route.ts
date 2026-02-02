@@ -73,10 +73,19 @@ export async function GET(
       return NextResponse.json({ error: 'Entry not found' }, { status: 404 })
     }
 
+    // Check if this is a solo group - skip major driver for solo groups
+    const memberCount = await prisma.groupMember.count({
+      where: { groupId: group.id },
+    })
+    const isSoloGroup = memberCount <= 1
+
     // Fetch all data in parallel
-    const [stats, majorDriver, totals, artistEntries, numberOnes] = await Promise.all([
+    const [stats, majorDriverResult, totals, artistEntries, numberOnes] = await Promise.all([
       getEntryStats(group.id, chartType, entry.entryKey),
-      getEntryMajorDriver(group.id, chartType, entry.entryKey, group.chartMode || 'vs'),
+      // Skip major driver calculation for solo groups
+      isSoloGroup 
+        ? Promise.resolve({ majorDriver: null, newlyCalculated: false })
+        : getEntryMajorDriver(group.id, chartType, entry.entryKey, group.chartMode || 'vs'),
       getEntryTotals(group.id, chartType, entry.entryKey),
       chartType === 'artists' ? getArtistChartEntries(group.id, entry.name) : Promise.resolve(null),
       chartType === 'artists' ? getArtistNumberOnes(group.id, entry.name) : Promise.resolve(null),
@@ -84,7 +93,8 @@ export async function GET(
 
     return NextResponse.json({
       stats,
-      majorDriver,
+      majorDriver: majorDriverResult.majorDriver,
+      majorDriverNewlyClaimed: majorDriverResult.newlyCalculated && majorDriverResult.majorDriver !== null,
       totals,
       artistEntries: chartType === 'artists' ? artistEntries : null,
       numberOnes: chartType === 'artists' ? numberOnes : null,

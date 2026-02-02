@@ -12,7 +12,7 @@ import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 import SafeImage from '@/components/SafeImage'
 import { getDefaultArtistImage, getDefaultAlbumImage } from '@/lib/default-images'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faImage } from '@fortawesome/free-solid-svg-icons'
+import { faImage, faStar, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 // Image cache helpers (same as GroupWeeklyChartsTab)
 const IMAGE_CACHE_PREFIX = 'chartsfm_image_cache_'
@@ -121,6 +121,7 @@ export default function DeepDiveClient({
   const [numberOnes, setNumberOnes] = useState<{ numberOneTracks: number; numberOneAlbums: number } | null>(null)
   const [loading, setLoading] = useState(true)
   const [imageUrl, setImageUrl] = useState<string | null | undefined>(initialImageUrl)
+  const [newDriverNotification, setNewDriverNotification] = useState<{ name: string } | null>(null)
 
   useEffect(() => {
     async function loadData() {
@@ -148,6 +149,11 @@ export default function DeepDiveClient({
           setArtistEntries(data.artistEntries)
           setNumberOnes(data.numberOnes)
         }
+        
+        // Show notification if major driver was newly claimed
+        if (data.majorDriverNewlyClaimed && data.majorDriver) {
+          setNewDriverNotification({ name: data.majorDriver.name })
+        }
       } catch (error) {
         console.error('Error loading deep dive data:', error)
       } finally {
@@ -157,6 +163,16 @@ export default function DeepDiveClient({
 
     loadData()
   }, [groupId, chartType, slug, isArtist])
+
+  // Auto-dismiss notification after 5 seconds
+  useEffect(() => {
+    if (newDriverNotification) {
+      const timer = setTimeout(() => {
+        setNewDriverNotification(null)
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [newDriverNotification])
 
   // Fetch image on client side (non-blocking)
   useEffect(() => {
@@ -425,6 +441,33 @@ export default function DeepDiveClient({
             groupId={groupId}
           />
         )
+      )}
+
+      {/* Major Driver Claimed Notification Bubble */}
+      {newDriverNotification && (
+        <div 
+          className="fixed bottom-4 right-4 z-50 animate-in slide-in-from-right-full duration-300"
+          role="status"
+          aria-live="polite"
+        >
+          <div className="flex items-center gap-3 bg-white/95 backdrop-blur-md rounded-xl px-4 py-3 shadow-lg border border-[var(--theme-primary)]/20 max-w-xs">
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--theme-primary)]/15 flex items-center justify-center">
+              <FontAwesomeIcon icon={faStar} className="text-[var(--theme-primary)] text-sm" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {t('majorDriverClaimed', { name: newDriverNotification.name })}
+              </p>
+            </div>
+            <button
+              onClick={() => setNewDriverNotification(null)}
+              className="flex-shrink-0 p-1 rounded-full hover:bg-gray-100 transition-colors"
+              aria-label="Dismiss notification"
+            >
+              <FontAwesomeIcon icon={faTimes} className="text-gray-400 text-xs" />
+            </button>
+          </div>
+        </div>
       )}
     </div>
   )

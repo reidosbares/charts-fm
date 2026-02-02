@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { Link } from '@/i18n/routing'
 import { MajorDriver } from '@/lib/chart-deep-dive'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
@@ -36,7 +37,12 @@ function QuickStats({ totalVS, totalPlays, majorDriver, chartMode, numberOneTrac
         {majorDriver && (
           <div>
             <div className="text-xs md:text-sm text-gray-600 mb-1">{t('majorChartDriver')}</div>
-            <div className="text-base md:text-lg font-semibold text-gray-900 break-words">{majorDriver.name}</div>
+            <Link 
+              href={`/u/${encodeURIComponent(majorDriver.lastfmUsername)}`}
+              className="text-base md:text-lg font-semibold text-[var(--theme-primary)] hover:text-[var(--theme-primary-dark)] active:text-[var(--theme-primary-dark)] transition-colors break-words touch-manipulation"
+            >
+              {majorDriver.name}
+            </Link>
             <div className="text-xs md:text-sm text-gray-500">
               {chartMode === 'plays_only' ? (
                 <>{majorDriver.contribution.toLocaleString()} plays</>

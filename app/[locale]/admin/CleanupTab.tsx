@@ -13,14 +13,42 @@ interface RecalculateResult {
   details: Array<{ groupId: string; groupName: string; weeksProcessed: number }>
 }
 
+interface MajorDriverCacheResult {
+  clearedCount: number
+}
+
+interface RecalculateMajorDriversResult {
+  totalGroupsProcessed: number
+  totalGroupsSkipped: number
+  totalEntriesProcessed: number
+  details: Array<{
+    groupId: string
+    groupName: string
+    entriesProcessed: number
+    skipped: boolean
+    reason?: string
+  }>
+}
+
 type CleanupType = 'userChartEntryVS' | 'userWeeklyStats' | null
 
 export default function CleanupTab() {
   const [isLoading, setIsLoading] = useState(false)
   const [isRecalculating, setIsRecalculating] = useState(false)
+  const [isClearingMajorDriverCache, setIsClearingMajorDriverCache] = useState(false)
+  const [isRecalculatingMajorDrivers, setIsRecalculatingMajorDrivers] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<{ type: CleanupType; result: CleanupResult } | null>(null)
   const [recalculateSuccess, setRecalculateSuccess] = useState<RecalculateResult | null>(null)
+  const [majorDriverCacheSuccess, setMajorDriverCacheSuccess] = useState<MajorDriverCacheResult | null>(null)
+  const [majorDriversRecalculateSuccess, setMajorDriversRecalculateSuccess] = useState<RecalculateMajorDriversResult | null>(null)
+
+  const clearAllSuccess = () => {
+    setSuccess(null)
+    setRecalculateSuccess(null)
+    setMajorDriverCacheSuccess(null)
+    setMajorDriversRecalculateSuccess(null)
+  }
 
   const handleCleanup = async (type: 'userChartEntryVS' | 'userWeeklyStats') => {
     const typeName = type === 'userChartEntryVS' ? 'UserChartEntryVS' : 'UserWeeklyStats'
@@ -29,8 +57,7 @@ export default function CleanupTab() {
     }
 
     setError(null)
-    setSuccess(null)
-    setRecalculateSuccess(null)
+    clearAllSuccess()
     setIsLoading(true)
 
     try {
@@ -65,8 +92,7 @@ export default function CleanupTab() {
     }
 
     setError(null)
-    setSuccess(null)
-    setRecalculateSuccess(null)
+    clearAllSuccess()
     setIsRecalculating(true)
 
     try {
@@ -88,6 +114,68 @@ export default function CleanupTab() {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setIsRecalculating(false)
+    }
+  }
+
+  const handleClearMajorDriverCache = async () => {
+    if (!confirm('Are you sure you want to clear all cached major driver data? The values will be recalculated on next access.')) {
+      return
+    }
+
+    setError(null)
+    clearAllSuccess()
+    setIsClearingMajorDriverCache(true)
+
+    try {
+      const response = await fetch('/api/admin/cleanup/major-driver-cache', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to clear major driver cache')
+      }
+
+      setMajorDriverCacheSuccess(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setIsClearingMajorDriverCache(false)
+    }
+  }
+
+  const handleRecalculateCurrentMajorDrivers = async () => {
+    if (!confirm('This will recalculate major drivers for currently charting entries of all groups. This may take a while. Continue?')) {
+      return
+    }
+
+    setError(null)
+    clearAllSuccess()
+    setIsRecalculatingMajorDrivers(true)
+
+    try {
+      const response = await fetch('/api/admin/recalculate-current-major-drivers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to recalculate major drivers')
+      }
+
+      setMajorDriversRecalculateSuccess(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setIsRecalculatingMajorDrivers(false)
     }
   }
 
@@ -137,6 +225,41 @@ export default function CleanupTab() {
                 {recalculateSuccess.details.map((d) => (
                   <li key={d.groupId}>
                     {d.groupName}: {d.weeksProcessed} weeks
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+        </div>
+      )}
+
+      {majorDriverCacheSuccess && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+          <p className="font-semibold mb-2">Major driver cache cleared successfully!</p>
+          <p>
+            Cleared cached data for {majorDriverCacheSuccess.clearedCount.toLocaleString()} chart entries.
+            Values will be recalculated on next access.
+          </p>
+        </div>
+      )}
+
+      {majorDriversRecalculateSuccess && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+          <p className="font-semibold mb-2">Major drivers recalculated successfully!</p>
+          <p className="mb-2">
+            Processed {majorDriversRecalculateSuccess.totalGroupsProcessed} groups, 
+            {majorDriversRecalculateSuccess.totalEntriesProcessed.toLocaleString()} entries.
+            {majorDriversRecalculateSuccess.totalGroupsSkipped > 0 && (
+              <> Skipped {majorDriversRecalculateSuccess.totalGroupsSkipped} groups (solo or no data).</>
+            )}
+          </p>
+          {majorDriversRecalculateSuccess.details.length > 0 && (
+            <details className="mt-2">
+              <summary className="cursor-pointer text-sm font-medium">View details</summary>
+              <ul className="mt-2 text-sm space-y-1 max-h-48 overflow-y-auto">
+                {majorDriversRecalculateSuccess.details.map((d) => (
+                  <li key={d.groupId} className={d.skipped ? 'text-gray-500' : ''}>
+                    {d.groupName}: {d.skipped ? `Skipped (${d.reason})` : `${d.entriesProcessed} entries`}
                   </li>
                 ))}
               </ul>
@@ -231,6 +354,66 @@ export default function CleanupTab() {
               className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isRecalculating ? 'Recalculating...' : 'Recalculate All Member Stats'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Clear Major Driver Cache */}
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Clear Major Driver Cache</h3>
+            <p className="text-sm text-gray-600 mb-3">
+              Clear the cached &quot;Major Chart Driver&quot; data for all chart entries. This forces 
+              recalculation of the major driver (top contributor) when drill-down pages are accessed.
+            </p>
+            <ul className="list-disc list-inside space-y-1 text-gray-600 text-sm">
+              <li>Clears cached major driver user, name, VS, and plays values</li>
+              <li>Use after fixing bugs in major driver calculation logic</li>
+              <li>Values will be lazily recalculated on next page access</li>
+              <li>Safe to run at any time - does not affect chart data</li>
+            </ul>
+          </div>
+
+          <div className="pt-4 border-t border-gray-200">
+            <button
+              type="button"
+              onClick={handleClearMajorDriverCache}
+              disabled={isClearingMajorDriverCache || isLoading || isRecalculating || isRecalculatingMajorDrivers}
+              className="w-full bg-orange-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isClearingMajorDriverCache ? 'Clearing cache...' : 'Clear Major Driver Cache'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Recalculate Current Major Drivers */}
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Recalculate Current Major Drivers</h3>
+            <p className="text-sm text-gray-600 mb-3">
+              Calculate major drivers for all entries currently charting across all groups. 
+              This is useful after deploying the feature or to populate data for the impact section on records pages.
+            </p>
+            <ul className="list-disc list-inside space-y-1 text-gray-600 text-sm">
+              <li>Processes entries from the most recent chart week of each group</li>
+              <li>Skips solo groups (no major driver needed)</li>
+              <li>May take a while depending on total number of entries</li>
+              <li>Safe to run at any time - does not affect chart data</li>
+            </ul>
+          </div>
+
+          <div className="pt-4 border-t border-gray-200">
+            <button
+              type="button"
+              onClick={handleRecalculateCurrentMajorDrivers}
+              disabled={isRecalculatingMajorDrivers || isLoading || isRecalculating || isClearingMajorDriverCache}
+              className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isRecalculatingMajorDrivers ? 'Recalculating...' : 'Recalculate Current Major Drivers'}
             </button>
           </div>
         </div>

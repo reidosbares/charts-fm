@@ -122,7 +122,13 @@
     "viewGroup": "View group",
     "noGroups": "No groups to show.",
     "privateGroupBadge": "Private",
-    "noBio": "No bio yet."
+    "noBio": "No bio yet.",
+    "contributionSummary": "Your contribution",
+    "memberAwards": "Member awards",
+    "featuredArtistPlaceholder": "Pick an artist",
+    "editFeaturedArtist": "Change featured artist",
+    "featuredArtistNone": "None",
+    "featuredArtistVS": "{value} VS"
   },
   "navbar": {
     "home": "Home",
@@ -1023,7 +1029,8 @@
     "client": {
       "track": "Track",
       "album": "Album",
-      "by": "by"
+      "by": "by",
+      "majorDriverClaimed": "Major driver claimed by {name}!"
     },
     "timeline": {
       "title": "Chart History",

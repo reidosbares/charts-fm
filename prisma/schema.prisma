@@ -24,6 +24,7 @@ model User {
   updatedAt                     DateTime                       @updatedAt
   quickAccessGroupId            String?
   highlightedGroupId           String?
+  highlightedGroupDriverArtistKey String?
   emailVerificationToken        String?
   emailVerificationTokenExpires DateTime?
   emailVerified                 Boolean                        @default(false)

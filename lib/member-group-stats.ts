@@ -340,6 +340,32 @@ export async function getEntriesAsMainDriverList(
 }
 
 /**
+ * Total VS a user contributed to a specific entry in a group.
+ * Only counts VS from weeks where the entry actually appeared in the group's chart.
+ */
+export async function getTotalVSForEntryInGroup(
+  groupId: string,
+  userId: string,
+  chartType: ChartType,
+  entryKey: string
+): Promise<number> {
+  const result = await prisma.$queryRaw<Array<{ total_vs: number | null }>>`
+    SELECT COALESCE(SUM(ucvs."vibeScore"), 0)::float AS total_vs
+    FROM "user_chart_entry_vs" ucvs
+    INNER JOIN "group_chart_entries" gce ON
+      gce."groupId" = ${groupId}::text
+      AND gce."weekStart" = ucvs."weekStart"
+      AND gce."chartType" = ucvs."chartType"
+      AND gce."entryKey" = ucvs."entryKey"
+    WHERE ucvs."userId" = ${userId}::text
+      AND ucvs."chartType" = ${chartType}
+      AND ucvs."entryKey" = ${entryKey}
+  `
+  const total = result[0]?.total_vs
+  return total != null ? total : 0
+}
+
+/**
  * Get full personalized member stats for a user in a group (stored + main driver count).
  */
 export async function getPersonalizedMemberStats(

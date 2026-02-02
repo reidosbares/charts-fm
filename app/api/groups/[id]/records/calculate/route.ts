@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { calculateGroupRecords } from '@/lib/group-records'
+import { calculateTopMajorDrivers } from '@/lib/chart-deep-dive'
 import type { ChartType } from '@/lib/chart-slugs'
 
 /**
@@ -49,7 +50,40 @@ export async function POST(
       },
     })
 
-    return NextResponse.json({ success: true, message: 'Records calculation completed' })
+    // Check if this is a solo group (only 1 member)
+    const memberCount = await prisma.groupMember.count({
+      where: { groupId },
+    })
+
+    // Skip major driver calculation for solo groups - no impact section needed
+    if (memberCount <= 1) {
+      return NextResponse.json({
+        success: true,
+        message: 'Records calculation completed (solo group - skipped major drivers)',
+        majorDrivers: { processed: 0, byChartType: { artists: 0, tracks: 0, albums: 0 }, skipped: true },
+      })
+    }
+
+    // Calculate major drivers for TOP 10 entries of each chart type
+    // This ensures the "impact" section on the records page has accurate data
+    // for the most prominent entries. Less important entries will have their
+    // major drivers calculated on-demand when users visit drill-down pages.
+    const group = await prisma.group.findUnique({
+      where: { id: groupId },
+      select: { chartMode: true },
+    })
+    const chartMode = group?.chartMode || 'vs'
+
+    const driverResult = await calculateTopMajorDrivers(groupId, chartMode)
+    
+    return NextResponse.json({
+      success: true,
+      message: 'Records calculation completed',
+      majorDrivers: {
+        processed: driverResult.processed,
+        byChartType: driverResult.byChartType,
+      },
+    })
   } catch (error: any) {
     console.error(`[Records] Error during calculation for group ${params.id}:`, error)
     

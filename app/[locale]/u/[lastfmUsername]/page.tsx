@@ -6,6 +6,21 @@ import SafeImage from '@/components/SafeImage'
 import { Link } from '@/i18n/routing'
 import PersonalListeningOverview from '@/components/dashboard/PersonalListeningOverview'
 import { getSession } from '@/lib/auth'
+import { getGroupRecords } from '@/lib/group-records'
+import { getPersonalizedMemberStats, getTotalVSForEntryInGroup } from '@/lib/member-group-stats'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChartLine, faTrophy, faStar } from '@fortawesome/free-solid-svg-icons'
+import HighlightedGroupFeaturedArtist from '@/components/profile/HighlightedGroupFeaturedArtist'
+
+// Same award colors as RecordBlock on the records page
+const AWARD_BADGE_CLASSES: Record<string, string> = {
+  vsVirtuoso: 'bg-gradient-to-br from-slate-50 to-gray-50 border-slate-300 text-slate-700',
+  playPowerhouse: 'bg-gradient-to-br from-red-50 to-rose-50 border-red-300 text-red-700',
+  chartConnoisseur: 'bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-300 text-yellow-700',
+  hiddenGemHunter: 'bg-gradient-to-br from-cyan-50 to-blue-50 border-cyan-300 text-cyan-700',
+  consistencyChampion: 'bg-gradient-to-br from-gray-50 to-slate-50 border-gray-400 text-gray-800',
+  tasteMaker: 'bg-gradient-to-br from-pink-50 to-fuchsia-50 border-pink-300 text-pink-700',
+}
 
 export async function generateMetadata({
   params,
@@ -59,6 +74,8 @@ export default async function PublicUserProfilePage({
 }) {
   const { lastfmUsername } = await params
   const t = await getTranslations('profilePublic')
+  const tMyContribution = await getTranslations('records.myContribution')
+  const tUserRecords = await getTranslations('records.userRecords')
 
   const username = decodeURIComponent(lastfmUsername).trim()
   if (!username) notFound()
@@ -75,6 +92,7 @@ export default async function PublicUserProfilePage({
       showProfileStats: true,
       showProfileGroups: true,
       highlightedGroupId: true,
+      highlightedGroupDriverArtistKey: true,
     },
   })
 
@@ -125,6 +143,45 @@ export default async function PublicUserProfilePage({
   const highlightedGroup =
     user.highlightedGroupId && user.showProfileGroups
       ? visibleGroups.find((g) => g.id === user.highlightedGroupId) ?? null
+      : null
+
+  // Contribution summary and member awards for the profile user in their highlighted group
+  const groupRecords = highlightedGroup ? await getGroupRecords(highlightedGroup.id) : null
+  const recordsData =
+    groupRecords?.status === 'completed' && groupRecords.records
+      ? (groupRecords.records as Record<string, { userId?: string; name?: string; value?: number }>)
+      : null
+  const userAwardKeys: string[] = []
+  if (recordsData && user.id) {
+    const awardFieldToKey: Record<string, string> = {
+      userMostVS: 'vsVirtuoso',
+      userMostPlays: 'playPowerhouse',
+      userMostEntries: 'chartConnoisseur',
+      userLeastEntries: 'hiddenGemHunter',
+      userMostWeeksContributing: 'consistencyChampion',
+      userTasteMaker: 'tasteMaker',
+    }
+    for (const [field, key] of Object.entries(awardFieldToKey)) {
+      if (recordsData[field]?.userId === user.id) userAwardKeys.push(key)
+    }
+  }
+  const contributionStats =
+    highlightedGroup && user.id
+      ? await getPersonalizedMemberStats(highlightedGroup.id, user.id)
+      : null
+
+  const driverArtists =
+    contributionStats?.driverEntries
+      ?.filter((e) => e.chartType === 'artists')
+      .map((e) => ({ entryKey: e.entryKey, name: e.name, slug: e.slug })) ?? []
+  const featuredEntry =
+    user.highlightedGroupDriverArtistKey && driverArtists.length > 0
+      ? driverArtists.find((a) => a.entryKey === user.highlightedGroupDriverArtistKey) ?? null
+      : null
+
+  const featuredEntryVS =
+    highlightedGroup && user.id && featuredEntry
+      ? await getTotalVSForEntryInGroup(highlightedGroup.id, user.id, 'artists', featuredEntry.entryKey)
       : null
 
   const lastfmUrl = `https://www.last.fm/user/${encodeURIComponent(user.lastfmUsername)}`
@@ -188,7 +245,7 @@ export default async function PublicUserProfilePage({
               <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">{t('groupsTitle')}</h2>
               {highlightedGroup && (
                 <section
-                  className={`mb-6 rounded-3xl overflow-hidden border-2 shadow-lg ${themeClass}`}
+                  className={`mb-6 rounded-3xl overflow-visible border-2 shadow-lg ${themeClass}`}
                   style={{
                     background: 'linear-gradient(135deg, var(--theme-background-from), var(--theme-background-to))',
                     borderColor: 'var(--theme-border)',
@@ -198,9 +255,6 @@ export default async function PublicUserProfilePage({
                     href={`/groups/${highlightedGroup.id}`}
                     className="block p-6 md:p-8 hover:opacity-95 transition-opacity"
                   >
-                    <p className="text-xs md:text-sm font-semibold uppercase tracking-wide mb-2" style={{ color: 'var(--theme-text)' }}>
-                      {t('highlightedGroupSection')}
-                    </p>
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden flex-shrink-0 border-2 shadow-md" style={{ borderColor: 'var(--theme-border)' }}>
                         <SafeImage
@@ -225,6 +279,82 @@ export default async function PublicUserProfilePage({
                       </div>
                     </div>
                   </Link>
+                  {(contributionStats || userAwardKeys.length > 0) && (
+                    <div
+                      className="px-6 md:px-8 pb-6 md:pb-8 pt-0"
+                      style={{ color: 'var(--theme-text)' }}
+                    >
+                      {contributionStats && (
+                        <div className={userAwardKeys.length > 0 ? 'mb-5' : undefined}>
+                          <div className="flex flex-wrap gap-4 md:gap-6 items-center">
+                            <div className="flex flex-wrap gap-4 md:gap-6">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'var(--theme-primary)' }}>
+                                <FontAwesomeIcon icon={faChartLine} className="text-sm" style={{ color: 'var(--theme-button-text)' }} />
+                              </div>
+                              <div>
+                                <p className="text-lg md:text-xl font-bold tabular-nums">
+                                  {contributionStats.totalVS.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+                                </p>
+                                <p className="text-xs opacity-90">{tMyContribution('totalVS')}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-amber-500/20">
+                                <FontAwesomeIcon icon={faTrophy} className="text-sm text-amber-600" />
+                              </div>
+                              <div>
+                                <p className="text-lg md:text-xl font-bold tabular-nums">{contributionStats.weeksAsMVP}</p>
+                                <p className="text-xs opacity-90">{tMyContribution('weeksAsMVP')}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-emerald-500/20">
+                                <FontAwesomeIcon icon={faStar} className="text-sm text-emerald-600" />
+                              </div>
+                              <div>
+                                <p className="text-lg md:text-xl font-bold tabular-nums">
+                                  {contributionStats.byChartType.artists.entriesAsMainDriver +
+                                    contributionStats.byChartType.tracks.entriesAsMainDriver +
+                                    contributionStats.byChartType.albums.entriesAsMainDriver}
+                                </p>
+                                <p className="text-xs opacity-90">{tMyContribution('entriesAsMainDriver')}</p>
+                              </div>
+                            </div>
+                            </div>
+                          </div>
+                          {/* Featured artist - always below stats */}
+                          {driverArtists.length > 0 && (featuredEntry || isSelf) && (
+                            <div className="mt-4">
+                              <HighlightedGroupFeaturedArtist
+                                groupId={highlightedGroup.id}
+                                featuredEntry={featuredEntry}
+                                featuredEntryVS={featuredEntryVS ?? undefined}
+                                driverArtists={driverArtists}
+                                isSelf={!!isSelf}
+                                currentEntryKey={user.highlightedGroupDriverArtistKey}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      {userAwardKeys.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {userAwardKeys.map((key) => {
+                            const cls = AWARD_BADGE_CLASSES[key] ?? 'bg-white/80 border-[var(--theme-border)] text-[var(--theme-text)]'
+                            return (
+                              <span
+                                key={key}
+                                className={`inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold border ${cls}`}
+                              >
+                                {tUserRecords(key)}
+                              </span>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </section>
               )}
               {otherGroups.length === 0 ? (

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { routing } from '@/i18n/routing'
+import { getPersonalizedMemberStats } from '@/lib/member-group-stats'
 import { generateVerificationToken, sendVerificationEmail } from '@/lib/email'
 import { detectLocale } from '@/lib/locale-utils'
 
@@ -27,6 +28,7 @@ export async function GET() {
       showProfileStats: true,
       showProfileGroups: true,
       highlightedGroupId: true,
+      highlightedGroupDriverArtistKey: true,
       locale: true,
       emailVerified: true,
     },
@@ -64,7 +66,7 @@ export async function PATCH(request: Request) {
   }
 
   const body = await request.json()
-  const { name, email, image, locale, bio, profilePublic, showProfileStats, showProfileGroups, highlightedGroupId } = body
+  const { name, email, image, locale, bio, profilePublic, showProfileStats, showProfileGroups, highlightedGroupId, highlightedGroupDriverArtistKey } = body
 
   // Validate name if provided
   if (name !== undefined) {
@@ -168,6 +170,27 @@ export async function PATCH(request: Request) {
     }
   }
 
+  // Validate highlightedGroupDriverArtistKey if provided (must be a driver artist in user's highlighted group)
+  if (highlightedGroupDriverArtistKey !== undefined) {
+    if (highlightedGroupDriverArtistKey !== null && typeof highlightedGroupDriverArtistKey !== 'string') {
+      return NextResponse.json({ error: 'highlightedGroupDriverArtistKey must be a string or null' }, { status: 400 })
+    }
+    const trimmedKey = typeof highlightedGroupDriverArtistKey === 'string' ? highlightedGroupDriverArtistKey.trim() : null
+    if (trimmedKey) {
+      const groupId = user.highlightedGroupId
+      if (!groupId) {
+        return NextResponse.json({ error: 'Set a highlighted group first' }, { status: 400 })
+      }
+      const stats = await getPersonalizedMemberStats(groupId, user.id)
+      const driverArtistKeys = new Set(
+        (stats?.driverEntries ?? []).filter((e) => e.chartType === 'artists').map((e) => e.entryKey)
+      )
+      if (!driverArtistKeys.has(trimmedKey)) {
+        return NextResponse.json({ error: 'Artist must be one of your main-driver artists in this group' }, { status: 400 })
+      }
+    }
+  }
+
   // Validate email if provided
   let emailChanged = false
   let newEmail = user.email
@@ -217,6 +240,10 @@ export async function PATCH(request: Request) {
   const nameChanged = name !== undefined && newNameValue !== currentNameValue
 
   // Prepare update data
+  const groupIdChanging =
+    highlightedGroupId !== undefined &&
+    String(highlightedGroupId ?? '').trim() !== String(user.highlightedGroupId ?? '').trim()
+
   const updateData: {
     name?: string | null
     email?: string
@@ -227,6 +254,7 @@ export async function PATCH(request: Request) {
     showProfileStats?: boolean
     showProfileGroups?: boolean
     highlightedGroupId?: string | null
+    highlightedGroupDriverArtistKey?: string | null
     emailVerified?: boolean
     emailVerificationToken?: string | null
     emailVerificationTokenExpires?: Date | null
@@ -241,6 +269,13 @@ export async function PATCH(request: Request) {
     ...(showProfileGroups !== undefined && showProfileGroups !== null && { showProfileGroups }),
     ...(highlightedGroupId !== undefined && {
       highlightedGroupId: typeof highlightedGroupId === 'string' && highlightedGroupId.trim() ? highlightedGroupId.trim() : null,
+      ...(groupIdChanging && { highlightedGroupDriverArtistKey: null }),
+    }),
+    ...(highlightedGroupDriverArtistKey !== undefined && !groupIdChanging && {
+      highlightedGroupDriverArtistKey:
+        typeof highlightedGroupDriverArtistKey === 'string' && highlightedGroupDriverArtistKey.trim()
+          ? highlightedGroupDriverArtistKey.trim()
+          : null,
     }),
   }
 
@@ -274,6 +309,7 @@ export async function PATCH(request: Request) {
         profilePublic: true,
         showProfileStats: true,
         showProfileGroups: true,
+        highlightedGroupDriverArtistKey: true,
         locale: true,
       },
     })

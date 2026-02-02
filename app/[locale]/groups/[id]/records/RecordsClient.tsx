@@ -851,8 +851,8 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
                 })}
               </p>
             )}
-            {/* My contribution - at bottom of Members tab */}
-            {activeTab === 'users' && isMember && userId && (
+            {/* My contribution - at bottom of Members tab (hidden for solo groups) */}
+            {activeTab === 'users' && isMember && userId && memberCount > 1 && (
               <MyContributionCard groupId={groupId} userId={userId} />
             )}
           </>

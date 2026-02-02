@@ -122,7 +122,13 @@
     "viewGroup": "Ver comunidade",
     "noGroups": "Nenhuma comunidade para mostrar.",
     "privateGroupBadge": "Privada",
-    "noBio": "Sem bio ainda."
+    "noBio": "Sem bio ainda.",
+    "contributionSummary": "Sua contribuição",
+    "memberAwards": "Destaques dos membros",
+    "featuredArtistPlaceholder": "Escolher um artista",
+    "editFeaturedArtist": "Alterar artista em destaque",
+    "featuredArtistNone": "Nenhum",
+    "featuredArtistVS": "{value} VS"
   },
   "navbar": {
     "home": "Início",
@@ -1023,7 +1029,8 @@
     "client": {
       "track": "Música",
       "album": "Álbum",
-      "by": "por"
+      "by": "por",
+      "majorDriverClaimed": "O principal ouvinte mudou!"
     },
     "timeline": {
       "title": "Desempenho histórico",

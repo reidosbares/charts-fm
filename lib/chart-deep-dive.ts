@@ -29,8 +29,15 @@ export interface EntryStats {
 
 export interface MajorDriver {
   userId: string
+  lastfmUsername: string
   name: string
   contribution: number
+}
+
+export interface MajorDriverResult {
+  majorDriver: MajorDriver | null
+  /** True if the major driver was just calculated (not retrieved from cache) */
+  newlyCalculated: boolean
 }
 
 export interface ArtistChartEntry {
@@ -323,6 +330,7 @@ export async function getEntryStats(
 
 /**
  * Recalculate major driver efficiently using raw SQL
+ * Only counts VS from weeks where the entry actually appeared in the group's chart
  */
 async function recalculateMajorDriverEfficient(
   groupId: string,
@@ -332,20 +340,26 @@ async function recalculateMajorDriverEfficient(
 ): Promise<MajorDriver | null> {
   const result = await prisma.$queryRaw<Array<{
     userId: string
+    lastfmUsername: string
     name: string
     totalVS: number
     totalPlays: number
   }>>`
     SELECT 
       u.id as "userId",
+      u."lastfmUsername" as "lastfmUsername",
       COALESCE(u.name, u."lastfmUsername") as name,
       COALESCE(SUM(ucvs."vibeScore"), 0)::float as "totalVS",
       COALESCE(SUM(ucvs.playcount), 0)::integer as "totalPlays"
     FROM "user_chart_entry_vs" ucvs
-    INNER JOIN "group_members" gm ON ucvs."userId" = gm."userId"
+    INNER JOIN "group_chart_entries" gce ON
+      gce."groupId" = ${groupId}::text
+      AND gce."weekStart" = ucvs."weekStart"
+      AND gce."chartType" = ucvs."chartType"
+      AND gce."entryKey" = ucvs."entryKey"
+    INNER JOIN "group_members" gm ON ucvs."userId" = gm."userId" AND gm."groupId" = ${groupId}::text
     INNER JOIN "users" u ON ucvs."userId" = u.id
-    WHERE gm."groupId" = ${groupId}::text
-      AND ucvs."chartType" = ${chartType}
+    WHERE ucvs."chartType" = ${chartType}
       AND ucvs."entryKey" = ${entryKey}
     GROUP BY u.id, u.name, u."lastfmUsername"
     ORDER BY 
@@ -361,6 +375,7 @@ async function recalculateMajorDriverEfficient(
   const top = result[0]
   return {
     userId: top.userId,
+    lastfmUsername: top.lastfmUsername,
     name: top.name || 'Unknown',
     contribution: chartMode === 'vs' || chartMode === 'vs_weighted' ? top.totalVS : top.totalPlays,
   }
@@ -368,13 +383,14 @@ async function recalculateMajorDriverEfficient(
 
 /**
  * Get major driver with lazy cache population
+ * Returns the major driver and whether it was newly calculated (vs retrieved from cache)
  */
 export async function getEntryMajorDriver(
   groupId: string,
   chartType: ChartType,
   entryKey: string,
   chartMode: string
-): Promise<MajorDriver | null> {
+): Promise<MajorDriverResult> {
   // Check cache first
   const stats = await prisma.chartEntryStats.findUnique({
     where: {
@@ -384,14 +400,25 @@ export async function getEntryMajorDriver(
         entryKey,
       },
     },
+    include: {
+      majorDriver: {
+        select: {
+          lastfmUsername: true,
+        },
+      },
+    },
   })
 
   // If cache exists and major driver is not stale, return cached value
-  if (stats && stats.majorDriverLastUpdated && stats.majorDriverUserId) {
+  if (stats && stats.majorDriverLastUpdated && stats.majorDriverUserId && stats.majorDriver) {
     return {
-      userId: stats.majorDriverUserId,
-      name: stats.majorDriverName || 'Unknown',
-      contribution: chartMode === 'vs' || chartMode === 'vs_weighted' ? (stats.majorDriverVS || 0) : (stats.majorDriverPlays || 0),
+      majorDriver: {
+        userId: stats.majorDriverUserId,
+        lastfmUsername: stats.majorDriver.lastfmUsername,
+        name: stats.majorDriverName || 'Unknown',
+        contribution: chartMode === 'vs' || chartMode === 'vs_weighted' ? (stats.majorDriverVS || 0) : (stats.majorDriverPlays || 0),
+      },
+      newlyCalculated: false,
     }
   }
 
@@ -450,7 +477,7 @@ export async function getEntryMajorDriver(
     })
   }
 
-  return majorDriver
+  return { majorDriver, newlyCalculated: true }
 }
 
 /**
@@ -967,5 +994,73 @@ export async function invalidateEntryStatsCacheBatch(
     }
   }
   
+}
+
+/**
+ * Calculate major drivers for the TOP 10 entries of each chart type that don't have them cached yet.
+ * This is called after records calculation to ensure the "impact" section
+ * on the records page has accurate data for the most important entries.
+ * Less prominent entries will have their major drivers calculated on-demand
+ * when users visit their drill-down pages.
+ *
+ * @param groupId - The group to calculate drivers for
+ * @param chartMode - The chart mode ('vs', 'vs_weighted', or 'plays_only')
+ * @returns Number of entries processed per chart type
+ */
+export async function calculateTopMajorDrivers(
+  groupId: string,
+  chartMode: string
+): Promise<{ processed: number; byChartType: { artists: number; tracks: number; albums: number } }> {
+  const chartTypes: ChartType[] = ['artists', 'tracks', 'albums']
+  const byChartType = { artists: 0, tracks: 0, albums: 0 }
+  let totalProcessed = 0
+
+  for (const chartType of chartTypes) {
+    // Get TOP 10 entries by total weeks charting (most prominent entries)
+    // that don't have major driver calculated yet
+    const topEntries = await prisma.chartEntryStats.findMany({
+      where: {
+        groupId,
+        chartType,
+        majorDriverLastUpdated: null,
+      },
+      orderBy: [
+        { totalWeeksCharting: 'desc' },
+        { totalVS: 'desc' },
+      ],
+      select: {
+        chartType: true,
+        entryKey: true,
+      },
+      take: 10,
+    })
+
+    // Process entries in parallel
+    const results = await Promise.all(
+      topEntries.map(async (entry) => {
+        try {
+          await getEntryMajorDriver(
+            groupId,
+            entry.chartType as ChartType,
+            entry.entryKey,
+            chartMode
+          )
+          return true
+        } catch (error) {
+          console.error(
+            `[MajorDriver] Error calculating driver for ${entry.chartType}/${entry.entryKey}:`,
+            error
+          )
+          return false
+        }
+      })
+    )
+
+    const successCount = results.filter(Boolean).length
+    byChartType[chartType] = successCount
+    totalProcessed += successCount
+  }
+
+  return { processed: totalProcessed, byChartType }
 }
 
