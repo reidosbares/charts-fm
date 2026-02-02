@@ -245,87 +245,180 @@ export default async function PublicUserProfilePage({
               <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">{t('groupsTitle')}</h2>
               {highlightedGroup && (
                 <section
-                  className={`mb-6 rounded-3xl overflow-visible border-2 shadow-lg ${themeClass}`}
+                  className={`mb-5 rounded-2xl overflow-hidden relative ${themeClass}`}
                   style={{
-                    background: 'linear-gradient(135deg, var(--theme-background-from), var(--theme-background-to))',
-                    borderColor: 'var(--theme-border)',
+                    background: `
+                      linear-gradient(135deg, var(--theme-background-from) 0%, var(--theme-background-to) 50%, var(--theme-background-from) 100%)
+                    `,
+                    boxShadow: `
+                      0 4px 6px -1px rgba(0, 0, 0, 0.06),
+                      0 8px 16px -4px rgba(0, 0, 0, 0.08),
+                      0 0 0 1px var(--theme-border),
+                      inset 0 1px 0 0 rgba(255, 255, 255, 0.2)
+                    `,
                   }}
                 >
+                  {/* Decorative gradient overlay */}
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background: `
+                        radial-gradient(ellipse 80% 50% at 20% 0%, var(--theme-primary) 0%, transparent 50%),
+                        radial-gradient(ellipse 60% 40% at 80% 100%, var(--theme-primary) 0%, transparent 40%)
+                      `,
+                      opacity: 0.06,
+                    }}
+                  />
+                  {/* Top highlight line */}
+                  <div
+                    className="absolute top-0 left-6 right-6 h-px"
+                    style={{
+                      background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent)',
+                    }}
+                  />
                   <Link
                     href={`/groups/${highlightedGroup.id}`}
-                    className="block p-6 md:p-8 hover:opacity-95 transition-opacity"
+                    className="block px-4 py-3 md:px-5 md:py-4 relative group"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden flex-shrink-0 border-2 shadow-md" style={{ borderColor: 'var(--theme-border)' }}>
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="rounded-xl overflow-hidden flex-shrink-0 relative"
+                        style={{
+                          width: '52px',
+                          height: '52px',
+                          boxShadow: `
+                            0 6px 12px -3px rgba(0, 0, 0, 0.12),
+                            0 0 0 1.5px var(--theme-border),
+                            inset 0 0 0 1px rgba(255, 255, 255, 0.1)
+                          `,
+                        }}
+                      >
                         <SafeImage
                           src={highlightedGroup.image}
                           alt={highlightedGroup.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       </div>
-                      <div className="min-w-0">
-                        <h2 className="text-xl md:text-2xl font-bold truncate" style={{ color: 'var(--theme-primary-dark)' }}>
+                      <div className="min-w-0 flex-1">
+                        <h2
+                          className="text-lg md:text-xl font-bold truncate transition-opacity duration-200 group-hover:opacity-80"
+                          style={{ color: 'var(--theme-primary-dark)' }}
+                        >
                           {highlightedGroup.name}
                         </h2>
                         <span
-                          className="inline-block mt-2 px-4 py-2 rounded-xl font-bold text-sm"
+                          className="inline-flex items-center mt-1.5 px-3 py-1.5 rounded-lg font-semibold text-xs text-white transition-all duration-200 group-hover:translate-x-0.5"
                           style={{
-                            backgroundColor: 'var(--theme-primary)',
-                            color: 'var(--theme-button-text)',
+                            background: `linear-gradient(135deg, var(--theme-primary), var(--theme-primary-dark))`,
+                            boxShadow: '0 2px 6px -2px rgba(0, 0, 0, 0.2)',
                           }}
                         >
                           {t('viewGroup')}
+                          <svg className="w-3 h-3 ml-1 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                          </svg>
                         </span>
                       </div>
                     </div>
                   </Link>
                   {(contributionStats || userAwardKeys.length > 0) && (
                     <div
-                      className="px-6 md:px-8 pb-6 md:pb-8 pt-0"
+                      className="px-4 md:px-5 pb-4 md:pb-5 pt-0 relative"
                       style={{ color: 'var(--theme-text)' }}
                     >
+                      {/* Subtle divider */}
+                      <div
+                        className="absolute top-0 left-4 right-4 md:left-5 md:right-5 h-px"
+                        style={{
+                          background: 'linear-gradient(90deg, transparent, var(--theme-border), transparent)',
+                        }}
+                      />
                       {contributionStats && (
-                        <div className={userAwardKeys.length > 0 ? 'mb-5' : undefined}>
-                          <div className="flex flex-wrap gap-4 md:gap-6 items-center">
-                            <div className="flex flex-wrap gap-4 md:gap-6">
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <div className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'var(--theme-primary)' }}>
-                                <FontAwesomeIcon icon={faChartLine} className="text-sm" style={{ color: 'var(--theme-button-text)' }} />
+                        <div className={`pt-3 ${userAwardKeys.length > 0 ? 'mb-3' : ''}`}>
+                          <div className="flex flex-wrap gap-2">
+                            <div
+                              className="flex items-center gap-2.5 px-3 py-2 rounded-xl min-w-0 flex-1 sm:flex-initial"
+                              style={{
+                                background: 'rgba(255, 255, 255, 0.5)',
+                                backdropFilter: 'blur(8px)',
+                                boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.04)',
+                              }}
+                            >
+                              <div
+                                className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+                                style={{
+                                  background: `linear-gradient(135deg, var(--theme-primary), var(--theme-primary-dark))`,
+                                  boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.12)',
+                                }}
+                              >
+                                <FontAwesomeIcon icon={faChartLine} className="text-xs" style={{ color: 'var(--theme-button-text)' }} />
                               </div>
                               <div>
-                                <p className="text-lg md:text-xl font-bold tabular-nums">
+                                <p className="text-base md:text-lg font-bold tabular-nums leading-tight">
                                   {contributionStats.totalVS.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                                 </p>
-                                <p className="text-xs opacity-90">{tMyContribution('totalVS')}</p>
+                                <p className="text-[10px] opacity-70 font-medium leading-tight">{tMyContribution('totalVS')}</p>
                               </div>
                             </div>
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <div className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-amber-500/20">
-                                <FontAwesomeIcon icon={faTrophy} className="text-sm text-amber-600" />
+                            <div
+                              className="flex items-center gap-2.5 px-3 py-2 rounded-xl min-w-0 flex-1 sm:flex-initial"
+                              style={{
+                                background: 'rgba(255, 255, 255, 0.5)',
+                                backdropFilter: 'blur(8px)',
+                                boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.04)',
+                              }}
+                            >
+                              <div
+                                className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+                                style={{
+                                  background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                                  boxShadow: '0 2px 4px -1px rgba(245, 158, 11, 0.25)',
+                                }}
+                              >
+                                <FontAwesomeIcon icon={faTrophy} className="text-xs text-white" />
                               </div>
                               <div>
-                                <p className="text-lg md:text-xl font-bold tabular-nums">{contributionStats.weeksAsMVP}</p>
-                                <p className="text-xs opacity-90">{tMyContribution('weeksAsMVP')}</p>
+                                <p className="text-base md:text-lg font-bold tabular-nums leading-tight">{contributionStats.weeksAsMVP}</p>
+                                <p className="text-[10px] opacity-70 font-medium leading-tight">{tMyContribution('weeksAsMVP')}</p>
                               </div>
                             </div>
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <div className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-emerald-500/20">
-                                <FontAwesomeIcon icon={faStar} className="text-sm text-emerald-600" />
+                            <div
+                              className="flex items-center gap-2.5 px-3 py-2 rounded-xl min-w-0 flex-1 sm:flex-initial"
+                              style={{
+                                background: 'rgba(255, 255, 255, 0.5)',
+                                backdropFilter: 'blur(8px)',
+                                boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.04)',
+                              }}
+                            >
+                              <div
+                                className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+                                style={{
+                                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                                  boxShadow: '0 2px 4px -1px rgba(16, 185, 129, 0.25)',
+                                }}
+                              >
+                                <FontAwesomeIcon icon={faStar} className="text-xs text-white" />
                               </div>
                               <div>
-                                <p className="text-lg md:text-xl font-bold tabular-nums">
+                                <p className="text-base md:text-lg font-bold tabular-nums leading-tight">
                                   {contributionStats.byChartType.artists.entriesAsMainDriver +
                                     contributionStats.byChartType.tracks.entriesAsMainDriver +
                                     contributionStats.byChartType.albums.entriesAsMainDriver}
                                 </p>
-                                <p className="text-xs opacity-90">{tMyContribution('entriesAsMainDriver')}</p>
+                                <p className="text-[10px] opacity-70 font-medium leading-tight">{tMyContribution('entriesAsMainDriver')}</p>
                               </div>
-                            </div>
                             </div>
                           </div>
                           {/* Featured artist - always below stats */}
                           {driverArtists.length > 0 && (featuredEntry || isSelf) && (
-                            <div className="mt-4">
+                            <div
+                              className="mt-2.5 px-3 py-2 rounded-xl"
+                              style={{
+                                background: 'rgba(255, 255, 255, 0.35)',
+                                backdropFilter: 'blur(8px)',
+                                boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.3)',
+                              }}
+                            >
                               <HighlightedGroupFeaturedArtist
                                 groupId={highlightedGroup.id}
                                 featuredEntry={featuredEntry}
@@ -339,13 +432,13 @@ export default async function PublicUserProfilePage({
                         </div>
                       )}
                       {userAwardKeys.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
+                        <div className={`flex flex-wrap gap-1.5 ${contributionStats ? '' : 'pt-3'}`}>
                           {userAwardKeys.map((key) => {
                             const cls = AWARD_BADGE_CLASSES[key] ?? 'bg-white/80 border-[var(--theme-border)] text-[var(--theme-text)]'
                             return (
                               <span
                                 key={key}
-                                className={`inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold border ${cls}`}
+                                className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border shadow-sm ${cls}`}
                               >
                                 {tUserRecords(key)}
                               </span>
