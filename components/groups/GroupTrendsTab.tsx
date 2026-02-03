@@ -204,9 +204,6 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
   if (isLoading) {
     return (
       <div>
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
-        </div>
         <div className="flex items-center justify-center py-8 md:py-12">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-3xl md:text-4xl text-[var(--theme-primary)]" />
         </div>
@@ -217,9 +214,6 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
   if (error || !data || !data.trends) {
     return (
       <div>
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
-        </div>
         <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-8 md:p-12 text-center border border-theme">
           <div className="mb-4 text-[var(--theme-primary)]">
             <FontAwesomeIcon icon={faFire} className="text-4xl md:text-5xl" />
