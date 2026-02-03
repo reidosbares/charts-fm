@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 
 export interface SelectOption {
   value: string | number
@@ -17,6 +18,12 @@ interface CustomSelectProps {
   placeholder?: string
 }
 
+interface DropdownPosition {
+  top: number
+  left: number
+  width: number
+}
+
 export default function CustomSelect({
   options,
   value,
@@ -28,14 +35,58 @@ export default function CustomSelect({
 }: CustomSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [highlightedIndex, setHighlightedIndex] = useState(-1)
-  const selectRef = useRef<HTMLDivElement>(null)
+  const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition | null>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const selectedOption = options.find(opt => opt.value === value)
 
+  // Calculate dropdown position based on button location
+  const getDropdownPosition = useCallback((): DropdownPosition | null => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      return {
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+      }
+    }
+    return null
+  }, [])
+
+  // Update position when dropdown opens
+  const openDropdown = useCallback(() => {
+    const position = getDropdownPosition()
+    setDropdownPosition(position)
+    setIsOpen(true)
+  }, [getDropdownPosition])
+
+  // Update position on scroll/resize when open
+  useEffect(() => {
+    if (!isOpen) return
+
+    const handleScrollOrResize = () => {
+      const position = getDropdownPosition()
+      setDropdownPosition(position)
+    }
+
+    window.addEventListener('scroll', handleScrollOrResize, true)
+    window.addEventListener('resize', handleScrollOrResize)
+    
+    return () => {
+      window.removeEventListener('scroll', handleScrollOrResize, true)
+      window.removeEventListener('resize', handleScrollOrResize)
+    }
+  }, [isOpen, getDropdownPosition])
+
+  // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
+      const target = event.target as Node
+      const clickedButton = buttonRef.current?.contains(target)
+      const clickedDropdown = dropdownRef.current?.contains(target)
+      
+      if (!clickedButton && !clickedDropdown) {
         setIsOpen(false)
         setHighlightedIndex(-1)
       }
@@ -47,9 +98,10 @@ export default function CustomSelect({
     }
   }, [isOpen])
 
+  // Scroll highlighted option into view
   useEffect(() => {
     if (isOpen && highlightedIndex >= 0) {
-      const optionElement = selectRef.current?.querySelector(
+      const optionElement = dropdownRef.current?.querySelector(
         `[data-option-index="${highlightedIndex}"]`
       ) as HTMLElement
       optionElement?.scrollIntoView({ block: 'nearest' })
@@ -65,14 +117,16 @@ export default function CustomSelect({
         e.preventDefault()
         if (isOpen && highlightedIndex >= 0) {
           handleSelect(options[highlightedIndex].value)
+        } else if (isOpen) {
+          setIsOpen(false)
         } else {
-          setIsOpen(!isOpen)
+          openDropdown()
         }
         break
       case 'ArrowDown':
         e.preventDefault()
         if (!isOpen) {
-          setIsOpen(true)
+          openDropdown()
         } else {
           setHighlightedIndex(prev => 
             prev < options.length - 1 ? prev + 1 : prev
@@ -101,13 +155,64 @@ export default function CustomSelect({
     buttonRef.current?.focus()
   }
 
+  // Render dropdown via portal to avoid overflow/z-index issues
+  const renderDropdown = () => {
+    if (!isOpen || disabled || !dropdownPosition) return null
+    if (typeof document === 'undefined') return null
+
+    return createPortal(
+      <div
+        ref={dropdownRef}
+        className="fixed z-[9999] bg-white border-2 border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto"
+        style={{
+          top: dropdownPosition.top,
+          left: dropdownPosition.left,
+          width: dropdownPosition.width,
+        }}
+        role="listbox"
+      >
+        {options.map((option, index) => (
+          <button
+            key={option.value}
+            type="button"
+            data-option-index={index}
+            onClick={() => handleSelect(option.value)}
+            onMouseEnter={() => setHighlightedIndex(index)}
+            className={`
+              w-full px-4 py-2 text-left transition-colors
+              ${option.value === value
+                ? 'bg-yellow-50 text-yellow-900 font-medium'
+                : 'text-gray-900 hover:bg-yellow-100'
+              }
+              ${highlightedIndex === index ? 'bg-yellow-100' : ''}
+              ${index === 0 ? 'rounded-t-lg' : ''}
+              ${index === options.length - 1 ? 'rounded-b-lg' : ''}
+            `}
+            role="option"
+            aria-selected={option.value === value}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>,
+      document.body
+    )
+  }
+
   return (
-    <div ref={selectRef} className={`relative ${className}`}>
+    <div className={`relative ${className}`}>
       <button
         ref={buttonRef}
         type="button"
         id={id}
-        onClick={() => !disabled && setIsOpen(!isOpen)}
+        onClick={() => {
+          if (disabled) return
+          if (isOpen) {
+            setIsOpen(false)
+          } else {
+            openDropdown()
+          }
+        }}
         onKeyDown={handleKeyDown}
         disabled={disabled}
         className={`
@@ -139,37 +244,7 @@ export default function CustomSelect({
         </svg>
       </button>
 
-      {isOpen && !disabled && (
-        <div
-          className="absolute z-50 w-full mt-1 bg-white border-2 border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto"
-          role="listbox"
-        >
-          {options.map((option, index) => (
-            <button
-              key={option.value}
-              type="button"
-              data-option-index={index}
-              onClick={() => handleSelect(option.value)}
-              onMouseEnter={() => setHighlightedIndex(index)}
-              className={`
-                w-full px-4 py-2 text-left transition-colors
-                ${option.value === value
-                  ? 'bg-yellow-50 text-yellow-900 font-medium'
-                  : 'text-gray-900 hover:bg-yellow-100'
-                }
-                ${highlightedIndex === index ? 'bg-yellow-100' : ''}
-                ${index === 0 ? 'rounded-t-lg' : ''}
-                ${index === options.length - 1 ? 'rounded-b-lg' : ''}
-              `}
-              role="option"
-              aria-selected={option.value === value}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      )}
+      {renderDropdown()}
     </div>
   )
 }
-
