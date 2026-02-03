@@ -147,78 +147,118 @@ export default async function PublicGroupHeroServer({ groupId, colorTheme }: Pub
 
   return (
     <div className={`mb-6 md:mb-8 relative ${themeClass}`}>
-      <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm p-4 md:p-6 lg:p-8 border border-theme">
-        {/* Breadcrumb Navigation */}
-        <nav className="mb-4 md:mb-6 flex items-center gap-2 text-xs md:text-sm">
-          <Link 
-            href="/groups" 
-            className="text-gray-500 hover:text-[var(--theme-text)] transition-colors"
-          >
-            {t('breadcrumb')}
-          </Link>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-900 font-medium truncate">{group.name}</span>
-        </nav>
+      {/* Full-width Banner with Blurred Background */}
+      <div className="relative rounded-2xl overflow-hidden shadow-lg">
+        {/* Blurred Background Image */}
+        <div className="absolute inset-0">
+          {groupImage ? (
+            <div 
+              className="absolute inset-0 scale-110 blur-2xl opacity-80"
+              style={{
+                backgroundImage: `url(${groupImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-[var(--theme-primary)] to-[var(--theme-primary-dark)]" />
+          )}
+          {/* Gradient Overlay for readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/50" />
+          {/* Theme tint overlay */}
+          <div className="absolute inset-0 bg-[var(--theme-primary)]/10" />
+        </div>
 
-        {hasPendingInvite && pendingInviteId && (
-          <div className="mb-4 md:mb-6">
-            <InviteNotification groupId={group.id} inviteId={pendingInviteId} />
+        {/* Content */}
+        <div className="relative z-10 p-4 md:p-6 lg:p-8">
+          {/* Top Row: Breadcrumb + Action Buttons */}
+          <div className="flex items-center justify-between mb-4 md:mb-6">
+            {/* Breadcrumb Navigation */}
+            <nav className="flex items-center gap-2 text-xs md:text-sm">
+              <Link 
+                href="/groups" 
+                className="text-white/70 hover:text-white transition-colors"
+              >
+                {t('breadcrumb')}
+              </Link>
+              <span className="text-white/40">/</span>
+              <span className="text-white font-medium truncate max-w-[150px] md:max-w-none">{group.name}</span>
+            </nav>
+            
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2">
+              {session?.user?.email && !isMember && (
+                <>
+                  <CompatibilityScore groupId={group.id} />
+                  <RequestToJoinButton
+                    groupId={group.id}
+                    hasPendingRequest={hasPendingRequest}
+                    hasPendingInvite={hasPendingInvite}
+                    allowFreeJoin={group.allowFreeJoin ?? false}
+                    memberCount={group._count.members}
+                  />
+                </>
+              )}
+            </div>
           </div>
-        )}
 
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6">
-          <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-6">
-            {/* Large Group Icon */}
+          {/* Invite Notification */}
+          {hasPendingInvite && pendingInviteId && (
+            <div className="mb-4 md:mb-6">
+              <InviteNotification groupId={group.id} inviteId={pendingInviteId} />
+            </div>
+          )}
+          
+          {/* Main Content */}
+          <div className="flex flex-col md:flex-row md:items-end gap-4 md:gap-6">
+            {/* Group Icon */}
             <div className="relative flex-shrink-0">
-              <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-xl md:rounded-2xl overflow-hidden shadow-sm ring-2 md:ring-4 ring-theme bg-[var(--theme-primary-lighter)]">
+              <div className="w-28 h-28 md:w-36 md:h-36 lg:w-44 lg:h-44 rounded-xl md:rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/30 bg-black/20">
                 <SafeImage
-                  key={groupImage} // Force re-render when image URL changes
+                  key={groupImage}
                   src={groupImage}
                   alt={group.name}
                   className="object-cover w-full h-full"
                 />
               </div>
               {imageCaption && (
-                <p className="text-xs italic text-gray-600 mt-2 text-left max-w-[10rem]">
+                <p className="text-xs italic text-white/70 mt-2 text-left max-w-[7rem] md:max-w-[9rem]">
                   {imageCaption}
                 </p>
               )}
             </div>
             
             {/* Group Info */}
-            <div className="flex-1 min-w-0">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3 text-[var(--theme-primary-dark)] leading-[1.1] pb-2 overflow-visible">
+            <div className="flex-1 min-w-0 pb-1">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 md:mb-4 text-white leading-[1.1] drop-shadow-lg break-words">
                 {group.name}
               </h1>
-              <div className="flex flex-wrap items-center gap-2 md:gap-4 mb-3 md:mb-4">
-                <div className="flex items-center gap-1.5 md:gap-2 min-w-0">
-                  <span className="text-xs md:text-sm text-gray-600">{t('owner')}</span>
-                  <span className="font-semibold text-xs md:text-sm text-gray-900 truncate max-w-[120px] md:max-w-[200px]">{group.creator?.name || group.creator?.lastfmUsername || t('deletedUser')}</span>
+              
+              {/* Metadata Badges */}
+              <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-4">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-xs md:text-sm text-white/90">
+                  <span className="opacity-70">{t('owner')}</span>
+                  <span className="font-semibold truncate max-w-[100px] md:max-w-[150px]">
+                    {group.creator?.name || group.creator?.lastfmUsername || t('deletedUser')}
+                  </span>
                 </div>
-                <span className="text-gray-300 hidden sm:inline">•</span>
-                <div className="flex items-center gap-1.5 md:gap-2">
-                  <span className="text-xs md:text-sm text-gray-600">{t('members')}</span>
-                  <span className="font-semibold text-xs md:text-sm text-gray-900">{group._count.members}</span>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-xs md:text-sm text-white/90">
+                  <span className="font-semibold">{group._count.members}</span>
+                  <span className="opacity-70">{t('members')}</span>
                 </div>
-                <span className="text-gray-300 hidden sm:inline">•</span>
-                <div className="flex items-center gap-1.5 md:gap-2">
-                  <span className="text-xs md:text-sm text-gray-600">{t('tracking')}</span>
-                  <span className="font-semibold text-xs md:text-sm text-gray-900">{trackingDayName}</span>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-xs md:text-sm text-white/90">
+                  <span className="opacity-70">{t('tracking')}</span>
+                  <span className="font-semibold">{trackingDayName}</span>
                 </div>
               </div>
               
               {/* Tags - Only shown on public pages */}
               {Array.isArray((group as any).tags) && (group as any).tags.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 md:gap-2 mb-3 md:mb-4">
+                <div className="flex flex-wrap gap-1.5 md:gap-2 mb-4">
                   {(group as any).tags.map((tag: string, index: number) => (
                     <span
                       key={index}
-                      className="inline-flex items-center px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-xs md:text-sm font-medium border"
-                      style={{
-                        backgroundColor: 'var(--theme-primary-lighter)',
-                        color: 'var(--theme-primary-dark)',
-                        borderColor: 'var(--theme-primary)',
-                      }}
+                      className="inline-flex items-center px-2.5 py-1 rounded-full text-xs md:text-sm font-medium bg-white/20 text-white border border-white/30 backdrop-blur-sm"
                     >
                       {tag}
                     </span>
@@ -226,34 +266,17 @@ export default async function PublicGroupHeroServer({ groupId, colorTheme }: Pub
                 </div>
               )}
               
+              {/* View as member link */}
               {isMember && (
-                <div className="mb-3 md:mb-4">
-                  <Link 
-                    href={`/groups/${group.id}`} 
-                    className="inline-flex items-center gap-2 text-[var(--theme-primary-dark)] hover:text-[var(--theme-primary-darker)] hover:underline font-medium text-xs md:text-sm transition-colors"
-                  >
-                    <span>←</span>
-                    <span>{t('public.viewAsMember')}</span>
-                  </Link>
-                </div>
+                <Link 
+                  href={`/groups/${group.id}`} 
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-white/90 hover:bg-white/25 font-medium text-xs md:text-sm transition-colors"
+                >
+                  <span>←</span>
+                  <span>{t('public.viewAsMember')}</span>
+                </Link>
               )}
             </div>
-          </div>
-          
-          {/* Action Buttons */}
-          <div className="flex flex-wrap gap-2 items-center justify-start sm:justify-end">
-            {session?.user?.email && !isMember && (
-              <>
-                <CompatibilityScore groupId={group.id} />
-                <RequestToJoinButton
-                  groupId={group.id}
-                  hasPendingRequest={hasPendingRequest}
-                  hasPendingInvite={hasPendingInvite}
-                  allowFreeJoin={group.allowFreeJoin ?? false}
-                  memberCount={group._count.members}
-                />
-              </>
-            )}
           </div>
         </div>
       </div>

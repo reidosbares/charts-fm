@@ -81,6 +81,19 @@ body {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;  /* Chrome, Safari and Opera */
   }
+
+  /* Hero background mask - responsive fade for blurred background */
+  .hero-background-mask {
+    mask-image: linear-gradient(to bottom, black 0%, black 30%, transparent 85%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 30%, transparent 85%);
+  }
+
+  @media (min-width: 768px) {
+    .hero-background-mask {
+      mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 90%);
+      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 90%);
+    }
+  }
 }
 
 /* Ensure input fields have dark, readable text on mobile devices (especially iOS Safari) */

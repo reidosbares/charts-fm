@@ -111,14 +111,14 @@ export default function QuickAccessButton({ groupId }: QuickAccessButtonProps) {
       <LiquidGlassButton
         onClick={handleToggle}
         variant="primary"
-        size="md"
+        size="sm"
         useTheme
         disabled={isUpdating}
-        className="!aspect-auto text-sm md:text-base px-2.5 py-1.5 md:px-4 md:py-2"
+        className="!px-2 !py-1.5 md:!px-3 md:!py-2"
         icon={
           <FontAwesomeIcon
             icon={isUpdating ? faSpinner : (isInQuickAccess ? faMinus : faPlus)}
-            className={`text-sm md:text-base ${isUpdating ? 'animate-spin' : ''}`}
+            className={`text-xs md:text-sm ${isUpdating ? 'animate-spin' : ''}`}
           />
         }
         aria-label={isUpdating 

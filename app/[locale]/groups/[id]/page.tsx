@@ -98,15 +98,14 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
 
   return (
     <main 
-      className={`flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}
+      className={`flex min-h-screen flex-col ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}
     >
-      <div className="max-w-6xl w-full mx-auto">
-        {/* Hero Section - loaded server-side for immediate display */}
-        <GroupHeroServer groupId={group.id} isOwner={isOwner || false} colorTheme={colorTheme} isMember={isMember} userId={user?.id || null} />
-        
-        {/* Quick Stats - loads asynchronously */}
+      {/* Full-width Hero Section with integrated Quick Stats */}
+      <GroupHeroServer groupId={group.id} isOwner={isOwner || false} colorTheme={colorTheme} isMember={isMember} userId={user?.id || null}>
         <GroupQuickStats groupId={group.id} />
+      </GroupHeroServer>
 
+      <div className="max-w-6xl w-full mx-auto px-4 md:px-6 lg:px-12 xl:px-24 pb-24">
         {/* Tabs with async loading content */}
         <GroupTabs
           defaultTab="trends"

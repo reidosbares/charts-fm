@@ -19,27 +19,11 @@ interface GroupHeroServerProps {
   colorTheme: string
   isMember?: boolean
   userId?: string | null
+  children?: React.ReactNode
 }
 
-export default async function GroupHeroServer({ groupId, isOwner, colorTheme, isMember = true, userId }: GroupHeroServerProps) {
+export default async function GroupHeroServer({ groupId, isOwner, colorTheme, isMember = true, userId, children }: GroupHeroServerProps) {
   const t = await getTranslations('groups.hero')
-  // Fetch members with images (only for members, for privacy)
-  const membersWithImages = isMember ? await prisma.groupMember.findMany({
-    where: { groupId },
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          lastfmUsername: true,
-          image: true,
-        },
-      },
-    },
-    orderBy: {
-      joinedAt: 'asc',
-    },
-  }) : []
 
   // Get group data
   const group = await prisma.group.findUnique({
@@ -172,181 +156,157 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme, is
   const themeClass = `theme-${colorTheme.replace('_', '-')}`
 
   return (
-    <div className={`mb-6 md:mb-8 relative ${themeClass}`}>
-      <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm p-4 md:p-6 lg:p-8 border border-theme relative">
-        {isMember && (
-          <SoloChartsEmptyOverlay
-            groupId={groupId}
-            enabled={isSolo && !hasCharts && canUpdateCharts && !chartGenerationInProgress}
-          />
-        )}
-        {/* Breadcrumb Navigation */}
-        <nav className="mb-4 md:mb-6 flex items-center gap-2 text-xs md:text-sm">
-          <Link 
-            href="/groups" 
-            className="text-gray-500 hover:text-[var(--theme-text)] transition-colors"
-          >
-            {t('breadcrumb')}
-          </Link>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-900 font-medium truncate">{group.name}</span>
-        </nav>
-        
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6">
-          <div className="flex items-start gap-3 md:gap-4 lg:gap-6">
-            {/* Large Group Icon */}
-            <div className="relative flex-shrink-0">
-              <div className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 rounded-xl md:rounded-2xl overflow-hidden shadow-sm ring-2 md:ring-4 ring-theme bg-[var(--theme-primary-lighter)]">
-                <SafeImage
-                  key={groupImage} // Force re-render when image URL changes
-                  src={groupImage}
-                  alt={group.name}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              {imageCaption && (
-                <p className="text-xs italic text-gray-600 mt-1 md:mt-2 text-left max-w-[8rem] md:max-w-[10rem]">
-                  {imageCaption}
-                </p>
-              )}
-            </div>
-            
-            {/* Group Info */}
-            <div className="flex-1 min-w-0">
-              <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 md:mb-3 text-[var(--theme-primary-dark)] leading-[1.1] pb-1 md:pb-2 overflow-visible break-words">
-                {group.name}
-              </h1>
-              <div className="flex flex-wrap items-center gap-2 md:gap-3 lg:gap-4 mb-3 md:mb-4 text-xs md:text-sm">
-                <div className="flex items-center gap-1 md:gap-2 min-w-0">
-                  <span className="text-gray-600">{t('owner')}</span>
-                  {group.creator?.lastfmUsername ? (
-                    <Link
-                      href={`/u/${encodeURIComponent(group.creator.lastfmUsername)}`}
-                      className="font-semibold text-gray-900 truncate max-w-[120px] md:max-w-[200px] hover:underline"
-                      title={group.creator.name || group.creator.lastfmUsername}
-                    >
-                      {group.creator.name || group.creator.lastfmUsername}
-                    </Link>
-                  ) : (
-                    <span className="font-semibold text-gray-900 truncate max-w-[120px] md:max-w-[200px]">
-                      {group.creator ? (group.creator.name || group.creator.lastfmUsername) : t('deletedUser')}
-                    </span>
-                  )}
-                </div>
-                <span className="text-gray-300 hidden sm:inline">•</span>
-                <div className="flex items-center gap-1 md:gap-2">
-                  <span className="text-gray-600">{t('members')}</span>
-                  <span className="font-semibold text-gray-900">{group._count.members}</span>
-                </div>
-                <span className="text-gray-300 hidden sm:inline">•</span>
-                <div className="flex items-center gap-1 md:gap-2">
-                  <span className="text-gray-600">{t('tracking')}</span>
-                  <span className="font-semibold text-gray-900">{trackingDayName}</span>
-                </div>
-              </div>
-              
-              {/* Member Avatars */}
-              {membersWithImages.length > 0 && (
-                <div className="flex items-center gap-2 mb-3 md:mb-4 min-w-0 flex-wrap">
-                  <div className="flex -space-x-2 md:-space-x-3 flex-shrink-0">
-                    {membersWithImages.slice(0, 6).map((member) => (
-                      <div
-                        key={member.user.id}
-                        className="relative w-8 h-8 md:w-10 md:h-10 rounded-full ring-2 ring-white bg-[var(--theme-primary-lighter)] overflow-hidden flex-shrink-0"
-                        title={member.user.name || member.user.lastfmUsername}
-                      >
-                        <SafeImage
-                          src={member.user.image}
-                          alt={member.user.name || member.user.lastfmUsername}
-                          className="object-cover w-full h-full"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  {membersWithImages.length > 6 && (
-                    <span className="text-xs md:text-sm text-gray-600 ml-1 md:ml-2 flex-shrink-0 whitespace-nowrap">{t('moreMembers', { count: membersWithImages.length - 6 })}</span>
-                  )}
-                </div>
-              )}
-              
-              {/* Next Charts Badge or Update Button - Desktop only (only for members) */}
-              {isMember && (
-                <div className="hidden md:block w-auto">
-                  {canUpdateCharts || chartGenerationInProgress ? (
-                    <UpdateChartsButton groupId={groupId} initialInProgress={chartGenerationInProgress} />
-                  ) : (
-                  <div 
-                    className="inline-flex items-center gap-1 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full font-semibold text-xs md:text-sm"
-                    style={{
-                      background: 'var(--theme-primary)',
-                      color: 'var(--theme-button-text)',
-                      backdropFilter: 'blur(12px) saturate(180%)',
-                      WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                    }}
-                  >
-                    <span className="whitespace-nowrap">{t(daysUntilNextChart === 1 ? 'nextChartsIn' : 'nextChartsInDays', { count: daysUntilNextChart })}</span>
-                    <span className="text-xs opacity-80 hidden sm:inline">({nextChartDateFormatted})</span>
-                  </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-          
-          {/* Next Charts Badge or Update Button - Mobile only (only for members) */}
-          {isMember && (
-            <div className="md:hidden w-full -mt-2 mb-1">
-              {canUpdateCharts || chartGenerationInProgress ? (
-                <UpdateChartsButton groupId={groupId} initialInProgress={chartGenerationInProgress} />
-              ) : (
-              <div 
-                className="flex items-center justify-center gap-1 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full font-semibold text-xs md:text-sm w-full"
-                style={{
-                  background: 'var(--theme-primary)',
-                  color: 'var(--theme-button-text)',
-                  backdropFilter: 'blur(12px) saturate(180%)',
-                  WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                }}
-              >
-                <span className="whitespace-nowrap">{t(daysUntilNextChart === 1 ? 'nextChartsIn' : 'nextChartsInDays', { count: daysUntilNextChart })}</span>
-                <span className="text-xs opacity-80 hidden sm:inline">({nextChartDateFormatted})</span>
-              </div>
-              )}
-            </div>
+    <div className={`relative ${themeClass}`}>
+      {/* Full-width Banner with Blurred Background */}
+      <div className="relative overflow-hidden">
+        {/* Blurred Background Image - fades out at bottom (earlier fade on mobile due to taller stacked content) */}
+        <div 
+          className="absolute inset-0 hero-background-mask"
+        >
+          {groupImage ? (
+            <div 
+              className="absolute inset-0 scale-110 blur-2xl opacity-90"
+              style={{
+                backgroundImage: `url(${groupImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-[var(--theme-primary)] to-[var(--theme-primary-dark)]" />
           )}
-          
-          {/* Action Buttons */}
-          <div className="flex flex-wrap gap-2 items-start mt-2 md:mt-0">
-            {isMember && <QuickAccessButton groupId={groupId} />}
-            {isOwner && (
-              <LiquidGlassLink
-                href={`/groups/${groupId}/settings`}
-                variant="primary"
-                useTheme
-                size="md"
-                className="text-sm md:text-base px-2.5 py-1.5 md:px-4 md:py-2"
-              >
-                {t('settings')}
-              </LiquidGlassLink>
-            )}
-            {!isMember && userId && (
-              <RequestToJoinButton
+          {/* Gradient Overlay - darker at top for readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/20 via-40% to-transparent" />
+          {/* Theme tint overlay */}
+          <div className="absolute inset-0 bg-[var(--theme-primary)]/10" />
+        </div>
+
+        {/* Content Container */}
+        <div className="relative z-10">
+          {/* Main Hero Content */}
+          <div className="max-w-6xl mx-auto px-3 md:px-6 lg:px-12 xl:px-24 pt-4 md:pt-8 pb-4 md:pb-6">
+            {isMember && (
+              <SoloChartsEmptyOverlay
                 groupId={groupId}
-                hasPendingRequest={hasPendingRequest}
-                hasPendingInvite={hasPendingInvite}
-                allowFreeJoin={group.allowFreeJoin ?? false}
-                memberCount={group._count.members}
+                enabled={isSolo && !hasCharts && canUpdateCharts && !chartGenerationInProgress}
               />
             )}
+            
+            {/* Top Row: Breadcrumb + Action Buttons */}
+            <div className="flex items-center justify-between mb-3 md:mb-6">
+              {/* Breadcrumb Navigation */}
+              <nav className="flex items-center gap-1.5 md:gap-2 text-[11px] md:text-sm">
+                <Link 
+                  href="/groups" 
+                  className="text-white/70 hover:text-white transition-colors"
+                >
+                  {t('breadcrumb')}
+                </Link>
+                <span className="text-white/40">/</span>
+                <span className="text-white font-medium truncate max-w-[120px] md:max-w-none">{group.name}</span>
+              </nav>
+              
+              {/* Action Buttons */}
+              <div className="flex items-center gap-1.5 md:gap-2">
+                {isMember && <QuickAccessButton groupId={groupId} />}
+                {isOwner && (
+                  <LiquidGlassLink
+                    href={`/groups/${groupId}/settings`}
+                    variant="secondary"
+                    size="sm"
+                    className="text-[10px] md:text-sm !bg-white/20 !text-white hover:!bg-white/30 !border-white/30 !px-1.5 !py-1 md:!px-3 md:!py-2"
+                  >
+                    {t('settings')}
+                  </LiquidGlassLink>
+                )}
+                {!isMember && userId && (
+                  <RequestToJoinButton
+                    groupId={groupId}
+                    hasPendingRequest={hasPendingRequest}
+                    hasPendingInvite={hasPendingInvite}
+                    allowFreeJoin={group.allowFreeJoin ?? false}
+                    memberCount={group._count.members}
+                  />
+                )}
+                {isMember && <ShareGroupButton groupId={groupId} />}
+              </div>
+            </div>
+            
+            {/* Main Content - horizontal on mobile too */}
+            <div className="flex items-start md:items-end gap-3 md:gap-6">
+              {/* Group Icon */}
+              <div className="relative flex-shrink-0">
+                <div className="w-20 h-20 md:w-36 md:h-36 lg:w-44 lg:h-44 rounded-lg md:rounded-2xl overflow-hidden shadow-2xl ring-2 md:ring-4 ring-white/30 bg-black/20">
+                  <SafeImage
+                    key={groupImage}
+                    src={groupImage}
+                    alt={group.name}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                {imageCaption && (
+                  <p className="text-[10px] md:text-xs italic text-white/70 mt-1 md:mt-2 text-left max-w-[5rem] md:max-w-[9rem]">
+                    {imageCaption}
+                  </p>
+                )}
+              </div>
+              
+              {/* Group Info */}
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-2 md:mb-4 text-white leading-[1.1] drop-shadow-lg break-words">
+                  {group.name}
+                </h1>
+                
+                {/* Metadata - compact on mobile */}
+                <div className="flex flex-wrap items-center gap-1.5 md:gap-3 mb-2 md:mb-4">
+                  <div className="inline-flex items-center gap-1 px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-[10px] md:text-sm text-white/90">
+                    <span className="opacity-70">{t('owner')}</span>
+                    {group.creator?.lastfmUsername ? (
+                      <Link
+                        href={`/u/${encodeURIComponent(group.creator.lastfmUsername)}`}
+                        className="font-semibold hover:underline truncate max-w-[60px] md:max-w-[150px]"
+                        title={group.creator.name || group.creator.lastfmUsername}
+                      >
+                        {group.creator.name || group.creator.lastfmUsername}
+                      </Link>
+                    ) : (
+                      <span className="font-semibold truncate max-w-[60px] md:max-w-[150px]">
+                        {group.creator ? (group.creator.name || group.creator.lastfmUsername) : t('deletedUser')}
+                      </span>
+                    )}
+                  </div>
+                  <div className="inline-flex items-center gap-1 px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-[10px] md:text-sm text-white/90">
+                    <span className="font-semibold">{group._count.members}</span>
+                    <span className="opacity-70">{t('members')}</span>
+                  </div>
+                  <div className="hidden sm:inline-flex items-center gap-1 px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-[10px] md:text-sm text-white/90">
+                    <span className="opacity-70">{t('tracking')}</span>
+                    <span className="font-semibold">{trackingDayName}</span>
+                  </div>
+                </div>
+                
+                {/* Next Charts Badge or Update Button */}
+                {isMember && (
+                  <div className="flex-shrink-0">
+                    {canUpdateCharts || chartGenerationInProgress ? (
+                      <UpdateChartsButton groupId={groupId} initialInProgress={chartGenerationInProgress} />
+                    ) : (
+                      <div className="inline-flex items-center gap-1.5 md:gap-2 px-2.5 py-1 md:px-4 md:py-2 rounded-full font-semibold text-[10px] md:text-sm bg-[var(--theme-primary)] text-[var(--theme-button-text)] shadow-lg">
+                        <span>{t(daysUntilNextChart === 1 ? 'nextChartsIn' : 'nextChartsInDays', { count: daysUntilNextChart })}</span>
+                        <span className="text-[10px] md:text-xs opacity-80 hidden sm:inline">({nextChartDateFormatted})</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-          
-          {/* Share Button - positioned at bottom right (only for members) */}
-          {isMember && (
-            <ShareGroupButton groupId={groupId} />
+
+          {/* Quick Stats Area - inside the hero with faded background */}
+          {children && (
+            <div className="max-w-6xl mx-auto px-3 md:px-6 lg:px-12 xl:px-24 pb-6 md:pb-8">
+              {children}
+            </div>
           )}
         </div>
       </div>

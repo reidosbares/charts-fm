@@ -27,11 +27,11 @@ export default function ShareGroupButton({ groupId }: ShareGroupButtonProps) {
       <LiquidGlassButton
         ref={buttonRef}
         onClick={() => setIsModalOpen(true)}
-        variant="primary"
-        size="lg"
-        useTheme
-        icon={<FontAwesomeIcon icon={faShare} className="text-base md:text-lg" />}
-        className="absolute bottom-4 right-4 z-10 w-10 h-10 md:w-12 md:h-12"
+        variant="secondary"
+        size="sm"
+        useTheme={false}
+        icon={<FontAwesomeIcon icon={faShare} className="text-xs md:text-sm" />}
+        className="!bg-white/20 !text-white hover:!bg-white/30 !border-white/30 !px-2 !py-1.5 md:!px-3 md:!py-2"
         aria-label={t('shareGroup')}
       />
 
