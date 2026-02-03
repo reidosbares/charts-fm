@@ -1223,16 +1223,16 @@
       "byChartType": "Por tipo de chart",
       "entriesHelpedDebut": "Itens que você ajudou a debutar",
       "weeksAtOneContributed": "Semanas em #1 que você contribuiu",
-      "entriesAsMainDriver": "Itens impulsionados por você",
-      "driverEntriesList": "Itens que você impulsiona",
+      "entriesAsMainDriver": "Principal ouvinte",
+      "driverEntriesList": "Você é o principal ouvinte de:",
       "noStats": "Sem estatísticas para este membro.",
       "chartTypeBreakdown": "Detalhes por tipo",
       "debuts": "Introduzidos aos charts",
       "debutsDesc": "Novos itens que entraram",
       "atNumberOne": "Semanas esuctando o #1",
       "atNumberOneDesc": "Contribuiu para itens no #1",
-      "asDriver": "Impulsionados",
-      "asDriverDesc": "Itens como motor principal"
+      "asDriver": "Principal ouvinte",
+      "asDriverDesc": "Itens como principal ouvinte"
     },
     "detail": {
       "rank": "Posição",

@@ -105,43 +105,45 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
     <div className="mt-6 pt-6 border-t border-[var(--theme-border)]/50">
       <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4">{tMyContribution('sectionTitle')}</h3>
       <div className="rounded-2xl bg-gradient-to-br from-white/90 to-[var(--theme-primary-lighter)]/20 border border-theme/60 shadow-sm">
-        <div className="p-5 md:p-6">
-          <div className="flex flex-wrap items-center gap-3 mb-5">
-            {selectedMember && (
-              <Link
-                href={`/u/${encodeURIComponent(selectedMember.user.lastfmUsername)}`}
-                className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden hover:opacity-90 transition-opacity"
-              >
-                <SafeImage
-                  src={selectedMember.user.image}
-                  alt={selectedMember.user.name || selectedMember.user.lastfmUsername}
-                  className="object-cover w-full h-full"
-                />
-              </Link>
-            )}
-            {selectedMember ? (
-              <Link
-                href={`/u/${encodeURIComponent(selectedMember.user.lastfmUsername)}`}
-                className="text-xl md:text-2xl font-bold text-gray-900 hover:text-[var(--theme-primary)] transition-colors"
-              >
-                {tMyContribution('memberContribution', { name: getMemberDisplayName(selectedMemberId!) })}
-              </Link>
-            ) : (
-              <h4 className="text-xl md:text-2xl font-bold text-gray-900">
-                {tMyContribution('title')}
-              </h4>
-            )}
-            <div className="relative">
+        <div className="p-4 md:p-6">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 mb-5">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              {selectedMember && (
+                <Link
+                  href={`/u/${encodeURIComponent(selectedMember.user.lastfmUsername)}`}
+                  className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden hover:opacity-90 transition-opacity"
+                >
+                  <SafeImage
+                    src={selectedMember.user.image}
+                    alt={selectedMember.user.name || selectedMember.user.lastfmUsername}
+                    className="object-cover w-full h-full"
+                  />
+                </Link>
+              )}
+              {selectedMember ? (
+                <Link
+                  href={`/u/${encodeURIComponent(selectedMember.user.lastfmUsername)}`}
+                  className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 hover:text-[var(--theme-primary)] transition-colors truncate"
+                >
+                  {tMyContribution('memberContribution', { name: getMemberDisplayName(selectedMemberId!) })}
+                </Link>
+              ) : (
+                <h4 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
+                  {tMyContribution('title')}
+                </h4>
+              )}
+            </div>
+            <div className="relative flex-shrink-0">
               <button
                 type="button"
                 onClick={() => setMemberDropdownOpen((o) => !o)}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-theme bg-white/80 text-sm font-medium text-gray-600 hover:bg-white hover:text-gray-900 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-theme bg-white/80 text-sm font-medium text-gray-600 hover:bg-white hover:text-gray-900 transition-colors w-full sm:w-auto justify-center sm:justify-start"
               >
                 <span>{tMyContribution('selectMember')}</span>
                 <FontAwesomeIcon icon={faChevronDown} className={`text-xs flex-shrink-0 transition-transform ${memberDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               {memberDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-64 rounded-lg border border-theme bg-white shadow-lg z-50 overflow-hidden">
+                <div className="absolute top-full left-0 right-0 sm:right-auto sm:left-0 mt-1 w-full sm:w-64 rounded-lg border border-theme bg-white shadow-lg z-50 overflow-hidden">
                   <div className="p-2 border-b border-theme/40">
                     <input
                       type="text"
@@ -186,36 +188,36 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
             </div>
           ) : personalizedStats ? (
             <>
-              <div className="flex flex-wrap gap-4 md:gap-6 mb-6">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-[var(--theme-primary)]/15 flex items-center justify-center">
-                    <FontAwesomeIcon icon={faChartLine} className="text-lg text-[var(--theme-primary)]" />
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-6 mb-6">
+                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-3 min-w-0 p-2 sm:p-0 rounded-xl bg-gray-50/50 sm:bg-transparent text-center sm:text-left">
+                  <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[var(--theme-primary)]/15 flex items-center justify-center">
+                    <FontAwesomeIcon icon={faChartLine} className="text-base md:text-lg text-[var(--theme-primary)]" />
                   </div>
-                  <div>
-                    <p className="text-2xl md:text-3xl font-bold text-gray-900 tabular-nums">
+                  <div className="min-w-0">
+                    <p className="text-lg sm:text-xl md:text-3xl font-bold text-gray-900 tabular-nums">
                       {personalizedStats.totalVS.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                     </p>
-                    <p className="text-xs text-gray-600">{tMyContribution('totalVS')}</p>
+                    <p className="text-[10px] sm:text-xs text-gray-600 leading-tight">{tMyContribution('totalVS')}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-amber-500/15 flex items-center justify-center">
-                    <FontAwesomeIcon icon={faTrophy} className="text-lg text-amber-600" />
+                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-3 min-w-0 p-2 sm:p-0 rounded-xl bg-gray-50/50 sm:bg-transparent text-center sm:text-left">
+                  <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-xl bg-amber-500/15 flex items-center justify-center">
+                    <FontAwesomeIcon icon={faTrophy} className="text-base md:text-lg text-amber-600" />
                   </div>
-                  <div>
-                    <p className="text-2xl md:text-3xl font-bold text-gray-900 tabular-nums">{personalizedStats.weeksAsMVP}</p>
-                    <p className="text-xs text-gray-600">{tMyContribution('weeksAsMVP')}</p>
+                  <div className="min-w-0">
+                    <p className="text-lg sm:text-xl md:text-3xl font-bold text-gray-900 tabular-nums">{personalizedStats.weeksAsMVP}</p>
+                    <p className="text-[10px] sm:text-xs text-gray-600 leading-tight">{tMyContribution('weeksAsMVP')}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-emerald-500/15 flex items-center justify-center">
-                    <FontAwesomeIcon icon={faStar} className="text-lg text-emerald-600" />
+                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-3 min-w-0 p-2 sm:p-0 rounded-xl bg-gray-50/50 sm:bg-transparent text-center sm:text-left">
+                  <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-xl bg-emerald-500/15 flex items-center justify-center">
+                    <FontAwesomeIcon icon={faStar} className="text-base md:text-lg text-emerald-600" />
                   </div>
-                  <div>
-                    <p className="text-2xl md:text-3xl font-bold text-gray-900 tabular-nums">
+                  <div className="min-w-0">
+                    <p className="text-lg sm:text-xl md:text-3xl font-bold text-gray-900 tabular-nums">
                       {personalizedStats.byChartType.artists.entriesAsMainDriver + personalizedStats.byChartType.tracks.entriesAsMainDriver + personalizedStats.byChartType.albums.entriesAsMainDriver}
                     </p>
-                    <p className="text-xs text-gray-600">{tMyContribution('entriesAsMainDriver')}</p>
+                    <p className="text-[10px] sm:text-xs text-gray-600 leading-tight">{tMyContribution('entriesAsMainDriver')}</p>
                   </div>
                 </div>
               </div>
@@ -275,15 +277,15 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
                 return (
                   <div className="mt-5 pt-4 border-t border-theme/40">
                     <p className="text-sm font-medium text-gray-700 mb-3">{tMyContribution('driverEntriesList')}</p>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
                       {sections.map(({ key, icon, label }) => (
-                        <div key={key} className="rounded-xl bg-white/60 border border-theme/40 overflow-hidden min-h-0">
+                        <div key={key} className="rounded-xl bg-white/60 border border-theme/40 overflow-hidden">
                           <div className="flex items-center gap-2 px-3 py-2 bg-[var(--theme-primary)]/10 border-b border-theme/40">
                             <FontAwesomeIcon icon={icon} className="text-[var(--theme-primary)] text-sm" />
                             <span className="text-sm font-semibold text-gray-800">{label}</span>
                             <span className="text-xs text-gray-500">({byType[key].length})</span>
                           </div>
-                          <ul className="divide-y divide-theme/30 max-h-[280px] overflow-y-auto">
+                          <ul className="divide-y divide-theme/30 max-h-[200px] md:max-h-[280px] overflow-y-auto">
                             {byType[key].length === 0 ? (
                               <li className="px-3 py-4 text-xs text-gray-500 text-center">—</li>
                             ) : (
