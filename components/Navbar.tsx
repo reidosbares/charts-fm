@@ -737,9 +737,14 @@ export default function Navbar() {
             <div className="px-4 py-6 space-y-4">
               {isAuthenticated ? (
                 <>
-                  {/* User Info */}
+                  {/* User Info - links to public profile */}
                   {userData && (
-                    <div className="pb-4 border-b border-gray-800">
+                    <Link
+                      href={userData.lastfmUsername ? `/u/${encodeURIComponent(userData.lastfmUsername)}` : '/profile'}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block pb-4 border-b border-gray-800 hover:opacity-90 transition-opacity"
+                      aria-label={t('publicProfile')}
+                    >
                       <div className="flex items-center space-x-3">
                         <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border-2 border-yellow-500">
                           <SafeImage
@@ -755,7 +760,7 @@ export default function Navbar() {
                           )}
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   )}
                   
                   {/* Navigation Links */}

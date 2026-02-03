@@ -446,26 +446,28 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                 )
               })}
               {topArtists.length > 3 && (
-                <div className="pt-3 border-t border-[var(--theme-border)]">
-                  <ol start={4} className="list-decimal list-inside space-y-0">
+                <div className="pt-2 border-t border-[var(--theme-border)]">
+                  <div className="space-y-0">
                     {topArtists.slice(3, 10).map((artist: any, idx: number) => {
+                      const position = idx + 4
                       const entryKey = getEntryKey(artist, 'artists')
                       const positionChange = positionChangeMapObj[`artists|${entryKey}`]
                       const entryType = entryTypeMapObj[`artists|${entryKey}`]
                       return (
-                        <li key={idx + 3}>
+                        <div key={idx + 3} className="flex items-center min-h-0 py-0.5">
+                          <span className="flex-shrink-0 w-5 text-right text-sm text-gray-500 tabular-nums">{position}.</span>
                           <Link
                             href={`/groups/${groupId}/charts/artist/${generateSlug(entryKey, 'artists')}`}
-                            className="flex items-center gap-2 min-h-[40px] sm:min-h-[44px] py-1.5 sm:py-2.5 pr-2 rounded-lg -ml-1 pl-3 hover:bg-[var(--theme-primary-lighter)]/30 active:bg-[var(--theme-primary-lighter)]/50 transition-colors touch-manipulation text-sm text-gray-700 hover:text-[var(--theme-primary)]"
+                            className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 py-1 pl-1.5 pr-2 rounded-lg hover:bg-[var(--theme-primary-lighter)]/30 active:bg-[var(--theme-primary-lighter)]/50 transition-colors touch-manipulation text-sm text-gray-700 hover:text-[var(--theme-primary)] flex-nowrap"
                           >
-                            <span className="truncate flex-1 min-w-0">{artist.name}</span>
+                            <span className="truncate min-w-0 flex-1">{artist.name}</span>
                             <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs flex-shrink-0" />
-                            <span className="text-[var(--theme-text)] flex-shrink-0 text-xs">({formatDisplayValue(artist, 'artists', showVS, vsMapObj, t)})</span>
+                            <span className="text-[var(--theme-text)] flex-shrink-0 text-xs whitespace-nowrap">({formatDisplayValue(artist, 'artists', showVS, vsMapObj, t)})</span>
                           </Link>
-                        </li>
+                        </div>
                       )
                     })}
-                  </ol>
+                  </div>
                   {topArtists.length > 10 && (
                     <p className="text-xs text-gray-500 mt-2">
                       {t('andMore', { count: topArtists.length - 10 })}
@@ -528,26 +530,28 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                 )
               })}
               {topTracks.length > 3 && (
-                <div className="pt-3 border-t border-[var(--theme-border)]">
-                  <ol start={4} className="list-decimal list-inside space-y-0">
+                <div className="pt-2 border-t border-[var(--theme-border)]">
+                  <div className="space-y-0">
                     {topTracks.slice(3, 10).map((track: any, idx: number) => {
+                      const position = idx + 4
                       const entryKey = getEntryKey(track, 'tracks')
                       const positionChange = positionChangeMapObj[`tracks|${entryKey}`]
                       const entryType = entryTypeMapObj[`tracks|${entryKey}`]
                       return (
-                        <li key={idx + 3}>
+                        <div key={idx + 3} className="flex items-center min-h-0 py-0.5">
+                          <span className="flex-shrink-0 w-5 text-right text-sm text-gray-500 tabular-nums">{position}.</span>
                           <Link
                             href={`/groups/${groupId}/charts/track/${generateSlug(entryKey, 'tracks')}`}
-                            className="flex items-center gap-2 min-h-[40px] sm:min-h-[44px] py-1.5 sm:py-2.5 pr-2 rounded-lg -ml-1 pl-3 hover:bg-[var(--theme-primary-lighter)]/30 active:bg-[var(--theme-primary-lighter)]/50 transition-colors touch-manipulation text-sm text-gray-700 hover:text-[var(--theme-primary)]"
+                            className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 py-1 pl-1.5 pr-2 rounded-lg hover:bg-[var(--theme-primary-lighter)]/30 active:bg-[var(--theme-primary-lighter)]/50 transition-colors touch-manipulation text-sm text-gray-700 hover:text-[var(--theme-primary)] flex-nowrap"
                           >
-                            <span className="truncate flex-1 min-w-0">{track.name} · {track.artist}</span>
+                            <span className="truncate min-w-0 flex-1">{track.name} · {track.artist}</span>
                             <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs flex-shrink-0" />
-                            <span className="text-[var(--theme-text)] flex-shrink-0 text-xs">({formatDisplayValue(track, 'tracks', showVS, vsMapObj, t)})</span>
+                            <span className="text-[var(--theme-text)] flex-shrink-0 text-xs whitespace-nowrap">({formatDisplayValue(track, 'tracks', showVS, vsMapObj, t)})</span>
                           </Link>
-                        </li>
+                        </div>
                       )
                     })}
-                  </ol>
+                  </div>
                   {topTracks.length > 10 && (
                     <p className="text-xs text-gray-500 mt-2">
                       {t('andMore', { count: topTracks.length - 10 })}
@@ -610,26 +614,28 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                 )
               })}
               {topAlbums.length > 3 && (
-                <div className="pt-3 border-t border-[var(--theme-border)]">
-                  <ol start={4} className="list-decimal list-inside space-y-0">
+                <div className="pt-2 border-t border-[var(--theme-border)]">
+                  <div className="space-y-0">
                     {topAlbums.slice(3, 10).map((album: any, idx: number) => {
+                      const position = idx + 4
                       const entryKey = getEntryKey(album, 'albums')
                       const positionChange = positionChangeMapObj[`albums|${entryKey}`]
                       const entryType = entryTypeMapObj[`albums|${entryKey}`]
                       return (
-                        <li key={idx + 3}>
+                        <div key={idx + 3} className="flex items-center min-h-0 py-0.5">
+                          <span className="flex-shrink-0 w-5 text-right text-sm text-gray-500 tabular-nums">{position}.</span>
                           <Link
                             href={`/groups/${groupId}/charts/album/${generateSlug(entryKey, 'albums')}`}
-                            className="flex items-center gap-2 min-h-[40px] sm:min-h-[44px] py-1.5 sm:py-2.5 pr-2 rounded-lg -ml-1 pl-3 hover:bg-[var(--theme-primary-lighter)]/30 active:bg-[var(--theme-primary-lighter)]/50 transition-colors touch-manipulation text-sm text-gray-700 hover:text-[var(--theme-primary)]"
+                            className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 py-1 pl-1.5 pr-2 rounded-lg hover:bg-[var(--theme-primary-lighter)]/30 active:bg-[var(--theme-primary-lighter)]/50 transition-colors touch-manipulation text-sm text-gray-700 hover:text-[var(--theme-primary)] flex-nowrap"
                           >
-                            <span className="truncate flex-1 min-w-0">{album.name} · {album.artist}</span>
+                            <span className="truncate min-w-0 flex-1">{album.name} · {album.artist}</span>
                             <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs flex-shrink-0" />
-                            <span className="text-[var(--theme-text)] flex-shrink-0 text-xs">({formatDisplayValue(album, 'albums', showVS, vsMapObj, t)})</span>
+                            <span className="text-[var(--theme-text)] flex-shrink-0 text-xs whitespace-nowrap">({formatDisplayValue(album, 'albums', showVS, vsMapObj, t)})</span>
                           </Link>
-                        </li>
+                        </div>
                       )
                     })}
-                  </ol>
+                  </div>
                   {topAlbums.length > 10 && (
                     <p className="text-xs text-gray-500 mt-2">
                       {t('andMore', { count: topAlbums.length - 10 })}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from '@/i18n/routing'
 import { useSearchParams } from 'next/navigation'
@@ -29,6 +30,8 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
     password: '',
   })
   const modalRef = useRef<HTMLDivElement>(null)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   // Redirect to dashboard if already logged in
   useEffect(() => {
@@ -155,19 +158,24 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
 
   if (!isOpen) return null
 
-  return (
+  const modalContent = (
     <>
-      {/* Backdrop */}
+      {/* Backdrop - full viewport */}
       <div
         className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm transition-opacity"
+        style={{ minHeight: '100dvh' }}
         onClick={onClose}
+        aria-hidden
       />
       
-      {/* Modal */}
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none">
+      {/* Modal - centered on all screen sizes with safe padding */}
+      <div
+        className="fixed inset-0 z-[9999] flex items-center justify-center p-4 pointer-events-none"
+        style={{ minHeight: '100dvh' }}
+      >
         <div
           ref={modalRef}
-          className="relative rounded-2xl shadow-2xl max-w-md w-full p-5 md:p-8 max-h-[90vh] overflow-y-auto pointer-events-auto"
+          className="relative rounded-xl shadow-2xl max-w-md w-full p-5 md:p-8 max-h-[calc(100dvh-2rem)] overflow-y-auto pointer-events-auto"
           style={{
             animation: 'fadeIn 0.2s ease-in-out',
             background: 'rgba(255, 255, 255, 0.95)',
@@ -177,6 +185,9 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
             boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
           }}
           onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="signin-modal-title"
         >
 
           <button
@@ -199,7 +210,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
             </svg>
           </button>
 
-          <h1 className="text-2xl md:text-3xl font-bold text-center mb-2 md:mb-2 text-gray-900 pr-8 md:pr-0">
+          <h1 id="signin-modal-title" className="text-2xl md:text-3xl font-bold text-center mb-2 md:mb-2 text-gray-900 pr-8 md:pr-0">
             {t('title')}
           </h1>
           <p className="text-center text-gray-600 mb-5 md:mb-6 text-sm md:text-base">
@@ -360,5 +371,8 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
       </div>
     </>
   )
+
+  if (!mounted || typeof document === 'undefined') return null
+  return createPortal(modalContent, document.body)
 }
 

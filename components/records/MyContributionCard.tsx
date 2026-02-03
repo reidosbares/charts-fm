@@ -151,7 +151,6 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
                       onChange={(e) => setMemberFilterQuery(e.target.value)}
                       placeholder={tMyContribution('filterMembers')}
                       className="w-full px-3 py-2 text-sm rounded-md border border-theme/50 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)]/50"
-                      autoFocus
                     />
                   </div>
                   <ul className="max-h-48 overflow-y-auto py-1">
