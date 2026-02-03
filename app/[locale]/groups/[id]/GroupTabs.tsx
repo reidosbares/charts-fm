@@ -106,19 +106,22 @@ export default function GroupTabs({
         />
       </div>
 
-      {/* Trends tab: no flat container, bento grid sits directly on page */}
+      {/* Trends and Charts tabs: content floats outside container, premium glass cards inside */}
       {activeTab === 'trends' && (
         <div className="min-w-0">
           {trendsContent}
         </div>
       )}
 
-      {/* Other tabs: inside glass container */}
-      {activeTab !== 'trends' && (
+      {activeTab === 'charts' && (
+        <div className="min-w-0">
+          {chartsContent}
+        </div>
+      )}
+
+      {/* All-time and Members: inside glass container */}
+      {(activeTab === 'alltime' || activeTab === 'members') && (
         <div className="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-white/50 shadow-lg">
-          <div style={{ display: activeTab === 'charts' ? 'block' : 'none' }}>
-            {chartsContent}
-          </div>
           <div style={{ display: activeTab === 'alltime' ? 'block' : 'none' }}>
             {allTimeContent}
           </div>

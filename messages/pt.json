@@ -376,6 +376,7 @@
     },
     "weeklyCharts": {
       "title": "Charts Semanais",
+      "weekNumber": "Semana {number}",
       "exploreCharts": "Ver mais charts",
       "weekOf": "Semana de {date}",
       "fromTo": "de {start} até {end}",
@@ -394,6 +395,9 @@
       "vs": "VS",
       "failedToLoad": "Falha ao carregar charts",
       "theNumberOnes": "Todos os #1s",
+      "chartToppersCalloutTitle": "Chart toppers",
+      "chartToppersCalloutDescription": "Veja todos os artistas, músicas e álbuns que chegaram ao #1 nas semanas anteriores.",
+      "viewChartToppers": "Ver chart toppers",
       "numberOneArtists": "Artistas",
       "numberOneTracks": "Músicas",
       "numberOneAlbums": "Álbuns",

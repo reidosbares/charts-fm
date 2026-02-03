@@ -94,6 +94,7 @@ export async function GET(
 
     return NextResponse.json({
       latestWeek: latestWeekData,
+      totalWeeks: weeklyStats.length,
       showVS,
       chartMode,
     })

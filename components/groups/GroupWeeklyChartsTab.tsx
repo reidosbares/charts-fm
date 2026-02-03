@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from '@/i18n/routing'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMusic, faMicrophone, faCompactDisc, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faMusic, faMicrophone, faCompactDisc, faSpinner, faTrophy } from '@fortawesome/free-solid-svg-icons'
 import PositionMovementIcon from '@/components/PositionMovementIcon'
 import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 import { generateSlug, ChartType } from '@/lib/chart-slugs'
@@ -314,12 +314,11 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
       })
   }, [groupId, t])
 
+  const cardBase = 'rounded-2xl p-4 md:p-5 backdrop-blur-md bg-white/70 border border-white/50 shadow-lg'
+
   if (isLoading) {
     return (
-      <div>
-        <div className="flex justify-between items-center mb-4 md:mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
-        </div>
+      <div className="min-w-0">
         <div className="flex items-center justify-center py-8 md:py-12">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-3xl md:text-4xl text-[var(--theme-primary)]" />
         </div>
@@ -329,11 +328,8 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
 
   if (error || !data || !data.latestWeek) {
     return (
-      <div>
-        <div className="flex justify-between items-center mb-4 md:mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
-        </div>
-        <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-8 md:p-12 text-center border border-theme">
+      <div className="min-w-0">
+        <div className={`${cardBase} p-8 md:p-12 text-center`}>
           <div className="mb-4 text-[var(--theme-primary)]">
             <FontAwesomeIcon icon={faMusic} className="text-4xl md:text-5xl" />
           </div>
@@ -353,7 +349,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
     )
   }
 
-  const { latestWeek, showVS } = data
+  const { latestWeek, totalWeeks, showVS } = data
   const { topArtists, topTracks, topAlbums, vsMap, positionChangeMap, entryTypeMap } = latestWeek
   const vsMapObj = vsMap || {}
   const positionChangeMapObj = positionChangeMap || {}
@@ -362,40 +358,45 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
   // Get weekStart Date from latestWeek.weekStart (ISO string)
   const weekStartDate = latestWeek.weekStart ? new Date(latestWeek.weekStart) : new Date()
 
+  // Week number = which week in the group's chart history (1 = first week, totalWeeks = latest)
+  const weekNumber = totalWeeks ?? 1
+
   return (
-    <div>
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
-        <div className="flex flex-col sm:flex-row gap-2 items-center">
-          <LiquidGlassLink
-            href={`/groups/${groupId}/charts`}
-            variant="primary"
-            useTheme
-            className="w-full sm:w-auto"
-          >
-            {t('exploreCharts')}
-          </LiquidGlassLink>
-          <div className="w-full sm:w-auto">
-            <ShareChartButton
-              groupId={groupId}
-              weekStart={weekStartDate}
-              fullWidth
-            />
+    <div className="min-w-0">
+      {/* Header: Week N, subtitle from–to (below title on mobile), Explore + Share */}
+      <div className="mb-5 sm:mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex flex-col gap-0.5 min-w-0">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[var(--theme-primary-dark)] leading-tight">
+              {t('weekNumber', { number: weekNumber })}
+            </h2>
+            <p className="text-sm md:text-base text-gray-600 break-words">
+              {t('fromTo', { start: latestWeek.weekStartFormatted, end: latestWeek.weekEndFormatted })}
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto sm:flex-shrink-0">
+            <LiquidGlassLink
+              href={`/groups/${groupId}/charts`}
+              variant="primary"
+              useTheme
+              className="w-full sm:w-auto justify-center min-h-[44px] items-center"
+            >
+              {t('exploreCharts')}
+            </LiquidGlassLink>
+            <div className="w-full sm:w-auto min-w-0 min-h-[44px] flex">
+              <ShareChartButton
+                groupId={groupId}
+                weekStart={weekStartDate}
+                fullWidth
+              />
+            </div>
           </div>
         </div>
       </div>
-      <div className="mb-4 md:mb-6">
-        <h3 className="text-lg md:text-2xl font-bold text-gray-900">
-          {t('weekOf', { date: latestWeek.weekStartFormatted })}
-          <span className="text-xs md:text-sm font-normal italic text-gray-500 ml-1 md:ml-2">
-            ({t('fromTo', { start: latestWeek.weekStartFormatted, end: latestWeek.weekEndFormatted })})
-          </span>
-        </h3>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
           {/* Top Artists */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
+          <div className={`${cardBase}`}>
             <h4 className="font-bold text-base md:text-lg mb-3 md:mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
               <FontAwesomeIcon icon={faMicrophone} className="text-base md:text-lg flex-shrink-0" />
               {t('topArtists')}
@@ -426,43 +427,41 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                 const positionChange = positionChangeMapObj[`artists|${entryKey}`]
                 const entryType = entryTypeMapObj[`artists|${entryKey}`]
                 return (
-                  <div
+                  <Link
                     key={idx}
-                    className="flex items-center gap-2 md:gap-3 p-2.5 md:p-3 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
+                    href={`/groups/${groupId}/charts/artist/${generateSlug(entryKey, 'artists')}`}
+                    className="flex items-center gap-2 md:gap-3 min-h-[44px] py-3 px-2.5 md:py-3 md:p-3 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 active:bg-[var(--theme-primary-lighter)]/60 transition-all border border-[var(--theme-border)] touch-manipulation"
                   >
-                    <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-xs md:text-sm shadow-sm">
+                    <div className="flex-shrink-0 w-8 h-8 md:w-8 md:h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-xs md:text-sm shadow-sm">
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <Link
-                        href={`/groups/${groupId}/charts/artist/${generateSlug(entryKey, 'artists')}`}
-                        className="font-semibold text-xs md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 hover:text-[var(--theme-primary)] transition-colors min-w-0"
-                      >
+                      <span className="font-semibold text-sm md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 min-w-0">
                         <span className="truncate">{artist.name}</span>
                         <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs md:text-sm flex-shrink-0" />
-                      </Link>
+                      </span>
                       <div className="text-xs md:text-sm text-[var(--theme-text)] font-medium truncate">{displayValue}</div>
                     </div>
-                  </div>
+                  </Link>
                 )
               })}
               {topArtists.length > 3 && (
-                <div className="pt-2 border-t border-[var(--theme-border)]">
-                  <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
+                <div className="pt-3 border-t border-[var(--theme-border)]">
+                  <ol start={4} className="list-decimal list-inside space-y-0">
                     {topArtists.slice(3, 10).map((artist: any, idx: number) => {
                       const entryKey = getEntryKey(artist, 'artists')
                       const positionChange = positionChangeMapObj[`artists|${entryKey}`]
                       const entryType = entryTypeMapObj[`artists|${entryKey}`]
                       return (
-                        <li key={idx + 3} className="flex items-center gap-1 min-w-0">
+                        <li key={idx + 3}>
                           <Link
                             href={`/groups/${groupId}/charts/artist/${generateSlug(entryKey, 'artists')}`}
-                            className="hover:text-[var(--theme-primary)] transition-colors truncate"
+                            className="flex items-center gap-2 min-h-[40px] sm:min-h-[44px] py-1.5 sm:py-2.5 pr-2 rounded-lg -ml-1 pl-3 hover:bg-[var(--theme-primary-lighter)]/30 active:bg-[var(--theme-primary-lighter)]/50 transition-colors touch-manipulation text-sm text-gray-700 hover:text-[var(--theme-primary)]"
                           >
-                            {artist.name}
-                          </Link>{' '}
-                          <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs flex-shrink-0" />{' '}
-                          <span className="text-[var(--theme-text)] flex-shrink-0">({formatDisplayValue(artist, 'artists', showVS, vsMapObj, t)})</span>
+                            <span className="truncate flex-1 min-w-0">{artist.name}</span>
+                            <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs flex-shrink-0" />
+                            <span className="text-[var(--theme-text)] flex-shrink-0 text-xs">({formatDisplayValue(artist, 'artists', showVS, vsMapObj, t)})</span>
+                          </Link>
                         </li>
                       )
                     })}
@@ -478,7 +477,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
           </div>
           
           {/* Top Tracks */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
+          <div className={`${cardBase}`}>
             <h4 className="font-bold text-base md:text-lg mb-3 md:mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
               <FontAwesomeIcon icon={faMusic} className="text-base md:text-lg flex-shrink-0" />
               {t('topTracks')}
@@ -509,47 +508,42 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                 const positionChange = positionChangeMapObj[`tracks|${entryKey}`]
                 const entryType = entryTypeMapObj[`tracks|${entryKey}`]
                 return (
-                  <div
+                  <Link
                     key={idx}
-                    className="flex items-center gap-2 md:gap-3 p-2.5 md:p-3 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
+                    href={`/groups/${groupId}/charts/track/${generateSlug(entryKey, 'tracks')}`}
+                    className="flex items-center gap-2 md:gap-3 min-h-[44px] py-3 px-2.5 md:py-3 md:p-3 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 active:bg-[var(--theme-primary-lighter)]/60 transition-all border border-[var(--theme-border)] touch-manipulation"
                   >
-                    <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-xs md:text-sm shadow-sm">
+                    <div className="flex-shrink-0 w-8 h-8 md:w-8 md:h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-xs md:text-sm shadow-sm">
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <Link
-                        href={`/groups/${groupId}/charts/track/${generateSlug(entryKey, 'tracks')}`}
-                        className="font-semibold text-xs md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 hover:text-[var(--theme-primary)] transition-colors min-w-0"
-                      >
+                      <span className="font-semibold text-sm md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 min-w-0">
                         <span className="truncate">{track.name}</span>
                         <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs md:text-sm flex-shrink-0" />
-                      </Link>
+                      </span>
                       <div className="text-xs text-gray-600 truncate">{t('by', { artist: track.artist })}</div>
-                      <div className="text-xs md:text-sm text-[var(--theme-text)] font-medium mt-1 truncate">{displayValue}</div>
+                      <div className="text-xs md:text-sm text-[var(--theme-text)] font-medium mt-0.5 truncate">{displayValue}</div>
                     </div>
-                  </div>
+                  </Link>
                 )
               })}
               {topTracks.length > 3 && (
-                <div className="pt-2 border-t border-[var(--theme-border)]">
-                  <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
+                <div className="pt-3 border-t border-[var(--theme-border)]">
+                  <ol start={4} className="list-decimal list-inside space-y-0">
                     {topTracks.slice(3, 10).map((track: any, idx: number) => {
                       const entryKey = getEntryKey(track, 'tracks')
                       const positionChange = positionChangeMapObj[`tracks|${entryKey}`]
                       const entryType = entryTypeMapObj[`tracks|${entryKey}`]
                       return (
-                        <li key={idx + 3} className="flex items-center gap-1 min-w-0">
-                          <span className="truncate">
-                            <Link
-                              href={`/groups/${groupId}/charts/track/${generateSlug(entryKey, 'tracks')}`}
-                              className="hover:text-[var(--theme-primary)] transition-colors"
-                            >
-                              {track.name}
-                            </Link>{' '}
-                            {t('by', { artist: track.artist })}
-                          </span>{' '}
-                          <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs flex-shrink-0" />{' '}
-                          <span className="text-[var(--theme-text)] flex-shrink-0">({formatDisplayValue(track, 'tracks', showVS, vsMapObj, t)})</span>
+                        <li key={idx + 3}>
+                          <Link
+                            href={`/groups/${groupId}/charts/track/${generateSlug(entryKey, 'tracks')}`}
+                            className="flex items-center gap-2 min-h-[40px] sm:min-h-[44px] py-1.5 sm:py-2.5 pr-2 rounded-lg -ml-1 pl-3 hover:bg-[var(--theme-primary-lighter)]/30 active:bg-[var(--theme-primary-lighter)]/50 transition-colors touch-manipulation text-sm text-gray-700 hover:text-[var(--theme-primary)]"
+                          >
+                            <span className="truncate flex-1 min-w-0">{track.name} · {track.artist}</span>
+                            <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs flex-shrink-0" />
+                            <span className="text-[var(--theme-text)] flex-shrink-0 text-xs">({formatDisplayValue(track, 'tracks', showVS, vsMapObj, t)})</span>
+                          </Link>
                         </li>
                       )
                     })}
@@ -565,7 +559,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
           </div>
           
           {/* Top Albums */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
+          <div className={`${cardBase}`}>
             <h4 className="font-bold text-base md:text-lg mb-3 md:mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
               <FontAwesomeIcon icon={faCompactDisc} className="text-base md:text-lg flex-shrink-0" />
               {t('topAlbums')}
@@ -596,47 +590,42 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                 const positionChange = positionChangeMapObj[`albums|${entryKey}`]
                 const entryType = entryTypeMapObj[`albums|${entryKey}`]
                 return (
-                  <div
+                  <Link
                     key={idx}
-                    className="flex items-center gap-2 md:gap-3 p-2.5 md:p-3 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
+                    href={`/groups/${groupId}/charts/album/${generateSlug(entryKey, 'albums')}`}
+                    className="flex items-center gap-2 md:gap-3 min-h-[44px] py-3 px-2.5 md:py-3 md:p-3 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 active:bg-[var(--theme-primary-lighter)]/60 transition-all border border-[var(--theme-border)] touch-manipulation"
                   >
-                    <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-xs md:text-sm shadow-sm">
+                    <div className="flex-shrink-0 w-8 h-8 md:w-8 md:h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-xs md:text-sm shadow-sm">
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <Link
-                        href={`/groups/${groupId}/charts/album/${generateSlug(entryKey, 'albums')}`}
-                        className="font-semibold text-xs md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 hover:text-[var(--theme-primary)] transition-colors min-w-0"
-                      >
+                      <span className="font-semibold text-sm md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 min-w-0">
                         <span className="truncate">{album.name}</span>
                         <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs md:text-sm flex-shrink-0" />
-                      </Link>
+                      </span>
                       <div className="text-xs text-gray-600 truncate">{t('by', { artist: album.artist })}</div>
-                      <div className="text-xs md:text-sm text-[var(--theme-text)] font-medium mt-1 truncate">{displayValue}</div>
+                      <div className="text-xs md:text-sm text-[var(--theme-text)] font-medium mt-0.5 truncate">{displayValue}</div>
                     </div>
-                  </div>
+                  </Link>
                 )
               })}
               {topAlbums.length > 3 && (
-                <div className="pt-2 border-t border-[var(--theme-border)]">
-                  <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
+                <div className="pt-3 border-t border-[var(--theme-border)]">
+                  <ol start={4} className="list-decimal list-inside space-y-0">
                     {topAlbums.slice(3, 10).map((album: any, idx: number) => {
                       const entryKey = getEntryKey(album, 'albums')
                       const positionChange = positionChangeMapObj[`albums|${entryKey}`]
                       const entryType = entryTypeMapObj[`albums|${entryKey}`]
                       return (
-                        <li key={idx + 3} className="flex items-center gap-1 min-w-0">
-                          <span className="truncate">
-                            <Link
-                              href={`/groups/${groupId}/charts/album/${generateSlug(entryKey, 'albums')}`}
-                              className="hover:text-[var(--theme-primary)] transition-colors"
-                            >
-                              {album.name}
-                            </Link>{' '}
-                            {t('by', { artist: album.artist })}
-                          </span>{' '}
-                          <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs flex-shrink-0" />{' '}
-                          <span className="text-[var(--theme-text)] flex-shrink-0">({formatDisplayValue(album, 'albums', showVS, vsMapObj, t)})</span>
+                        <li key={idx + 3}>
+                          <Link
+                            href={`/groups/${groupId}/charts/album/${generateSlug(entryKey, 'albums')}`}
+                            className="flex items-center gap-2 min-h-[40px] sm:min-h-[44px] py-1.5 sm:py-2.5 pr-2 rounded-lg -ml-1 pl-3 hover:bg-[var(--theme-primary-lighter)]/30 active:bg-[var(--theme-primary-lighter)]/50 transition-colors touch-manipulation text-sm text-gray-700 hover:text-[var(--theme-primary)]"
+                          >
+                            <span className="truncate flex-1 min-w-0">{album.name} · {album.artist}</span>
+                            <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs flex-shrink-0" />
+                            <span className="text-[var(--theme-text)] flex-shrink-0 text-xs">({formatDisplayValue(album, 'albums', showVS, vsMapObj, t)})</span>
+                          </Link>
                         </li>
                       )
                     })}
@@ -652,35 +641,29 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
           </div>
         </div>
 
-      {/* The #1s Section */}
-      <div className="mt-6 md:mt-8">
-        <h3 className="text-xl md:text-2xl font-bold text-[var(--theme-primary-dark)] mb-4 md:mb-6">
-          {t('theNumberOnes')}
-        </h3>
-        <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+      {/* Chart toppers callout */}
+      <div className="mt-6 md:mt-8 rounded-2xl p-4 md:p-6 backdrop-blur-md border border-[var(--theme-primary)]/30 shadow-lg bg-gradient-to-br from-[var(--theme-primary-lighter)]/40 via-white/70 to-white/80">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-start gap-3 md:gap-4 min-w-0">
+            <div className="w-11 h-11 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[var(--theme-primary)]/20 text-[var(--theme-primary)] flex-shrink-0">
+              <FontAwesomeIcon icon={faTrophy} className="text-xl md:text-2xl" />
+            </div>
+            <div className="min-w-0">
+              <h3 className="text-base md:text-xl font-bold text-[var(--theme-primary-dark)] mb-0.5">
+                {t('chartToppersCalloutTitle')}
+              </h3>
+              <p className="text-sm md:text-base text-gray-600 break-words">
+                {t('chartToppersCalloutDescription')}
+              </p>
+            </div>
+          </div>
           <LiquidGlassLink
-            href={`/groups/${groupId}/chart-toppers#artists`}
+            href={`/groups/${groupId}/chart-toppers`}
             variant="primary"
             useTheme
-            className="flex-1"
+            className="flex-shrink-0 w-full sm:w-auto justify-center min-h-[44px] items-center touch-manipulation"
           >
-            {t('numberOneArtists')}
-          </LiquidGlassLink>
-          <LiquidGlassLink
-            href={`/groups/${groupId}/chart-toppers#tracks`}
-            variant="primary"
-            useTheme
-            className="flex-1"
-          >
-            {t('numberOneTracks')}
-          </LiquidGlassLink>
-          <LiquidGlassLink
-            href={`/groups/${groupId}/chart-toppers#albums`}
-            variant="primary"
-            useTheme
-            className="flex-1"
-          >
-            {t('numberOneAlbums')}
+            {t('viewChartToppers')}
           </LiquidGlassLink>
         </div>
       </div>
