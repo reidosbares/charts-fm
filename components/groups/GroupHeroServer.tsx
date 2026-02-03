@@ -166,7 +166,7 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme, is
         >
           {groupImage ? (
             <div 
-              className="absolute inset-0 scale-110 blur-2xl opacity-90"
+              className="absolute inset-0 scale-110 blur-xl opacity-90"
               style={{
                 backgroundImage: `url(${groupImage})`,
                 backgroundSize: 'cover',

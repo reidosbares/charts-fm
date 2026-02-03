@@ -153,7 +153,7 @@ export default async function PublicGroupHeroServer({ groupId, colorTheme, child
         <div className="absolute inset-0 hero-background-mask">
           {groupImage ? (
             <div
-              className="absolute inset-0 scale-110 blur-2xl opacity-90"
+              className="absolute inset-0 scale-110 blur-xl opacity-90"
               style={{
                 backgroundImage: `url(${groupImage})`,
                 backgroundSize: 'cover',
