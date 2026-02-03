@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import SafeImage from '@/components/SafeImage'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import { Link } from '@/i18n/routing'
 
 interface Request {
   id: string
@@ -181,7 +182,11 @@ export default function RequestsModal({
                     key={request.id}
                     className="flex items-center justify-between p-4 bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all hover:bg-gradient-to-br hover:from-gray-100 hover:to-gray-200/50"
                   >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <Link
+                      href={`/u/${encodeURIComponent(request.user.lastfmUsername)}`}
+                      className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-90 transition-opacity"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <div className="relative w-12 h-12 rounded-full ring-2 ring-gray-300 bg-gray-200 flex-shrink-0 overflow-hidden">
                         <SafeImage
                           src={request.user.image}
@@ -197,7 +202,7 @@ export default function RequestsModal({
                         </div>
                         <p className="text-sm text-gray-600 truncate">@{request.user.lastfmUsername}</p>
                       </div>
-                    </div>
+                    </Link>
                     <div className="flex items-center gap-2 ml-2 md:ml-4 flex-shrink-0">
                       <LiquidGlassButton
                         onClick={() => handleAccept(request.id)}
