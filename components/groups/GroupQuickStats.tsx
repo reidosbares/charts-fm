@@ -41,7 +41,7 @@ export default function GroupQuickStats({ groupId }: GroupQuickStatsProps) {
     return (
       <div className="relative z-10 mt-3 md:mt-6">
         <div 
-          className="rounded-xl md:rounded-2xl p-2 md:p-5 shadow-xl border border-white/30"
+          className="rounded-xl md:rounded-2xl p-2 md:p-5 border border-white/30"
           style={{
             background: 'rgba(0, 0, 0, 0.35)',
             backdropFilter: 'blur(16px) saturate(180%)',
@@ -65,7 +65,7 @@ export default function GroupQuickStats({ groupId }: GroupQuickStatsProps) {
   return (
     <div className="relative z-10 mt-3 md:mt-6">
       <div 
-        className="rounded-xl md:rounded-2xl shadow-xl border border-white/30 overflow-hidden"
+        className="rounded-xl md:rounded-2xl border border-white/30 overflow-hidden"
         style={{
           background: 'rgba(0, 0, 0, 0.35)',
           backdropFilter: 'blur(16px) saturate(180%)',
