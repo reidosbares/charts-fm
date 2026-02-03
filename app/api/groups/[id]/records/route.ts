@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { checkGroupAccessForAPI } from '@/lib/group-auth'
 import { getGroupRecords, calculateGroupRecords, triggerRecordsCalculation } from '@/lib/group-records'
+import { getMemberGroupStats } from '@/lib/member-group-stats'
 import { prisma } from '@/lib/prisma'
 
 export async function GET(
@@ -12,10 +13,37 @@ export async function GET(
 
     const records = await getGroupRecords(group.id)
 
+    // Member with most weeks as MVP (from MemberGroupStats, all-time)
+    let mostWeeksAsMVP: { userId: string; name: string; image: string | null; lastfmUsername: string | null; value: number } | null = null
+    const allMemberStats = await getMemberGroupStats(group.id)
+    if (Array.isArray(allMemberStats) && allMemberStats.length > 0) {
+      const top = allMemberStats.reduce((best, row) =>
+        row.weeksAsMVP > best.weeksAsMVP ? row : best
+      )
+      if (top.weeksAsMVP > 0) {
+        const u = await prisma.user.findUnique({
+          where: { id: top.userId },
+          select: { id: true, image: true, name: true, lastfmUsername: true },
+        })
+        if (u) {
+          mostWeeksAsMVP = {
+            userId: u.id,
+            name: u.name || u.lastfmUsername || '',
+            image: u.image || null,
+            lastfmUsername: u.lastfmUsername,
+            value: top.weeksAsMVP,
+          }
+        }
+      }
+    }
+
     if (!records) {
       return NextResponse.json({
         status: 'not_started',
         records: null,
+        mostWeeksAsMVP,
+        calculationStartedAt: null,
+        chartsGeneratedAt: null,
       })
     }
 
@@ -69,6 +97,7 @@ export async function GET(
     return NextResponse.json({
       status: records.status,
       records: records.status === 'completed' ? enrichedRecords : null,
+      mostWeeksAsMVP,
       calculationStartedAt: records.calculationStartedAt,
       chartsGeneratedAt: records.chartsGeneratedAt,
     })

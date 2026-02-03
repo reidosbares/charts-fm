@@ -106,7 +106,7 @@ export default function GroupTabs({
         />
       </div>
 
-      {/* Trends and Charts tabs: content floats outside container, premium glass cards inside */}
+      {/* Trends, Charts, and All-time: content floats outside container, premium glass cards inside */}
       {activeTab === 'trends' && (
         <div className="min-w-0">
           {trendsContent}
@@ -119,17 +119,16 @@ export default function GroupTabs({
         </div>
       )}
 
-      {/* All-time and Members: inside glass container */}
-      {(activeTab === 'alltime' || activeTab === 'members') && (
+      {activeTab === 'alltime' && (
+        <div className="min-w-0">
+          {allTimeContent}
+        </div>
+      )}
+
+      {/* Members: inside glass container */}
+      {isMember && activeTab === 'members' && (
         <div className="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-white/50 shadow-lg">
-          <div style={{ display: activeTab === 'alltime' ? 'block' : 'none' }}>
-            {allTimeContent}
-          </div>
-          {isMember && (
-            <div style={{ display: activeTab === 'members' ? 'block' : 'none' }}>
-              {membersContent}
-            </div>
-          )}
+          {membersContent}
         </div>
       )}
     </div>

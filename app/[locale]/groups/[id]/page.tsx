@@ -113,7 +113,7 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
             <GroupWeeklyChartsTab groupId={group.id} isOwner={isOwner || false} isSuperuser={isSuperuser} />
           }
           allTimeContent={
-            <GroupAllTimeTab groupId={group.id} isOwner={isOwner || false} />
+            <GroupAllTimeTab groupId={group.id} isOwner={isOwner || false} userId={user?.id ?? null} />
           }
           trendsContent={
             <GroupTrendsTab groupId={group.id} />
