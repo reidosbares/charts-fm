@@ -134,6 +134,7 @@ export default async function PublicUserProfilePage({
 
   const viewerPrivateGroupIdSet = new Set(viewerPrivateMemberships.map((m) => m.groupId))
 
+  // Private groups are only visible to: profile owner (isSelf), group creator, or group members.
   const visibleGroups = groups.filter((g) => {
     if (!g.isPrivate) return true
     if (isSelf) return true
@@ -142,6 +143,8 @@ export default async function PublicUserProfilePage({
     return viewerPrivateGroupIdSet.has(g.id)
   })
 
+  // Resolve highlighted group from visibleGroups so a private highlighted group is only shown
+  // to the profile owner and to other users who are in that same group (creator or member).
   const highlightedGroup =
     user.highlightedGroupId && user.showProfileGroups
       ? visibleGroups.find((g) => g.id === user.highlightedGroupId) ?? null

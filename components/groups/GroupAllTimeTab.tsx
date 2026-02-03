@@ -550,7 +550,7 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
               useTheme
               className="flex-shrink-0 w-full sm:w-auto justify-center"
             >
-              {t('viewCompleteTable')}
+              {t('viewTop100TableButton')}
             </LiquidGlassLink>
           </div>
         </div>
