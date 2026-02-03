@@ -377,7 +377,7 @@
     "weeklyCharts": {
       "title": "Charts Semanais",
       "weekNumber": "Semana {number}",
-      "exploreCharts": "Ver mais charts",
+      "exploreCharts": "Ver charts completos",
       "weekOf": "Semana de {date}",
       "fromTo": "de {start} até {end}",
       "topArtists": "Top Artistas",
