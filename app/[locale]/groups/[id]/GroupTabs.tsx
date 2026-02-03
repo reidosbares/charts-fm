@@ -106,23 +106,29 @@ export default function GroupTabs({
         />
       </div>
 
-      {/* Tab Content - All tabs load asynchronously on page load, hidden until active */}
-      <div className="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-white/50 shadow-lg">
-        <div style={{ display: activeTab === 'charts' ? 'block' : 'none' }}>
-          {chartsContent}
-        </div>
-        <div style={{ display: activeTab === 'alltime' ? 'block' : 'none' }}>
-          {allTimeContent}
-        </div>
-        <div style={{ display: activeTab === 'trends' ? 'block' : 'none' }}>
+      {/* Trends tab: no flat container, bento grid sits directly on page */}
+      {activeTab === 'trends' && (
+        <div className="min-w-0">
           {trendsContent}
         </div>
-        {isMember && (
-          <div style={{ display: activeTab === 'members' ? 'block' : 'none' }}>
-            {membersContent}
+      )}
+
+      {/* Other tabs: inside glass container */}
+      {activeTab !== 'trends' && (
+        <div className="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-white/50 shadow-lg">
+          <div style={{ display: activeTab === 'charts' ? 'block' : 'none' }}>
+            {chartsContent}
           </div>
-        )}
-      </div>
+          <div style={{ display: activeTab === 'alltime' ? 'block' : 'none' }}>
+            {allTimeContent}
+          </div>
+          {isMember && (
+            <div style={{ display: activeTab === 'members' ? 'block' : 'none' }}>
+              {membersContent}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

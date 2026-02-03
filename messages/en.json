@@ -432,6 +432,7 @@
     "trends": {
       "title": "Trends",
       "exploreFullTrends": "Explore Full Trends",
+      "exploreFullTrendsTagline": "Charts, movers, streaks and more",
       "failedToLoad": "Failed to load trends",
       "noTrendsAvailable": "No trends available yet.",
       "generateChartsToSee": "Generate charts to see weekly trends and insights!",

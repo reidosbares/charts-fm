@@ -132,8 +132,28 @@ export async function GET(
       }
     }
 
+    // Enrich memberSpotlight with lastfmUsername and image (cached trends may lack these)
+    let trendsToReturn = trends
+    const spotlight = trends?.memberSpotlight as { userId?: string; lastfmUsername?: string; image?: string | null } | null
+    if (spotlight?.userId && !spotlight.lastfmUsername) {
+      const mvpUser = await prisma.user.findUnique({
+        where: { id: spotlight.userId },
+        select: { lastfmUsername: true, image: true },
+      })
+      if (mvpUser) {
+        trendsToReturn = {
+          ...trends,
+          memberSpotlight: {
+            ...spotlight,
+            lastfmUsername: mvpUser.lastfmUsername,
+            image: spotlight.image ?? mvpUser.image,
+          },
+        } as typeof trends
+      }
+    }
+
     return NextResponse.json({
-      trends,
+      trends: trendsToReturn,
       personalizedStats,
       longestStreaks,
       comebacks,

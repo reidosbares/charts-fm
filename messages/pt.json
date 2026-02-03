@@ -432,6 +432,7 @@
     "trends": {
       "title": "Trends",
       "exploreFullTrends": "Ver mais trends",
+      "exploreFullTrendsTagline": "Charts, subidas e descidas, combos e mais",
       "failedToLoad": "Falha ao carregar trends",
       "noTrendsAvailable": "Ainda não há trends disponíveis.",
       "generateChartsToSee": "Gere charts para ver trends semanais e insights!",

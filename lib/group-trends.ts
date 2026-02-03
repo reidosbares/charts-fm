@@ -40,6 +40,8 @@ interface MemberContribution {
 interface MemberSpotlight {
   userId: string
   name: string
+  lastfmUsername: string
+  image?: string | null
   highlight: string
   topContributions: Array<{
     chartType: ChartType
@@ -315,6 +317,7 @@ export async function calculateMemberContributions(
           id: true,
           name: true,
           lastfmUsername: true,
+          image: true,
         },
       },
     },
@@ -406,9 +409,12 @@ export async function calculateMemberContributions(
         contribution: c.vs,
       }))
 
+    const mvpMember = members.find((m) => m.user.id === mvp.userId)
     memberSpotlight = {
       userId: mvp.userId,
       name: mvp.name,
+      lastfmUsername: mvpMember?.user.lastfmUsername ?? '',
+      image: mvpMember?.user.image ?? null,
       highlight: mostDiverse.userId === mvp.userId ? `MVP & Most Diverse Listener` : `Most Active Listener`,
       topContributions: mvpTopContributions,
     }
