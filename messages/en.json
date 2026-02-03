@@ -48,15 +48,15 @@
     "bioPlaceholder": "Write a short bio about your taste, what you’re listening to, or anything you’d like to share.",
     "bioHelp": "Shown on your public profile.",
     "publicProfile": {
-      "title": "Public profile",
+      "title": "Profile page",
       "profilePublic": "Make my profile public",
       "showStats": "Show my listening stats",
       "showGroups": "Show my groups",
       "highlightedGroup": "Highlighted group",
-      "highlightedGroupHelp": "Choose one group to display at the top of your public profile with its theme.",
+      "highlightedGroupHelp": "Choose one group to display at the top of your public profile page.",
       "highlightedGroupNone": "None",
       "viewPublicProfileLabel": "Public profile link",
-      "viewPublicProfileLink": "View my public profile"
+      "viewPublicProfileLink": "View my profile page"
     },
     "saveChanges": "Save Changes",
     "saving": "Saving...",
@@ -127,14 +127,54 @@
     "memberAwards": "Member awards",
     "featuredArtistPlaceholder": "Pick an artist",
     "editFeaturedArtist": "Change featured artist",
+    "featuredArtistHelp": "Only artists where you are the main driver can be selected as your featured artist.",
+    "featuredArtistSearchPlaceholder": "Search artists...",
+    "featuredArtistNoResults": "No artists found",
     "featuredArtistNone": "None",
-    "featuredArtistVS": "{value} VS"
+    "featuredArtistVS": "{value} VS",
+    "highlightedGroupCalloutTitle": "Highlight a group on your profile",
+    "highlightedGroupCalloutDescription": "Choose a group to showcase at the top of your profile with your contribution stats and awards.",
+    "highlightedGroupChooseButton": "Choose a group",
+    "highlightedGroupSaving": "Saving...",
+    "highlightedGroupSearchPlaceholder": "Search groups...",
+    "highlightedGroupNoResults": "No groups found",
+    "clearHighlightedGroup": "Remove highlighted group"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account settings",
+    "email": "Email",
+    "emailVerified": "Verified",
+    "emailNotVerified": "Not Verified",
+    "emailChangeWarning": "Changing your email will reset your verification status. A verification email will be sent to your new address.",
+    "language": "Language",
+    "selectLanguage": "Select your preferred language",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "settingsUpdated": "Settings updated successfully!",
+    "failedToLoad": "Failed to load settings",
+    "failedToUpdate": "Failed to update settings",
+    "errors": {
+      "emailRequired": "Email is required",
+      "invalidEmail": "Invalid email format",
+      "emailExists": "An account with this email already exists"
+    },
+    "dangerZone": {
+      "title": "Danger Zone",
+      "description": "Irreversible and destructive actions",
+      "deleteAccount": {
+        "title": "Delete Account",
+        "description": "Permanently delete your account and all associated data. This action cannot be undone.",
+        "button": "Delete Account"
+      }
+    }
   },
   "navbar": {
     "home": "Home",
     "dashboard": "Dashboard",
     "profile": "Profile",
     "editProfile": "Edit Profile",
+    "settings": "Settings",
     "publicProfile": "Public Profile",
     "signIn": "Sign In",
     "signOut": "Sign Out",

@@ -11,6 +11,8 @@ import { getPersonalizedMemberStats, getTotalVSForEntryInGroup } from '@/lib/mem
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChartLine, faTrophy, faStar } from '@fortawesome/free-solid-svg-icons'
 import HighlightedGroupFeaturedArtist from '@/components/profile/HighlightedGroupFeaturedArtist'
+import HighlightedGroupCallout from '@/components/profile/HighlightedGroupCallout'
+import ClearHighlightedGroupButton from '@/components/profile/ClearHighlightedGroupButton'
 
 // Same award colors as RecordBlock on the records page
 const AWARD_BADGE_CLASSES: Record<string, string> = {
@@ -243,6 +245,16 @@ export default async function PublicUserProfilePage({
           {user.showProfileGroups && (
             <section>
               <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">{t('groupsTitle')}</h2>
+              {/* Callout to encourage choosing a highlighted group - only shown to the user on their own profile */}
+              {isSelf && !highlightedGroup && visibleGroups.length > 0 && (
+                <HighlightedGroupCallout
+                  groups={visibleGroups.map((g) => ({
+                    id: g.id,
+                    name: g.name,
+                    image: g.image,
+                  }))}
+                />
+              )}
               {highlightedGroup && (
                 <section
                   className={`mb-5 rounded-2xl overflow-hidden relative ${themeClass}`}
@@ -258,6 +270,8 @@ export default async function PublicUserProfilePage({
                     `,
                   }}
                 >
+                  {/* Clear button - only shown to owner */}
+                  {isSelf && <ClearHighlightedGroupButton />}
                   {/* Decorative gradient overlay */}
                   <div
                     className="absolute inset-0 pointer-events-none"

@@ -1,18 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from '@/i18n/routing'
-import Image from 'next/image'
+import { useRouter, Link } from '@/i18n/routing'
 import { getDefaultGroupImage } from '@/lib/default-images'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner, faUpload, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
-import DeleteAccountModal from '@/components/DeleteAccountModal'
 import RemovePictureModal from '@/components/RemovePictureModal'
 import CustomSelect from '@/components/CustomSelect'
 import Toast from '@/components/Toast'
 import { useTranslations } from 'next-intl'
-import { routing } from '@/i18n/routing'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -24,9 +21,7 @@ export default function ProfilePage() {
   const [success, setSuccess] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     image: '',
-    locale: 'en',
     bio: '',
     profilePublic: true,
     showProfileStats: true,
@@ -34,11 +29,7 @@ export default function ProfilePage() {
     highlightedGroupId: '' as string | null,
   })
   const [profileGroups, setProfileGroups] = useState<{ id: string; name: string }[]>([])
-  const [originalLocale, setOriginalLocale] = useState<string>('en')
   const [lastfmUsername, setLastfmUsername] = useState<string | null>(null)
-  const [originalEmail, setOriginalEmail] = useState<string>('')
-  const [emailVerified, setEmailVerified] = useState<boolean>(false)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -55,12 +46,9 @@ export default function ProfilePage() {
       .then(res => res.json())
       .then(data => {
         if (data.user) {
-          const userLocale = data.user.locale || 'en'
           setFormData({
             name: data.user.name || '',
-            email: data.user.email || '',
             image: data.user.image || '',
-            locale: userLocale,
             bio: data.user.bio || '',
             profilePublic: data.user.profilePublic ?? true,
             showProfileStats: data.user.showProfileStats ?? true,
@@ -68,10 +56,7 @@ export default function ProfilePage() {
             highlightedGroupId: data.user.highlightedGroupId || null,
           })
           setProfileGroups(data.groups || [])
-          setOriginalLocale(userLocale)
-          setOriginalEmail(data.user.email || '')
           setLastfmUsername(data.user.lastfmUsername || null)
-          setEmailVerified(data.user.emailVerified || false)
         }
         setIsLoading(false)
       })
@@ -89,9 +74,6 @@ export default function ProfilePage() {
       'Image must be a string': t('errors.imageMustBeString'),
       'Name cannot exceed 100 characters': t('errors.nameTooLong'),
       'Name must be a string': t('errors.nameMustBeString'),
-      'Email is required': t('errors.emailRequired'),
-      'Invalid email format': t('errors.invalidEmail'),
-      'An account with this email already exists': t('errors.emailExists'),
     }
     return errorMap[errorMessage] || errorMessage
   }
@@ -119,31 +101,7 @@ export default function ProfilePage() {
       }
 
       setSuccess(true)
-      
-      // Update email verification status if email changed
-      if (formData.email !== originalEmail) {
-        setEmailVerified(false)
-        setOriginalEmail(formData.email)
-      }
-      
-      // Reload profile data to get updated verification status
-      const profileResponse = await fetch('/api/user/profile')
-      const profileData = await profileResponse.json()
-      if (profileData.user) {
-        setEmailVerified(profileData.user.emailVerified || false)
-      }
-      
-      // If locale changed, set cookie and reload the page to apply the new locale
-      if (formData.locale !== originalLocale) {
-        // Update original locale to prevent multiple redirects
-        setOriginalLocale(formData.locale)
-        // Set cookie for middleware to use
-        document.cookie = `NEXT_LOCALE=${formData.locale}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`
-        // Redirect to new locale
-        window.location.href = `/${formData.locale}/profile`
-      }
     } catch (err) {
-      // Error is already translated in the throw above, or use default
       setError(err instanceof Error ? err.message : t('failedToUpdate'))
     } finally {
       setIsSaving(false)
@@ -219,7 +177,6 @@ export default function ProfilePage() {
         throw new Error(data.error || t('upload.failed'))
       }
 
-      // Don't update formData.image - the upload endpoint already updated the database
       // Reload profile data to get the updated image
       const profileResponse = await fetch('/api/user/profile')
       const profileData = await profileResponse.json()
@@ -383,56 +340,6 @@ export default function ProfilePage() {
                     placeholder="Your name"
                     disabled={isSaving || isUploading}
                   />
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label htmlFor="email" className="block text-xs md:text-sm font-semibold text-gray-800">
-                      {t('email')}
-                    </label>
-                    <div className="flex items-center gap-2">
-                      {emailVerified ? (
-                        <span className="flex items-center gap-1.5 text-xs text-green-600 font-medium">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                          {t('emailVerified')}
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1.5 text-xs text-yellow-600 font-medium">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                          </svg>
-                          {t('emailNotVerified')}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <input
-                    type="email"
-                    id="email"
-                    value={formData.email}
-                    onChange={(e) => {
-                      setFormData({ ...formData, email: e.target.value })
-                      // Reset verification status when email changes from original
-                      // If changed back to original, we'll refresh status on save
-                      if (e.target.value !== originalEmail) {
-                        setEmailVerified(false)
-                      }
-                    }}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
-                      backdropFilter: 'blur(8px)',
-                    }}
-                    placeholder="your.email@example.com"
-                    disabled={isSaving || isUploading}
-                  />
-                  {formData.email !== originalEmail && (
-                    <p className="text-xs text-yellow-600 mt-2">
-                      {t('emailChangeWarning')}
-                    </p>
-                  )}
                 </div>
 
                 <div>
@@ -672,41 +579,15 @@ export default function ProfilePage() {
 
                     {lastfmUsername && formData.profilePublic && (
                       <div className="pt-2 border-t border-gray-200">
-                        <p className="text-xs text-gray-600 mb-2">{t('publicProfile.viewPublicProfileLabel')}</p>
-                        <a
+                        <Link
                           href={`/u/${encodeURIComponent(lastfmUsername)}`}
                           className="text-sm font-semibold text-[var(--theme-primary-dark)] hover:underline"
                         >
                           {t('publicProfile.viewPublicProfileLink')}
-                        </a>
+                        </Link>
                       </div>
                     )}
                   </div>
-                </div>
-
-                <div>
-                  <label htmlFor="locale" className="block text-xs md:text-sm font-semibold text-gray-800 mb-2">
-                    {t('language')}
-                  </label>
-                  <CustomSelect
-                    id="locale"
-                    options={routing.locales.map((locale) => {
-                      const localeNames: Record<string, string> = {
-                        'en': 'English',
-                        'pt': 'Português'
-                      };
-                      return {
-                        value: locale,
-                        label: localeNames[locale] || locale.toUpperCase(),
-                      };
-                    })}
-                    value={formData.locale}
-                    onChange={(value) => setFormData({ ...formData, locale: String(value) })}
-                    disabled={isSaving || isUploading}
-                  />
-                  <p className="text-xs text-gray-600 mt-2">
-                    {t('selectLanguage')}
-                  </p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-4">
@@ -733,50 +614,8 @@ export default function ProfilePage() {
               </form>
             </div>
           </div>
-
-          {/* Danger Zone */}
-          <div
-            className="rounded-3xl p-4 md:p-6 lg:p-8 xl:p-10 relative mt-6 md:mt-8"
-            style={{
-              background: 'rgba(255, 255, 255, 0.6)',
-              backdropFilter: 'blur(16px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
-            }}
-          >
-            <div className="relative z-10">
-              <h2 className="text-xl md:text-2xl font-bold text-red-600 mb-2">{t('dangerZone.title')}</h2>
-              <p className="text-xs md:text-sm text-gray-600 mb-4">
-                {t('dangerZone.description')}
-              </p>
-              <div className="pt-4 border-t border-red-200">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex-1">
-                    <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-1">
-                      {t('dangerZone.deleteAccount.title')}
-                    </h3>
-                    <p className="text-xs md:text-sm text-gray-600">
-                      {t('dangerZone.deleteAccount.description')}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setIsDeleteModalOpen(true)}
-                    className="px-4 py-2.5 md:py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-sm md:text-base min-h-[44px] sm:min-h-0 w-full sm:w-auto"
-                  >
-                    {t('dangerZone.deleteAccount.button')}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
-
-      <DeleteAccountModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-      />
 
       <RemovePictureModal
         isOpen={isRemoveModalOpen}
@@ -786,4 +625,3 @@ export default function ProfilePage() {
     </main>
   )
 }
-

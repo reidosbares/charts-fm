@@ -615,6 +615,19 @@ export default function Navbar() {
                       >
                         {t('editProfile')}
                       </Link>
+                      <Link
+                        href="/settings"
+                        className="block px-4 py-2 text-sm font-semibold text-gray-200 hover:text-white transition-all duration-200"
+                        onClick={() => setIsDropdownOpen(false)}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'transparent'
+                        }}
+                      >
+                        {t('settings')}
+                      </Link>
                       {userData?.isSuperuser && (
                         <Link
                           href="/admin"
@@ -807,6 +820,15 @@ export default function Navbar() {
                     className="block px-4 py-3 rounded-lg text-base font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-all"
                   >
                     {t('editProfile')}
+                  </Link>
+                  
+                  {/* Settings Link */}
+                  <Link
+                    href="/settings"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block px-4 py-3 rounded-lg text-base font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-all"
+                  >
+                    {t('settings')}
                   </Link>
                   
                   {/* Admin Links */}

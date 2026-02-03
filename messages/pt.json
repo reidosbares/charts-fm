@@ -46,17 +46,17 @@
     "lastfmUsernameTooltip": "Seu usuário foi definido quando a conta foi criada e não pode ser alterado",
     "bio": "Bio",
     "bioPlaceholder": "Escreva uma bio curta sobre seu gosto, o que você está ouvindo, ou o que quiser compartilhar.",
-    "bioHelp": "Aparece no seu perfil público.",
+    "bioHelp": "Esta bio será exibida no seu perfil público.",
     "publicProfile": {
-      "title": "Perfil público",
+      "title": "Página de perfil",
       "profilePublic": "Tornar meu perfil público",
       "showStats": "Mostrar minhas estatísticas",
       "showGroups": "Mostrar minhas comunidades",
       "highlightedGroup": "Comunidade em destaque",
-      "highlightedGroupHelp": "Escolha uma comunidade para exibir no topo do seu perfil público com o tema dela.",
+      "highlightedGroupHelp": "Escolha uma comunidade para exibir no topo do seu perfil.",
       "highlightedGroupNone": "Nenhuma",
-      "viewPublicProfileLabel": "Link do perfil público",
-      "viewPublicProfileLink": "Ver meu perfil público"
+      "viewPublicProfileLabel": "Link da página de perfil",
+      "viewPublicProfileLink": "Ver meu perfil"
     },
     "saveChanges": "Salvar Alterações",
     "saving": "Salvando...",
@@ -126,15 +126,55 @@
     "contributionSummary": "Sua contribuição",
     "memberAwards": "Destaques dos membros",
     "featuredArtistPlaceholder": "Escolher um artista",
-    "editFeaturedArtist": "Alterar artista em destaque",
+    "editFeaturedArtist": "Escolher artista em destaque",
+    "featuredArtistHelp": "Apenas artistas dos quais você é o principal ouvinte podem ser colocados em destaque.",
+    "featuredArtistSearchPlaceholder": "Buscar artistas...",
+    "featuredArtistNoResults": "Nenhum artista encontrado",
     "featuredArtistNone": "Nenhum",
-    "featuredArtistVS": "{value} VS"
+    "featuredArtistVS": "{value} VS",
+    "highlightedGroupCalloutTitle": "Destaque uma comunidade no seu perfil",
+    "highlightedGroupCalloutDescription": "Escolha uma comunidade para exibir no topo do seu perfil com suas estatísticas e conquistas.",
+    "highlightedGroupChooseButton": "Escolher comunidade",
+    "highlightedGroupSaving": "Salvando...",
+    "highlightedGroupSearchPlaceholder": "Buscar comunidades...",
+    "highlightedGroupNoResults": "Nenhuma comunidade encontrada",
+    "clearHighlightedGroup": "Remover comunidade em destaque"
+  },
+  "settings": {
+    "title": "Configurações",
+    "subtitle": "Gerencie as configurações da sua conta",
+    "email": "Email",
+    "emailVerified": "Verificado",
+    "emailNotVerified": "Não Verificado",
+    "emailChangeWarning": "Alterar seu email redefinirá o status de verificação. Um email de verificação será enviado para seu novo endereço.",
+    "language": "Idioma",
+    "selectLanguage": "Selecione seu idioma preferido",
+    "saveChanges": "Salvar Alterações",
+    "saving": "Salvando...",
+    "settingsUpdated": "Configurações atualizadas com sucesso!",
+    "failedToLoad": "Falha ao carregar configurações",
+    "failedToUpdate": "Falha ao atualizar configurações",
+    "errors": {
+      "emailRequired": "O email é obrigatório",
+      "invalidEmail": "Formato de email inválido",
+      "emailExists": "Já existe uma conta com este email"
+    },
+    "dangerZone": {
+      "title": "Zona de perigo",
+      "description": "Ações irreversíveis e destrutivas",
+      "deleteAccount": {
+        "title": "Excluir conta",
+        "description": "Excluir permanentemente sua conta e todos os dados associados a ela. Esta ação não pode ser desfeita.",
+        "button": "Excluir conta"
+      }
+    }
   },
   "navbar": {
     "home": "Início",
     "dashboard": "Painel",
     "profile": "Perfil",
     "editProfile": "Editar perfil",
+    "settings": "Configurações",
     "publicProfile": "Perfil público",
     "signIn": "Entrar",
     "signOut": "Sair",
