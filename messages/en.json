@@ -324,6 +324,7 @@
         "friday": "Friday",
         "saturday": "Saturday"
       },
+      "searchPlaceholder": "Search artists, tracks, or albums...",
       "public": {
         "viewAsMember": "View as Member"
       }

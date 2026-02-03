@@ -21,6 +21,12 @@ alwaysApply: true
 - Always center modals on all screen sizes using `items-center justify-center`
 - Use consistent border radius (`rounded-xl`) across all breakpoints
 
+## Mobile-First Design
+- Always keep mobile users in mind when designing UI elements
+- Avoid hover-only interactions like tooltips that require a cursor
+- Ensure all interactive elements are touch-friendly with adequate tap targets
+- Provide alternative ways to access information that would otherwise be shown on hover
+
 # Database
 
 ## Migrations

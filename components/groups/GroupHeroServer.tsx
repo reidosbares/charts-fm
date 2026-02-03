@@ -12,6 +12,7 @@ import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 import { getTranslations } from 'next-intl/server'
 import { getSession } from '@/lib/auth'
 import { getArtistImage } from '@/lib/lastfm'
+import HeroSearchBar from '@/app/[locale]/groups/[id]/HeroSearchBar'
 
 interface GroupHeroServerProps {
   groupId: string
@@ -304,8 +305,15 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme, is
 
           {/* Quick Stats Area - inside the hero with faded background */}
           {children && (
-            <div className="max-w-6xl mx-auto px-3 md:px-6 lg:px-12 xl:px-24 pb-6 md:pb-8">
+            <div className="max-w-6xl mx-auto px-3 md:px-6 lg:px-12 xl:px-24 pb-4 md:pb-6">
               {children}
+            </div>
+          )}
+
+          {/* Search Bar - inside the hero, below quick stats */}
+          {isMember && (
+            <div className="max-w-6xl mx-auto px-3 md:px-6 lg:px-12 xl:px-24 pb-6 md:pb-8">
+              <HeroSearchBar groupId={groupId} />
             </div>
           )}
         </div>

@@ -324,6 +324,7 @@
         "friday": "Sexta-feira",
         "saturday": "Sábado"
       },
+      "searchPlaceholder": "Buscar artistas, faixas ou álbuns...",
       "public": {
         "viewAsMember": "Visualizar como membro"
       }

@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
-import { faChartBar, faTrophy, faUsers, faFire, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faChartBar, faTrophy, faUsers, faFire } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
-type Tab = 'charts' | 'members' | 'alltime' | 'trends' | 'search'
+type Tab = 'charts' | 'members' | 'alltime' | 'trends'
 
 interface GroupTabsProps {
   defaultTab?: Tab
@@ -13,7 +13,6 @@ interface GroupTabsProps {
   chartsContent: React.ReactNode
   allTimeContent: React.ReactNode
   trendsContent?: React.ReactNode
-  searchContent?: React.ReactNode
   pendingRequestsCount?: number
   isMember?: boolean
 }
@@ -24,7 +23,6 @@ export default function GroupTabs({
   chartsContent,
   allTimeContent,
   trendsContent,
-  searchContent,
   pendingRequestsCount = 0,
   isMember = true
 }: GroupTabsProps) {
@@ -35,8 +33,8 @@ export default function GroupTabs({
     if (typeof window === 'undefined') return null
     const hash = window.location.hash.slice(1) // Remove the #
     const validTabs: Tab[] = isMember 
-      ? ['charts', 'members', 'alltime', 'trends', 'search']
-      : ['charts', 'alltime', 'trends', 'search']
+      ? ['charts', 'members', 'alltime', 'trends']
+      : ['charts', 'alltime', 'trends']
     return validTabs.includes(hash as Tab) ? (hash as Tab) : null
   }
   
@@ -49,8 +47,8 @@ export default function GroupTabs({
       if (typeof window === 'undefined') return null
       const hash = window.location.hash.slice(1) // Remove the #
       const validTabs: Tab[] = isMember 
-        ? ['charts', 'members', 'alltime', 'trends', 'search']
-        : ['charts', 'alltime', 'trends', 'search']
+        ? ['charts', 'members', 'alltime', 'trends']
+        : ['charts', 'alltime', 'trends']
       return validTabs.includes(hash as Tab) ? (hash as Tab) : null
     }
     
@@ -86,12 +84,11 @@ export default function GroupTabs({
       { id: 'trends', label: t('trends'), icon: faFire },
       { id: 'charts', label: t('weeklyCharts'), icon: faChartBar },
       { id: 'alltime', label: t('allTimeStats'), icon: faTrophy },
-      { id: 'search', label: t('search'), icon: faSearch },
     ]
     
     // Only include members tab if user is a member
     if (isMember) {
-      baseTabs.splice(3, 0, { id: 'members', label: t('members'), icon: faUsers, badge: pendingRequestsCount })
+      baseTabs.push({ id: 'members', label: t('members'), icon: faUsers, badge: pendingRequestsCount })
     }
     
     return baseTabs
@@ -105,11 +102,12 @@ export default function GroupTabs({
           tabs={tabs}
           activeTab={activeTab}
           onTabChange={handleTabChange}
+          variant="dark"
         />
       </div>
 
       {/* Tab Content - All tabs load asynchronously on page load, hidden until active */}
-      <div className="bg-white/60 backdrop-blur-md rounded-xl p-4 md:p-6 border border-theme shadow-sm">
+      <div className="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-white/50 shadow-lg">
         <div style={{ display: activeTab === 'charts' ? 'block' : 'none' }}>
           {chartsContent}
         </div>
@@ -124,9 +122,6 @@ export default function GroupTabs({
             {membersContent}
           </div>
         )}
-        <div style={{ display: activeTab === 'search' ? 'block' : 'none' }}>
-          {searchContent}
-        </div>
       </div>
     </div>
   )
