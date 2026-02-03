@@ -111,7 +111,7 @@ export default function LiquidGlassTabs({
         border: '1px solid rgba(255, 255, 255, 0.6)',
       }
 
-  const textClass = isActive =>
+  const textClass = (isActive: boolean) =>
     isDark
       ? isActive
         ? 'text-white'

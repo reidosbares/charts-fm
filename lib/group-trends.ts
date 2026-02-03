@@ -421,6 +421,7 @@ export async function calculateMemberContributions(
 
     // Create most diverse spotlight (only if different from MVP)
     if (mostDiverse.userId !== mvp.userId) {
+      const diverseMember = members.find((m) => m.user.id === mostDiverse.userId)
       const diverseTopContributions = mostDiverse.contributions
         .sort((a, b) => b.vs - a.vs)
         .slice(0, 3)
@@ -435,6 +436,7 @@ export async function calculateMemberContributions(
       mostDiverseSpotlight = {
         userId: mostDiverse.userId,
         name: mostDiverse.name,
+        lastfmUsername: diverseMember?.user.lastfmUsername ?? '',
         highlight: `Most Diverse Listener`,
         topContributions: diverseTopContributions,
       }

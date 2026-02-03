@@ -1,9 +1,9 @@
 import { getGroupByIdForAccess } from '@/lib/group-queries'
 import PublicGroupHeroServer from './PublicGroupHeroServer'
 import PublicGroupWeeklyCharts from './PublicGroupWeeklyCharts'
-import LoggedOutBanner from './LoggedOutBanner'
+import PublicGroupQuickStats from './PublicGroupQuickStats'
+import LoggedOutCallout from './LoggedOutCallout'
 import { getTranslations } from 'next-intl/server'
-import { getSession } from '@/lib/auth'
 import { getGroupAccess } from '@/lib/group-auth'
 import { redirect } from '@/i18n/routing'
 import type { Metadata } from 'next'
@@ -102,21 +102,18 @@ export default async function PublicGroupPage({ params }: { params: { id: string
   // @ts-ignore - Prisma client will be regenerated after migration
   const chartMode = (group.chartMode || 'plays_only') as string
 
-  // User is logged out (we already checked above)
-  const isLoggedOut = true
-
   return (
     <main 
-      className={`flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}
+      className={`flex min-h-screen flex-col ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}
     >
-      <div className="max-w-6xl w-full mx-auto">
-        {/* Banner for logged-out users */}
-        {isLoggedOut && <LoggedOutBanner />}
-        
-        {/* Hero Section - loaded server-side for immediate display */}
-        <PublicGroupHeroServer groupId={group.id} colorTheme={colorTheme} />
-        
-        {/* Weekly Charts - loads asynchronously */}
+      {/* Full-width Hero with integrated callout and quick stats (same design as member page) */}
+      <PublicGroupHeroServer groupId={group.id} colorTheme={colorTheme}>
+        <LoggedOutCallout />
+        <PublicGroupQuickStats groupId={group.id} />
+      </PublicGroupHeroServer>
+
+      <div className="max-w-6xl w-full mx-auto px-4 md:px-6 lg:px-12 xl:px-24 pb-24">
+        {/* Latest weekly chart only */}
         <PublicGroupWeeklyCharts groupId={group.id} chartMode={chartMode} />
       </div>
     </main>

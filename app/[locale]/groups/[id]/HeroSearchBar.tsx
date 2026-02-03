@@ -43,7 +43,7 @@ export default function HeroSearchBar({ groupId }: HeroSearchBarProps) {
           rounded-xl
           bg-white/20 backdrop-blur-sm
           border border-white/30
-          text-white placeholder-white/60
+          text-white placeholder-white/60 caret-black
           text-sm md:text-base
           focus:bg-white/30 focus:border-white/50
           focus:outline-none focus:ring-2 focus:ring-white/20

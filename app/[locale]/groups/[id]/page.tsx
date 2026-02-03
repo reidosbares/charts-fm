@@ -59,9 +59,15 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 }
 
-export default async function GroupPage({ params }: { params: { id: string } }) {
-  const { user, group, isMember } = await getGroupAccess(params.id)
+export default async function GroupPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
+  const { id, locale } = await params
+  const { user, group, isMember } = await getGroupAccess(id)
   const t = await getTranslations('groups')
+
+  // Logged-out users always see the public page
+  if (!user) {
+    redirect({ href: `/groups/${id}/public`, locale: locale as 'en' | 'pt' })
+  }
 
   if (!group) {
     return (

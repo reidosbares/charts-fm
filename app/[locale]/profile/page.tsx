@@ -571,7 +571,7 @@ export default function ProfilePage() {
                             ...profileGroups.map((g) => ({ value: g.id, label: g.name })),
                           ]}
                           value={formData.highlightedGroupId ?? ''}
-                          onChange={(value) => setFormData({ ...formData, highlightedGroupId: value || null })}
+                          onChange={(value) => setFormData({ ...formData, highlightedGroupId: value === '' || value == null ? null : String(value) })}
                           disabled={isSaving || isUploading}
                         />
                       </div>

@@ -39,7 +39,6 @@ function formatDisplayValue(
 
 export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGroupWeeklyChartsProps) {
   const t = useSafeTranslations('groups.weeklyCharts')
-  const tQuickStats = useSafeTranslations('groups.quickStats')
   const [data, setData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -83,78 +82,33 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
 
   if (error || !data || !data.weeks || data.weeks.length === 0) {
     return (
-      <>
-        {data && data.weeksTracked > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 md:mb-8">
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-              <div className="text-xs md:text-sm text-gray-600 mb-1">{t('public.totalPlaysThisWeek')}</div>
-              <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">
-                {data.totalPlaysThisWeek?.toLocaleString() || 0} <span className="text-base md:text-lg font-normal">{tQuickStats('plays')}</span>
-              </div>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-              <div className="text-xs md:text-sm text-gray-600 mb-1">{tQuickStats('weeksTracked')}</div>
-              <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">
-                {data.weeksTracked || 0} <span className="text-base md:text-lg font-normal">{tQuickStats('weeks')}</span>
-              </div>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-              <div className="text-xs md:text-sm text-gray-600 mb-1">{tQuickStats('chartMode')}</div>
-              <div className="text-base md:text-lg font-bold text-[var(--theme-text)] capitalize">
-                {data.chartMode === 'vs' ? tQuickStats('vibeScore') : data.chartMode === 'vs_weighted' ? tQuickStats('vibeScoreWeighted') : tQuickStats('playsOnly')}
-              </div>
-            </div>
-          </div>
-        )}
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)] mb-4 md:mb-6">
-            {t('title')}
-          </h2>
-          <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 md:p-12 text-center border border-theme">
-            <div className="mb-4 text-[var(--theme-primary)]">
-              <FontAwesomeIcon icon={faMusic} size="2x" className="md:hidden" />
-              <FontAwesomeIcon icon={faMusic} size="3x" className="hidden md:inline" />
-            </div>
-            <p className="text-gray-700 text-base md:text-lg mb-2 font-medium">{t('noChartsAvailable')}</p>
-            <p className="text-gray-500 text-xs md:text-sm">{t('public.noChartsDescription')}</p>
-          </div>
-        </div>
-      </>
-    )
-  }
-
-  const { weeks, showVS } = data
-
-  return (
-    <>
-      {/* Quick Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 md:mb-8">
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-          <div className="text-xs md:text-sm text-gray-600 mb-1">{t('public.totalPlaysThisWeek')}</div>
-          <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">
-            {data.totalPlaysThisWeek.toLocaleString()} <span className="text-base md:text-lg font-normal">{tQuickStats('plays')}</span>
-          </div>
-        </div>
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-          <div className="text-xs md:text-sm text-gray-600 mb-1">{tQuickStats('weeksTracked')}</div>
-          <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">
-            {data.weeksTracked} <span className="text-base md:text-lg font-normal">{tQuickStats('weeks')}</span>
-          </div>
-        </div>
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-theme shadow-sm">
-          <div className="text-xs md:text-sm text-gray-600 mb-1">{tQuickStats('chartMode')}</div>
-          <div className="text-base md:text-lg font-bold text-[var(--theme-text)] capitalize">
-            {data.chartMode === 'vs' ? tQuickStats('vibeScore') : data.chartMode === 'vs_weighted' ? tQuickStats('vibeScoreWeighted') : tQuickStats('playsOnly')}
-          </div>
-        </div>
-      </div>
-
       <div>
         <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)] mb-4 md:mb-6">
           {t('title')}
         </h2>
-        <div className="space-y-4 md:space-y-6">
-          {weeks.map((week: any) => {
+        <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 md:p-12 text-center border border-theme">
+          <div className="mb-4 text-[var(--theme-primary)]">
+            <FontAwesomeIcon icon={faMusic} size="2x" className="md:hidden" />
+            <FontAwesomeIcon icon={faMusic} size="3x" className="hidden md:inline" />
+          </div>
+          <p className="text-gray-700 text-base md:text-lg mb-2 font-medium">{t('noChartsAvailable')}</p>
+          <p className="text-gray-500 text-xs md:text-sm">{t('public.noChartsDescription')}</p>
+        </div>
+      </div>
+    )
+  }
+
+  const { weeks, showVS } = data
+  // Only show the latest weekly chart
+  const latestWeeks = weeks.slice(0, 1)
+
+  return (
+    <div>
+      <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)] mb-4 md:mb-6">
+        {t('title')}
+      </h2>
+      <div className="space-y-4 md:space-y-6">
+        {latestWeeks.map((week: any) => {
             const vsMap = week.vsMap || {}
             const positionChangeMap = week.positionChangeMap || {}
             const entryTypeMap = week.entryTypeMap || {}
@@ -339,9 +293,8 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
               </div>
             )
           })}
-        </div>
       </div>
-    </>
+    </div>
   )
 }
 
