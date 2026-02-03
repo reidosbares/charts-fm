@@ -24,6 +24,7 @@ interface GroupAllTimeTabProps {
   groupId: string
   isOwner: boolean
   userId?: string | null
+  memberCount?: number
 }
 
 // Map API record field to user-facing award key (records.userRecords.*)
@@ -89,7 +90,7 @@ function getChartTypeIcon(chartType: string) {
   }
 }
 
-export default function GroupAllTimeTab({ groupId, isOwner, userId }: GroupAllTimeTabProps) {
+export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount = 1 }: GroupAllTimeTabProps) {
   const t = useSafeTranslations('groups.allTimeStats')
   const tImpact = useSafeTranslations('records.myContribution')
   const tUserRecords = useSafeTranslations('records.userRecords')
@@ -437,8 +438,8 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId }: GroupAllTi
               { artist: 'mc_artists', track: 'mc_tracks', album: 'mc_albums' }
             )}
 
-          {/* Your impact – double-height card (fills empty space on the right) */}
-          {userId && (
+          {/* Your impact – double-height card (fills empty space on the right); hidden for solo groups */}
+          {userId && memberCount > 1 && (
             <div
               className={`${cardFeatured} min-h-[200px] md:min-h-[240px] lg:col-start-3 lg:row-span-2 lg:row-start-2 flex flex-col`}
             >
@@ -495,8 +496,8 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId }: GroupAllTi
             </div>
           )}
 
-          {/* Most weeks as MVP – prominent featured card */}
-          {!recordsLoading && recordsData?.mostWeeksAsMVP && (
+          {/* Most weeks as MVP – prominent featured card; hidden for solo groups */}
+          {memberCount > 1 && !recordsLoading && recordsData?.mostWeeksAsMVP && (
             <div className={`${cardFeatured} md:col-span-2`}>
               <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
                 <FontAwesomeIcon icon={faTrophy} className="text-2xl md:text-3xl text-[var(--theme-primary)] flex-shrink-0" />

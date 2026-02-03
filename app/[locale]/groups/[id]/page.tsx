@@ -95,6 +95,10 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
     })
   }
 
+  const memberCount = await prisma.groupMember.count({
+    where: { groupId: group.id },
+  })
+
   return (
     <main 
       className={`flex min-h-screen flex-col ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}
@@ -113,7 +117,7 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
             <GroupWeeklyChartsTab groupId={group.id} isOwner={isOwner || false} isSuperuser={isSuperuser} />
           }
           allTimeContent={
-            <GroupAllTimeTab groupId={group.id} isOwner={isOwner || false} userId={user?.id ?? null} />
+            <GroupAllTimeTab groupId={group.id} isOwner={isOwner || false} userId={user?.id ?? null} memberCount={memberCount} />
           }
           trendsContent={
             <GroupTrendsTab groupId={group.id} />
