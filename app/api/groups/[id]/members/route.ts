@@ -380,22 +380,44 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    const { searchParams } = new URL(request.url)
+    const userIdParam = searchParams.get('userId')
+
+    // No userId = current user is leaving the group (require membership only)
+    if (!userIdParam || userIdParam.trim() === '') {
+      const { user, group } = await requireGroupMembership(params.id)
+
+      if (!group) {
+        return NextResponse.json({ error: 'Group not found' }, { status: 404 })
+      }
+
+      if (user.id === group.creatorId) {
+        return NextResponse.json(
+          { error: "Group owner can't leave; transfer ownership or delete the group" },
+          { status: 400 }
+        )
+      }
+
+      await prisma.groupMember.delete({
+        where: {
+          groupId_userId: {
+            groupId: group.id,
+            userId: user.id,
+          },
+        },
+      })
+
+      return NextResponse.json({ success: true })
+    }
+
+    // userId provided = owner removing another member (require creator)
     const { user, group } = await requireGroupCreator(params.id)
 
     if (!group) {
       return NextResponse.json({ error: 'Group not found' }, { status: 404 })
     }
 
-    // Get userId from query parameters
-    const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId')
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
-      )
-    }
+    const userId = userIdParam.trim()
 
     // Prevent removing the creator
     if (userId === group.creatorId) {

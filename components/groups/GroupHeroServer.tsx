@@ -196,7 +196,7 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme, is
             {/* Top Row: Breadcrumb + Action Buttons */}
             <div className="flex items-center justify-between mb-3 md:mb-6">
               {/* Breadcrumb Navigation */}
-              <nav className="flex items-center gap-1.5 md:gap-2 text-[11px] md:text-sm">
+              <nav className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm">
                 <Link 
                   href="/groups" 
                   className="text-white/70 hover:text-white transition-colors"
@@ -215,7 +215,7 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme, is
                     href={`/groups/${groupId}/settings`}
                     variant="secondary"
                     size="sm"
-                    className="text-[10px] md:text-sm !bg-white/20 !text-white hover:!bg-white/30 !border-white/30 !px-1.5 !py-1 md:!px-3 md:!py-2"
+                    className="text-xs md:text-sm !bg-white/20 !text-white hover:!bg-white/30 !border-white/30 !px-1.5 !py-1 md:!px-3 md:!py-2"
                   >
                     {t('settings')}
                   </LiquidGlassLink>
@@ -246,7 +246,7 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme, is
                   />
                 </div>
                 {imageCaption && (
-                  <p className="text-[10px] md:text-xs italic text-white/70 mt-1 md:mt-2 text-left max-w-[5rem] md:max-w-[9rem]">
+                  <p className="text-xs md:text-xs italic text-white/70 mt-1 md:mt-2 text-left max-w-[5rem] md:max-w-[9rem]">
                     {imageCaption}
                   </p>
                 )}
@@ -254,13 +254,13 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme, is
               
               {/* Group Info */}
               <div className="flex-1 min-w-0">
-                <h1 className="text-xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-2 md:mb-4 text-white leading-[1.1] drop-shadow-lg break-words">
+                <h1 className="text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-2 md:mb-4 text-white leading-[1.1] drop-shadow-lg break-words">
                   {group.name}
                 </h1>
                 
                 {/* Metadata - compact on mobile */}
                 <div className="flex flex-wrap items-center gap-1.5 md:gap-3 mb-2 md:mb-4">
-                  <div className="inline-flex items-center gap-1 px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-[10px] md:text-sm text-white/90">
+                  <div className="inline-flex items-center gap-1 px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-xs md:text-sm text-white/90">
                     <span className="opacity-70">{t('owner')}</span>
                     {group.creator?.lastfmUsername ? (
                       <Link
@@ -276,11 +276,11 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme, is
                       </span>
                     )}
                   </div>
-                  <div className="inline-flex items-center gap-1 px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-[10px] md:text-sm text-white/90">
+                  <div className="inline-flex items-center gap-1 px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-xs md:text-sm text-white/90">
                     <span className="font-semibold">{group._count.members}</span>
                     <span className="opacity-70">{t('members')}</span>
                   </div>
-                  <div className="hidden sm:inline-flex items-center gap-1 px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-[10px] md:text-sm text-white/90">
+                  <div className="hidden sm:inline-flex items-center gap-1 px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-xs md:text-sm text-white/90">
                     <span className="opacity-70">{t('tracking')}</span>
                     <span className="font-semibold">{trackingDayName}</span>
                   </div>
@@ -292,9 +292,9 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme, is
                     {canUpdateCharts || chartGenerationInProgress ? (
                       <UpdateChartsButton groupId={groupId} initialInProgress={chartGenerationInProgress} />
                     ) : (
-                      <div className="inline-flex items-center gap-1.5 md:gap-2 px-2.5 py-1 md:px-4 md:py-2 rounded-full font-semibold text-[10px] md:text-sm bg-[var(--theme-primary)] text-[var(--theme-button-text)] shadow-lg">
+                      <div className="inline-flex items-center gap-1.5 md:gap-2 px-2.5 py-1 md:px-4 md:py-2 rounded-full font-semibold text-xs md:text-sm bg-[var(--theme-primary)] text-[var(--theme-button-text)] shadow-lg">
                         <span>{t(daysUntilNextChart === 1 ? 'nextChartsIn' : 'nextChartsInDays', { count: daysUntilNextChart })}</span>
-                        <span className="text-[10px] md:text-xs opacity-80 hidden sm:inline">({nextChartDateFormatted})</span>
+                        <span className="text-xs md:text-xs opacity-80 hidden sm:inline">({nextChartDateFormatted})</span>
                       </div>
                     )}
                   </div>

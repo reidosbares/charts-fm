@@ -27,7 +27,7 @@ export default function LeaveGroupButton({ groupId, isOwner = false, subtle = fa
     setIsLoading(true)
 
     try {
-      const response = await fetch(`/api/groups/${groupId}/members?userId=`, {
+      const response = await fetch(`/api/groups/${groupId}/members`, {
         method: 'DELETE',
       })
 
