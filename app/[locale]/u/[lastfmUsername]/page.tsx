@@ -203,48 +203,50 @@ export default async function PublicUserProfilePage({
     : visibleGroups
 
   return (
-    <main className="flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 relative">
-      <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row lg:items-start gap-6 lg:gap-8">
+    <main className="flex min-h-screen flex-col pt-4 sm:pt-6 md:pt-8 pb-20 sm:pb-24 px-3 sm:px-4 md:px-6 lg:px-12 xl:px-24 relative">
+      <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row lg:items-start gap-4 sm:gap-6 lg:gap-8">
         {/* Sidebar: profile identity */}
         <aside className="lg:w-72 xl:w-80 flex-shrink-0">
           <div
-            className="rounded-3xl p-6 border border-gray-200 shadow-lg sticky lg:top-8"
+            className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-gray-200 shadow-lg lg:sticky lg:top-8"
             style={glassStyle}
           >
-            <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
-              <div className="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white/60 shadow-lg flex-shrink-0">
+            <div className="flex flex-row sm:flex-col items-center sm:items-center lg:items-start gap-4 sm:gap-0 text-left sm:text-center lg:text-left">
+              <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white/60 shadow-lg flex-shrink-0">
                 <SafeImage
                   src={user.image}
                   alt={user.name || user.lastfmUsername}
                   className="w-full h-full object-cover"
                 />
               </div>
-              <h1 className="mt-4 text-2xl font-bold text-gray-900 truncate w-full">
-                {user.name || user.lastfmUsername}
-              </h1>
-              <p className="text-sm text-gray-600 font-semibold truncate w-full mt-0.5">@{user.lastfmUsername}</p>
-              <a
-                href={lastfmUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-3 bg-red-800 hover:bg-red-900 text-white px-4 py-2 rounded-lg font-bold transition-colors flex items-center justify-center gap-2 whitespace-nowrap text-sm w-full"
-              >
-                {t('viewOnLastfm')}
-              </a>
-              {user.bio ? (
-                <p className="mt-4 text-sm text-gray-700 whitespace-pre-wrap text-left w-full">{user.bio}</p>
-              ) : (
-                <p className="mt-4 text-sm text-gray-500 w-full">{t('noBio')}</p>
-              )}
+              <div className="flex-1 min-w-0 sm:w-full">
+                <h1 className="sm:mt-4 text-xl sm:text-2xl font-bold text-gray-900 truncate">
+                  {user.name || user.lastfmUsername}
+                </h1>
+                <p className="text-sm text-gray-600 font-semibold truncate mt-0.5">@{user.lastfmUsername}</p>
+                <a
+                  href={lastfmUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-2 sm:mt-3 bg-red-800 hover:bg-red-900 text-white px-4 py-2 rounded-lg font-bold transition-colors flex items-center justify-center gap-2 whitespace-nowrap text-sm w-full"
+                >
+                  {t('viewOnLastfm')}
+                </a>
+              </div>
             </div>
+            {user.bio ? (
+              <p className="mt-3 sm:mt-4 text-sm text-gray-700 whitespace-pre-wrap text-left w-full">{user.bio}</p>
+            ) : (
+              <p className="mt-3 sm:mt-4 text-sm text-gray-500 w-full sm:text-center lg:text-left">{t('noBio')}</p>
+            )}
           </div>
         </aside>
 
         {/* Main: groups and listening stats */}
-        <div className="flex-1 min-w-0 space-y-8">
+        <div className="flex-1 min-w-0 space-y-5 sm:space-y-8">
           {user.showProfileGroups && (
             <section>
-              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">{t('groupsTitle')}</h2>
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">{t('groupsTitle')}</h2>
               {/* Callout to encourage choosing a highlighted group - only shown to the user on their own profile */}
               {isSelf && !highlightedGroup && visibleGroups.length > 0 && (
                 <HighlightedGroupCallout
@@ -257,7 +259,7 @@ export default async function PublicUserProfilePage({
               )}
               {highlightedGroup && (
                 <section
-                  className={`mb-5 rounded-2xl overflow-hidden relative ${themeClass}`}
+                  className={`mb-4 sm:mb-5 rounded-xl sm:rounded-2xl overflow-hidden relative ${themeClass}`}
                   style={{
                     background: `
                       linear-gradient(135deg, var(--theme-background-from) 0%, var(--theme-background-to) 50%, var(--theme-background-from) 100%)
@@ -285,21 +287,19 @@ export default async function PublicUserProfilePage({
                   />
                   {/* Top highlight line */}
                   <div
-                    className="absolute top-0 left-6 right-6 h-px"
+                    className="absolute top-0 left-4 right-4 sm:left-6 sm:right-6 h-px"
                     style={{
                       background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent)',
                     }}
                   />
                   <Link
                     href={`/groups/${highlightedGroup.id}`}
-                    className="block px-4 py-3 md:px-5 md:py-4 relative group"
+                    className="block px-3 py-2.5 sm:px-4 sm:py-3 md:px-5 md:py-4 relative group"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2.5 sm:gap-3">
                       <div
-                        className="rounded-xl overflow-hidden flex-shrink-0 relative"
+                        className="rounded-lg sm:rounded-xl overflow-hidden flex-shrink-0 relative w-11 h-11 sm:w-[52px] sm:h-[52px]"
                         style={{
-                          width: '52px',
-                          height: '52px',
                           boxShadow: `
                             0 6px 12px -3px rgba(0, 0, 0, 0.12),
                             0 0 0 1.5px var(--theme-border),
@@ -315,13 +315,13 @@ export default async function PublicUserProfilePage({
                       </div>
                       <div className="min-w-0 flex-1">
                         <h2
-                          className="text-lg md:text-xl font-bold truncate transition-opacity duration-200 group-hover:opacity-80"
+                          className="text-base sm:text-lg md:text-xl font-bold truncate transition-opacity duration-200 group-hover:opacity-80"
                           style={{ color: 'var(--theme-primary-dark)' }}
                         >
                           {highlightedGroup.name}
                         </h2>
                         <span
-                          className="inline-flex items-center mt-1.5 px-3 py-1.5 rounded-lg font-semibold text-xs text-white transition-all duration-200 group-hover:translate-x-0.5"
+                          className="inline-flex items-center mt-1 sm:mt-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-md sm:rounded-lg font-semibold text-[11px] sm:text-xs text-white transition-all duration-200 group-hover:translate-x-0.5"
                           style={{
                             background: `linear-gradient(135deg, var(--theme-primary), var(--theme-primary-dark))`,
                             boxShadow: '0 2px 6px -2px rgba(0, 0, 0, 0.2)',
@@ -337,21 +337,21 @@ export default async function PublicUserProfilePage({
                   </Link>
                   {(contributionStats || userAwardKeys.length > 0) && (
                     <div
-                      className="px-4 md:px-5 pb-4 md:pb-5 pt-0 relative"
+                      className="px-3 sm:px-4 md:px-5 pb-3 sm:pb-4 md:pb-5 pt-0 relative"
                       style={{ color: 'var(--theme-text)' }}
                     >
                       {/* Subtle divider */}
                       <div
-                        className="absolute top-0 left-4 right-4 md:left-5 md:right-5 h-px"
+                        className="absolute top-0 left-3 right-3 sm:left-4 sm:right-4 md:left-5 md:right-5 h-px"
                         style={{
                           background: 'linear-gradient(90deg, transparent, var(--theme-border), transparent)',
                         }}
                       />
                       {contributionStats && (
-                        <div className={`pt-3 ${userAwardKeys.length > 0 ? 'mb-3' : ''}`}>
-                          <div className="flex flex-wrap gap-2">
+                        <div className={`pt-2.5 sm:pt-3 ${userAwardKeys.length > 0 ? 'mb-2.5 sm:mb-3' : ''}`}>
+                          <div className="grid grid-cols-3 gap-1.5 sm:flex sm:flex-wrap sm:gap-2">
                             <div
-                              className="flex items-center gap-2.5 px-3 py-2 rounded-xl min-w-0 flex-1 sm:flex-initial"
+                              className="flex flex-col sm:flex-row items-center sm:items-center gap-1 sm:gap-2.5 px-2 py-2 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl min-w-0 sm:flex-initial"
                               style={{
                                 background: 'rgba(255, 255, 255, 0.5)',
                                 backdropFilter: 'blur(8px)',
@@ -359,23 +359,23 @@ export default async function PublicUserProfilePage({
                               }}
                             >
                               <div
-                                className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+                                className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-md sm:rounded-lg flex items-center justify-center"
                                 style={{
                                   background: `linear-gradient(135deg, var(--theme-primary), var(--theme-primary-dark))`,
                                   boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.12)',
                                 }}
                               >
-                                <FontAwesomeIcon icon={faChartLine} className="text-xs" style={{ color: 'var(--theme-button-text)' }} />
+                                <FontAwesomeIcon icon={faChartLine} className="text-[10px] sm:text-xs" style={{ color: 'var(--theme-button-text)' }} />
                               </div>
-                              <div>
-                                <p className="text-base md:text-lg font-bold tabular-nums leading-tight">
+                              <div className="text-center sm:text-left">
+                                <p className="text-sm sm:text-base md:text-lg font-bold tabular-nums leading-tight">
                                   {contributionStats.totalVS.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                                 </p>
-                                <p className="text-[10px] opacity-70 font-medium leading-tight">{tMyContribution('totalVS')}</p>
+                                <p className="text-[9px] sm:text-[10px] opacity-70 font-medium leading-tight">{tMyContribution('totalVS')}</p>
                               </div>
                             </div>
                             <div
-                              className="flex items-center gap-2.5 px-3 py-2 rounded-xl min-w-0 flex-1 sm:flex-initial"
+                              className="flex flex-col sm:flex-row items-center sm:items-center gap-1 sm:gap-2.5 px-2 py-2 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl min-w-0 sm:flex-initial"
                               style={{
                                 background: 'rgba(255, 255, 255, 0.5)',
                                 backdropFilter: 'blur(8px)',
@@ -383,21 +383,21 @@ export default async function PublicUserProfilePage({
                               }}
                             >
                               <div
-                                className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+                                className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-md sm:rounded-lg flex items-center justify-center"
                                 style={{
                                   background: 'linear-gradient(135deg, #f59e0b, #d97706)',
                                   boxShadow: '0 2px 4px -1px rgba(245, 158, 11, 0.25)',
                                 }}
                               >
-                                <FontAwesomeIcon icon={faTrophy} className="text-xs text-white" />
+                                <FontAwesomeIcon icon={faTrophy} className="text-[10px] sm:text-xs text-white" />
                               </div>
-                              <div>
-                                <p className="text-base md:text-lg font-bold tabular-nums leading-tight">{contributionStats.weeksAsMVP}</p>
-                                <p className="text-[10px] opacity-70 font-medium leading-tight">{tMyContribution('weeksAsMVP')}</p>
+                              <div className="text-center sm:text-left">
+                                <p className="text-sm sm:text-base md:text-lg font-bold tabular-nums leading-tight">{contributionStats.weeksAsMVP}</p>
+                                <p className="text-[9px] sm:text-[10px] opacity-70 font-medium leading-tight">{tMyContribution('weeksAsMVP')}</p>
                               </div>
                             </div>
                             <div
-                              className="flex items-center gap-2.5 px-3 py-2 rounded-xl min-w-0 flex-1 sm:flex-initial"
+                              className="flex flex-col sm:flex-row items-center sm:items-center gap-1 sm:gap-2.5 px-2 py-2 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl min-w-0 sm:flex-initial"
                               style={{
                                 background: 'rgba(255, 255, 255, 0.5)',
                                 backdropFilter: 'blur(8px)',
@@ -405,28 +405,28 @@ export default async function PublicUserProfilePage({
                               }}
                             >
                               <div
-                                className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+                                className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-md sm:rounded-lg flex items-center justify-center"
                                 style={{
                                   background: 'linear-gradient(135deg, #10b981, #059669)',
                                   boxShadow: '0 2px 4px -1px rgba(16, 185, 129, 0.25)',
                                 }}
                               >
-                                <FontAwesomeIcon icon={faStar} className="text-xs text-white" />
+                                <FontAwesomeIcon icon={faStar} className="text-[10px] sm:text-xs text-white" />
                               </div>
-                              <div>
-                                <p className="text-base md:text-lg font-bold tabular-nums leading-tight">
+                              <div className="text-center sm:text-left">
+                                <p className="text-sm sm:text-base md:text-lg font-bold tabular-nums leading-tight">
                                   {contributionStats.byChartType.artists.entriesAsMainDriver +
                                     contributionStats.byChartType.tracks.entriesAsMainDriver +
                                     contributionStats.byChartType.albums.entriesAsMainDriver}
                                 </p>
-                                <p className="text-[10px] opacity-70 font-medium leading-tight">{tMyContribution('entriesAsMainDriver')}</p>
+                                <p className="text-[9px] sm:text-[10px] opacity-70 font-medium leading-tight">{tMyContribution('entriesAsMainDriver')}</p>
                               </div>
                             </div>
                           </div>
                           {/* Featured artist - always below stats */}
                           {driverArtists.length > 0 && (featuredEntry || isSelf) && (
                             <div
-                              className="mt-2.5 px-3 py-2 rounded-xl"
+                              className="mt-2 sm:mt-2.5 px-2.5 sm:px-3 py-2 rounded-lg sm:rounded-xl"
                               style={{
                                 background: 'rgba(255, 255, 255, 0.35)',
                                 backdropFilter: 'blur(8px)',
@@ -446,13 +446,13 @@ export default async function PublicUserProfilePage({
                         </div>
                       )}
                       {userAwardKeys.length > 0 && (
-                        <div className={`flex flex-wrap gap-1.5 ${contributionStats ? '' : 'pt-3'}`}>
+                        <div className={`flex flex-wrap gap-1 sm:gap-1.5 ${contributionStats ? '' : 'pt-2.5 sm:pt-3'}`}>
                           {userAwardKeys.map((key) => {
                             const cls = AWARD_BADGE_CLASSES[key] ?? 'bg-white/80 border-[var(--theme-border)] text-[var(--theme-text)]'
                             return (
                               <span
                                 key={key}
-                                className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border shadow-sm ${cls}`}
+                                className={`inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md sm:rounded-lg text-[10px] sm:text-xs font-semibold border shadow-sm ${cls}`}
                               >
                                 {tUserRecords(key)}
                               </span>
@@ -467,22 +467,22 @@ export default async function PublicUserProfilePage({
               {otherGroups.length === 0 ? (
                 <p className="text-sm text-gray-600">{t('noGroups')}</p>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4">
                   {otherGroups.map((g) => (
                     <Link
                       key={g.id}
                       href={`/groups/${g.id}`}
-                      className="rounded-2xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+                      className="rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
                       style={glassStyle}
                     >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-white/60">
+                      <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden flex-shrink-0 border border-white/60">
                           <SafeImage src={g.image} alt={g.name} className="w-full h-full object-cover" />
                         </div>
-                        <div className="min-w-0">
-                          <div className="font-semibold text-gray-900 truncate">{g.name}</div>
+                        <div className="min-w-0 flex-1">
+                          <div className="font-semibold text-gray-900 truncate text-sm sm:text-base">{g.name}</div>
                           {g.isPrivate && (
-                            <div className="text-xs text-gray-500 font-medium">{t('privateGroupBadge')}</div>
+                            <div className="text-[10px] sm:text-xs text-gray-500 font-medium">{t('privateGroupBadge')}</div>
                           )}
                         </div>
                       </div>

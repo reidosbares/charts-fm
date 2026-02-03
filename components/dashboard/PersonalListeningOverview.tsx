@@ -261,7 +261,7 @@ export default function PersonalListeningOverview({
 
         {/* Top Tracks */}
         <div 
-          className="rounded-lg p-4 border"
+          className="rounded-lg p-3 md:p-4 border"
           style={{
             background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
@@ -291,7 +291,7 @@ export default function PersonalListeningOverview({
 
         {/* Top Albums */}
         <div 
-          className="rounded-lg p-4 border"
+          className="rounded-lg p-3 md:p-4 border"
           style={{
             background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',

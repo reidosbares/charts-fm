@@ -242,21 +242,21 @@ function FeaturedArtistModal({
       />
       {/* Modal container */}
       <div 
-        className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center pointer-events-none p-0 sm:p-4"
+        className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none p-4"
       >
         <div
-          className="bg-white w-full sm:w-[400px] sm:max-w-[90vw] rounded-t-2xl sm:rounded-xl shadow-2xl flex flex-col pointer-events-auto"
+          className="bg-white w-full max-w-[340px] sm:max-w-[400px] rounded-xl shadow-2xl flex flex-col pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3.5 border-b border-gray-200 flex-shrink-0 bg-gray-50 rounded-t-2xl sm:rounded-t-xl">
+          <div className="flex items-center justify-between px-3.5 sm:px-4 py-3 sm:py-3.5 border-b border-gray-200 flex-shrink-0 bg-gray-50 rounded-t-xl">
             <h2 className="text-sm sm:text-base font-bold text-gray-900">
               {t('editFeaturedArtist')}
             </h2>
             <button
               onClick={onClose}
               disabled={saving}
-              className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
+              className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
               aria-label={tCommon('close')}
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -266,7 +266,7 @@ function FeaturedArtistModal({
           </div>
 
           {/* Content */}
-          <div className="p-4 space-y-4">
+          <div className="p-3.5 sm:p-4 space-y-3 sm:space-y-4">
             {/* Explanatory text */}
             <p className="text-xs sm:text-sm text-gray-600">
               {t('featuredArtistHelp')}
@@ -275,7 +275,7 @@ function FeaturedArtistModal({
             {/* Searchable dropdown trigger */}
             <div
               ref={triggerRef}
-              className={`w-full px-3 py-2.5 bg-white border-2 rounded-xl cursor-pointer transition-all ${
+              className={`w-full px-3 py-2 sm:py-2.5 bg-white border-2 rounded-lg sm:rounded-xl cursor-pointer transition-all ${
                 dropdownOpen 
                   ? 'border-yellow-500 ring-2 ring-yellow-500/20' 
                   : 'border-gray-300 hover:border-gray-400'
@@ -309,9 +309,6 @@ function FeaturedArtistModal({
               )}
             </div>
           </div>
-
-          {/* Mobile safe area padding */}
-          <div className="pb-[env(safe-area-inset-bottom)] sm:pb-0 flex-shrink-0" />
         </div>
       </div>
 

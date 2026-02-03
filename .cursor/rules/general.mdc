@@ -1,0 +1,28 @@
+---
+description: General rules for chartsfm development
+globs: 
+alwaysApply: true
+---
+
+# Deployment Environment
+
+## Serverless (Vercel)
+- The app is hosted on Vercel in a serverless environment - all solutions must be compatible
+- Never implement cron jobs or scheduled tasks (use Vercel Cron or external services if needed)
+- Never use fire-and-forget patterns - all async work must complete within the request lifecycle
+- Avoid long-running processes; serverless functions have execution time limits
+- Do not rely on persistent in-memory state between requests
+- Be mindful of cold starts when designing performance-critical paths
+
+# UI/UX Guidelines
+
+## Modals
+- Never use bottom sheet patterns for modals on mobile (e.g., `items-end` with `rounded-t-2xl`)
+- Always center modals on all screen sizes using `items-center justify-center`
+- Use consistent border radius (`rounded-xl`) across all breakpoints
+
+# Database
+
+## Migrations
+- Never create database migrations yourself
+- After finishing implementation that requires schema changes, ask the user to create the migration
