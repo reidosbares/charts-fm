@@ -206,8 +206,7 @@ async function getArtistImageFromMusicBrainz(artist: string): Promise<string | n
     }
 
     const artistData = await artistResponse.json()
-    console.log('MusicBrainz API Response (Artist):', JSON.stringify(artistData, null, 2))
-    
+
     // Step 3: Look for image sources
     const relations = artistData.relations || []
     
@@ -231,11 +230,9 @@ async function getArtistImageFromMusicBrainz(artist: string): Promise<string | n
           })
           if (imageCheck.ok) {
             const finalUrl = imageCheck.url
-            console.log('MusicBrainz API Image Response (Artist):', { artist, imageUrl: finalUrl })
             return finalUrl
           }
         } catch {
-          console.log('MusicBrainz API Image Response (Artist):', { artist, imageUrl: directImageUrl })
           return directImageUrl
         }
       }
@@ -274,7 +271,6 @@ async function getArtistImageFromMusicBrainz(artist: string): Promise<string | n
                 const imageFilename = imageClaim.mainsnak.datavalue.value
                 // Convert to Wikimedia Commons direct image URL
                 const imageUrl = `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(imageFilename)}`
-                console.log('MusicBrainz API Image Response (Artist via Wikidata):', { artist, imageUrl })
                 return imageUrl
               }
             }
@@ -351,8 +347,7 @@ export async function getAlbumImage(
     }
 
     const data = await response.json()
-    console.log('LAST.FM API Image Response (Album):', JSON.stringify(data, null, 2))
-    
+
     if (data.error) {
       return null
     }

@@ -211,9 +211,7 @@ async function calculateAndStoreUserVS(
 export async function fetchOrGetUserWeeklyStats(
   userId: string,
   lastfmUsername: string,
-  sessionKey: string | null,
   weekStart: Date,
-  
 ): Promise<{
   topTracks: TopItem[]
   topArtists: TopItem[]
@@ -239,12 +237,14 @@ export async function fetchOrGetUserWeeklyStats(
     : await (async () => {
         console.log(`[User Stats] 🔄 Fetching fresh data from Last.fm for ${lastfmUsername} (week: ${weekStart.toISOString().split('T')[0]})`)
         const apiStart = Date.now()
+        // Weekly chart methods (user.getWeeklyTrackChart, etc.) do not require auth; use unauthenticated
+        // calls to avoid "Invalid session key" (error 9) when stored session keys are revoked/expired.
         const result = await getWeeklyStats(
           lastfmUsername,
           weekStart,
           API_KEY,
           API_SECRET,
-          sessionKey || undefined
+          undefined
         )
         const apiTime = ((Date.now() - apiStart) / 1000).toFixed(1)
         console.log(`[User Stats] ✅ Fetched data for ${lastfmUsername} in ${apiTime}s (tracks: ${result.topTracks.length}, artists: ${result.topArtists.length}, albums: ${result.topAlbums.length})`)
@@ -496,7 +496,6 @@ export async function calculateGroupWeeklyStats(
       return await fetchOrGetUserWeeklyStats(
         member.user.id,
         member.user.lastfmUsername,
-        member.user.lastfmSessionKey,
         weekStart
       )
     },
