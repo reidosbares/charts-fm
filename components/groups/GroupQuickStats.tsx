@@ -89,18 +89,7 @@ export default function GroupQuickStats({ groupId }: GroupQuickStatsProps) {
               {obsessionArtist ? (
                 <>
                   <div className="text-[11px] md:text-lg font-bold text-white truncate drop-shadow-sm">{obsessionArtist.name}</div>
-                  <div className="hidden md:flex items-center gap-1 mt-1">
-                    <div className="flex gap-0.5">
-                      {[...Array(Math.min(obsessionArtist.weeks, 5))].map((_, i) => (
-                        <div 
-                          key={i} 
-                          className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-orange-400 to-red-500"
-                        />
-                      ))}
-                      {obsessionArtist.weeks > 5 && (
-                        <span className="text-xs text-white/60 ml-0.5">+{obsessionArtist.weeks - 5}</span>
-                      )}
-                    </div>
+                  <div className="hidden md:block mt-1">
                     <span className="text-xs text-white/70">
                       {obsessionArtist.weeks === 1 ? t('weekStreak', { count: obsessionArtist.weeks }) : t('weeksStreak', { count: obsessionArtist.weeks })}
                     </span>
@@ -138,16 +127,21 @@ export default function GroupQuickStats({ groupId }: GroupQuickStatsProps) {
                 {t('chartMode')}
               </div>
               <div className="text-[11px] md:text-lg font-bold text-white drop-shadow-sm">
-                {chartMode === 'vs' ? t('vibeScore') : chartMode === 'vs_weighted' ? t('vibeScoreWeighted') : t('playsOnly')}
+                {chartMode === 'vs' || chartMode === 'vs_weighted' ? (
+                  <Link
+                    href="/faq#what-is-the-vibe-score-vs"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white hover:text-white/90 hover:underline transition-colors inline md:inline-block"
+                  >
+                    {chartMode === 'vs' ? t('vibeScore') : t('vibeScoreWeighted')}
+                    <span className="md:hidden"> (?)</span>
+                    <span className="hidden md:block text-white/80 font-normal text-xs mt-0.5">{t('whatIsVS')}</span>
+                  </Link>
+                ) : (
+                  t('playsOnly')
+                )}
               </div>
-              {(chartMode === 'vs' || chartMode === 'vs_weighted') && (
-                <Link
-                  href="/faq#what-is-the-vibe-score-vs"
-                  className="hidden md:inline-flex text-xs text-white/80 hover:text-white hover:underline transition-colors items-center gap-1 mt-0.5"
-                >
-                  {t('whatIsVS')}
-                </Link>
-              )}
             </div>
           </div>
         </div>
