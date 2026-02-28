@@ -232,6 +232,11 @@
       "title": "O que você está escutando?",
       "titleForUser": "O que {username} está escutando?",
       "weekOf": "Semana de {date}",
+      "range": {
+        "week": "Esta semana",
+        "4weeks": "Últimas 4 semanas",
+        "alltime": "Tudo"
+      },
       "totalPlays": "Total de plays",
       "uniqueArtists": "Artistas distintos",
       "uniqueTracks": "Músicas distintas",

@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getPersonalListeningStats } from '@/lib/dashboard-queries'
+import { getPersonalListeningStats, StatsRange } from '@/lib/dashboard-queries'
 
 export async function GET(
-  _request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ lastfmUsername: string }> }
 ) {
   const { lastfmUsername } = await params
@@ -26,11 +26,16 @@ export async function GET(
     return NextResponse.json({ error: 'User not found' }, { status: 404 })
   }
 
+  const rangeParam = request.nextUrl.searchParams.get('range')
+  const range: StatsRange =
+    rangeParam === '4weeks' || rangeParam === 'alltime' ? rangeParam : 'week'
+
   try {
-    const stats = await getPersonalListeningStats(user.id)
+    const stats = await getPersonalListeningStats(user.id, range)
     return NextResponse.json({
       ...stats,
       weekStart: stats.weekStart.toISOString(),
+      periodEnd: stats.periodEnd?.toISOString(),
     })
   } catch (error) {
     console.error('Error fetching public personal stats:', error)

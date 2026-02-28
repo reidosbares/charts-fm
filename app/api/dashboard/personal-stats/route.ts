@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { getPersonalListeningStats } from '@/lib/dashboard-queries'
+import { getPersonalListeningStats, StatsRange } from '@/lib/dashboard-queries'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const session = await getSession()
 
   if (!session?.user?.email) {
@@ -19,13 +19,16 @@ export async function GET() {
     return NextResponse.json({ error: 'User not found' }, { status: 404 })
   }
 
+  const rangeParam = request.nextUrl.searchParams.get('range')
+  const range: StatsRange =
+    rangeParam === '4weeks' || rangeParam === 'alltime' ? rangeParam : 'week'
+
   try {
-    const stats = await getPersonalListeningStats(user.id)
-    
-    // Convert Date objects to ISO strings for JSON serialization
+    const stats = await getPersonalListeningStats(user.id, range)
     return NextResponse.json({
       ...stats,
       weekStart: stats.weekStart.toISOString(),
+      periodEnd: stats.periodEnd?.toISOString(),
     })
   } catch (error) {
     console.error('Error fetching personal stats:', error)

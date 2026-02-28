@@ -229,9 +229,14 @@
       "slideTo": "Go to slide {index} of {total}"
     },
     "personalListening": {
-      "title": "Your Listening This Week",
-      "titleForUser": "{username}'s Listening This Week",
+      "title": "Your Listening",
+      "titleForUser": "{username}'s Listening",
       "weekOf": "Week of {date}",
+      "range": {
+        "week": "This Week",
+        "4weeks": "Last 4 Weeks",
+        "alltime": "All Time"
+      },
       "totalPlays": "Total Plays",
       "uniqueArtists": "Unique Artists",
       "uniqueTracks": "Unique Tracks",

@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect, useMemo, memo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMusic, faMicrophone, faCompactDisc, faArrowUp, faArrowDown, faMinus, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { Link } from '@/i18n/routing'
 import { formatWeekLabel } from '@/lib/weekly-utils'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import type { StatsRange } from '@/lib/dashboard-queries'
 
 interface PersonalListeningStats {
   currentWeek: {
@@ -20,7 +21,10 @@ interface PersonalListeningStats {
     totalPlays: number
   } | null
   weekStart: string
+  periodEnd?: string
 }
+
+const RANGES: StatsRange[] = ['week', '4weeks', 'alltime']
 
 export default function PersonalListeningOverview({
   username,
@@ -28,18 +32,25 @@ export default function PersonalListeningOverview({
   username?: string
 }) {
   const t = useSafeTranslations('dashboard.personalListening')
+  const [range, setRange] = useState<StatsRange>('week')
   const [stats, setStats] = useState<PersonalListeningStats | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const endpoint = username
+    setIsLoading(true)
+    setError(null)
+
+    const base = username
       ? `/api/users/${encodeURIComponent(username)}/personal-stats`
       : '/api/dashboard/personal-stats'
+    const endpoint = range === 'week' ? base : `${base}?range=${range}`
 
+    let cancelled = false
     fetch(endpoint)
       .then((res) => res.json())
       .then((data) => {
+        if (cancelled) return
         if (data.error) {
           setError(data.error)
         } else {
@@ -48,20 +59,48 @@ export default function PersonalListeningOverview({
         setIsLoading(false)
       })
       .catch((err) => {
+        if (cancelled) return
         setError(t('failedToLoad'))
         setIsLoading(false)
         console.error('Error fetching personal stats:', err)
       })
-  }, [t, username])
+
+    return () => { cancelled = true }
+  }, [t, username, range])
 
   // All hooks must be called before any conditional returns
   const currentWeek = stats?.currentWeek ?? null
   const previousWeek = stats?.previousWeek ?? null
-  
+
   const weekStartDate = useMemo(() => {
     if (!stats?.weekStart) return new Date()
     return new Date(stats.weekStart)
   }, [stats?.weekStart])
+
+  const periodEndDate = useMemo(() => {
+    if (!stats?.periodEnd) return null
+    return new Date(stats.periodEnd)
+  }, [stats?.periodEnd])
+
+  const periodLabel = useMemo(() => {
+    if (range === 'week') {
+      return t('weekOf', { date: formatWeekLabel(weekStartDate) })
+    }
+    if (range === '4weeks') {
+      return periodEndDate
+        ? `${formatWeekLabel(weekStartDate)} – ${formatWeekLabel(periodEndDate)}`
+        : formatWeekLabel(weekStartDate)
+    }
+    // alltime
+    if (periodEndDate) {
+      const startYear = weekStartDate.getUTCFullYear()
+      const endYear = periodEndDate.getUTCFullYear()
+      const startStr = weekStartDate.toLocaleString('default', { month: 'short', year: 'numeric', timeZone: 'UTC' })
+      const endStr = periodEndDate.toLocaleString('default', { month: 'short', year: 'numeric', timeZone: 'UTC' })
+      return startYear === endYear ? `${startStr} – ${periodEndDate.toLocaleString('default', { month: 'short', timeZone: 'UTC' })} ${endYear}` : `${startStr} – ${endStr}`
+    }
+    return formatWeekLabel(weekStartDate)
+  }, [range, weekStartDate, periodEndDate, t])
 
   // Memoize computed values - safe to call even if data is null
   const { playsChange, playsChangePercent } = useMemo(() => {
@@ -100,13 +139,31 @@ export default function PersonalListeningOverview({
   // Now we can safely return early after all hooks have been called
   if (isLoading) {
     return (
-      <div 
+      <div
         className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
         style={glassStyle}
       >
-        <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-900">
-          {username ? t('titleForUser', { username }) : t('title')}
-        </h2>
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-3">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+            {username ? t('titleForUser', { username }) : t('title')}
+          </h2>
+          <div
+            className="flex items-center rounded-lg border border-gray-200 p-0.5 opacity-60"
+            style={{ background: 'rgba(255,255,255,0.5)' }}
+          >
+            {RANGES.map((r) => (
+              <button
+                key={r}
+                disabled
+                className={`px-2.5 py-1 rounded-md text-xs font-medium ${
+                  range === r ? 'bg-yellow-400 text-white shadow-sm' : 'text-gray-400'
+                }`}
+              >
+                {t(`range.${r}`)}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="flex items-center justify-center py-12">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
         </div>
@@ -140,15 +197,36 @@ export default function PersonalListeningOverview({
         WebkitBackdropFilter: 'blur(12px) saturate(180%)',
       }}
     >
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 md:mb-6 gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 md:mb-6 gap-3">
         <h2 className="text-xl md:text-2xl font-bold text-gray-900">
           {username ? t('titleForUser', { username }) : t('title')}
         </h2>
-        {currentWeek && (
-          <span className="text-xs sm:text-sm text-gray-500">
-            {t('weekOf', { date: formatWeekLabel(weekStartDate) })}
-        </span>
-        )}
+        <div className="flex flex-col items-start sm:items-end gap-1.5">
+          {/* Range selector */}
+          <div
+            className="flex items-center rounded-lg border border-gray-200 p-0.5"
+            style={{ background: 'rgba(255,255,255,0.5)' }}
+          >
+            {RANGES.map((r) => (
+              <button
+                key={r}
+                onClick={() => setRange(r)}
+                disabled={isLoading}
+                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
+                  range === r
+                    ? 'bg-yellow-400 text-white shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700 disabled:opacity-50'
+                }`}
+              >
+                {t(`range.${r}`)}
+              </button>
+            ))}
+          </div>
+          {/* Period label */}
+          {currentWeek && (
+            <span className="text-xs text-gray-400">{periodLabel}</span>
+          )}
+        </div>
       </div>
 
       {/* Quick Stats */}

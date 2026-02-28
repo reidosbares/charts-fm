@@ -5,6 +5,8 @@ import { getWeekStart, getWeekStartForDay, getWeekEndForDay } from './weekly-uti
 import { canUpdateCharts } from './group-service'
 import { getGroupImageUrl } from './group-image-utils'
 
+export type StatsRange = 'week' | '4weeks' | 'alltime'
+
 export interface PersonalListeningStats {
   currentWeek: {
     topArtists: Array<{ name: string; playcount: number }>
@@ -21,6 +23,7 @@ export interface PersonalListeningStats {
     totalPlays: number
   } | null
   weekStart: Date
+  periodEnd?: Date
 }
 
 export interface GroupQuickView {
@@ -53,38 +56,183 @@ export interface ActivityItem {
   metadata?: any
 }
 
+type RawWeekStats = {
+  topArtists: unknown
+  topTracks: unknown
+  topAlbums: unknown
+}
+
+function aggregateUserWeeklyStats(weeks: RawWeekStats[]): {
+  topArtists: Array<{ name: string; playcount: number }>
+  topTracks: Array<{ name: string; artist: string; playcount: number }>
+  topAlbums: Array<{ name: string; artist: string; playcount: number }>
+  totalPlays: number
+  uniqueArtists: number
+  uniqueTracks: number
+} {
+  const artistMap = new Map<string, number>()
+  const trackMap = new Map<string, { name: string; artist: string; playcount: number }>()
+  const albumMap = new Map<string, { name: string; artist: string; playcount: number }>()
+
+  for (const week of weeks) {
+    const artists = (week.topArtists as Array<{ name: string; playcount: number }>) || []
+    const tracks = (week.topTracks as Array<{ name: string; artist: string; playcount: number }>) || []
+    const albums = (week.topAlbums as Array<{ name: string; artist: string; playcount: number }>) || []
+
+    for (const a of artists) {
+      artistMap.set(a.name, (artistMap.get(a.name) ?? 0) + (a.playcount || 0))
+    }
+    for (const t of tracks) {
+      const key = `${t.name}|${t.artist}`
+      const existing = trackMap.get(key)
+      if (existing) {
+        existing.playcount += t.playcount || 0
+      } else {
+        trackMap.set(key, { name: t.name, artist: t.artist, playcount: t.playcount || 0 })
+      }
+    }
+    for (const a of albums) {
+      const key = `${a.name}|${a.artist}`
+      const existing = albumMap.get(key)
+      if (existing) {
+        existing.playcount += a.playcount || 0
+      } else {
+        albumMap.set(key, { name: a.name, artist: a.artist, playcount: a.playcount || 0 })
+      }
+    }
+  }
+
+  const topArtists = Array.from(artistMap.entries())
+    .map(([name, playcount]) => ({ name, playcount }))
+    .sort((a, b) => b.playcount - a.playcount)
+    .slice(0, 5)
+  const topTracks = Array.from(trackMap.values())
+    .sort((a, b) => b.playcount - a.playcount)
+    .slice(0, 5)
+  const topAlbums = Array.from(albumMap.values())
+    .sort((a, b) => b.playcount - a.playcount)
+    .slice(0, 5)
+
+  const totalPlays =
+    topArtists.reduce((sum, a) => sum + a.playcount, 0) +
+    topTracks.reduce((sum, t) => sum + t.playcount, 0) +
+    topAlbums.reduce((sum, a) => sum + a.playcount, 0)
+
+  return {
+    topArtists,
+    topTracks,
+    topAlbums,
+    totalPlays,
+    uniqueArtists: artistMap.size,
+    uniqueTracks: trackMap.size,
+  }
+}
+
 /**
  * Get personal listening stats for the most recent week with data and the previous week
  * First checks groups to find the most recent compiled week, then uses that to get user stats
  * Only shows data if there's actual data (non-empty arrays)
  */
-export async function getPersonalListeningStats(userId: string): Promise<PersonalListeningStats> {
-  // First, find the most recent week that has compiled data in any group the user is in
+export async function getPersonalListeningStats(userId: string, range: StatsRange = 'week'): Promise<PersonalListeningStats> {
   const userGroups = await prisma.group.findMany({
     where: {
       OR: [{ creatorId: userId }, { members: { some: { userId } } }],
     },
-    select: {
-      id: true,
-    },
+    select: { id: true },
   })
 
   const groupIds = userGroups.map((g) => g.id)
+
+  // ── All-time range ──────────────────────────────────────────────────────────
+  if (range === 'alltime') {
+    const allUserStats = await prisma.userWeeklyStats.findMany({
+      where: { userId },
+      orderBy: { weekStart: 'asc' },
+    })
+
+    if (allUserStats.length === 0) {
+      return { currentWeek: null, previousWeek: null, weekStart: new Date() }
+    }
+
+    const aggregated = aggregateUserWeeklyStats(allUserStats)
+    const currentWeek =
+      aggregated.topArtists.length > 0 || aggregated.topTracks.length > 0 || aggregated.topAlbums.length > 0
+        ? aggregated
+        : null
+
+    return {
+      currentWeek,
+      previousWeek: null,
+      weekStart: allUserStats[0].weekStart,
+      periodEnd: allUserStats[allUserStats.length - 1].weekStart,
+    }
+  }
+
+  // ── 4-week range ────────────────────────────────────────────────────────────
+  if (range === '4weeks') {
+    if (groupIds.length === 0) {
+      return { currentWeek: null, previousWeek: null, weekStart: new Date() }
+    }
+
+    // Find the 4 most recent distinct compiled week starts across the user's groups
+    const compiledWeekRows = await prisma.groupWeeklyStats.findMany({
+      where: { groupId: { in: groupIds } },
+      orderBy: { weekStart: 'desc' },
+      select: { weekStart: true },
+      distinct: ['weekStart'],
+      take: 4,
+    })
+
+    if (compiledWeekRows.length === 0) {
+      return { currentWeek: null, previousWeek: null, weekStart: new Date() }
+    }
+
+    const weekStarts = compiledWeekRows.map((r) => r.weekStart)
+    const newestWeek = weekStarts[0]
+    const oldestWeek = weekStarts[weekStarts.length - 1]
+
+    // Fetch current-period user stats and the equivalent prior-period weeks
+    const prevWeekStarts = weekStarts.map((ws) => {
+      const d = new Date(ws.getTime())
+      d.setUTCDate(d.getUTCDate() - 28)
+      return d
+    })
+
+    const [currentPeriodStats, previousPeriodStats] = await Promise.all([
+      prisma.userWeeklyStats.findMany({ where: { userId, weekStart: { in: weekStarts } } }),
+      prisma.userWeeklyStats.findMany({ where: { userId, weekStart: { in: prevWeekStarts } } }),
+    ])
+
+    const aggregated = aggregateUserWeeklyStats(currentPeriodStats)
+    const currentWeek =
+      aggregated.topArtists.length > 0 || aggregated.topTracks.length > 0 || aggregated.topAlbums.length > 0
+        ? aggregated
+        : null
+
+    let previousWeek: PersonalListeningStats['previousWeek'] = null
+    if (previousPeriodStats.length > 0) {
+      const prevAgg = aggregateUserWeeklyStats(previousPeriodStats)
+      previousWeek = {
+        topArtists: prevAgg.topArtists,
+        topTracks: prevAgg.topTracks,
+        topAlbums: prevAgg.topAlbums,
+        totalPlays: prevAgg.totalPlays,
+      }
+    }
+
+    return { currentWeek, previousWeek, weekStart: oldestWeek, periodEnd: newestWeek }
+  }
+
+  // ── Single-week range (default) ─────────────────────────────────────────────
 
   // Find the most recent week with group weekly stats (compiled data)
   let mostRecentWeekStart: Date | null = null
 
   if (groupIds.length > 0) {
     const mostRecentGroupStats = await prisma.groupWeeklyStats.findFirst({
-      where: {
-        groupId: { in: groupIds },
-      },
-      orderBy: {
-        weekStart: 'desc',
-      },
-      select: {
-        weekStart: true,
-      },
+      where: { groupId: { in: groupIds } },
+      orderBy: { weekStart: 'desc' },
+      select: { weekStart: true },
     })
 
     if (mostRecentGroupStats) {
@@ -92,47 +240,33 @@ export async function getPersonalListeningStats(userId: string): Promise<Persona
     }
   }
 
-  // If no compiled data exists in groups, return empty data without a specific week
   if (!mostRecentWeekStart) {
     return {
       currentWeek: null,
       previousWeek: null,
-      weekStart: new Date(), // Will not be displayed since currentWeek is null
+      weekStart: new Date(),
     }
   }
 
-  // Use the most recent compiled week as the "current" week
   const currentWeekStart = mostRecentWeekStart
   const previousWeekStart = new Date(currentWeekStart)
   previousWeekStart.setUTCDate(previousWeekStart.getUTCDate() - 7)
 
   const [currentWeekStats, previousWeekStats] = await Promise.all([
     prisma.userWeeklyStats.findUnique({
-      where: {
-        userId_weekStart: {
-          userId,
-          weekStart: currentWeekStart,
-        },
-      },
+      where: { userId_weekStart: { userId, weekStart: currentWeekStart } },
     }),
     prisma.userWeeklyStats.findUnique({
-      where: {
-        userId_weekStart: {
-          userId,
-          weekStart: previousWeekStart,
-        },
-      },
+      where: { userId_weekStart: { userId, weekStart: previousWeekStart } },
     }),
   ])
 
-  // Only create currentWeek if stats exist AND have actual data
   let currentWeek: PersonalListeningStats['currentWeek'] = null
   if (currentWeekStats) {
     const topArtists = (currentWeekStats.topArtists as Array<{ name: string; playcount: number }>) || []
     const topTracks = (currentWeekStats.topTracks as Array<{ name: string; artist: string; playcount: number }>) || []
     const topAlbums = (currentWeekStats.topAlbums as Array<{ name: string; artist: string; playcount: number }>) || []
 
-    // Only show data if there's actual content (at least one item)
     if (topArtists.length > 0 || topTracks.length > 0 || topAlbums.length > 0) {
       currentWeek = {
         topArtists,
@@ -143,7 +277,6 @@ export async function getPersonalListeningStats(userId: string): Promise<Persona
         uniqueTracks: 0,
       }
 
-      // Calculate totals
       currentWeek.totalPlays =
         currentWeek.topArtists.reduce((sum, a) => sum + (a.playcount || 0), 0) +
         currentWeek.topTracks.reduce((sum, t) => sum + (t.playcount || 0), 0) +
@@ -169,11 +302,7 @@ export async function getPersonalListeningStats(userId: string): Promise<Persona
       previousWeek.topAlbums.reduce((sum, a) => sum + (a.playcount || 0), 0)
   }
 
-  return {
-    currentWeek,
-    previousWeek,
-    weekStart: currentWeekStart,
-  }
+  return { currentWeek, previousWeek, weekStart: currentWeekStart }
 }
 
 /**
