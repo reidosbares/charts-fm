@@ -3,7 +3,6 @@ import { getSession } from '@/lib/auth'
 import PersonalListeningOverview from '@/components/dashboard/PersonalListeningOverview'
 import GroupQuickViewCards from '@/components/dashboard/GroupQuickViewCards'
 import ActivityFeed from '@/components/dashboard/ActivityFeed'
-import QuickActionsPanel from '@/components/dashboard/QuickActionsPanel'
 import GroupsYouMightLike from '@/components/dashboard/GroupsYouMightLike'
 import EmptyStateCTA from '@/components/dashboard/EmptyStateCTA'
 import TrendingAcrossGroupsBanner from '@/components/dashboard/TrendingAcrossGroupsBanner'
@@ -46,11 +45,6 @@ export default async function DashboardPage({
       <TrendingAcrossGroupsBanner />
 
       <div className="max-w-7xl w-full mx-auto relative z-10 px-4 md:px-6 lg:px-12 xl:px-24">
-        {/* Quick Actions Panel - loads its own data */}
-        <div className="mb-8">
-          <QuickActionsPanel />
-        </div>
-
         {/* Empty State CTA - shows for users with no groups */}
         <EmptyStateCTA />
 

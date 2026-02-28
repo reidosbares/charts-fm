@@ -3,18 +3,20 @@ import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 
 /**
- * Check if the current user is a superuser
- * Returns the user if they are a superuser, null otherwise
+ * Check if the current user is a superuser.
+ * When impersonating, uses the real (admin) user for the check so admin access is preserved.
+ * Returns the user if they are a superuser, null otherwise.
  */
 export async function getSuperuser() {
   const session = await getSession()
-  
-  if (!session?.user?.email) {
-    return null
-  }
+  if (!session?.user?.id) return null
+
+  const userIdToCheck = session.impersonating && session.realUser
+    ? session.realUser.id
+    : session.user.id
 
   const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
+    where: { id: userIdToCheck },
     select: {
       id: true,
       email: true,
@@ -22,10 +24,7 @@ export async function getSuperuser() {
     },
   })
 
-  if (!user || !user.isSuperuser) {
-    return null
-  }
-
+  if (!user || !user.isSuperuser) return null
   return user
 }
 

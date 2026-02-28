@@ -42,6 +42,8 @@ export default function Navbar() {
     lastfmUsername: string
     image: string | null
     isSuperuser: boolean
+    impersonating?: boolean
+    realUser?: { id: string; name: string | null; email: string | null; isSuperuser: boolean }
   } | null>(null)
   const [isUserDataLoading, setIsUserDataLoading] = useState(true)
   const [quickAccessGroup, setQuickAccessGroup] = useState<{
@@ -55,6 +57,7 @@ export default function Navbar() {
   const quickAccessButtonRef = useRef<HTMLButtonElement>(null)
   const prevPathnameRef = useRef(pathname)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isStoppingImpersonation, setIsStoppingImpersonation] = useState(false)
 
   // Close mobile menu on Escape key
   useEffect(() => {
@@ -82,12 +85,14 @@ export default function Navbar() {
         .then(res => res.json())
         .then(data => {
           if (data.user) {
-          setUserData({
-            name: data.user.name,
-            lastfmUsername: data.user.lastfmUsername,
-            image: data.user.image,
-            isSuperuser: data.user.isSuperuser || false,
-          })
+            setUserData({
+              name: data.user.name,
+              lastfmUsername: data.user.lastfmUsername,
+              image: data.user.image,
+              isSuperuser: (data.impersonating && data.realUser?.isSuperuser) ? true : (data.user.isSuperuser || false),
+              impersonating: data.impersonating || false,
+              realUser: data.realUser,
+            })
           }
         })
         .catch(console.error)
@@ -147,12 +152,14 @@ export default function Navbar() {
         .then(res => res.json())
         .then(data => {
           if (data.user) {
-          setUserData({
-            name: data.user.name,
-            lastfmUsername: data.user.lastfmUsername,
-            image: data.user.image,
-            isSuperuser: data.user.isSuperuser || false,
-          })
+            setUserData({
+              name: data.user.name,
+              lastfmUsername: data.user.lastfmUsername,
+              image: data.user.image,
+              isSuperuser: (data.impersonating && data.realUser?.isSuperuser) ? true : (data.user.isSuperuser || false),
+              impersonating: data.impersonating || false,
+              realUser: data.realUser,
+            })
           }
         })
         .catch(console.error)
@@ -194,6 +201,29 @@ export default function Navbar() {
     await signOut({ redirect: false })
     router.push('/')
     router.refresh()
+  }, [router])
+
+  const handleStopImpersonation = useCallback(async () => {
+    setIsStoppingImpersonation(true)
+    try {
+      const res = await fetch('/api/admin/impersonate/stop', { method: 'POST' })
+      if (res.ok) {
+        router.refresh()
+        const data = await fetch('/api/user/me').then(r => r.json())
+        if (data.user) {
+          setUserData({
+            name: data.user.name,
+            lastfmUsername: data.user.lastfmUsername,
+            image: data.user.image,
+            isSuperuser: data.user.isSuperuser || false,
+            impersonating: false,
+            realUser: undefined,
+          })
+        }
+      }
+    } finally {
+      setIsStoppingImpersonation(false)
+    }
   }, [router])
 
   const isAuthenticated = useMemo(() => status === 'authenticated' && session?.user, [status, session?.user])
@@ -643,6 +673,25 @@ export default function Navbar() {
                           Admin Panel
                         </Link>
                       )}
+                      {userData?.impersonating && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsDropdownOpen(false)
+                            handleStopImpersonation()
+                          }}
+                          disabled={isStoppingImpersonation}
+                          className="block w-full text-left px-4 py-2 text-sm font-semibold text-amber-300 hover:text-amber-200 transition-all duration-200 disabled:opacity-50"
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'transparent'
+                          }}
+                        >
+                          {isStoppingImpersonation ? '…' : t('stopImpersonating')}
+                        </button>
+                      )}
                       <button
                         onClick={handleLogout}
                         className="block w-full text-left px-4 py-2 text-sm font-semibold text-gray-200 hover:text-white transition-all duration-200"
@@ -717,6 +766,25 @@ export default function Navbar() {
             </div>
           ) : null}
         </div>
+        {userData?.impersonating && (
+          <div
+            className="flex items-center justify-center gap-3 py-2 px-4 bg-amber-500/20 border-t border-amber-500/30 text-amber-200 text-sm"
+            role="status"
+            aria-label={t('impersonatingTitle', { name: userData.name || userData.realUser?.email || t('user') })}
+          >
+            <span>
+              {t('impersonatingTitle', { name: userData.name || userData.realUser?.email || t('user') })}
+            </span>
+            <button
+              type="button"
+              onClick={handleStopImpersonation}
+              disabled={isStoppingImpersonation}
+              className="px-3 py-1 rounded font-semibold bg-amber-500/30 hover:bg-amber-500/50 text-amber-100 transition-colors disabled:opacity-50"
+            >
+              {isStoppingImpersonation ? '…' : t('stopImpersonating')}
+            </button>
+          </div>
+        )}
       </div>
       
       {/* Mobile Menu Slide-out */}
@@ -846,7 +914,19 @@ export default function Navbar() {
                       Admin Panel
                     </Link>
                   )}
-                  
+                  {userData?.impersonating && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false)
+                        handleStopImpersonation()
+                      }}
+                      disabled={isStoppingImpersonation}
+                      className="block w-full text-left px-4 py-3 rounded-lg text-base font-semibold text-amber-300 hover:text-amber-200 hover:bg-white/10 transition-all disabled:opacity-50"
+                    >
+                      {isStoppingImpersonation ? '…' : t('stopImpersonating')}
+                    </button>
+                  )}
                   {/* Sign Out */}
                   <button
                     onClick={() => {

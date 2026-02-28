@@ -186,6 +186,8 @@
     "addGroupToQuickAccess": "Adicionar comunidade ao atalho",
     "createUser": "Criar usuário",
     "bulkGenerate": "Geração em massa",
+    "impersonatingTitle": "Personificando {name}",
+    "stopImpersonating": "Parar personificação",
     "quickAccess": {
       "title": "Atalho",
       "close": "Fechar",
@@ -295,7 +297,8 @@
     },
     "groupQuickView": {
       "title": "Suas comunidades",
-      "viewAll": "Ver todas →",
+      "createGroup": "Criar comunidade",
+      "viewAll": "Ver todas",
       "member": "membro",
       "members": "membros",
       "noCharts": "Ainda não há charts",

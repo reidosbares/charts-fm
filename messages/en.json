@@ -186,6 +186,8 @@
     "addGroupToQuickAccess": "Add group to quick access",
     "createUser": "Create User",
     "bulkGenerate": "Bulk Generate",
+    "impersonatingTitle": "Impersonating {name}",
+    "stopImpersonating": "Stop impersonating",
     "quickAccess": {
       "title": "Quick Access",
       "close": "Close",
@@ -295,7 +297,8 @@
     },
     "groupQuickView": {
       "title": "Your Groups",
-      "viewAll": "View All →",
+      "createGroup": "Create Group",
+      "viewAll": "View All",
       "member": "member",
       "members": "members",
       "noCharts": "No charts yet",

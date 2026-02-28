@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
-
 interface User {
   id: string
   email: string
@@ -27,6 +26,7 @@ export default function UserListTab() {
   const [updatingUsers, setUpdatingUsers] = useState<Set<string>>(new Set())
   const [sortColumn, setSortColumn] = useState<SortColumn>('lastAccessedAt')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+  const [impersonatingUserId, setImpersonatingUserId] = useState<string | null>(null)
 
   // Debounce search query
   useEffect(() => {
@@ -101,6 +101,26 @@ export default function UserListTab() {
         next.delete(userId)
         return next
       })
+    }
+  }
+
+  const handleImpersonate = async (userId: string) => {
+    setImpersonatingUserId(userId)
+    setError(null)
+    try {
+      const response = await fetch('/api/admin/impersonate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId }),
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || 'Impersonation failed')
+      const locale = window.location.pathname.split('/')[1] || 'en'
+      window.location.href = `/${locale}/dashboard`
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Impersonation failed')
+    } finally {
+      setImpersonatingUserId(null)
     }
   }
 
@@ -268,6 +288,9 @@ export default function UserListTab() {
                   Last Access
                   <SortIcon column="lastAccessedAt" />
                 </th>
+                <th className="text-left p-2 font-medium text-gray-700">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -345,6 +368,19 @@ export default function UserListTab() {
                       ? new Date(user.lastAccessedAt).toLocaleString()
                       : <span className="text-gray-400">Never</span>
                     }
+                  </td>
+                  <td className="p-2">
+                    {!user.isSuperuser && (
+                      <button
+                        type="button"
+                        onClick={() => handleImpersonate(user.id)}
+                        disabled={impersonatingUserId !== null}
+                        className="text-xs px-2 py-1 rounded bg-amber-100 text-amber-800 hover:bg-amber-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Browse as this user"
+                      >
+                        {impersonatingUserId === user.id ? '…' : 'Impersonate'}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

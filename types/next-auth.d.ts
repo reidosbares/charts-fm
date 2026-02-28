@@ -12,6 +12,14 @@ declare module 'next-auth' {
       email?: string | null
       image?: string | null
     }
+    /** Set when a superuser is impersonating another user */
+    impersonating?: boolean
+    /** Real (admin) user when impersonating; used for "Stop impersonating" and superuser checks */
+    realUser?: {
+      id: string
+      name?: string | null
+      email?: string | null
+    }
   }
 }
 

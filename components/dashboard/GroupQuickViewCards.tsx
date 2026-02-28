@@ -4,9 +4,8 @@ import { useState, useEffect, useMemo, memo } from 'react'
 import { Link } from '@/i18n/routing'
 import SafeImage from '@/components/SafeImage'
 import { getDefaultGroupImage } from '@/lib/default-images'
-import { formatWeekLabel } from '@/lib/weekly-utils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMusic, faMicrophone, faCrown, faUsers, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faMusic, faMicrophone, faCrown, faUsers, faSpinner, faPlus, faEnvelope, faHandPaper } from '@fortawesome/free-solid-svg-icons'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 interface GroupQuickView {
@@ -129,9 +128,16 @@ const GroupCard = memo(({ group, t }: { group: GroupQuickView; t: any }) => {
 })
 GroupCard.displayName = 'GroupCard'
 
+interface QuickActionsData {
+  pendingInvitesCount: number
+  pendingRequestsCount: number
+}
+
 export default function GroupQuickViewCards() {
   const t = useSafeTranslations('dashboard.groupQuickView')
+  const tQuick = useSafeTranslations('dashboard.quickActions')
   const [groups, setGroups] = useState<GroupQuickView[]>([])
+  const [quickActions, setQuickActions] = useState<QuickActionsData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -152,6 +158,20 @@ export default function GroupQuickViewCards() {
         console.error('Error fetching groups:', err)
       })
   }, [t])
+
+  useEffect(() => {
+    fetch('/api/dashboard/quick-actions')
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.error) {
+          setQuickActions({
+            pendingInvitesCount: data.pendingInvitesCount ?? 0,
+            pendingRequestsCount: data.pendingRequestsCount ?? 0,
+          })
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   const glassStyle = {
     background: 'rgba(255, 255, 255, 0.6)',
@@ -174,18 +194,88 @@ export default function GroupQuickViewCards() {
   }
 
   if (error || groups.length === 0) {
+    const pendingInvites = quickActions?.pendingInvitesCount ?? 0
+    const pendingRequests = quickActions?.pendingRequestsCount ?? 0
+    const hasNotificationBanners = pendingInvites > 0 || pendingRequests > 0
+
     return (
       <div 
         className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
         style={glassStyle}
       >
-        <h2 className="text-xl md:text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">{t('title')}</h2>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+          <h2 className="text-xl md:text-2xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
+          <Link
+            href="/groups/create"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-yellow-500 text-black rounded-lg hover:bg-yellow-400 transition-colors font-semibold text-sm w-fit"
+          >
+            <FontAwesomeIcon icon={faPlus} className="text-xs" />
+            {t('createGroup')}
+          </Link>
+        </div>
+
+        {hasNotificationBanners && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+            {pendingInvites > 0 && (
+              <Link
+                href="/groups"
+                className="flex items-center gap-3 p-3 rounded-lg transition-all hover:shadow-sm"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.5)',
+                  backdropFilter: 'blur(8px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                }}
+              >
+                <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-yellow-100 text-yellow-700 flex-shrink-0">
+                  <FontAwesomeIcon icon={faEnvelope} className="text-sm" />
+                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold">
+                    {pendingInvites}
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <div className="font-semibold text-gray-900 text-sm">{tQuick('pendingInvites')}</div>
+                  <div className="text-xs text-gray-600">
+                    {pendingInvites} {pendingInvites === 1 ? tQuick('invite') : tQuick('invites')}
+                  </div>
+                </div>
+              </Link>
+            )}
+            {pendingRequests > 0 && (
+              <Link
+                href="/groups"
+                className="flex items-center gap-3 p-3 rounded-lg transition-all hover:shadow-sm"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.5)',
+                  backdropFilter: 'blur(8px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                }}
+              >
+                <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-purple-100 text-purple-700 flex-shrink-0">
+                  <FontAwesomeIcon icon={faHandPaper} className="text-sm" />
+                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold">
+                    {pendingRequests}
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <div className="font-semibold text-gray-900 text-sm">{tQuick('joinRequests')}</div>
+                  <div className="text-xs text-gray-600">
+                    {pendingRequests} {pendingRequests === 1 ? tQuick('request') : tQuick('requests')}
+                  </div>
+                </div>
+              </Link>
+            )}
+          </div>
+        )}
+
         <div className="text-center py-8 text-gray-500">
           <p className="mb-4">{t('noGroups')}</p>
           <Link
             href="/groups/create"
-            className="inline-block px-6 py-3 bg-yellow-500 text-black rounded-lg hover:bg-yellow-400 transition-colors font-semibold"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-yellow-500 text-black rounded-lg hover:bg-yellow-400 transition-colors font-semibold"
           >
+            <FontAwesomeIcon icon={faPlus} className="text-xs" />
             {t('createFirstGroup')}
           </Link>
         </div>
@@ -193,25 +283,93 @@ export default function GroupQuickViewCards() {
     )
   }
 
+  const pendingInvites = quickActions?.pendingInvitesCount ?? 0
+  const pendingRequests = quickActions?.pendingRequestsCount ?? 0
+  const hasNotificationBanners = pendingInvites > 0 || pendingRequests > 0
+
   return (
     <div 
       className="rounded-xl shadow-lg p-4 md:p-6 border border-theme"
       style={glassStyle}
     >
-      <div className="flex items-center justify-between mb-4 md:mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 md:mb-6">
         <div>
           <h2 className="text-xl md:text-2xl font-bold text-gray-900">{t('title')}</h2>
           {groups.some(group => group.canUpdateCharts) && (
             <p className="text-sm text-gray-600 mt-1">{t('chartsCanBeUpdated')}</p>
           )}
         </div>
-        <Link
-          href="/groups"
-          className="text-xs md:text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
-        >
-          {t('viewAll')}
-        </Link>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Link
+            href="/groups/create"
+            className="inline-flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 bg-yellow-500 text-black rounded-lg hover:bg-yellow-600 transition-colors font-semibold text-sm"
+          >
+            <FontAwesomeIcon icon={faPlus} className="text-xs" />
+            {t('createGroup')}
+          </Link>
+          <Link
+            href="/groups"
+            className="inline-flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 rounded-lg border border-gray-300 bg-white/80 text-gray-700 hover:bg-gray-100 transition-colors font-semibold text-sm"
+          >
+            {t('viewAll')}
+          </Link>
+        </div>
       </div>
+
+      {hasNotificationBanners && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          {pendingInvites > 0 && (
+            <Link
+              href="/groups"
+              className="flex items-center gap-3 p-3 rounded-lg transition-all hover:shadow-sm"
+              style={{
+                background: 'rgba(255, 255, 255, 0.5)',
+                backdropFilter: 'blur(8px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+              }}
+            >
+              <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-yellow-100 text-yellow-700 flex-shrink-0">
+                <FontAwesomeIcon icon={faEnvelope} className="text-sm" />
+                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold">
+                  {pendingInvites}
+                </span>
+              </div>
+              <div className="min-w-0">
+                <div className="font-semibold text-gray-900 text-sm">{tQuick('pendingInvites')}</div>
+                <div className="text-xs text-gray-600">
+                  {pendingInvites} {pendingInvites === 1 ? tQuick('invite') : tQuick('invites')}
+                </div>
+              </div>
+            </Link>
+          )}
+          {pendingRequests > 0 && (
+            <Link
+              href="/groups"
+              className="flex items-center gap-3 p-3 rounded-lg transition-all hover:shadow-sm"
+              style={{
+                background: 'rgba(255, 255, 255, 0.5)',
+                backdropFilter: 'blur(8px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+              }}
+            >
+              <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-purple-100 text-purple-700 flex-shrink-0">
+                <FontAwesomeIcon icon={faHandPaper} className="text-sm" />
+                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold">
+                  {pendingRequests}
+                </span>
+              </div>
+              <div className="min-w-0">
+                <div className="font-semibold text-gray-900 text-sm">{tQuick('joinRequests')}</div>
+                <div className="text-xs text-gray-600">
+                  {pendingRequests} {pendingRequests === 1 ? tQuick('request') : tQuick('requests')}
+                </div>
+              </div>
+            </Link>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
         {groups.map((group) => (
