@@ -217,6 +217,17 @@
       "request": "request",
       "requests": "requests"
     },
+    "trendingBanner": {
+      "title": "Charting everywhere",
+      "chartingInGroups": "Charting in {count} groups",
+      "yourTopArtist": "Your top artist this week — also charting in these groups",
+      "yourTopTrack": "Your top track this week — also charting in these groups",
+      "forYouBadge": "For you",
+      "prev": "Previous slide",
+      "next": "Next slide",
+      "slideIndicator": "Slide position",
+      "slideTo": "Go to slide {index} of {total}"
+    },
     "personalListening": {
       "title": "Your Listening This Week",
       "titleForUser": "{username}'s Listening This Week",

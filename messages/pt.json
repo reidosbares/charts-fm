@@ -217,6 +217,17 @@
       "request": "solicitação",
       "requests": "solicitações"
     },
+    "trendingBanner": {
+      "title": "Em alta em todo lugar",
+      "chartingInGroups": "Em {count} comunidades",
+      "yourTopArtist": "Seu artista mais ouvido esta semana — também em alta nestas comunidades",
+      "yourTopTrack": "Sua faixa mais ouvida esta semana — também em alta nestas comunidades",
+      "forYouBadge": "Para você",
+      "prev": "Slide anterior",
+      "next": "Próximo slide",
+      "slideIndicator": "Posição do slide",
+      "slideTo": "Ir para o slide {index} de {total}"
+    },
     "personalListening": {
       "title": "O que você está escutando?",
       "titleForUser": "O que {username} está escutando?",

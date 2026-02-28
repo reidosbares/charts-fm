@@ -6,6 +6,7 @@ import ActivityFeed from '@/components/dashboard/ActivityFeed'
 import QuickActionsPanel from '@/components/dashboard/QuickActionsPanel'
 import GroupsYouMightLike from '@/components/dashboard/GroupsYouMightLike'
 import EmptyStateCTA from '@/components/dashboard/EmptyStateCTA'
+import TrendingAcrossGroupsBanner from '@/components/dashboard/TrendingAcrossGroupsBanner'
 import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
 
@@ -40,8 +41,11 @@ export default async function DashboardPage({
   }
 
   return (
-    <main className="flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 relative">
-      <div className="max-w-7xl w-full mx-auto relative z-10">
+    <main className="flex min-h-screen flex-col pb-24 relative">
+      {/* Full-width banner: sits flush under navbar when no email verification banner; otherwise under that banner */}
+      <TrendingAcrossGroupsBanner />
+
+      <div className="max-w-7xl w-full mx-auto relative z-10 px-4 md:px-6 lg:px-12 xl:px-24">
         {/* Quick Actions Panel - loads its own data */}
         <div className="mb-8">
           <QuickActionsPanel />
@@ -76,4 +80,3 @@ export default async function DashboardPage({
     </main>
   )
 }
-
