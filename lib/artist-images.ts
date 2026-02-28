@@ -52,19 +52,15 @@ export async function getSelectedArtistImage(artistName: string): Promise<string
     }
   })
 
-  // Find image with highest score
-  const topImage = imagesWithScores.reduce((prev, current) => {
-    if (current.score > prev.score) {
-      return current
-    }
-    // If scores are equal, prefer the most recently uploaded
-    if (current.score === prev.score && current.uploadedAt > prev.uploadedAt) {
-      return current
-    }
-    return prev
+  // Sort by score (highest first), then by upload date (newest first) for tie-breaker.
+  // This ensures we always pick the best-voted image for group covers, drill-down, etc.
+  const sorted = [...imagesWithScores].sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score
+    return b.uploadedAt.getTime() - a.uploadedAt.getTime()
   })
+  const topImage = sorted[0]
 
-  // Only return if score is positive (or at least 0)
+  // Only return if the best image has non-negative score (don't show downvoted images)
   return topImage.score >= 0 ? topImage.imageUrl : null
 }
 
