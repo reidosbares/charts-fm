@@ -283,9 +283,19 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
         {/* MVP - full width, featured */}
         {memberSpotlight && (
           <div className={`${cardFeatured} md:col-span-2`}>
-            <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
-              <FontAwesomeIcon icon={faTrophy} className="text-xl md:text-2xl text-[var(--theme-primary)] flex-shrink-0" />
-              <h3 className="text-lg md:text-xl font-bold text-[var(--theme-primary-dark)]">{t('thisWeeksMVP')}</h3>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2 md:mb-3">
+              <div className="flex items-center gap-2 md:gap-3">
+                <FontAwesomeIcon icon={faTrophy} className="text-xl md:text-2xl text-[var(--theme-primary)] flex-shrink-0" />
+                <h3 className="text-lg md:text-xl font-bold text-[var(--theme-primary-dark)]">{t('thisWeeksMVP')}</h3>
+              </div>
+              <LiquidGlassLink
+                href={`/groups/${groupId}/records/mvp-by-week`}
+                variant="secondary"
+                useTheme
+                className="hidden sm:inline-flex flex-shrink-0 w-full sm:w-auto justify-center"
+              >
+                {t('previousWeeksMVPs')}
+              </LiquidGlassLink>
             </div>
             <div className="flex items-center gap-3 md:gap-4 mb-2">
               {memberSpotlight.lastfmUsername ? (
@@ -327,6 +337,14 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
                 {t('topContributions', { contributions: memberSpotlight.topContributions.map((c: any) => c.name).join(', ') })}
               </div>
             )}
+            <LiquidGlassLink
+              href={`/groups/${groupId}/records/mvp-by-week`}
+              variant="secondary"
+              useTheme
+              className="sm:hidden mt-3 w-full justify-center"
+            >
+              {t('previousWeeksMVPs')}
+            </LiquidGlassLink>
           </div>
         )}
 

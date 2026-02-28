@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMicrophone, faMusic, faCompactDisc, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
 import { Link } from '@/i18n/routing'
+import SafeImage from '@/components/SafeImage'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 import { useLocale } from 'next-intl'
 import { ChartType } from '@/lib/chart-slugs'
@@ -23,6 +24,80 @@ interface ChartTopperEntry {
 
 interface ChartToppersClientProps {
   groupId: string
+}
+
+const IMAGE_BATCH_SIZE = 20
+
+/** Loads artist or album image async when shouldLoad is true, styled like MVP table profile picture */
+function ChartTopperEntryImage({
+  chartType,
+  name,
+  artist,
+  shouldLoad,
+}: {
+  chartType: ChartType
+  name: string
+  artist: string | null
+  shouldLoad: boolean
+}) {
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!shouldLoad) {
+      setLoading(false)
+      setImageUrl(null)
+      return
+    }
+    let cancelled = false
+    setImageUrl(null)
+    setLoading(true)
+
+    const fetchImage = async () => {
+      try {
+        if (chartType === 'artists') {
+          const res = await fetch(`/api/images/artist?artist=${encodeURIComponent(name)}`)
+          const data = await res.json()
+          if (!cancelled) setImageUrl(data.imageUrl || null)
+        } else if (chartType === 'albums' && artist) {
+          const res = await fetch(
+            `/api/images/album?artist=${encodeURIComponent(artist)}&album=${encodeURIComponent(name)}`
+          )
+          const data = await res.json()
+          if (!cancelled) setImageUrl(data.imageUrl || null)
+        } else if (chartType === 'tracks' && artist) {
+          const res = await fetch(`/api/images/artist?artist=${encodeURIComponent(artist)}`)
+          const data = await res.json()
+          if (!cancelled) setImageUrl(data.imageUrl || null)
+        } else {
+          if (!cancelled) setImageUrl(null)
+        }
+      } catch {
+        if (!cancelled) setImageUrl(null)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+
+    fetchImage()
+    return () => { cancelled = true }
+  }, [chartType, name, artist, shouldLoad])
+
+  return (
+    <div className="h-8 w-8 flex-shrink-0 overflow-hidden rounded-full bg-[var(--theme-primary)]/10 ring-1 ring-[var(--theme-border)]">
+      {loading ? (
+        <div className="w-full h-full bg-gray-200 animate-pulse" />
+      ) : imageUrl ? (
+        <SafeImage
+          src={imageUrl}
+          alt={name}
+          className="object-cover w-full h-full"
+        />
+      ) : (
+        <div className="w-full h-full bg-gray-200" />
+      )}
+    </div>
+  )
 }
 
 export default function ChartToppersClient({ groupId }: ChartToppersClientProps) {
@@ -44,6 +119,32 @@ export default function ChartToppersClient({ groupId }: ChartToppersClientProps)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showVS, setShowVS] = useState(false)
+  const [visibleImageCount, setVisibleImageCount] = useState(IMAGE_BATCH_SIZE)
+  const sentinelRef = useRef<HTMLTableRowElement>(null)
+  const totalCountRef = useRef(entries.length)
+  totalCountRef.current = entries.length
+
+  // Reset visible image count when entries or tab change
+  useEffect(() => {
+    setVisibleImageCount(IMAGE_BATCH_SIZE)
+  }, [entries.length, activeTab])
+
+  // Load more images when sentinel scrolls into view
+  useEffect(() => {
+    if (entries.length <= IMAGE_BATCH_SIZE) return
+    const el = sentinelRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      (observerEntries) => {
+        if (!observerEntries[0]?.isIntersecting) return
+        const total = totalCountRef.current
+        setVisibleImageCount((prev) => Math.min(prev + IMAGE_BATCH_SIZE, total))
+      },
+      { root: null, rootMargin: '100px', threshold: 0 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [entries.length])
 
   const tabs: TabItem[] = [
     { id: 'artists', label: tTabs('artists'), icon: faMicrophone },
@@ -180,6 +281,9 @@ export default function ChartToppersClient({ groupId }: ChartToppersClientProps)
                     <span className="md:hidden">{locale === 'pt' ? 'sem.' : t('week')}</span>
                     <span className="hidden md:inline">{t('week')}</span>
                   </th>
+                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-24 sm:w-28 md:w-36">
+                    {t('weekOf')}
+                  </th>
                   <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     {t('entry')}
                   </th>
@@ -192,27 +296,38 @@ export default function ChartToppersClient({ groupId }: ChartToppersClientProps)
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {entries.map((entry, index) => (
+                {entries.slice(0, visibleImageCount).map((entry, index) => (
                   <tr key={`${entry.weekStart}-${entry.entryKey}`} className="hover:bg-gray-50 transition-colors">
                     <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm">
                       <span className="text-gray-900 font-medium" title={entry.weekStartFormatted}>
                         {entries.length - index}
                       </span>
                     </td>
+                    <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-gray-700 whitespace-nowrap">
+                      {entry.weekStartFormatted}
+                    </td>
                     <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm">
-                      <div className="min-w-0 max-w-[100px] sm:max-w-none">
-                        <Link
-                          href={getEntryLink(entry)}
-                          className="font-medium text-gray-900 hover:text-[var(--theme-primary-dark)] transition-colors block truncate"
-                          title={entry.name}
-                        >
-                          {entry.name}
-                        </Link>
-                        {entry.artist && (
-                          <div className="text-gray-500 text-xs mt-0.5 sm:mt-1 truncate" title={`by ${entry.artist}`}>
-                            by {entry.artist}
-                          </div>
-                        )}
+                      <div className="flex items-center gap-2 min-w-0">
+                        <ChartTopperEntryImage
+                          chartType={activeTab}
+                          name={entry.name}
+                          artist={entry.artist}
+                          shouldLoad={true}
+                        />
+                        <div className="min-w-0 max-w-[100px] sm:max-w-none">
+                          <Link
+                            href={getEntryLink(entry)}
+                            className="font-medium text-gray-900 hover:text-[var(--theme-primary-dark)] transition-colors block truncate"
+                            title={entry.name}
+                          >
+                            {entry.name}
+                          </Link>
+                          {entry.artist && (
+                            <div className="text-gray-500 text-xs mt-0.5 sm:mt-1 truncate" title={`by ${entry.artist}`}>
+                              by {entry.artist}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </td>
                     <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-right whitespace-nowrap">
@@ -223,6 +338,56 @@ export default function ChartToppersClient({ groupId }: ChartToppersClientProps)
                     </td>
                   </tr>
                 ))}
+                {entries.length > visibleImageCount && (
+                  <tr ref={sentinelRef}>
+                    <td colSpan={5} className="h-1 p-0 border-0 bg-transparent" aria-hidden />
+                  </tr>
+                )}
+                {entries.slice(visibleImageCount).map((entry, index) => {
+                  const globalIndex = visibleImageCount + index
+                  return (
+                    <tr key={`${entry.weekStart}-${entry.entryKey}`} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm">
+                        <span className="text-gray-900 font-medium" title={entry.weekStartFormatted}>
+                          {entries.length - globalIndex}
+                        </span>
+                      </td>
+                      <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-gray-700 whitespace-nowrap">
+                        {entry.weekStartFormatted}
+                      </td>
+                      <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <ChartTopperEntryImage
+                            chartType={activeTab}
+                            name={entry.name}
+                            artist={entry.artist}
+                            shouldLoad={false}
+                          />
+                          <div className="min-w-0 max-w-[100px] sm:max-w-none">
+                            <Link
+                              href={getEntryLink(entry)}
+                              className="font-medium text-gray-900 hover:text-[var(--theme-primary-dark)] transition-colors block truncate"
+                              title={entry.name}
+                            >
+                              {entry.name}
+                            </Link>
+                            {entry.artist && (
+                              <div className="text-gray-500 text-xs mt-0.5 sm:mt-1 truncate" title={`by ${entry.artist}`}>
+                                by {entry.artist}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-right whitespace-nowrap">
+                        <span className="text-gray-900 font-medium">{entry.playcount.toLocaleString()}</span>
+                      </td>
+                      <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-right whitespace-nowrap">
+                        <span className="text-gray-900 font-medium">{formatValue(entry.value, entry.isVS)}</span>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

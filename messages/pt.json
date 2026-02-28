@@ -455,6 +455,7 @@
       "debutedAt": "Estreou em #{position}",
       "andMore": "...e mais {count}",
       "thisWeeksMVP": "MVP da Semana",
+      "previousWeeksMVPs": "MVPs anteriores",
       "topContributions": "Principais contribuições: {contributions}",
       "highlightMostActiveListener": "Mais VS contabilizados",
       "highlightMVPAndMostDiverse": "Mais VS contabilizados e mais contribuições",
@@ -1235,6 +1236,11 @@
       "entry": "item",
       "entries": "itens",
       "memberAwardsFAQLink": "Para saber mais sobre como estes prêmios são definidos, <link>consulte as perguntas frequentes</link> →",
+      "mostWeeksAsMVP": "Mais semanas como MVP",
+      "mostWeeksAsMVPTagline": "O membro que tem mais semanas como MVP é…",
+      "weeksAsMVPCount": "{count} semana como MVP",
+      "weeksAsMVPCountPlural": "{count} semanas como MVP",
+      "viewMVPPerWeek": "Ver MVP por semana",
       "awardDescriptions": {
         "vsVirtuoso": "O membro que contribuiu com mais Vibe Score (VS) total para os charts do grupo. Ele é a alma do grupo.",
         "playPowerhouse": "Este é o usuário que deu mais plays para os charts do grupo. Ele é o que mais escuta.",
@@ -1243,6 +1249,17 @@
         "consistencyChampion": "Este é o membro que escutou itens dos charts por mais semanas. Ele gosta do que hita.",
         "tasteMaker": "Este é o membro que fez debutar mais itens que em seguida pegaram #1. E quando ele quiser, ele hita."
       }
+    },
+    "mvpByWeek": {
+      "pageTitle": "MVP por semana",
+      "breadcrumb": "MVP por semana",
+      "weekNumber": "Semana",
+      "weekDate": "Semana de",
+      "mvp": "MVP",
+      "plays": "Plays",
+      "vs": "VS",
+      "loading": "Carregando…",
+      "empty": "Ainda não há semanas de chart."
     },
     "myContribution": {
       "title": "Seu impacto",
@@ -1440,6 +1457,7 @@
     "title": "Chart Toppers",
     "subheader": "Todos os hits top #1 semana a semana",
     "week": "Semana",
+    "weekOf": "Semana de",
     "entry": "Item",
     "plays": "Plays",
     "value": "VS",

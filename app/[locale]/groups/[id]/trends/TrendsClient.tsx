@@ -738,6 +738,14 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                   {t('topContributions', { contributions: memberSpotlight.topContributions.map((c: any) => c.name).join(', ') })}
                 </div>
               )}
+              <LiquidGlassLink
+                href={`/groups/${groupId}/records/mvp-by-week`}
+                variant="primary"
+                useTheme
+                className="mt-3 w-full sm:w-auto justify-center"
+              >
+                {t('previousWeeksMVPs')}
+              </LiquidGlassLink>
             </div>
           )}
 

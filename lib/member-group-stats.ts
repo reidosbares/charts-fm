@@ -367,6 +367,7 @@ export async function getTotalVSForEntryInGroup(
 
 /**
  * Get full personalized member stats for a user in a group (stored + main driver count).
+ * weeksAsMVP comes from GroupWeekMVP table so it matches the MVP-per-week page.
  */
 export async function getPersonalizedMemberStats(
   groupId: string,
@@ -378,12 +379,16 @@ export async function getPersonalizedMemberStats(
   const hasMainDriver =
     mainDriver.artists > 0 || mainDriver.tracks > 0 || mainDriver.albums > 0
 
+  // Use GroupWeekMVP table so "weeks as MVP" matches the MVP-per-week page
+  const { getWeeksAsMVPCountForUser } = await import('./group-week-mvp')
+  const weeksAsMVP = await getWeeksAsMVPCountForUser(groupId, userId)
+
   if (!stored) {
     if (!hasMainDriver) return null
     return {
       totalVS: 0,
       totalPlays: 0,
-      weeksAsMVP: 0,
+      weeksAsMVP,
       byChartType: {
         artists: {
           entriesHelpedDebut: 0,
@@ -408,7 +413,7 @@ export async function getPersonalizedMemberStats(
   return {
     totalVS: stored.totalVS,
     totalPlays: stored.totalPlays,
-    weeksAsMVP: stored.weeksAsMVP,
+    weeksAsMVP,
     byChartType: {
       artists: {
         entriesHelpedDebut: stored.entriesHelpedDebutArtists,

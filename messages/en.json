@@ -455,6 +455,7 @@
       "debutedAt": "Debuted at #{position}",
       "andMore": "...and {count} more",
       "thisWeeksMVP": "This Week's MVP",
+      "previousWeeksMVPs": "Previous weeks MVPs",
       "topContributions": "Top contributions: {contributions}",
       "highlightMostActiveListener": "Contributed the Most VS",
       "highlightMVPAndMostDiverse": "MVP & Most Diverse Listener",
@@ -1235,6 +1236,11 @@
       "entry": "entry",
       "entries": "entries",
       "memberAwardsFAQLink": "To learn more about how member awards are given, <link>check the FAQ page</link> →",
+      "mostWeeksAsMVP": "Most weeks as MVP",
+      "mostWeeksAsMVPTagline": "The member who spent the most weeks as MVP is…",
+      "weeksAsMVPCount": "{count} week as MVP",
+      "weeksAsMVPCountPlural": "{count} weeks as MVP",
+      "viewMVPPerWeek": "View MVP per week",
       "awardDescriptions": {
         "vsVirtuoso": "The member who contributed the most total Vibe Score (VS) to this group's charts. They're the life of the group.",
         "playPowerhouse": "This is the member with the most total plays across all their contributions. They really love scrobbling.",
@@ -1243,6 +1249,17 @@
         "consistencyChampion": "The member who contributed to charts for the most weeks. They show up every time.",
         "tasteMaker": "This is the member who introduced the most entries that later became #1 hits. They have that magic touch."
       }
+    },
+    "mvpByWeek": {
+      "pageTitle": "MVP per week",
+      "breadcrumb": "MVP per week",
+      "weekNumber": "Week",
+      "weekDate": "Week of",
+      "mvp": "MVP",
+      "plays": "Plays",
+      "vs": "VS",
+      "loading": "Loading…",
+      "empty": "No chart weeks yet."
     },
     "myContribution": {
       "title": "Your impact",
@@ -1440,6 +1457,7 @@
     "title": "Chart Toppers",
     "subheader": "All #1 entries week-by-week",
     "week": "Week",
+    "weekOf": "Week of",
     "entry": "Entry",
     "plays": "Plays",
     "value": "VS",

@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMusic, faMicrophone, faCompactDisc, faUsers, faSpinner, faMedal } from '@fortawesome/free-solid-svg-icons'
+import { faMusic, faMicrophone, faCompactDisc, faUsers, faSpinner, faMedal, faTrophy } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
 import RecordBlock from '@/components/records/RecordBlock'
 import MyContributionCard from '@/components/records/MyContributionCard'
 import { Link } from '@/i18n/routing'
+import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 import { generateSlug } from '@/lib/chart-slugs'
 import SafeImage from '@/components/SafeImage'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
@@ -850,6 +851,45 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
                   )
                 })}
               </p>
+            )}
+            {/* Most weeks as MVP – between member awards and impact per member */}
+            {activeTab === 'users' && memberCount > 1 && records?.mostWeeksAsMVP && (
+              <div className="mt-6 md:mt-8 pt-6 md:pt-8 border-t border-[var(--theme-border)]">
+                <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+                  <FontAwesomeIcon icon={faTrophy} className="text-2xl md:text-3xl text-[var(--theme-primary)] flex-shrink-0" />
+                  <h3 className="text-lg md:text-xl font-bold text-[var(--theme-primary)]">{tUserRecords('mostWeeksAsMVP')}</h3>
+                </div>
+                <p className="text-xs md:text-sm text-gray-600 mb-4">{tUserRecords('mostWeeksAsMVPTagline')}</p>
+                <Link
+                  href={`/u/${encodeURIComponent(records.mostWeeksAsMVP.lastfmUsername || records.mostWeeksAsMVP.name)}`}
+                  className="flex items-center gap-4 md:gap-5 p-4 rounded-xl bg-white/80 border border-theme hover:border-[var(--theme-primary)]/50 transition-all"
+                >
+                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[var(--theme-primary)]/50 bg-[var(--theme-primary)]/10">
+                    <SafeImage
+                      src={records.mostWeeksAsMVP.image || ''}
+                      alt={records.mostWeeksAsMVP.name}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-xl md:text-2xl font-bold text-gray-900 block truncate">{records.mostWeeksAsMVP.name}</span>
+                    <span className="text-base md:text-lg text-[var(--theme-primary)] font-semibold">
+                      {records.mostWeeksAsMVP.value === 1
+                        ? tUserRecords('weeksAsMVPCount', { count: records.mostWeeksAsMVP.value })
+                        : tUserRecords('weeksAsMVPCountPlural', { count: records.mostWeeksAsMVP.value })}
+                    </span>
+                  </div>
+                </Link>
+                <LiquidGlassLink
+                  href={`/groups/${groupId}/records/mvp-by-week`}
+                  variant="secondary"
+                  size="sm"
+                  useTheme
+                  className="mt-3"
+                >
+                  {tUserRecords('viewMVPPerWeek')} →
+                </LiquidGlassLink>
+              </div>
             )}
             {/* My contribution - at bottom of Members tab (hidden for solo groups) */}
             {activeTab === 'users' && isMember && userId && memberCount > 1 && (

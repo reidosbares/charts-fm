@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { checkGroupAccessForAPI } from '@/lib/group-auth'
 import { getGroupRecords, calculateGroupRecords, triggerRecordsCalculation } from '@/lib/group-records'
-import { getMemberGroupStats } from '@/lib/member-group-stats'
+import { getMostWeeksAsMVPFromTable } from '@/lib/group-week-mvp'
 import { prisma } from '@/lib/prisma'
 
 export async function GET(
@@ -13,26 +13,21 @@ export async function GET(
 
     const records = await getGroupRecords(group.id)
 
-    // Member with most weeks as MVP (from MemberGroupStats, all-time)
+    // Member with most weeks as MVP (from GroupWeekMVP table so it matches MVP-per-week page)
     let mostWeeksAsMVP: { userId: string; name: string; image: string | null; lastfmUsername: string | null; value: number } | null = null
-    const allMemberStats = await getMemberGroupStats(group.id)
-    if (Array.isArray(allMemberStats) && allMemberStats.length > 0) {
-      const top = allMemberStats.reduce((best, row) =>
-        row.weeksAsMVP > best.weeksAsMVP ? row : best
-      )
-      if (top.weeksAsMVP > 0) {
-        const u = await prisma.user.findUnique({
-          where: { id: top.userId },
-          select: { id: true, image: true, name: true, lastfmUsername: true },
-        })
-        if (u) {
-          mostWeeksAsMVP = {
-            userId: u.id,
-            name: u.name || u.lastfmUsername || '',
-            image: u.image || null,
-            lastfmUsername: u.lastfmUsername,
-            value: top.weeksAsMVP,
-          }
+    const top = await getMostWeeksAsMVPFromTable(group.id)
+    if (top && top.count > 0) {
+      const u = await prisma.user.findUnique({
+        where: { id: top.userId },
+        select: { id: true, image: true, name: true, lastfmUsername: true },
+      })
+      if (u) {
+        mostWeeksAsMVP = {
+          userId: u.id,
+          name: u.name || u.lastfmUsername || '',
+          image: u.image || null,
+          lastfmUsername: u.lastfmUsername,
+          value: top.count,
         }
       }
     }

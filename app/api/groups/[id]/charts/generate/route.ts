@@ -8,6 +8,7 @@ import { invalidateEntryStatsCacheBatch } from '@/lib/chart-deep-dive'
 import { calculateGroupTrends } from '@/lib/group-trends'
 import { calculateGroupRecords, getGroupRecords } from '@/lib/group-records'
 import { accumulateMemberGroupStats } from '@/lib/member-group-stats'
+import { persistMVPForWeek } from '@/lib/group-week-mvp'
 import { ChartType } from '@/lib/chart-slugs'
 
 /**
@@ -229,7 +230,11 @@ export async function POST(
         accumulateMemberGroupStats(groupId, weekStart).catch((err) => {
           console.error('[Chart Generate] accumulateMemberGroupStats failed:', err)
         })
-        
+        // Persist this week's MVP so MVP-per-week table has full history (before UserChartEntryVS cleanup)
+        persistMVPForWeek(groupId, weekStart).catch((err) => {
+          console.error('[Chart Generate] persistMVPForWeek failed:', err)
+        })
+
         // Small delay between weeks
         await new Promise(resolve => setTimeout(resolve, 500))
       }

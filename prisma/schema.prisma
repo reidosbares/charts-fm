@@ -43,6 +43,7 @@ model User {
   groupJoinRequests             GroupJoinRequest[]
   groupMemberships              GroupMember[]
   memberGroupStats              MemberGroupStats[]
+  groupWeeksAsMVP               GroupWeekMVP[]                 @relation("UserAsWeekMVP")
   recommendationCache           GroupRecommendationCache?
   groupRecommendationRejections GroupRecommendationRejection[]
   shoutboxPermissionsGranted    GroupShoutboxPermission[]      @relation("ShoutboxPermissionsGranted")
@@ -127,6 +128,7 @@ model Group {
   joinRequests                   GroupJoinRequest[]
   members                        GroupMember[]
   memberGroupStats               MemberGroupStats[]
+  groupWeekMVPs                  GroupWeekMVP[]
   recommendationRejections       GroupRecommendationRejection[]
   records                        GroupRecords?
   recordDetailCaches             GroupRecordDetailCache[]
@@ -175,6 +177,22 @@ model MemberGroupStats {
   @@index([groupId])
   @@index([userId])
   @@map("member_group_stats")
+}
+
+/// Cached MVP per week (groupId + weekStart). Backfilled on first access if empty.
+model GroupWeekMVP {
+  id          String    @id @default(cuid())
+  groupId     String
+  weekStart   DateTime
+  mvpUserId   String?
+  totalVS     Float     @default(0)
+  totalPlays  Int       @default(0)
+  group       Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  mvpUser     User?     @relation("UserAsWeekMVP", fields: [mvpUserId], references: [id], onDelete: SetNull)
+
+  @@unique([groupId, weekStart])
+  @@index([groupId])
+  @@map("group_week_mvp")
 }
 
 model UserWeeklyStats {
