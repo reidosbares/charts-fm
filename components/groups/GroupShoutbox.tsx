@@ -7,6 +7,7 @@ import { faSpinner, faEdit, faTrash, faPaperPlane } from '@fortawesome/free-soli
 import SafeImage from '@/components/SafeImage'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import { Link } from '@/i18n/routing'
 
 interface Comment {
   id: string
@@ -319,16 +320,24 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
                   className="p-3 md:p-4 rounded-lg border border-gray-200 bg-white/40"
                 >
                   <div className="flex items-start gap-2 md:gap-3">
-                    <SafeImage
-                      src={comment.user.image}
-                      alt={comment.user.name || comment.user.lastfmUsername}
-                      className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover flex-shrink-0"
-                    />
+                    <Link
+                      href={`/u/${encodeURIComponent(comment.user.lastfmUsername)}`}
+                      className="flex-shrink-0 rounded-full ring-2 ring-transparent hover:ring-[var(--theme-primary)] transition-shadow"
+                    >
+                      <SafeImage
+                        src={comment.user.image}
+                        alt={comment.user.name || comment.user.lastfmUsername}
+                        className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover"
+                      />
+                    </Link>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-1 md:gap-2 mb-1">
-                        <span className="font-semibold text-gray-900 text-sm md:text-base">
+                        <Link
+                          href={`/u/${encodeURIComponent(comment.user.lastfmUsername)}`}
+                          className="font-semibold text-gray-900 text-sm md:text-base hover:underline"
+                        >
                           {comment.user.name || comment.user.lastfmUsername}
-                        </span>
+                        </Link>
                         <span className="text-xs text-gray-500">
                           {formatRelativeTime(new Date(comment.createdAt), t)}
                         </span>
