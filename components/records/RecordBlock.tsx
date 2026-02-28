@@ -1,3 +1,6 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { generateSlug, ChartType } from '@/lib/chart-slugs'
 import ChartEntryCard from '@/components/ChartEntryCard'
 import Tooltip from '@/components/Tooltip'
@@ -6,6 +9,7 @@ import { faQuestionCircle, faChevronRight } from '@fortawesome/free-solid-svg-ic
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 import { Link } from '@/i18n/routing'
 import { isRecordTypeSupported, isArtistSpecificRecordType } from '@/lib/group-records'
+import { getCachedRecordsImage, setCachedRecordsImage } from '@/lib/records-image-cache'
 
 interface RecordBlockProps {
   title: string
@@ -198,6 +202,81 @@ export default function RecordBlock({ title, record, value, groupId, isUser, act
   
   const description = getAwardDescription(title)
 
+  // Load artist/album image for artist, track, album tabs (same styling as member images)
+  const [entryImage, setEntryImage] = useState<string | null | undefined>(undefined)
+  const chartType = record.chartType
+
+  useEffect(() => {
+    if (isUser || !chartType || (chartType !== 'artists' && chartType !== 'tracks' && chartType !== 'albums')) {
+      setEntryImage(undefined)
+      return
+    }
+    let cancelled = false
+
+    const loadImage = async () => {
+      if (chartType === 'artists') {
+        const cached = getCachedRecordsImage('artist', record.name)
+        if (cached !== undefined) {
+          if (!cancelled) setEntryImage(cached)
+          return
+        }
+        try {
+          const res = await fetch(`/api/images/artist?artist=${encodeURIComponent(record.name)}`)
+          const data = await res.json()
+          const url = data.imageUrl || null
+          if (!cancelled) setEntryImage(url)
+          setCachedRecordsImage('artist', record.name, url)
+        } catch {
+          if (!cancelled) setEntryImage(null)
+        }
+        return
+      }
+      if (chartType === 'tracks' && record.artist) {
+        const cached = getCachedRecordsImage('artist', record.artist)
+        if (cached !== undefined) {
+          if (!cancelled) setEntryImage(cached)
+          return
+        }
+        try {
+          const res = await fetch(`/api/images/artist?artist=${encodeURIComponent(record.artist)}`)
+          const data = await res.json()
+          const url = data.imageUrl || null
+          if (!cancelled) setEntryImage(url)
+          setCachedRecordsImage('artist', record.artist, url)
+        } catch {
+          if (!cancelled) setEntryImage(null)
+        }
+        return
+      }
+      if (chartType === 'albums' && record.artist) {
+        const identifier = `${record.artist}|${record.name}`
+        const cached = getCachedRecordsImage('album', identifier)
+        if (cached !== undefined) {
+          if (!cancelled) setEntryImage(cached)
+          return
+        }
+        try {
+          const res = await fetch(
+            `/api/images/album?artist=${encodeURIComponent(record.artist)}&album=${encodeURIComponent(record.name)}`
+          )
+          const data = await res.json()
+          const url = data.imageUrl || null
+          if (!cancelled) setEntryImage(url)
+          setCachedRecordsImage('album', identifier, url)
+        } catch {
+          if (!cancelled) setEntryImage(null)
+        }
+        return
+      }
+      if (!cancelled) setEntryImage(null)
+    }
+
+    loadImage()
+    return () => { cancelled = true }
+  }, [isUser, chartType, record.name, record.artist])
+
+  const imageShape = activeTab === 'albums' ? 'roundedSquare' : 'circle'
+
   return (
     <div className="h-full relative">
       <div className={`relative bg-gradient-to-br ${colorScheme.bgGradient} backdrop-blur-sm rounded-xl p-3 md:p-4 border ${colorScheme.borderColor} shadow-sm h-full transition-all hover:shadow-md`}>
@@ -232,6 +311,8 @@ export default function RecordBlock({ title, record, value, groupId, isUser, act
           href={link}
           variant="nested"
           userImage={isUser ? record.image : undefined}
+          entryImage={!isUser ? entryImage : undefined}
+          imageShape={imageShape}
           accentColor={colorScheme.accentColor}
           openInNewTab={false}
         >

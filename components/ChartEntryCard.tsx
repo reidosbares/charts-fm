@@ -17,6 +17,10 @@ interface ChartEntryCardProps {
   children?: React.ReactNode
   variant?: 'default' | 'nested'
   userImage?: string | null
+  /** Image URL for artist/track/album entries (same styling as user image; use imageShape for albums) */
+  entryImage?: string | null
+  /** 'circle' (default) or 'roundedSquare' for album art */
+  imageShape?: 'circle' | 'roundedSquare'
   accentColor?: string
   openInNewTab?: boolean
 }
@@ -33,6 +37,8 @@ export default function ChartEntryCard({
   children,
   variant = 'default',
   userImage,
+  entryImage,
+  imageShape = 'circle',
   accentColor,
   openInNewTab = false,
 }: ChartEntryCardProps) {
@@ -60,7 +66,10 @@ export default function ChartEntryCard({
     return 'ring-[var(--theme-primary)]/30'
   }
   
-  // Render icon or user image
+  // Render icon, user image, or artist/track/album image
+  const showEntryImage = entryImage !== undefined && (chartType === 'artists' || chartType === 'tracks' || chartType === 'albums')
+  const entryImageShapeClass = imageShape === 'roundedSquare' ? 'rounded-lg' : 'rounded-full'
+
   const iconContent = chartType === 'user' ? (
     <div className={`relative w-10 h-10 rounded-full ring-2 ${getRingColor()} bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden`}>
       <SafeImage
@@ -68,6 +77,18 @@ export default function ChartEntryCard({
         alt={name}
         className="object-cover w-full h-full"
       />
+    </div>
+  ) : showEntryImage ? (
+    <div className={`relative w-10 h-10 ring-2 ${getRingColor()} bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden flex items-center justify-center ${entryImageShapeClass}`}>
+      {entryImage ? (
+        <SafeImage
+          src={entryImage}
+          alt={name}
+          className="object-cover w-full h-full"
+        />
+      ) : (
+        <FontAwesomeIcon icon={getIcon()} className={`text-lg ${iconColorClass}`} />
+      )}
     </div>
   ) : (
     <FontAwesomeIcon 
