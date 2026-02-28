@@ -2,7 +2,7 @@
 
 import { prisma } from './prisma'
 import { generateSlug, ChartType } from './chart-slugs'
-import { formatWeekDate, getWeekStart } from './weekly-utils'
+import { formatWeekDate, getWeekStart, getWeekStartNWeeksAgo } from './weekly-utils'
 
 export interface ChartHistoryEntry {
   weekStart: Date
@@ -82,6 +82,67 @@ export async function getEntryChartHistory(
     playcount: entry.playcount,
     vibeScore: entry.vibeScore,
   }))
+}
+
+/** Number of weeks to consider "recent" when finding other groups where an entry charted */
+const RECENT_WEEKS_FOR_OTHER_GROUPS = 12
+
+/** Lightweight stats for an entry in another group (for "also charting in" section) */
+export interface OtherGroupEntryStats {
+  peakPosition: number
+  totalWeeksCharting: number
+  totalVS: number
+  totalPlays: number
+}
+
+/**
+ * Get distinct group IDs (excluding current) where this entry has charted in the last N weeks.
+ */
+export async function getOtherGroupIdsWhereEntryChartedRecently(
+  currentGroupId: string,
+  chartType: ChartType,
+  entryKey: string
+): Promise<string[]> {
+  const weekStartCutoff = getWeekStartNWeeksAgo(RECENT_WEEKS_FOR_OTHER_GROUPS)
+  const rows = await prisma.groupChartEntry.findMany({
+    where: {
+      chartType,
+      entryKey,
+      groupId: { not: currentGroupId },
+      weekStart: { gte: weekStartCutoff },
+    },
+    select: { groupId: true },
+    distinct: ['groupId'],
+  })
+  return rows.map((r) => r.groupId)
+}
+
+/**
+ * Get a few display stats for an entry in another group (no cache writes).
+ */
+export async function getEntryStatsForOtherGroup(
+  groupId: string,
+  chartType: ChartType,
+  entryKey: string
+): Promise<OtherGroupEntryStats> {
+  const history = await getEntryChartHistory(groupId, chartType, entryKey)
+  if (history.length === 0) {
+    return {
+      peakPosition: 0,
+      totalWeeksCharting: 0,
+      totalVS: 0,
+      totalPlays: 0,
+    }
+  }
+  const peakPosition = Math.min(...history.map((h) => h.position))
+  const totalVS = history.reduce((sum, h) => sum + (h.vibeScore ?? 0), 0)
+  const totalPlays = history.reduce((sum, h) => sum + (h.playcount ?? 0), 0)
+  return {
+    peakPosition,
+    totalWeeksCharting: history.length,
+    totalVS,
+    totalPlays,
+  }
 }
 
 /**

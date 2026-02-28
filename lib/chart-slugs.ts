@@ -52,3 +52,28 @@ export function entryKeyToSlug(entryKey: string, chartType: ChartType): string {
   return generateSlug(entryKey, chartType)
 }
 
+/** URL path segment for chart type (routes use singular: artist, track, album) */
+export type ChartTypePathSegment = 'artist' | 'track' | 'album'
+
+export function getChartTypePathSegment(chartType: ChartType): ChartTypePathSegment {
+  switch (chartType) {
+    case 'artists': return 'artist'
+    case 'tracks': return 'track'
+    case 'albums': return 'album'
+    default: return 'artist'
+  }
+}
+
+/**
+ * Build the path to an entry's drill-down page for a group.
+ * Use with next-intl's Link: <Link href={getEntryDrillDownPath(groupId, chartType, slug)}>
+ */
+export function getEntryDrillDownPath(
+  groupId: string,
+  chartType: ChartType,
+  slug: string
+): string {
+  const segment = getChartTypePathSegment(chartType)
+  return `/groups/${groupId}/charts/${segment}/${encodeURIComponent(slug)}`
+}
+

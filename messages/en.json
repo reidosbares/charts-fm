@@ -1140,6 +1140,22 @@
       "name": "Name",
       "weeksOnChart": "Weeks on Chart"
     },
+    "otherGroups": {
+      "title": "Also charting in",
+      "peakPosition": "Peak",
+      "totalWeeksCharting": "Weeks on chart",
+      "totalVS": "Total VS received",
+      "totalPlays": "Playcount",
+      "weeksUnit": "weeks",
+      "vsUnit": "VS",
+      "playsUnit": "plays",
+      "viewInGroup": "View in {groupName}",
+      "emptyMessage": "This one's a lone wolf — no other groups have had it on their charts recently. Maybe they just haven't met yet.",
+      "prevGroup": "Previous group",
+      "nextGroup": "Next group",
+      "groupDots": "Other groups",
+      "goToGroup": "Group {index} of {total}"
+    },
     "metadata": {
       "artist": "Artist",
       "track": "Track",

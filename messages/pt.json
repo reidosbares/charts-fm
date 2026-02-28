@@ -1140,6 +1140,22 @@
       "name": "Nome",
       "weeksOnChart": "Semanas nos charts"
     },
+    "otherGroups": {
+      "title": "Também nos charts de",
+      "peakPosition": "Maior posição",
+      "totalWeeksCharting": "Semanas no chart",
+      "totalVS": "Total de VS recebido",
+      "totalPlays": "Total de plays",
+      "weeksUnit": "semanas",
+      "vsUnit": "VS",
+      "playsUnit": "plays",
+      "viewInGroup": "Ver em {groupName}",
+      "emptyMessage": "Este item é um lobo solitário. Nenhuma outra comunidade o teve nos charts recentemente. Talvez ainda não tenham se encontrado.",
+      "prevGroup": "Comunidade anterior",
+      "nextGroup": "Próxima comunidade",
+      "groupDots": "Outras comunidades",
+      "goToGroup": "Comunidade {index} de {total}"
+    },
     "metadata": {
       "artist": "Artista",
       "track": "Música",

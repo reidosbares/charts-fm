@@ -6,6 +6,7 @@ import ChartHistoryTimeline from '@/components/charts/ChartHistoryTimeline'
 import QuickStats from '@/components/charts/QuickStats'
 import EntryStatsTable from '@/components/charts/EntryStatsTable'
 import ArtistEntriesTable from '@/components/charts/ArtistEntriesTable'
+import OtherGroupsSection from '@/components/charts/OtherGroupsSection'
 import { ChartHistoryEntry, EntryStats, MajorDriver, ArtistChartEntry } from '@/lib/chart-deep-dive'
 import { ChartType } from '@/lib/chart-slugs'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
@@ -442,6 +443,9 @@ export default function DeepDiveClient({
           />
         )
       )}
+
+      {/* Other groups where this entry has charted recently - loaded asynchronously */}
+      <OtherGroupsSection groupId={groupId} chartType={chartType} slug={slug} />
 
       {/* Major Driver Claimed Notification Bubble */}
       {newDriverNotification && (
