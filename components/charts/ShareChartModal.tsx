@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
+import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMicrophone, faMusic, faCompactDisc, faXmark, faSpinner, faCheck, faRotateRight, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
@@ -624,10 +625,12 @@ export default function ShareChartModal({
                     <p className="text-xs md:text-sm text-gray-600">{t('generatingImage')}</p>
                   </div>
                 ) : previewUrl ? (
-                  <img
+                  <Image
                     src={previewUrl}
                     alt={`${chartTypeLabels[selectedChartType]} preview`}
-                    className="w-full h-full object-contain"
+                    fill
+                    className="object-contain"
+                    unoptimized
                   />
                 ) : (
                   <div className="flex flex-col items-center justify-center gap-2 md:gap-3 p-4 md:p-6">
