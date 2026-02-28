@@ -1,5 +1,7 @@
 // Slug generation and normalization utilities for chart entries
 
+import { createHash } from 'crypto'
+
 export type ChartType = 'artists' | 'tracks' | 'albums'
 
 /**
@@ -11,37 +13,55 @@ function removeAccents(str: string): string {
 }
 
 /**
+ * Deterministic fallback slug when the entry key is only special characters
+ * (e.g. "★", "…", emoji). Uses a short hash so the same entryKey always gets
+ * the same slug and entries are still recordable and linkable.
+ */
+function fallbackSlugFromEntryKey(entryKey: string): string {
+  const hash = createHash('sha256').update(entryKey, 'utf8').digest('base64url').slice(0, 12)
+  return `e-${hash}`
+}
+
+/**
  * Generate a URL-friendly slug from an entryKey
  * For artists: entryKey is already URL-friendly (just lowercase name)
  * For tracks/albums: entryKey is "name|artist", convert to "name-artist"
- * 
- * Removes accents, special characters, and normalizes to lowercase
+ *
+ * Removes accents, special characters, and normalizes to lowercase.
+ * If the result would be empty (name is only special characters), returns
+ * a deterministic hash-based slug so the entry can still be recorded.
  */
 export function generateSlug(entryKey: string, chartType: ChartType): string {
   // Start with the entryKey
   let slug = entryKey.trim().toLowerCase()
-  
+
   // Remove accents and diacritics
   slug = removeAccents(slug)
-  
+
   // For tracks/albums, replace pipe with hyphen
   if (chartType !== 'artists') {
     slug = slug.replace(/\|/g, '-')
   }
-  
+
   // Replace spaces and underscores with hyphens
   slug = slug.replace(/[\s_]+/g, '-')
-  
+
   // Remove all special characters except hyphens and alphanumeric
   slug = slug.replace(/[^a-z0-9-]/g, '')
-  
+
   // Collapse multiple hyphens into one
   slug = slug.replace(/-+/g, '-')
-  
+
   // Remove leading and trailing hyphens
-  slug = slug.replace(/^-|-$/g, '')
-  
-  return slug.trim()
+  slug = slug.replace(/^-|-$/g, '').trim()
+
+  // Names that are only special characters (e.g. "★", "…", emoji) produce
+  // an empty slug; use a deterministic fallback so the entry is still recorded
+  if (slug === '') {
+    return fallbackSlugFromEntryKey(entryKey)
+  }
+
+  return slug
 }
 
 /**
