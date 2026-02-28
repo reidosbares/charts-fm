@@ -220,8 +220,8 @@
     "trendingBanner": {
       "title": "Em alta em todo lugar",
       "chartingInGroups": "Em {count} comunidades",
-      "yourTopArtist": "Seu artista mais ouvido esta semana — também em alta nestas comunidades",
-      "yourTopTrack": "Sua faixa mais ouvida esta semana — também em alta nestas comunidades",
+      "yourTopArtist": "Seu artista mais ouvido esta semana. Também em alta nestas comunidades",
+      "yourTopTrack": "Sua faixa mais ouvida esta semana. Também em alta nestas comunidades",
       "forYouBadge": "Para você",
       "prev": "Slide anterior",
       "next": "Próximo slide",
