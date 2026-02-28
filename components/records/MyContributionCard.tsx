@@ -53,7 +53,14 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
     fetch(`/api/groups/${groupId}/members`)
       .then((res) => res.json())
       .then((data) => {
-        if (!data.error && data.members) setMembersList(data.members)
+        if (!data.error && data.members) {
+          const sorted = [...data.members].sort((a, b) => {
+            const nameA = (a.user.name || a.user.lastfmUsername || '').toLowerCase()
+            const nameB = (b.user.name || b.user.lastfmUsername || '').toLowerCase()
+            return nameA.localeCompare(nameB)
+          })
+          setMembersList(sorted)
+        }
       })
       .catch((err) => console.error('Error fetching members:', err))
   }, [groupId, userId])
