@@ -87,6 +87,8 @@ export default function RequestToJoinButton({
         disabled={hasRequested || hasJoined || hasPendingInvite || isLoading || isAtLimit}
         variant={hasRequested || hasJoined || hasPendingInvite || isLoading || isAtLimit ? 'neutral' : 'primary'}
         useTheme={false}
+        size="sm"
+        className="shrink-0 !px-2.5 !py-1.5 !text-xs sm:!px-3 sm:!py-1.5 sm:!text-sm whitespace-nowrap"
         title={
           isAtLimit
             ? t('groupFullTooltip', { count: MAX_GROUP_MEMBERS })
