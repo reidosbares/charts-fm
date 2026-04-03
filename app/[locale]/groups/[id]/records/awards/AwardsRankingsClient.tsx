@@ -124,7 +124,7 @@ export default function AwardsRankingsClient({ groupId, records }: AwardsRanking
   const tAwardDescriptions = useSafeTranslations('records.userRecords.awardDescriptions')
   const tStatus = useSafeTranslations('records.status')
 
-  const [activeAward, setActiveAward] = useState(AWARDS[0].slug)
+  const [activeAward, setActiveAward] = useState<string>(AWARDS[0].slug)
 
   // Read hash on mount to pre-select award
   useEffect(() => {
