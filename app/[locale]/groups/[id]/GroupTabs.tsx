@@ -40,6 +40,7 @@ export default function GroupTabs({
   
   // Initialize with defaultTab, then check hash on mount
   const [activeTab, setActiveTab] = useState<Tab>(defaultTab)
+  const [visited, setVisited] = useState<Set<Tab>>(() => new Set([defaultTab]))
   
   // Check hash fragment on mount and when hash changes
   useEffect(() => {
@@ -55,12 +56,14 @@ export default function GroupTabs({
     const tabFromHash = getTabFromHash()
     if (tabFromHash) {
       setActiveTab(tabFromHash)
+      setVisited(prev => new Set(prev).add(tabFromHash))
     }
     
     const handleHashChange = () => {
       const tabFromHash = getTabFromHash()
       if (tabFromHash && tabFromHash !== activeTab) {
         setActiveTab(tabFromHash)
+        setVisited(prev => new Set(prev).add(tabFromHash))
       } else if (!tabFromHash && activeTab !== defaultTab) {
         // If hash is cleared, restore default tab
         setActiveTab(defaultTab)
@@ -75,6 +78,7 @@ export default function GroupTabs({
   const handleTabChange = (tabId: string) => {
     const tab = tabId as Tab
     setActiveTab(tab)
+    setVisited(prev => new Set(prev).add(tab))
     // Update hash without causing page refresh or scroll
     window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${tab}`)
   }
@@ -107,27 +111,28 @@ export default function GroupTabs({
       </div>
 
       {/* Trends, Charts, and All-time: content floats outside container, premium glass cards inside */}
-      {activeTab === 'trends' && (
-        <div className="min-w-0">
+      {/* Tabs mount on first visit and stay alive (hidden via CSS) for instant switching */}
+      {visited.has('trends') && (
+        <div className="min-w-0" style={{ display: activeTab === 'trends' ? 'block' : 'none' }}>
           {trendsContent}
         </div>
       )}
 
-      {activeTab === 'charts' && (
-        <div className="min-w-0">
+      {visited.has('charts') && (
+        <div className="min-w-0" style={{ display: activeTab === 'charts' ? 'block' : 'none' }}>
           {chartsContent}
         </div>
       )}
 
-      {activeTab === 'alltime' && (
-        <div className="min-w-0">
+      {visited.has('alltime') && (
+        <div className="min-w-0" style={{ display: activeTab === 'alltime' ? 'block' : 'none' }}>
           {allTimeContent}
         </div>
       )}
 
       {/* Members: inside glass container */}
-      {isMember && activeTab === 'members' && (
-        <div className="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-white/50 shadow-lg">
+      {isMember && visited.has('members') && (
+        <div className="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-white/50 shadow-lg" style={{ display: activeTab === 'members' ? 'block' : 'none' }}>
           {membersContent}
         </div>
       )}
