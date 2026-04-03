@@ -127,8 +127,8 @@ This is the member who contributed the most items that debuted in the group's ch
 ### Hidden Gem Hunter
 The least mainstream member - this is the member who contributed the *fewest* items that debuted in the charts (but at least 1). It's an award that recognizes the member who has the most niche, or most unique, listening habits.
 
-### Consistency Champion
-The user who contributed to charts over the most weeks. This award recognizes the member who is constantly listening to items that are popular among other group members.
+### One Track Mind
+The member who poured the most VS into a single entry. This award highlights the member with the deepest musical obsession — when they love something, they go all in.
 
 ### Taste Maker
 The member who brought the most items that, over time, reached #1 on the charts. This award recognizes those members who bring new music to the group and it becomes popular.

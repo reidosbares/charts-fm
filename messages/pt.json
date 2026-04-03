@@ -1253,7 +1253,7 @@
       "playPowerhouse": "Potência do Flood",
       "chartConnoisseur": "Influencer",
       "hiddenGemHunter": "Alternativo(a)",
-      "consistencyChampion": "Farofeiro(a)",
+      "oneTrackMind": "Disco Arranhado",
       "tasteMaker": "Hitmaker",
       "entry": "item",
       "entries": "itens",
@@ -1268,7 +1268,7 @@
         "playPowerhouse": "Este é o usuário que deu mais plays para os charts do grupo. Ele é o que mais escuta.",
         "chartConnoisseur": "Este é o membro que ajudou mais itens diferentes a debutarem nos charts. Ele não se prende a nenhum artista.",
         "hiddenGemHunter": "O gosto deste membro não foi feito pros charts. Ele é o que menos escutou de tudo que entrou.",
-        "consistencyChampion": "Este é o membro que escutou itens dos charts por mais semanas. Ele gosta do que hita.",
+        "oneTrackMind": "O membro que mais deu VS para um único item. Quando gosta de algo, não larga.",
         "tasteMaker": "Este é o membro que fez debutar mais itens que em seguida pegaram #1. E quando ele quiser, ele hita."
       }
     },

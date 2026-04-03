@@ -55,7 +55,7 @@ export async function GET(
         'userMostEntries',
         'userLeastEntries',
         'userMostNumberOnes',
-        'userMostWeeksContributing',
+        'userOneTrackMind',
         'userTasteMaker',
         'userPeakPerformer',
       ]

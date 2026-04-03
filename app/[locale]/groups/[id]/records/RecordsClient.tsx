@@ -696,11 +696,14 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
       })
     }
 
-    if (recordsData.userMostWeeksContributing) {
+    if (recordsData.userOneTrackMind) {
+      const entryLabel = recordsData.userOneTrackMind.entryArtist
+        ? `${recordsData.userOneTrackMind.entryName} — ${recordsData.userOneTrackMind.entryArtist}`
+        : recordsData.userOneTrackMind.entryName
       records.push({
-        title: tUserRecords('consistencyChampion'),
-        record: recordsData.userMostWeeksContributing,
-        value: `${recordsData.userMostWeeksContributing.value} ${recordsData.userMostWeeksContributing.value === 1 ? tPreview('week') : tPreview('weeks')}`,
+        title: tUserRecords('oneTrackMind'),
+        record: recordsData.userOneTrackMind,
+        value: `${recordsData.userOneTrackMind.value.toLocaleString()} VS · ${entryLabel}`,
         isUser: true,
       })
     }

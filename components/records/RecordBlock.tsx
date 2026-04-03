@@ -66,12 +66,12 @@ const awardColorSchemes: Record<string, {
     accentColor: 'text-cyan-600',
     ribbonColor: 'bg-blue-500',
   },
-  'Consistency Champion': {
-    bgGradient: 'from-gray-50 to-slate-50',
-    borderColor: 'border-gray-400',
-    titleColor: 'text-gray-800',
-    accentColor: 'text-gray-700',
-    ribbonColor: 'bg-gray-800',
+  'One Track Mind': {
+    bgGradient: 'from-violet-50 to-purple-50',
+    borderColor: 'border-violet-300',
+    titleColor: 'text-violet-700',
+    accentColor: 'text-violet-600',
+    ribbonColor: 'bg-violet-500',
   },
   'Taste Maker': {
     bgGradient: 'from-pink-50 to-fuchsia-50',
@@ -221,7 +221,7 @@ export default function RecordBlock({ title, record, value, groupId, isUser, act
     if (!isUser) return null
     
     // Map award titles to translation keys - check both English and translated versions
-    const awardKeys = ['vsVirtuoso', 'playPowerhouse', 'chartConnoisseur', 'hiddenGemHunter', 'consistencyChampion', 'tasteMaker']
+    const awardKeys = ['vsVirtuoso', 'playPowerhouse', 'chartConnoisseur', 'hiddenGemHunter', 'oneTrackMind', 'tasteMaker']
     
     // Find the key that matches the title (works for both English and translated titles)
     const matchingKey = awardKeys.find(key => tUserRecords(key) === awardTitle)
@@ -237,7 +237,7 @@ export default function RecordBlock({ title, record, value, groupId, isUser, act
       'playPowerhouse': 'Play Powerhouse',
       'chartConnoisseur': 'Chart Connoisseur',
       'hiddenGemHunter': 'Hidden Gem Hunter',
-      'consistencyChampion': 'Consistency Champion',
+      'oneTrackMind': 'One Track Mind',
       'tasteMaker': 'Taste Maker',
     }
     return englishTitles[key] || ''
@@ -261,7 +261,7 @@ export default function RecordBlock({ title, record, value, groupId, isUser, act
     if (!isUser) return null
     
     // Map award titles to translation keys - check both English and translated versions
-    const awardKeys = ['vsVirtuoso', 'playPowerhouse', 'chartConnoisseur', 'hiddenGemHunter', 'consistencyChampion', 'tasteMaker']
+    const awardKeys = ['vsVirtuoso', 'playPowerhouse', 'chartConnoisseur', 'hiddenGemHunter', 'oneTrackMind', 'tasteMaker']
     
     // Find the key that matches the title (works for both English and translated titles)
     const matchingKey = awardKeys.find(key => tUserRecords(key) === awardTitle)

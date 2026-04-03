@@ -20,7 +20,7 @@ const AWARD_BADGE_CLASSES: Record<string, string> = {
   playPowerhouse: 'bg-gradient-to-br from-red-50 to-rose-50 border-red-300 text-red-700',
   chartConnoisseur: 'bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-300 text-yellow-700',
   hiddenGemHunter: 'bg-gradient-to-br from-cyan-50 to-blue-50 border-cyan-300 text-cyan-700',
-  consistencyChampion: 'bg-gradient-to-br from-gray-50 to-slate-50 border-gray-400 text-gray-800',
+  oneTrackMind: 'bg-gradient-to-br from-violet-50 to-purple-50 border-violet-300 text-violet-700',
   tasteMaker: 'bg-gradient-to-br from-pink-50 to-fuchsia-50 border-pink-300 text-pink-700',
 }
 
@@ -163,7 +163,7 @@ export default async function PublicUserProfilePage({
       userMostPlays: 'playPowerhouse',
       userMostEntries: 'chartConnoisseur',
       userLeastEntries: 'hiddenGemHunter',
-      userMostWeeksContributing: 'consistencyChampion',
+      userOneTrackMind: 'oneTrackMind',
       userTasteMaker: 'tasteMaker',
     }
     for (const [field, key] of Object.entries(awardFieldToKey)) {

@@ -1253,7 +1253,7 @@
       "playPowerhouse": "Play Powerhouse",
       "chartConnoisseur": "Chart Connoisseur",
       "hiddenGemHunter": "Hidden Gem Hunter",
-      "consistencyChampion": "Consistency Champion",
+      "oneTrackMind": "One Track Mind",
       "tasteMaker": "Taste Maker",
       "entry": "entry",
       "entries": "entries",
@@ -1268,7 +1268,7 @@
         "playPowerhouse": "This is the member with the most total plays across all their contributions. They really love scrobbling.",
         "chartConnoisseur": "This member helped the most different entries make it onto the charts. They have broad taste.",
         "hiddenGemHunter": "The member who helped the fewest entries chart. They keep it niche and curated.",
-        "consistencyChampion": "The member who contributed to charts for the most weeks. They show up every time.",
+        "oneTrackMind": "The member who poured the most VS into a single entry. When they love something, they go all in.",
         "tasteMaker": "This is the member who introduced the most entries that later became #1 hits. They have that magic touch."
       }
     },

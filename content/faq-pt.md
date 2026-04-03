@@ -127,8 +127,8 @@ Este é o membro que contribuiu com mais itens que debutaram nos charts da comun
 ### Alternativo(a)
 O membro menos mainstream - este é o membro que contribuiu com *menos* itens que debutaram nos charts (mas pelo menos 1). É um prêmio que reconhece o membro que têm os hábitos de escuta mais nichados, ou mais únicos.
 
-### Farofeiro(a)
-O usuário que contribuiu para os charts o longo de mais semanas. Este prêmio reconhece o membro que está constantemente ouvindo itens que são populares entre os outros membros da comunidade.
+### Disco Arranhado
+O membro que mais deu VS para um único item. Este prêmio destaca o membro com a maior obsessão musical — quando gosta de algo, não larga.
 
 ### Hitmaker
 O membro que trouxe mais itens que, ao decorrer do tempo, chegaram na posição #1 nos charts. Esse prêmio reconhece aqueles membros que trazem música nova pra comunidade e que se torna popular.

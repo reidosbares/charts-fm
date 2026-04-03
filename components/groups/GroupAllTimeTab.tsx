@@ -34,7 +34,7 @@ const USER_RECORD_AWARD_KEYS: Record<string, string> = {
   userMostPlays: 'playPowerhouse',
   userMostEntries: 'chartConnoisseur',
   userLeastEntries: 'hiddenGemHunter',
-  userMostWeeksContributing: 'consistencyChampion',
+  userOneTrackMind: 'oneTrackMind',
   userTasteMaker: 'tasteMaker',
 }
 
@@ -44,7 +44,7 @@ const AWARD_RIBBON_COLORS: Record<string, string> = {
   playPowerhouse: 'bg-red-500',
   chartConnoisseur: 'bg-orange-500',
   hiddenGemHunter: 'bg-blue-500',
-  consistencyChampion: 'bg-gray-800',
+  oneTrackMind: 'bg-violet-500',
   tasteMaker: 'bg-pink-500',
 }
 
@@ -197,7 +197,7 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
     'userMostPlays',
     'userMostEntries',
     'userLeastEntries',
-    'userMostWeeksContributing',
+    'userOneTrackMind',
     'userTasteMaker',
   ]
   const awardHoldersMap = new Map<

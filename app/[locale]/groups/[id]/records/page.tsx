@@ -82,7 +82,7 @@ export default async function RecordsPage({ params }: { params: { id: string; lo
       'userMostEntries',
       'userLeastEntries',
       'userMostNumberOnes',
-      'userMostWeeksContributing',
+      'userOneTrackMind',
       'userTasteMaker',
       'userPeakPerformer',
     ]

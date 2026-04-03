@@ -117,10 +117,12 @@ export interface GroupRecordsData {
     name: string
     value: number
   } | null
-  userMostWeeksContributing: {
+  userOneTrackMind: {
     userId: string
     name: string
     value: number
+    entryName: string
+    entryArtist: string | null
   } | null
   userTasteMaker: {
     userId: string
@@ -1028,7 +1030,7 @@ async function calculatePhase6Records(
     userMostEntries: null,
     userLeastEntries: null,
     userMostNumberOnes: null,
-    userMostWeeksContributing: null,
+    userOneTrackMind: null,
     userTasteMaker: null,
     userPeakPerformer: null,
   }
@@ -1232,18 +1234,21 @@ async function calculatePhase6Records(
     }
   }
 
-  // Most weeks contributing
-  // Only count weeks where user contributed AND group has charts for that week
-  const mostWeeksResult = await prisma.$queryRaw<Array<{
+  // One Track Mind - user who contributed the most VS to a single entry
+  const oneTrackMindResult = await prisma.$queryRaw<Array<{
     userId: string
-    distinct_weeks: bigint
+    entryKey: string
+    chartType: string
+    total_vs: number
   }>>`
-    SELECT 
+    SELECT
       ucvs."userId",
-      COUNT(DISTINCT ucvs."weekStart")::bigint as distinct_weeks
+      ucvs."entryKey",
+      ucvs."chartType",
+      SUM(ucvs."vibeScore")::float as total_vs
     FROM "user_chart_entry_vs" ucvs
     INNER JOIN "group_members" gm ON ucvs."userId" = gm."userId"
-    INNER JOIN "group_chart_entries" gce ON 
+    INNER JOIN "group_chart_entries" gce ON
       gce."groupId" = ${groupId}::text AND
       gce."weekStart" = ucvs."weekStart" AND
       gce."chartType" = ucvs."chartType" AND
@@ -1251,18 +1256,30 @@ async function calculatePhase6Records(
     WHERE gm."groupId" = ${groupId}::text
       AND ucvs."userId" IS NOT NULL
       AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
-    GROUP BY ucvs."userId"
-    ORDER BY distinct_weeks DESC
+    GROUP BY ucvs."userId", ucvs."entryKey", ucvs."chartType"
+    ORDER BY total_vs DESC
     LIMIT 1
   `
 
-  if (mostWeeksResult.length > 0 && mostWeeksResult[0].userId) {
-    const user = userMap.get(mostWeeksResult[0].userId)
+  if (oneTrackMindResult.length > 0 && oneTrackMindResult[0].userId) {
+    const user = userMap.get(oneTrackMindResult[0].userId)
     if (user) {
-      records.userMostWeeksContributing = {
+      // Look up the entry name from group_chart_entries
+      const entry = await prisma.groupChartEntry.findFirst({
+        where: {
+          groupId,
+          entryKey: oneTrackMindResult[0].entryKey,
+          chartType: oneTrackMindResult[0].chartType,
+        },
+        select: { name: true, artist: true },
+        orderBy: { weekStart: 'desc' },
+      })
+      records.userOneTrackMind = {
         userId: user.id,
         name: user.name || user.lastfmUsername,
-        value: Number(mostWeeksResult[0].distinct_weeks),
+        value: Math.round(oneTrackMindResult[0].total_vs),
+        entryName: entry?.name || oneTrackMindResult[0].entryKey,
+        entryArtist: entry?.artist || null,
       }
     }
   }

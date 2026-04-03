@@ -45,7 +45,7 @@ These records are calculated separately for each chart type (artists, tracks, al
 3. **Chart Connoisseur** - Most mainstream user (most entries contributed to charts)
 4. **Hidden Gem Hunter** - Least mainstream user (least songs contributed, but at least 1)
 5. **Chart Dominator** - User with most #1 entries
-6. **Consistency Champion** - User with most weeks contributing
+6. **One Track Mind** - User who contributed the most VS to a single entry
 7. **Taste Maker** - User who introduced most entries that later reached #1
 8. **Peak Performer** - User with highest average VS per entry (minimum 5 entries)
 
@@ -337,7 +337,7 @@ interface GroupRecordsData {
   userMostEntries: { userId: string, name: string, value: number } | null
   userLeastEntries: { userId: string, name: string, value: number } | null
   userMostNumberOnes: { userId: string, name: string, value: number } | null
-  userMostWeeksContributing: { userId: string, name: string, value: number } | null
+  userOneTrackMind: { userId: string, name: string, value: number, entryName: string, entryArtist: string | null } | null
   userTasteMaker: { userId: string, name: string, value: number } | null
   userPeakPerformer: { userId: string, name: string, value: number } | null
 }
