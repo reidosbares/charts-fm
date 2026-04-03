@@ -22,6 +22,17 @@ export interface RecordHolder {
   slug: string
 }
 
+export interface UserRanking {
+  userId: string
+  name: string
+  value: number
+}
+
+export interface UserOneTrackMindRanking extends UserRanking {
+  entryName: string
+  entryArtist: string | null
+}
+
 export interface GroupRecordsData {
   // Artists/Tracks/Albums shared records
   mostWeeksOnChart: {
@@ -134,6 +145,13 @@ export interface GroupRecordsData {
     name: string
     value: number
   } | null
+  // User rankings (full member rankings for each displayed award)
+  userMostVSRankings?: UserRanking[]
+  userMostPlaysRankings?: UserRanking[]
+  userMostEntriesRankings?: UserRanking[]
+  userLeastEntriesRankings?: UserRanking[]
+  userOneTrackMindRankings?: UserOneTrackMindRanking[]
+  userTasteMakerRankings?: UserRanking[]
 }
 
 /**
@@ -1062,6 +1080,10 @@ async function calculatePhase6Records(
   const userMap = new Map(members.map(m => [m.user.id, m.user]))
   const tenWeekCutoff = getTenWeekCutoffDate()
 
+  // Fetch all current group members for rankings
+  const allMembers = members
+  const memberMap = new Map(allMembers.map(m => [m.userId, m.user.name || m.user.lastfmUsername || 'Unknown']))
+
   // Most VS
   const mostVSResult = await prisma.$queryRaw<Array<{
     userId: string
@@ -1095,6 +1117,26 @@ async function calculatePhase6Records(
       }
     }
   }
+
+  // Rankings: Most VS (all members)
+  const allUserVS = await prisma.$queryRaw<Array<{ userId: string; total_vs: number }>>`
+    SELECT ucvs."userId", COALESCE(SUM(ucvs."vibeScore"), 0)::float as total_vs
+    FROM "group_members" gm
+    LEFT JOIN "user_chart_entry_vs" ucvs ON ucvs."userId" = gm."userId"
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
+    LEFT JOIN "group_chart_entries" gce ON
+      gce."groupId" = ${groupId}::text AND
+      gce."weekStart" = ucvs."weekStart" AND
+      gce."chartType" = ucvs."chartType" AND
+      gce."entryKey" = ucvs."entryKey"
+    WHERE gm."groupId" = ${groupId}::text
+    GROUP BY ucvs."userId", gm."userId"
+    ORDER BY total_vs DESC
+  `
+  const userMostVSRankings: UserRanking[] = allMembers.map(m => {
+    const row = allUserVS.find(r => r.userId === m.userId)
+    return { userId: m.userId, name: memberMap.get(m.userId) || 'Unknown', value: row ? Math.round(row.total_vs) : 0 }
+  }).sort((a, b) => b.value - a.value)
 
   // Most plays
   const mostPlaysResult = await prisma.$queryRaw<Array<{
@@ -1130,6 +1172,26 @@ async function calculatePhase6Records(
     }
   }
 
+  // Rankings: Most Plays (all members)
+  const allUserPlays = await prisma.$queryRaw<Array<{ userId: string; total_plays: bigint }>>`
+    SELECT ucvs."userId", COALESCE(SUM(ucvs.playcount), 0)::bigint as total_plays
+    FROM "group_members" gm
+    LEFT JOIN "user_chart_entry_vs" ucvs ON ucvs."userId" = gm."userId"
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
+    LEFT JOIN "group_chart_entries" gce ON
+      gce."groupId" = ${groupId}::text AND
+      gce."weekStart" = ucvs."weekStart" AND
+      gce."chartType" = ucvs."chartType" AND
+      gce."entryKey" = ucvs."entryKey"
+    WHERE gm."groupId" = ${groupId}::text
+    GROUP BY ucvs."userId", gm."userId"
+    ORDER BY total_plays DESC
+  `
+  const userMostPlaysRankings: UserRanking[] = allMembers.map(m => {
+    const row = allUserPlays.find(r => r.userId === m.userId)
+    return { userId: m.userId, name: memberMap.get(m.userId) || 'Unknown', value: row ? Number(row.total_plays) : 0 }
+  }).sort((a, b) => b.value - a.value)
+
   // Most entries (most mainstream)
   const mostEntriesResult = await prisma.$queryRaw<Array<{
     userId: string
@@ -1163,6 +1225,26 @@ async function calculatePhase6Records(
       }
     }
   }
+
+  // Rankings: Most Entries (all members)
+  const allUserEntries = await prisma.$queryRaw<Array<{ userId: string; distinct_entries: bigint }>>`
+    SELECT gm."userId", COUNT(DISTINCT CASE WHEN ucvs."entryKey" IS NOT NULL THEN CONCAT(ucvs."entryKey", '|', ucvs."chartType") END)::bigint as distinct_entries
+    FROM "group_members" gm
+    LEFT JOIN "user_chart_entry_vs" ucvs ON ucvs."userId" = gm."userId"
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
+    LEFT JOIN "group_chart_entries" gce ON
+      gce."groupId" = ${groupId}::text AND
+      gce."weekStart" = ucvs."weekStart" AND
+      gce."chartType" = ucvs."chartType" AND
+      gce."entryKey" = ucvs."entryKey"
+    WHERE gm."groupId" = ${groupId}::text
+    GROUP BY gm."userId"
+    ORDER BY distinct_entries DESC
+  `
+  const userMostEntriesRankings: UserRanking[] = allMembers.map(m => {
+    const row = allUserEntries.find(r => r.userId === m.userId)
+    return { userId: m.userId, name: memberMap.get(m.userId) || 'Unknown', value: row ? Number(row.distinct_entries) : 0 }
+  }).sort((a, b) => b.value - a.value)
 
   // Least entries (least mainstream, but at least 1)
   const leastEntriesResult = await prisma.$queryRaw<Array<{
@@ -1198,6 +1280,14 @@ async function calculatePhase6Records(
       }
     }
   }
+
+  // Hidden Gem Hunter rankings: ascending sort, zeros last
+  const userLeastEntriesRankings: UserRanking[] = [...userMostEntriesRankings].sort((a, b) => {
+    if (a.value === 0 && b.value === 0) return 0
+    if (a.value === 0) return 1
+    if (b.value === 0) return -1
+    return a.value - b.value
+  })
 
   // Most #1 entries - count entries where user contributed and entry reached #1
   const mostNumberOnesResult = await prisma.$queryRaw<Array<{
@@ -1284,6 +1374,44 @@ async function calculatePhase6Records(
     }
   }
 
+  // Rankings: One Track Mind (all members)
+  const allUserOneTrack = await prisma.$queryRaw<Array<{ userId: string; entryKey: string; chartType: string; total_vs: number }>>`
+    SELECT DISTINCT ON (ucvs."userId")
+      ucvs."userId", ucvs."entryKey", ucvs."chartType", SUM(ucvs."vibeScore")::float as total_vs
+    FROM "user_chart_entry_vs" ucvs
+    INNER JOIN "group_members" gm ON ucvs."userId" = gm."userId"
+    INNER JOIN "group_chart_entries" gce ON
+      gce."groupId" = ${groupId}::text AND
+      gce."weekStart" = ucvs."weekStart" AND
+      gce."chartType" = ucvs."chartType" AND
+      gce."entryKey" = ucvs."entryKey"
+    WHERE gm."groupId" = ${groupId}::text
+      AND ucvs."userId" IS NOT NULL
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
+    GROUP BY ucvs."userId", ucvs."entryKey", ucvs."chartType"
+    ORDER BY ucvs."userId", total_vs DESC
+  `
+
+  const oneTrackEntryKeys = allUserOneTrack.map(r => r.entryKey)
+  const oneTrackEntries = oneTrackEntryKeys.length > 0 ? await prisma.groupChartEntry.findMany({
+    where: { groupId, entryKey: { in: oneTrackEntryKeys } },
+    distinct: ['entryKey'],
+    select: { entryKey: true, name: true, artist: true },
+  }) : []
+  const entryNameMap = new Map(oneTrackEntries.map(e => [e.entryKey, { name: e.name, artist: e.artist }]))
+
+  const userOneTrackMindRankings: UserOneTrackMindRanking[] = allMembers.map(m => {
+    const row = allUserOneTrack.find(r => r.userId === m.userId)
+    const entry = row ? entryNameMap.get(row.entryKey) : null
+    return {
+      userId: m.userId,
+      name: memberMap.get(m.userId) || 'Unknown',
+      value: row ? Math.round(row.total_vs) : 0,
+      entryName: entry?.name || '',
+      entryArtist: entry?.artist || null,
+    }
+  }).sort((a, b) => b.value - a.value)
+
   // Taste Maker - user who introduced most entries that later reached #1
   // This requires tracking which user first introduced each entry
   // Simplified: count distinct entries that reached #1 where user contributed in first week
@@ -1340,6 +1468,43 @@ async function calculatePhase6Records(
     }
   }
 
+  // Rankings: Taste Maker (all members)
+  const allUserTasteMaker = await prisma.$queryRaw<Array<{ userId: string; taste_maker_count: bigint }>>`
+    WITH first_appearances AS (
+      SELECT "entryKey", "chartType", MIN("weekStart") as first_week
+      FROM "group_chart_entries"
+      WHERE "groupId" = ${groupId}::text
+        AND "weekStart" >= ${tenWeekCutoff}::timestamp
+      GROUP BY "entryKey", "chartType"
+    ),
+    number_ones AS (
+      SELECT DISTINCT "entryKey", "chartType"
+      FROM "group_chart_entries"
+      WHERE "groupId" = ${groupId}::text
+        AND position = 1
+        AND "weekStart" >= ${tenWeekCutoff}::timestamp
+    )
+    SELECT gm."userId", COUNT(DISTINCT ucvs."entryKey")::bigint as taste_maker_count
+    FROM "group_members" gm
+    LEFT JOIN "user_chart_entry_vs" ucvs ON ucvs."userId" = gm."userId"
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
+    LEFT JOIN first_appearances fa ON
+      ucvs."entryKey" = fa."entryKey" AND
+      ucvs."chartType" = fa."chartType" AND
+      ucvs."weekStart" = fa.first_week
+    LEFT JOIN number_ones no ON
+      fa."entryKey" = no."entryKey" AND
+      fa."chartType" = no."chartType"
+    WHERE gm."groupId" = ${groupId}::text
+      AND (ucvs."userId" IS NULL OR (fa."entryKey" IS NOT NULL AND no."entryKey" IS NOT NULL))
+    GROUP BY gm."userId"
+    ORDER BY taste_maker_count DESC
+  `
+  const userTasteMakerRankings: UserRanking[] = allMembers.map(m => {
+    const row = allUserTasteMaker.find(r => r.userId === m.userId)
+    return { userId: m.userId, name: memberMap.get(m.userId) || 'Unknown', value: row ? Number(row.taste_maker_count) : 0 }
+  }).sort((a, b) => b.value - a.value)
+
   // Peak Performer - highest average VS per entry (min 5 entries)
   const peakPerformerResult = await prisma.$queryRaw<Array<{
     userId: string
@@ -1376,6 +1541,13 @@ async function calculatePhase6Records(
       }
     }
   }
+
+  records.userMostVSRankings = userMostVSRankings
+  records.userMostPlaysRankings = userMostPlaysRankings
+  records.userMostEntriesRankings = userMostEntriesRankings
+  records.userLeastEntriesRankings = userLeastEntriesRankings
+  records.userOneTrackMindRankings = userOneTrackMindRankings
+  records.userTasteMakerRankings = userTasteMakerRankings
 
   return records
 }
