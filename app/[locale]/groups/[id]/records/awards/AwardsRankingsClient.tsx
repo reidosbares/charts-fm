@@ -156,10 +156,10 @@ export default function AwardsRankingsClient({ groupId, records }: AwardsRanking
 
   return (
     <div className="mt-6">
-      {/* Tab selector — horizontally scrollable on mobile */}
-      <div className="relative mb-6">
-        <div className="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
-          <div className="flex gap-1.5 sm:gap-2 min-w-max pr-8 md:pr-0">
+      {/* Tab selector — horizontally scrollable on mobile with mask fade */}
+      <div className="mb-6 -mx-4 px-4 md:mx-0 md:px-0" style={{ WebkitMaskImage: 'linear-gradient(to right, black calc(100% - 3rem), transparent)', maskImage: 'linear-gradient(to right, black calc(100% - 3rem), transparent)' }}>
+        <div className="overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex gap-1.5 sm:gap-2 min-w-max pr-10 md:pr-0">
             {AWARDS.map((award) => {
               const isActive = activeAward === award.slug
               return (
@@ -178,7 +178,6 @@ export default function AwardsRankingsClient({ groupId, records }: AwardsRanking
             })}
           </div>
         </div>
-        <div className="absolute right-0 top-0 bottom-2 w-12 pointer-events-none md:hidden" style={{ background: 'linear-gradient(to right, transparent, var(--theme-background-to) 70%)' }} />
       </div>
 
       {/* Award description */}
