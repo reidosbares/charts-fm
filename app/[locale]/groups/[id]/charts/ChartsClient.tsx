@@ -72,6 +72,9 @@ export default function ChartsClient({
           onLoadingChange={setIsLoading}
           groupId={groupId}
           onTypeChange={setCurrentChartType}
+          weeks={weeks}
+          currentWeek={currentWeek}
+          onWeekNavigate={() => setIsLoading(true)}
         />
       </div>
     </div>

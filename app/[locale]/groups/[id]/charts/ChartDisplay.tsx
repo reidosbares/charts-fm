@@ -2,10 +2,16 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { useRouter } from '@/i18n/routing'
 import { EnrichedChartItem } from '@/lib/group-chart-metrics'
 import ChartTypeSelector from './ChartTypeSelector'
 import ChartTable from './ChartTable'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import { formatWeekDate } from '@/lib/weekly-utils'
+import { useNavigation } from '@/contexts/NavigationContext'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import LiquidGlassButton from '@/components/LiquidGlassButton'
 
 type ChartType = 'artists' | 'tracks' | 'albums'
 
@@ -18,14 +24,54 @@ interface ChartDisplayProps {
   onLoadingChange?: (loading: boolean) => void
   onTypeChange?: (type: ChartType) => void
   groupId: string
+  weeks: { weekStart: Date }[]
+  currentWeek: Date
+  onWeekNavigate?: () => void
 }
 
-export default function ChartDisplay({ initialType, artists, tracks, albums, isLoading = false, onLoadingChange, onTypeChange, groupId }: ChartDisplayProps) {
+function toWeekStartTime(value: Date | string): number {
+  const d = value instanceof Date ? value : new Date(value)
+  return d.getTime()
+}
+
+export default function ChartDisplay({
+  initialType,
+  artists,
+  tracks,
+  albums,
+  isLoading = false,
+  onLoadingChange,
+  onTypeChange,
+  groupId,
+  weeks,
+  currentWeek,
+  onWeekNavigate,
+}: ChartDisplayProps) {
   const [currentType, setCurrentType] = useState<ChartType>(initialType)
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const { triggerPulse } = useNavigation()
   const isInternalChange = useRef(false)
   const previousItemsRef = useRef<EnrichedChartItem[] | null>(null)
   const t = useSafeTranslations('charts')
+
+  const currentWeekKey = formatWeekDate(new Date(toWeekStartTime(currentWeek)))
+  const currentWeekIndex = useMemo(
+    () => weeks.findIndex((w) => formatWeekDate(new Date(w.weekStart)) === currentWeekKey),
+    [weeks, currentWeekKey]
+  )
+  const weekOrdinal =
+    currentWeekIndex >= 0 && weeks.length > 0 ? weeks.length - currentWeekIndex : null
+  const canGoPrevious = currentWeekIndex >= 0 && currentWeekIndex < weeks.length - 1
+  const canGoNext = currentWeekIndex > 0
+
+  const navigateToWeek = (weekStart: Date) => {
+    onWeekNavigate?.()
+    triggerPulse()
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('week', formatWeekDate(weekStart))
+    router.push(`?${params.toString()}`)
+  }
 
   const currentItems = useMemo(() => {
     switch (currentType) {
@@ -75,6 +121,35 @@ export default function ChartDisplay({ initialType, artists, tracks, albums, isL
 
   return (
     <div className="relative">
+      {weeks.length > 0 && weekOrdinal !== null && (
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <LiquidGlassButton
+            type="button"
+            variant="primary"
+            useTheme
+            size="md"
+            className="shrink-0 min-w-[4.75rem] sm:min-w-20 !aspect-auto px-6"
+            disabled={!canGoPrevious}
+            aria-label={t('previousChartWeek')}
+            icon={<FontAwesomeIcon icon={faChevronLeft} className="text-sm" aria-hidden />}
+            onClick={() => canGoPrevious && navigateToWeek(new Date(weeks[currentWeekIndex + 1].weekStart))}
+          />
+          <p className="text-center text-base sm:text-lg font-semibold text-[var(--theme-primary-dark)] tabular-nums px-2">
+            {t('weekNumber', { number: weekOrdinal })}
+          </p>
+          <LiquidGlassButton
+            type="button"
+            variant="primary"
+            useTheme
+            size="md"
+            className="shrink-0 min-w-[4.75rem] sm:min-w-20 !aspect-auto px-6"
+            disabled={!canGoNext}
+            aria-label={t('nextChartWeek')}
+            icon={<FontAwesomeIcon icon={faChevronRight} className="text-sm" aria-hidden />}
+            onClick={() => canGoNext && navigateToWeek(new Date(weeks[currentWeekIndex - 1].weekStart))}
+          />
+        </div>
+      )}
       <div className="mb-4">
         <ChartTypeSelector currentType={currentType} onTypeChange={handleTypeChange} />
       </div>
