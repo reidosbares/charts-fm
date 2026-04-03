@@ -25,11 +25,18 @@ export async function GET(request: NextRequest) {
 
   try {
     const stats = await getPersonalListeningStats(user.id, range)
-    return NextResponse.json({
-      ...stats,
-      weekStart: stats.weekStart.toISOString(),
-      periodEnd: stats.periodEnd?.toISOString(),
-    })
+    return NextResponse.json(
+      {
+        ...stats,
+        weekStart: stats.weekStart.toISOString(),
+        periodEnd: stats.periodEnd?.toISOString(),
+      },
+      {
+        headers: {
+          'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
+        },
+      }
+    )
   } catch (error) {
     console.error('Error fetching personal stats:', error)
     return NextResponse.json(

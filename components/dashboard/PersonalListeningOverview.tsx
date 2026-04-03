@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
+import useSWR from 'swr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMusic, faMicrophone, faCompactDisc, faArrowUp, faArrowDown, faMinus, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { Link } from '@/i18n/routing'
@@ -33,40 +34,14 @@ export default function PersonalListeningOverview({
 }) {
   const t = useSafeTranslations('dashboard.personalListening')
   const [range, setRange] = useState<StatsRange>('week')
-  const [stats, setStats] = useState<PersonalListeningStats | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    setIsLoading(true)
-    setError(null)
+  const base = username
+    ? `/api/users/${encodeURIComponent(username)}/personal-stats`
+    : '/api/dashboard/personal-stats'
+  const endpoint = range === 'week' ? base : `${base}?range=${range}`
 
-    const base = username
-      ? `/api/users/${encodeURIComponent(username)}/personal-stats`
-      : '/api/dashboard/personal-stats'
-    const endpoint = range === 'week' ? base : `${base}?range=${range}`
-
-    let cancelled = false
-    fetch(endpoint)
-      .then((res) => res.json())
-      .then((data) => {
-        if (cancelled) return
-        if (data.error) {
-          setError(data.error)
-        } else {
-          setStats(data)
-        }
-        setIsLoading(false)
-      })
-      .catch((err) => {
-        if (cancelled) return
-        setError(t('failedToLoad'))
-        setIsLoading(false)
-        console.error('Error fetching personal stats:', err)
-      })
-
-    return () => { cancelled = true }
-  }, [t, username, range])
+  const { data: stats, error: swrError, isLoading } = useSWR<PersonalListeningStats>(endpoint)
+  const error = swrError ? t('failedToLoad') : stats && 'error' in stats ? (stats as any).error : null
 
   // All hooks must be called before any conditional returns
   const currentWeek = stats?.currentWeek ?? null

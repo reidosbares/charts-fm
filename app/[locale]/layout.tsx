@@ -1,4 +1,5 @@
 import SessionProvider from "@/components/SessionProvider";
+import SWRProvider from "@/components/SWRProvider";
 import { NavigationProvider } from "@/contexts/NavigationContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -69,6 +70,7 @@ export default async function LocaleLayout({
       </div>
       <NextIntlClientProvider messages={messages} locale={locale}>
         <SessionProvider>
+          <SWRProvider>
           <NavigationProvider>
             <div className="flex flex-col min-h-screen">
               <Navbar />
@@ -79,6 +81,7 @@ export default async function LocaleLayout({
               <Footer />
             </div>
           </NavigationProvider>
+          </SWRProvider>
         </SessionProvider>
       </NextIntlClientProvider>
     </>
