@@ -59,22 +59,41 @@ export async function GET(
         'userTasteMaker',
         'userPeakPerformer',
       ]
-      
+
+      const rankingsFields = [
+        'userMostVSRankings',
+        'userMostPlaysRankings',
+        'userMostEntriesRankings',
+        'userLeastEntriesRankings',
+        'userOneTrackMindRankings',
+        'userTasteMakerRankings',
+      ]
+
       userRecordFields.forEach((field) => {
         if (recordsData[field]?.userId) {
           userIds.add(recordsData[field].userId)
         }
       })
-      
+
+      // Also collect user IDs from rankings
+      rankingsFields.forEach((field) => {
+        const rankings = recordsData[field] as any[]
+        if (Array.isArray(rankings)) {
+          rankings.forEach((r: any) => {
+            if (r?.userId) userIds.add(r.userId)
+          })
+        }
+      })
+
       // Fetch user data (image, name, lastfmUsername)
       if (userIds.size > 0) {
         const users = await prisma.user.findMany({
           where: { id: { in: Array.from(userIds) } },
           select: { id: true, image: true, name: true, lastfmUsername: true },
         })
-        
+
         const userDataMap = new Map(users.map(u => [u.id, u]))
-        
+
         // Enrich user records with fresh user data
         userRecordFields.forEach((field) => {
           if (recordsData[field]?.userId) {
@@ -84,6 +103,23 @@ export async function GET(
               recordsData[field].name = userData.name || userData.lastfmUsername
               recordsData[field].lastfmUsername = userData.lastfmUsername
             }
+          }
+        })
+
+        // Enrich rankings with fresh user data
+        rankingsFields.forEach((field) => {
+          const rankings = recordsData[field] as any[]
+          if (Array.isArray(rankings)) {
+            rankings.forEach((r: any) => {
+              if (r?.userId) {
+                const userData = userDataMap.get(r.userId)
+                if (userData) {
+                  r.image = userData.image || null
+                  r.name = userData.name || userData.lastfmUsername
+                  r.lastfmUsername = userData.lastfmUsername
+                }
+              }
+            })
           }
         })
       }
