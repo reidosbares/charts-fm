@@ -1272,6 +1272,19 @@
         "tasteMaker": "This is the member who introduced the most entries that later became #1 hits. They have that magic touch."
       }
     },
+    "awards": {
+      "title": "Member Award Rankings",
+      "breadcrumb": "Awards",
+      "viewAllRankings": "View All Rankings",
+      "rank": "Rank",
+      "member": "Member",
+      "value": "Value",
+      "vs": "VS",
+      "plays": "plays",
+      "entry": "entry",
+      "entries": "entries",
+      "noEntry": "—"
+    },
     "mvpByWeek": {
       "pageTitle": "MVP per week",
       "breadcrumb": "MVP per week",

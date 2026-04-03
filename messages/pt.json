@@ -1272,6 +1272,19 @@
         "tasteMaker": "Este é o membro que fez debutar mais itens que em seguida pegaram #1. E quando ele quiser, ele hita."
       }
     },
+    "awards": {
+      "title": "Ranking de Premiações",
+      "breadcrumb": "Premiações",
+      "viewAllRankings": "Ver Ranking Completo",
+      "rank": "Pos.",
+      "member": "Membro",
+      "value": "Valor",
+      "vs": "VS",
+      "plays": "plays",
+      "entry": "item",
+      "entries": "itens",
+      "noEntry": "—"
+    },
     "mvpByWeek": {
       "pageTitle": "MVP por semana",
       "breadcrumb": "MVP por semana",
