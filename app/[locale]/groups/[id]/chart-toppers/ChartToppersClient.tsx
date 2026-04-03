@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import useSWR from 'swr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMicrophone, faMusic, faCompactDisc, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
@@ -115,12 +116,16 @@ export default function ChartToppersClient({ groupId }: ChartToppersClientProps)
   
   const defaultTab: ChartType = 'artists'
   const [activeTab, setActiveTab] = useState<ChartType>(defaultTab)
-  const [entries, setEntries] = useState<ChartTopperEntry[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [showVS, setShowVS] = useState(false)
   const [visibleImageCount, setVisibleImageCount] = useState(IMAGE_BATCH_SIZE)
   const sentinelRef = useRef<HTMLTableRowElement>(null)
+
+  const { data: chartData, error: fetchError, isLoading } = useSWR<any>(
+    `/api/groups/${groupId}/chart-toppers?type=${activeTab}`
+  )
+  const entries: ChartTopperEntry[] = chartData?.entries || []
+  const showVS: boolean = chartData?.showVS || false
+  const error = fetchError ? t('error') : null
+
   const totalCountRef = useRef(entries.length)
   totalCountRef.current = entries.length
 
@@ -171,7 +176,7 @@ export default function ChartToppersClient({ groupId }: ChartToppersClientProps)
         setActiveTab(defaultTab)
       }
     }
-    
+
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
   }, [activeTab])
@@ -180,7 +185,7 @@ export default function ChartToppersClient({ groupId }: ChartToppersClientProps)
   const handleTabChange = (tabId: string) => {
     const newTab = tabId as ChartType
     setActiveTab(newTab)
-    
+
     // Update hash without triggering hashchange event
     if (typeof window !== 'undefined') {
       const newHash = `#${newTab}`
@@ -190,34 +195,6 @@ export default function ChartToppersClient({ groupId }: ChartToppersClientProps)
       }
     }
   }
-
-  useEffect(() => {
-    const fetchEntries = async () => {
-      setIsLoading(true)
-      setError(null)
-      
-      try {
-        const url = `/api/groups/${groupId}/chart-toppers?type=${activeTab}`
-        
-        const response = await fetch(url)
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch chart toppers')
-        }
-        
-        const data = await response.json()
-        setEntries(data.entries || [])
-        setShowVS(data.showVS || false)
-      } catch (err) {
-        console.error('Error fetching chart toppers:', err)
-        setError(t('error'))
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchEntries()
-  }, [groupId, activeTab, t])
 
   const getEntryLink = (entry: ChartTopperEntry) => {
     const chartTypePath = activeTab === 'artists' ? 'artist' : activeTab === 'tracks' ? 'track' : 'album'

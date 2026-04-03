@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback, useRef } from 'react'
+import useSWR from 'swr'
 import { Link } from '@/i18n/routing'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 import SafeImage from '@/components/SafeImage'
@@ -32,41 +33,14 @@ interface TrendingBannerItem {
 
 export default function TrendingAcrossGroupsBanner() {
   const t = useSafeTranslations('dashboard.trendingBanner')
-  const [items, setItems] = useState<TrendingBannerItem[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
+  const { data, error, isLoading: loading } = useSWR<{ items: TrendingBannerItem[] }>('/api/dashboard/trending-across-groups')
+  const items = data?.items ?? []
   const [index, setIndex] = useState(0)
   const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('right')
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const touchStartX = useRef<number | null>(null)
   const slideAreaRef = useRef<HTMLDivElement>(null)
   const [contentMinHeight, setContentMinHeight] = useState(0)
-
-  useEffect(() => {
-    let cancelled = false
-    setLoading(true)
-    setError(false)
-    fetch('/api/dashboard/trending-across-groups')
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to load')
-        return res.json()
-      })
-      .then((data) => {
-        if (!cancelled) {
-          setItems(Array.isArray(data.items) ? data.items : [])
-          setIndex(0)
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setError(true)
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [])
 
   const hasItems = items.length > 0
   const currentItem = hasItems ? items[index] : null

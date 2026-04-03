@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faUsers,
@@ -77,37 +77,11 @@ function MetricCard({ title, value, subtitle, icon }: MetricCardProps) {
 }
 
 export default function MetricsTab() {
-  const [metrics, setMetrics] = useState<Metrics | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
-
-  const fetchMetrics = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      const response = await fetch('/api/admin/metrics')
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch metrics')
-      }
-      
-      const data = await response.json()
-      setMetrics(data)
-      setLastUpdated(new Date())
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchMetrics()
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(fetchMetrics, 30000)
-    return () => clearInterval(interval)
-  }, [])
+  const { data: metrics, error: swrError, isLoading: loading, isValidating, mutate } = useSWR<Metrics>(
+    '/api/admin/metrics',
+    { refreshInterval: 30000 }
+  )
+  const error = swrError ? (swrError instanceof Error ? swrError.message : 'An error occurred') : null
 
   if (loading && !metrics) {
     return (
@@ -122,7 +96,7 @@ export default function MetricsTab() {
       <div className="text-center py-12">
         <p className="text-red-600 mb-4">Error: {error}</p>
         <button
-          onClick={fetchMetrics}
+          onClick={() => mutate()}
           className="px-4 py-2 bg-theme text-white rounded-lg hover:bg-theme/90 transition-colors"
         >
           Retry
@@ -141,20 +115,15 @@ export default function MetricsTab() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Activity Metrics</h2>
-          {lastUpdated && (
-            <p className="text-sm text-gray-500 mt-1">
-              Last updated: {lastUpdated.toLocaleTimeString()}
-            </p>
-          )}
         </div>
         <button
-          onClick={fetchMetrics}
-          disabled={loading}
+          onClick={() => mutate()}
+          disabled={isValidating}
           className="px-4 py-2 bg-theme text-white rounded-lg hover:bg-theme/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           <FontAwesomeIcon
             icon={faSpinner}
-            className={loading ? 'animate-spin' : ''}
+            className={isValidating ? 'animate-spin' : ''}
           />
           Refresh
         </button>

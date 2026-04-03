@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import useSWR from 'swr'
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from '@/i18n/routing'
 import { Link, usePathname } from '@/i18n/routing'
@@ -37,27 +38,43 @@ export default function Navbar() {
   const [isSigningOut, setIsSigningOut] = useState(false)
   const signOutStartTimeRef = useRef<number | null>(null)
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false)
-  const [userData, setUserData] = useState<{
-    name: string | null
-    lastfmUsername: string
-    image: string | null
-    isSuperuser: boolean
-    impersonating?: boolean
-    realUser?: { id: string; name: string | null; email: string | null; isSuperuser: boolean }
-  } | null>(null)
-  const [isUserDataLoading, setIsUserDataLoading] = useState(true)
-  const [quickAccessGroup, setQuickAccessGroup] = useState<{
-    id: string
-    name: string
-    image: string | null
-    colorTheme: string
-  } | null>(null)
-  const [isQuickAccessLoading, setIsQuickAccessLoading] = useState(true)
   const [isQuickAccessInfoOpen, setIsQuickAccessInfoOpen] = useState(false)
   const quickAccessButtonRef = useRef<HTMLButtonElement>(null)
   const prevPathnameRef = useRef(pathname)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isStoppingImpersonation, setIsStoppingImpersonation] = useState(false)
+
+  // Fetch user data via SWR
+  const shouldFetchUser = !!session?.user?.email
+  const { data: meData, isLoading: isUserDataLoading, mutate: mutateMe } = useSWR<{
+    user?: {
+      name: string | null
+      lastfmUsername: string
+      image: string | null
+      isSuperuser: boolean
+    }
+    impersonating?: boolean
+    realUser?: { id: string; name: string | null; email: string | null; isSuperuser: boolean }
+  }>(shouldFetchUser ? '/api/user/me' : null)
+
+  const userData = useMemo(() => {
+    if (!meData?.user) return null
+    return {
+      name: meData.user.name,
+      lastfmUsername: meData.user.lastfmUsername,
+      image: meData.user.image,
+      isSuperuser: (meData.impersonating && meData.realUser?.isSuperuser) ? true : (meData.user.isSuperuser || false),
+      impersonating: meData.impersonating || false,
+      realUser: meData.realUser,
+    }
+  }, [meData])
+
+  // Fetch quick access group via SWR
+  const { data: quickAccessData, isLoading: isQuickAccessLoading, mutate: mutateQuickAccess } = useSWR<{
+    group?: { id: string; name: string; image: string | null; colorTheme: string } | null
+  }>(shouldFetchUser ? '/api/user/quick-access' : null)
+
+  const quickAccessGroup = quickAccessData?.group ?? null
 
   // Close mobile menu on Escape key
   useEffect(() => {
@@ -75,64 +92,11 @@ export default function Navbar() {
     setIsMobileMenuOpen(false)
   }, [pathname])
 
-  // Fetch user data and quick access group
-  useEffect(() => {
-    if (session?.user?.email) {
-      setIsUserDataLoading(true)
-      setIsQuickAccessLoading(true)
-      
-      fetch('/api/user/me')
-        .then(res => res.json())
-        .then(data => {
-          if (data.user) {
-            setUserData({
-              name: data.user.name,
-              lastfmUsername: data.user.lastfmUsername,
-              image: data.user.image,
-              isSuperuser: (data.impersonating && data.realUser?.isSuperuser) ? true : (data.user.isSuperuser || false),
-              impersonating: data.impersonating || false,
-              realUser: data.realUser,
-            })
-          }
-        })
-        .catch(console.error)
-        .finally(() => setIsUserDataLoading(false))
-      
-      // Fetch quick access group
-      fetch('/api/user/quick-access')
-        .then(res => res.json())
-        .then(data => {
-          if (data.group) {
-            setQuickAccessGroup(data.group)
-          } else {
-            setQuickAccessGroup(null)
-          }
-        })
-        .catch(console.error)
-        .finally(() => setIsQuickAccessLoading(false))
-    } else {
-      setQuickAccessGroup(null)
-      setIsUserDataLoading(false)
-      setIsQuickAccessLoading(false)
-    }
-  }, [session])
-
   // Listen for quick access updates
   useEffect(() => {
     const handleQuickAccessUpdate = () => {
       if (session?.user?.email) {
-        setIsQuickAccessLoading(true)
-        fetch('/api/user/quick-access')
-          .then(res => res.json())
-          .then(data => {
-            if (data.group) {
-              setQuickAccessGroup(data.group)
-            } else {
-              setQuickAccessGroup(null)
-            }
-          })
-          .catch(console.error)
-          .finally(() => setIsQuickAccessLoading(false))
+        mutateQuickAccess()
       }
     }
 
@@ -140,35 +104,17 @@ export default function Navbar() {
     return () => {
       window.removeEventListener('quickAccessUpdated', handleQuickAccessUpdate)
     }
-  }, [session])
+  }, [session, mutateQuickAccess])
 
-  // Refetch when navigating away from profile page
+  // Refetch user data when navigating away from profile page
   useEffect(() => {
     const prevPathWithoutLocale = prevPathnameRef.current?.replace(/^\/[^/]+/, '') || ''
     const currentPathWithoutLocale = pathname?.replace(/^\/[^/]+/, '') || ''
     if (prevPathWithoutLocale === '/profile' && currentPathWithoutLocale !== '/profile' && session?.user?.email) {
-      setIsUserDataLoading(true)
-      fetch('/api/user/me')
-        .then(res => res.json())
-        .then(data => {
-          if (data.user) {
-            setUserData({
-              name: data.user.name,
-              lastfmUsername: data.user.lastfmUsername,
-              image: data.user.image,
-              isSuperuser: (data.impersonating && data.realUser?.isSuperuser) ? true : (data.user.isSuperuser || false),
-              impersonating: data.impersonating || false,
-              realUser: data.realUser,
-            })
-          }
-        })
-        .catch(console.error)
-        .finally(() => setIsUserDataLoading(false))
+      mutateMe()
     }
-    // Note: Quick access is not refetched on pathname change to prevent flashing
-    // It only updates when the session changes or when explicitly updated via events
     prevPathnameRef.current = pathname
-  }, [pathname, session])
+  }, [pathname, session, mutateMe])
 
   // Clear sign out loading screen when user is actually logged out, but ensure it shows for at least 1 second
   useEffect(() => {
@@ -209,22 +155,12 @@ export default function Navbar() {
       const res = await fetch('/api/admin/impersonate/stop', { method: 'POST' })
       if (res.ok) {
         router.refresh()
-        const data = await fetch('/api/user/me').then(r => r.json())
-        if (data.user) {
-          setUserData({
-            name: data.user.name,
-            lastfmUsername: data.user.lastfmUsername,
-            image: data.user.image,
-            isSuperuser: data.user.isSuperuser || false,
-            impersonating: false,
-            realUser: undefined,
-          })
-        }
+        await mutateMe()
       }
     } finally {
       setIsStoppingImpersonation(false)
     }
-  }, [router])
+  }, [router, mutateMe])
 
   const isAuthenticated = useMemo(() => status === 'authenticated' && session?.user, [status, session?.user])
   const isSessionLoading = status === 'loading'

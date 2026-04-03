@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { Link } from '@/i18n/routing'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFire, faSpinner, faArrowUp, faMusic, faMicrophone, faCompactDisc, faTrophy, faChartLine } from '@fortawesome/free-solid-svg-icons'
@@ -158,29 +159,10 @@ async function fetchEntryImage(entry: { chartType: string; name: string; artist?
 
 export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
   const t = useSafeTranslations('groups.trends')
-  const [data, setData] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { data, error: swrError, isLoading } = useSWR<any>(`/api/groups/${groupId}/trends`)
+  const error = swrError ? t('failedToLoad') : data?.error || null
   const [biggestClimberImage, setBiggestClimberImage] = useState<string | null>(null)
   const [newEntriesImages, setNewEntriesImages] = useState<(string | null)[]>([])
-
-  useEffect(() => {
-    fetch(`/api/groups/${groupId}/trends`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          setError(data.error)
-        } else {
-          setData(data)
-        }
-        setIsLoading(false)
-      })
-      .catch((err) => {
-        setError(t('failedToLoad'))
-        setIsLoading(false)
-        console.error('Error fetching trends:', err)
-      })
-  }, [groupId, t])
 
   // Fetch images for biggest climber and new entries
   useEffect(() => {

@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
+import useSWR from 'swr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHeart, faSpinner, faInfoCircle, faCalculator } from '@fortawesome/free-solid-svg-icons'
+import { faHeart, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import Tooltip from '@/components/Tooltip'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
@@ -24,10 +25,14 @@ interface CompatibilityData {
 
 export default function CompatibilityScore({ groupId }: CompatibilityScoreProps) {
   const t = useSafeTranslations('groups.public')
-  const [score, setScore] = useState<CompatibilityData | null>(null)
+  const { data: checkData, error: checkError, isLoading: isChecking, mutate } = useSWR<any>(`/api/groups/${groupId}/compatibility`)
+
+  const score: CompatibilityData | null = checkData?.exists && checkData?.score !== undefined
+    ? { score: checkData.score, components: checkData.components }
+    : null
+  const error = checkError || (checkData?.error ? checkData.error : null)
+
   const [isLoading, setIsLoading] = useState(false)
-  const [isChecking, setIsChecking] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [showDetails, setShowDetails] = useState(false)
   const [mounted, setMounted] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -37,33 +42,8 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
     setMounted(true)
   }, [])
 
-  // Check if score exists (without calculating)
-  useEffect(() => {
-    fetch(`/api/groups/${groupId}/compatibility`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          setError(data.error)
-        } else if (data.exists && data.score !== undefined) {
-          // Score exists and is fresh
-          setScore({
-            score: data.score,
-            components: data.components,
-          })
-        }
-        // If exists is false, score is null - user can click to calculate
-        setIsChecking(false)
-      })
-      .catch((err) => {
-        setError(t('failedToCheckCompatibility'))
-        setIsChecking(false)
-        console.error('Error checking compatibility score:', err)
-      })
-  }, [groupId, t])
-
   const handleCalculate = async () => {
     setIsLoading(true)
-    setError(null)
 
     try {
       const response = await fetch(`/api/groups/${groupId}/compatibility`, {
@@ -76,12 +56,9 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
         throw new Error(data.error || t('failedToCalculateCompatibility'))
       }
 
-      setScore({
-        score: data.score,
-        components: data.components,
-      })
+      // Refresh SWR cache with the new score
+      mutate()
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('failedToCalculateCompatibility'))
       console.error('Error calculating compatibility score:', err)
     } finally {
       setIsLoading(false)

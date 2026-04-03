@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { Link } from '@/i18n/routing'
@@ -25,24 +25,8 @@ interface MVPByWeekClientProps {
 
 export default function MVPByWeekClient({ groupId }: MVPByWeekClientProps) {
   const t = useSafeTranslations('records.mvpByWeek')
-  const [rows, setRows] = useState<MVPByWeekRow[] | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    setLoading(true)
-    setError(null)
-    fetch(`/api/groups/${groupId}/records/mvp-by-week`)
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to load')
-        return res.json()
-      })
-      .then((data) => {
-        setRows(Array.isArray(data) ? data : [])
-      })
-      .catch(() => setError('Failed to load'))
-      .finally(() => setLoading(false))
-  }, [groupId])
+  const { data: rawData, error, isLoading: loading } = useSWR<any>(`/api/groups/${groupId}/records/mvp-by-week`)
+  const rows = rawData ? (Array.isArray(rawData) ? rawData : []) as MVPByWeekRow[] : null
 
   const titleBlock = (
     <div className="mb-3 md:mb-6 text-center px-2">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
+import useSWR from 'swr'
 import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMicrophone, faMusic, faCompactDisc, faXmark, faSpinner, faCheck, faRotateRight, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
@@ -167,7 +168,6 @@ export default function ShareChartModal({
   const [overlayType, setOverlayType] = useState<OverlayType>('position')
   const [showName, setShowName] = useState<boolean>(true)
   const [gridSize, setGridSize] = useState<GridSize>('4x3')
-  const [chartSize, setChartSize] = useState<number | null>(null)
   const [showMoreOptions, setShowMoreOptions] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -175,36 +175,22 @@ export default function ShareChartModal({
   const [copySuccess, setCopySuccess] = useState(false)
   const previewUrlRef = useRef<string | null>(null)
 
+  // Fetch chart size when modal is open
+  const { data: settingsData } = useSWR<{ chartSize?: number }>(
+    isOpen ? `/api/groups/${groupId}/settings` : null
+  )
+  const chartSize = settingsData?.chartSize || 20
+
+  // If chart size is 10, default to 3x3 grid
+  useEffect(() => {
+    if (chartSize === 10) {
+      setGridSize('3x3')
+    }
+  }, [chartSize])
+
   useEffect(() => {
     setMounted(true)
-    
-    // Fetch chart size when modal opens
-    const fetchChartSize = async () => {
-      try {
-        const response = await fetch(`/api/groups/${groupId}/settings`)
-        if (response.ok) {
-          const data = await response.json()
-          const size = data.chartSize || 20
-          setChartSize(size)
-          // If chart size is 10, default to 3x3 grid
-          if (size === 10) {
-            setGridSize('3x3')
-          }
-        } else {
-          // Default to 20 if fetch fails (allows all grid sizes)
-          setChartSize(20)
-        }
-      } catch (error) {
-        console.error('Error fetching chart size:', error)
-        // Default to 20 if fetch fails (allows all grid sizes)
-        setChartSize(20)
-      }
-    }
-    
-    if (isOpen) {
-      fetchChartSize()
-    }
-  }, [isOpen, groupId])
+  }, [])
 
   useEffect(() => {
     if (!isOpen) {

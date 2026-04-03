@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner, faMusic, faCalendarDays, faChartLine } from '@fortawesome/free-solid-svg-icons'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
@@ -12,23 +12,7 @@ interface PublicGroupQuickStatsProps {
 export default function PublicGroupQuickStats({ groupId }: PublicGroupQuickStatsProps) {
   const t = useSafeTranslations('groups.quickStats')
   const tWeekly = useSafeTranslations('groups.weeklyCharts')
-  const [data, setData] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    fetch(`/api/groups/${groupId}/public/weekly-charts`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.error) {
-          setData(data)
-        }
-        setIsLoading(false)
-      })
-      .catch((err) => {
-        setIsLoading(false)
-        console.error('Error fetching public weekly charts for quick stats:', err)
-      })
-  }, [groupId])
+  const { data, isLoading } = useSWR<any>(`/api/groups/${groupId}/public/weekly-charts`)
 
   if (isLoading) {
     return (

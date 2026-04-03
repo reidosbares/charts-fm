@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
+import useSWR from 'swr'
 import { useRouter } from '@/i18n/routing'
 import Toggle from '@/components/Toggle'
 import SafeImage from '@/components/SafeImage'
@@ -26,9 +27,6 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
   const t = useSafeTranslations('groups.settings.shoutbox')
   const [shoutboxEnabled, setShoutboxEnabled] = useState(true)
   const [shoutboxRestrictiveMode, setShoutboxRestrictiveMode] = useState(false)
-  const [silencedUsers, setSilencedUsers] = useState<User[]>([])
-  const [allowedUsers, setAllowedUsers] = useState<User[]>([])
-  const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -38,32 +36,29 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
   const [searchError, setSearchError] = useState<string | null>(null)
   const [silencingUserId, setSilencingUserId] = useState<string | null>(null)
   const [unsilencingUserId, setUnsilencingUserId] = useState<string | null>(null)
+  const [settingsInitialized, setSettingsInitialized] = useState(false)
 
-  const fetchSettings = useCallback(async () => {
-    setIsLoading(true)
-    try {
-      const res = await fetch(`/api/groups/${groupId}/shoutbox/settings`)
-      const data = await res.json()
-      if (data.error) {
-        setError(data.error)
-      } else {
-        setShoutboxEnabled(data.shoutboxEnabled ?? true)
-        setShoutboxRestrictiveMode(data.shoutboxRestrictiveMode ?? false)
-        setSilencedUsers(data.silencedUsers || [])
-        setAllowedUsers(data.allowedUsers || [])
-        setError(null)
-      }
-    } catch (err) {
-      setError(t('failedToLoad'))
-      console.error('Error fetching settings:', err)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [groupId, t])
+  interface ShoutboxSettings {
+    shoutboxEnabled?: boolean
+    shoutboxRestrictiveMode?: boolean
+    silencedUsers?: User[]
+    allowedUsers?: User[]
+    error?: string
+  }
 
-  useEffect(() => {
-    fetchSettings()
-  }, [fetchSettings])
+  const { data: settingsData, isLoading, mutate: mutateSettings } = useSWR<ShoutboxSettings>(
+    `/api/groups/${groupId}/shoutbox/settings`
+  )
+
+  // Sync fetched settings into local state for form editing
+  if (settingsData && !settingsData.error && !settingsInitialized) {
+    setShoutboxEnabled(settingsData.shoutboxEnabled ?? true)
+    setShoutboxRestrictiveMode(settingsData.shoutboxRestrictiveMode ?? false)
+    setSettingsInitialized(true)
+  }
+
+  const silencedUsers = settingsData?.silencedUsers || []
+  const allowedUsers = settingsData?.allowedUsers || []
 
   const searchUser = async () => {
     if (!searchUsername.trim()) return
@@ -110,7 +105,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
         return
       }
 
-      await fetchSettings()
+      await mutateSettings()
       setSearchUsername('')
       setSearchResult(null)
       setSearchError(null)
@@ -139,7 +134,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
         return
       }
 
-      await fetchSettings()
+      await mutateSettings()
     } catch (err) {
       setError(t('failedToRemoveSilence'))
       console.error('Error removing silence:', err)
@@ -163,7 +158,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
         return
       }
 
-      await fetchSettings()
+      await mutateSettings()
       setSearchUsername('')
       setSearchResult(null)
       setSearchError(null)
@@ -186,7 +181,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
         return
       }
 
-      await fetchSettings()
+      await mutateSettings()
     } catch (err) {
       setError(t('failedToRevoke'))
       console.error('Error revoking permission:', err)

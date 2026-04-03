@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import useSWR from 'swr'
 import { Link } from '@/i18n/routing'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
@@ -164,8 +165,13 @@ function translateFunFact(fact: string, t: (key: string, values?: Record<string,
 
 export default function TrendsClient({ trends, groupId, userId }: TrendsClientProps) {
   const t = useSafeTranslations('groups.trends')
-  const [personalizedStats, setPersonalizedStats] = useState<any>(null)
-  const [isLoadingPersonal, setIsLoadingPersonal] = useState(true)
+  const { data: personalData, isLoading: isLoadingPersonal } = useSWR<any>(
+    `/api/groups/${groupId}/trends?includePersonal=true`
+  )
+  const personalizedStats = personalData?.personalizedStats || null
+  const longestStreaks = personalData?.longestStreaks || []
+  const comebacks = personalData?.comebacks || []
+  const mostDiverseSpotlight = personalData?.mostDiverseSpotlight || null
   
   // Get tab from hash fragment (e.g., #artists)
   const getTabFromHash = (): CategoryTab | null => {
@@ -178,10 +184,6 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
   const defaultTab: CategoryTab = 'members'
   // Initialize with defaultTab, then check hash on mount
   const [activeTab, setActiveTab] = useState<CategoryTab>(defaultTab)
-  const [longestStreaks, setLongestStreaks] = useState<any[]>([])
-  const [comebacks, setComebacks] = useState<any[]>([])
-  const [mostDiverseSpotlight, setMostDiverseSpotlight] = useState<any>(null)
-  
   // Check hash fragment on mount and when hash changes
   useEffect(() => {
     const tabFromHash = getTabFromHash()
@@ -210,31 +212,6 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
     // Update hash without causing page refresh or scroll
     window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${tab}`)
   }
-
-  useEffect(() => {
-    // Fetch personalized stats, longest streaks, comebacks, and most diverse spotlight asynchronously
-    fetch(`/api/groups/${groupId}/trends?includePersonal=true`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.personalizedStats) {
-          setPersonalizedStats(data.personalizedStats)
-        }
-        if (data.longestStreaks) {
-          setLongestStreaks(data.longestStreaks)
-        }
-        if (data.comebacks) {
-          setComebacks(data.comebacks)
-        }
-        if (data.mostDiverseSpotlight) {
-          setMostDiverseSpotlight(data.mostDiverseSpotlight)
-        }
-        setIsLoadingPersonal(false)
-      })
-      .catch((err) => {
-        console.error('Error fetching personalized stats:', err)
-        setIsLoadingPersonal(false)
-      })
-  }, [groupId])
 
   // Organize data by category - memoized to prevent recalculation
   const organizeByCategory = useCallback((): Record<string, CategoryData> => {

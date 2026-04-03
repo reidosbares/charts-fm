@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { createPortal } from 'react-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner, faEdit, faTrash, faPaperPlane } from '@fortawesome/free-solid-svg-icons'
@@ -51,18 +52,14 @@ function formatRelativeTime(date: Date, t: (key: string, values?: Record<string,
 
 export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnabled }: GroupShoutboxProps) {
   const t = useSafeTranslations('groups.shoutbox')
-  const [comments, setComments] = useState<Comment[]>([])
-  const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(0)
-  const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [content, setContent] = useState('')
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editContent, setEditContent] = useState('')
   const [isSaving, setIsSaving] = useState(false)
-  const [canPost, setCanPost] = useState<boolean | null>(null)
+  const [canPost, setCanPost] = useState<boolean | null>(true)
   const [postError, setPostError] = useState<string | null>(null)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [commentToDelete, setCommentToDelete] = useState<string | null>(null)
@@ -71,50 +68,22 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
 
   const MAX_CONTENT_LENGTH = 500
 
-  const fetchComments = useCallback(async (pageNum: number = 1) => {
-    setIsLoading(true)
-    try {
-      const res = await fetch(`/api/groups/${groupId}/comments?page=${pageNum}&limit=20`)
-      const data = await res.json()
-      if (data.error) {
-        setError(data.error)
-      } else {
-        setComments(data.comments)
-        setTotal(data.total)
-        setPage(data.page)
-        setTotalPages(data.totalPages)
-        setError(null)
-      }
-    } catch (err) {
-      setError(t('failedToLoad'))
-      console.error('Error fetching comments:', err)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [groupId, t])
+  const { data: commentsData, isLoading, mutate } = useSWR<any>(
+    shoutboxEnabled ? `/api/groups/${groupId}/comments?page=${page}&limit=20` : null
+  )
+  const comments: Comment[] = commentsData?.comments || []
+  const total = commentsData?.total || 0
+  const totalPages = commentsData?.totalPages || 0
 
-  const checkCanPost = useCallback(async () => {
-    try {
-      // Check permissions by trying to get settings (which requires membership)
-      // We'll check actual posting permissions on first submit attempt
-      setCanPost(true)
-      setPostError(null)
-    } catch (err) {
-      // If there's an error, assume we can post (will show error on actual submit)
-      setCanPost(true)
+  useEffect(() => {
+    if (commentsData?.error) {
+      setError(commentsData.error)
     }
-  }, [])
+  }, [commentsData])
 
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  useEffect(() => {
-    if (shoutboxEnabled) {
-      fetchComments()
-      checkCanPost()
-    }
-  }, [shoutboxEnabled, fetchComments, checkCanPost])
 
   useEffect(() => {
     if (deleteModalOpen) {
@@ -156,10 +125,9 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
 
       setContent('')
       setError(null)
-      // Refresh comments
-      await fetchComments(1)
-      // Re-check permissions
-      await checkCanPost()
+      // Refresh comments - go back to page 1 to see the new comment
+      setPage(1)
+      await mutate()
     } catch (err) {
       setError(t('failedToPost'))
       console.error('Error posting comment:', err)
@@ -190,7 +158,7 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
       setEditingId(null)
       setEditContent('')
       setError(null)
-      await fetchComments(page)
+      await mutate()
     } catch (err) {
       setError(t('failedToUpdate'))
       console.error('Error updating comment:', err)
@@ -226,7 +194,7 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
       setError(null)
       setDeleteModalOpen(false)
       setCommentToDelete(null)
-      await fetchComments(page)
+      await mutate()
     } catch (err) {
       setError(t('failedToDelete'))
       console.error('Error deleting comment:', err)
@@ -411,7 +379,7 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
             {totalPages > 1 && (
               <div className="flex flex-col sm:flex-row items-center justify-center gap-2 md:gap-2">
                 <button
-                  onClick={() => fetchComments(page - 1)}
+                  onClick={() => setPage((p) => p - 1)}
                   disabled={page === 1}
                   className="px-3 md:px-4 py-1.5 md:py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base w-full sm:w-auto"
                 >
@@ -421,7 +389,7 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
                   {t('pageOf', { page, totalPages, total })}
                 </span>
                 <button
-                  onClick={() => fetchComments(page + 1)}
+                  onClick={() => setPage((p) => p + 1)}
                   disabled={page === totalPages}
                   className="px-3 md:px-4 py-1.5 md:py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base w-full sm:w-auto"
                 >

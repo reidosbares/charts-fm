@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner, faFire, faCalendarDays, faChartLine, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
@@ -12,24 +13,8 @@ interface GroupQuickStatsProps {
 
 export default function GroupQuickStats({ groupId }: GroupQuickStatsProps) {
   const t = useSafeTranslations('groups.quickStats')
-  const [data, setData] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const { data, isLoading } = useSWR<any>(`/api/groups/${groupId}/quick-stats`)
   const [isRainbowTheme, setIsRainbowTheme] = useState(false)
-
-  useEffect(() => {
-    fetch(`/api/groups/${groupId}/quick-stats`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.error) {
-          setData(data)
-        }
-        setIsLoading(false)
-      })
-      .catch((err) => {
-        setIsLoading(false)
-        console.error('Error fetching quick stats:', err)
-      })
-  }, [groupId])
 
   useEffect(() => {
     // Check if the page has the rainbow theme class
@@ -56,7 +41,7 @@ export default function GroupQuickStats({ groupId }: GroupQuickStatsProps) {
     )
   }
 
-  if (!data || data.weeksTracked === 0) {
+  if (!data || data.error || data.weeksTracked === 0) {
     return null
   }
 

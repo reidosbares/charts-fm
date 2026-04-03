@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { Link } from '@/i18n/routing'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -25,9 +25,7 @@ interface ActivityItem {
 
 export default function ActivityFeed() {
   const t = useSafeTranslations('dashboard.activityFeed')
-  const [activities, setActivities] = useState<ActivityItem[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { data: activities, error, isLoading } = useSWR<ActivityItem[]>('/api/dashboard/activity')
 
   // Simple relative time formatter
   function formatRelativeTime(date: Date): string {
@@ -41,31 +39,13 @@ export default function ActivityFeed() {
     if (diffMins < 60) return t(diffMins === 1 ? 'minuteAgo' : 'minutesAgo', { count: diffMins })
     if (diffHours < 24) return t(diffHours === 1 ? 'hourAgo' : 'hoursAgo', { count: diffHours })
     if (diffDays < 7) return t(diffDays === 1 ? 'dayAgo' : 'daysAgo', { count: diffDays })
-    
+
     const diffWeeks = Math.floor(diffDays / 7)
     if (diffWeeks < 4) return t(diffWeeks === 1 ? 'weekAgo' : 'weeksAgo', { count: diffWeeks })
-    
+
     const diffMonths = Math.floor(diffDays / 30)
     return t(diffMonths === 1 ? 'monthAgo' : 'monthsAgo', { count: diffMonths })
   }
-
-  useEffect(() => {
-    fetch('/api/dashboard/activity')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          setError(data.error)
-        } else {
-          setActivities(data)
-        }
-        setIsLoading(false)
-      })
-      .catch((err) => {
-        setError(t('failedToLoad'))
-        setIsLoading(false)
-        console.error('Error fetching activity:', err)
-      })
-  }, [t])
 
   const glassStyle = {
     background: 'rgba(255, 255, 255, 0.6)',
@@ -87,7 +67,7 @@ export default function ActivityFeed() {
     )
   }
 
-  if (error || activities.length === 0) {
+  if (error || !activities || activities.length === 0) {
     return (
       <div 
         className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { useRouter } from '@/i18n/routing'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
@@ -15,7 +16,6 @@ export default function SettingsPage() {
   const router = useRouter()
   const t = useTranslations('settings')
   const tCommon = useTranslations('common')
-  const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -27,32 +27,34 @@ export default function SettingsPage() {
   const [originalEmail, setOriginalEmail] = useState<string>('')
   const [emailVerified, setEmailVerified] = useState<boolean>(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [settingsInitialized, setSettingsInitialized] = useState(false)
 
   useEffect(() => {
     document.title = 'ChartsFM - Settings'
   }, [])
 
-  useEffect(() => {
-    fetch('/api/user/profile')
-      .then(res => res.json())
-      .then(data => {
-        if (data.user) {
-          const userLocale = data.user.locale || 'en'
-          setFormData({
-            email: data.user.email || '',
-            locale: userLocale,
-          })
-          setOriginalLocale(userLocale)
-          setOriginalEmail(data.user.email || '')
-          setEmailVerified(data.user.emailVerified || false)
-        }
-        setIsLoading(false)
-      })
-      .catch(err => {
-        setError(t('failedToLoad'))
-        setIsLoading(false)
-      })
-  }, [t])
+  interface SettingsProfileData {
+    user?: {
+      email: string
+      locale: string
+      emailVerified: boolean
+    }
+  }
+
+  const { data: profileData, isLoading, mutate: mutateProfile } = useSWR<SettingsProfileData>('/api/user/profile')
+
+  // Initialize form data from fetched profile
+  if (profileData?.user && !settingsInitialized) {
+    const userLocale = profileData.user.locale || 'en'
+    setFormData({
+      email: profileData.user.email || '',
+      locale: userLocale,
+    })
+    setOriginalLocale(userLocale)
+    setOriginalEmail(profileData.user.email || '')
+    setEmailVerified(profileData.user.emailVerified || false)
+    setSettingsInitialized(true)
+  }
 
   // Map API error messages to translation keys
   const translateError = (errorMessage: string): string => {
@@ -95,10 +97,9 @@ export default function SettingsPage() {
       }
       
       // Reload profile data to get updated verification status
-      const profileResponse = await fetch('/api/user/profile')
-      const profileData = await profileResponse.json()
-      if (profileData.user) {
-        setEmailVerified(profileData.user.emailVerified || false)
+      const refreshed = await mutateProfile()
+      if (refreshed?.user) {
+        setEmailVerified(refreshed.user.emailVerified || false)
       }
       
       // If locale changed, set cookie and reload the page to apply the new locale

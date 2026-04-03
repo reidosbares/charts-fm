@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import useSWR from 'swr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faMinus, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
@@ -11,33 +12,15 @@ interface QuickAccessButtonProps {
 }
 
 export default function QuickAccessButton({ groupId }: QuickAccessButtonProps) {
-  const [isInQuickAccess, setIsInQuickAccess] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
-  const [currentQuickAccessGroup, setCurrentQuickAccessGroup] = useState<{
-    id: string
-    name: string
-  } | null>(null)
 
-  // Check if this group is in quick access
-  useEffect(() => {
-    fetch('/api/user/quick-access')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.group) {
-          setCurrentQuickAccessGroup(data.group)
-          setIsInQuickAccess(data.group.id === groupId)
-        } else {
-          setIsInQuickAccess(false)
-        }
-        setIsLoading(false)
-      })
-      .catch((err) => {
-        console.error('Error fetching quick access:', err)
-        setIsLoading(false)
-      })
-  }, [groupId])
+  const { data: quickAccessData, isLoading, mutate: mutateQuickAccess } = useSWR<{
+    group?: { id: string; name: string } | null
+  }>('/api/user/quick-access')
+
+  const currentQuickAccessGroup = quickAccessData?.group ?? null
+  const isInQuickAccess = currentQuickAccessGroup?.id === groupId
 
   const handleToggle = async () => {
     if (isUpdating) return // Prevent multiple clicks
@@ -50,8 +33,7 @@ export default function QuickAccessButton({ groupId }: QuickAccessButtonProps) {
           method: 'DELETE',
         })
         if (res.ok) {
-          setIsInQuickAccess(false)
-          setCurrentQuickAccessGroup(null)
+          mutateQuickAccess({ group: null }, false)
           // Trigger navbar refresh by dispatching a custom event
           window.dispatchEvent(new Event('quickAccessUpdated'))
         }
@@ -86,8 +68,7 @@ export default function QuickAccessButton({ groupId }: QuickAccessButtonProps) {
       })
       if (res.ok) {
         const data = await res.json()
-        setIsInQuickAccess(true)
-        setCurrentQuickAccessGroup(data.group)
+        mutateQuickAccess({ group: data.group }, false)
         // Trigger navbar refresh
         window.dispatchEvent(new Event('quickAccessUpdated'))
       }

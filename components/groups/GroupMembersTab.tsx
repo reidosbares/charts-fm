@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import useSWR from 'swr'
 import SafeImage from '@/components/SafeImage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
@@ -20,32 +20,9 @@ interface GroupMembersTabProps {
 
 export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
   const t = useSafeTranslations('groups.members')
-  const [data, setData] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  const fetchMembers = useCallback(async () => {
-    setIsLoading(true)
-    try {
-      const res = await fetch(`/api/groups/${groupId}/members`)
-      const data = await res.json()
-      if (data.error) {
-        setError(data.error)
-      } else {
-        setData(data)
-        setError(null)
-      }
-    } catch (err) {
-      setError(t('failedToLoad'))
-      console.error('Error fetching members:', err)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [groupId, t])
-
-  useEffect(() => {
-    fetchMembers()
-  }, [fetchMembers])
+  const { data, error: swrError, isLoading, mutate } = useSWR<any>(`/api/groups/${groupId}/members`)
+  const error = swrError ? t('failedToLoad') : data?.error || null
+  const fetchMembers = () => mutate()
 
   if (isLoading) {
     return (

@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import useSWR from 'swr'
 import { Link } from '@/i18n/routing'
 import { useRouter } from '@/i18n/routing'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -10,28 +11,10 @@ import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 export default function EmptyStateCTA() {
   const t = useSafeTranslations('dashboard.emptyState')
   const router = useRouter()
-  const [groupsCount, setGroupsCount] = useState<number | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: groupsData, isLoading } = useSWR<any[]>('/api/dashboard/groups')
+  const groupsCount = groupsData ? groupsData.length : 0
   const [isCreatingSolo, setIsCreatingSolo] = useState(false)
   const [createSoloError, setCreateSoloError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetch('/api/dashboard/groups')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          setGroupsCount(0)
-        } else {
-          setGroupsCount(Array.isArray(data) ? data.length : 0)
-        }
-        setIsLoading(false)
-      })
-      .catch((err) => {
-        console.error('Error fetching groups:', err)
-        setGroupsCount(0)
-        setIsLoading(false)
-      })
-  }, [])
 
   const handleCreateSolo = async () => {
     if (isCreatingSolo) return
@@ -60,7 +43,7 @@ export default function EmptyStateCTA() {
   }
 
   // Only show if user has no groups
-  if (groupsCount !== null && groupsCount > 0) {
+  if (groupsCount > 0) {
     return null
   }
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import PositionMovementIcon from '@/components/PositionMovementIcon'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMusic, faMicrophone, faCompactDisc, faSpinner } from '@fortawesome/free-solid-svg-icons'
@@ -39,27 +39,7 @@ function formatDisplayValue(
 
 export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGroupWeeklyChartsProps) {
   const t = useSafeTranslations('groups.weeklyCharts')
-  const [data, setData] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetch(`/api/groups/${groupId}/public/weekly-charts`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          setError(data.error)
-        } else {
-          setData(data)
-        }
-        setIsLoading(false)
-      })
-      .catch((err) => {
-        setError(t('failedToLoad'))
-        setIsLoading(false)
-        console.error('Error fetching public weekly charts:', err)
-      })
-  }, [groupId, t])
+  const { data, error, isLoading } = useSWR<any>(`/api/groups/${groupId}/public/weekly-charts`)
 
   if (isLoading) {
     return (
@@ -80,7 +60,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
     )
   }
 
-  if (error || !data || !data.weeks || data.weeks.length === 0) {
+  if (error || !data || data.error || !data.weeks || data.weeks.length === 0) {
     return (
       <div>
         <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)] mb-4 md:mb-6">

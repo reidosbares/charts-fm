@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMusic, faMicrophone, faCompactDisc, faUsers, faSpinner, faMedal, faTrophy } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
@@ -149,10 +150,11 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
   const tUserRecordsRich = useTranslations('records.userRecords')
   const tStatus = useSafeTranslations('records.status')
   const tTabs = useSafeTranslations('records.tabs')
-  const [records, setRecords] = useState<any>(initialRecords)
-  const [isLoading, setIsLoading] = useState(false)
-  const [previewData, setPreviewData] = useState<any>(null)
-  const [isLoadingPreview, setIsLoadingPreview] = useState(true)
+  const { data: recordsResponse, mutate: mutateRecords } = useSWR<any>(`/api/groups/${groupId}/records`)
+  const records = recordsResponse && !recordsResponse.error ? recordsResponse : initialRecords
+  const isLoading = !recordsResponse
+  const { data: previewResponse, isLoading: isLoadingPreview } = useSWR<any>(`/api/groups/${groupId}/records/preview`)
+  const previewData = previewResponse && !previewResponse.error ? previewResponse : null
   
   // Get tab from hash fragment (e.g., #artists)
   const getTabFromHash = (): 'artists' | 'tracks' | 'albums' | 'users' | null => {
@@ -216,36 +218,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
   useEffect(() => {
     // Clean up expired cache entries on mount
     clearExpiredCache()
-    
-    // Fetch records status
-    fetch(`/api/groups/${groupId}/records`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.error) {
-          setRecords(data)
-        }
-        setIsLoading(false)
-      })
-      .catch((err) => {
-        setIsLoading(false)
-        console.error('Error fetching records:', err)
-      })
-
-    // Fetch preview data
-    setIsLoadingPreview(true)
-    fetch(`/api/groups/${groupId}/records/preview`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.error) {
-          setPreviewData(data)
-        }
-        setIsLoadingPreview(false)
-      })
-      .catch((err) => {
-        console.error('Error fetching preview:', err)
-        setIsLoadingPreview(false)
-      })
-  }, [groupId])
+  }, [])
 
   // Extract records data from API response
   const recordsData = records?.records || (initialRecords?.status === 'completed' ? initialRecords.records : null)
@@ -370,18 +343,14 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
         {canRetry && (
           <button
             onClick={async () => {
-              setIsLoading(true)
               try {
                 const res = await fetch(`/api/groups/${groupId}/records`, { method: 'POST' })
                 if (res.ok) {
-                  // Refresh records
-                  const data = await fetch(`/api/groups/${groupId}/records`).then(r => r.json())
-                  setRecords(data)
+                  // Refresh records via SWR
+                  mutateRecords()
                 }
               } catch (err) {
                 console.error('Error triggering recalculation:', err)
-              } finally {
-                setIsLoading(false)
               }
             }}
             className="px-4 py-2 text-sm md:text-base bg-[var(--theme-primary)] text-white rounded-lg hover:opacity-90 transition-opacity"

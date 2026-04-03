@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { useRouter, Link } from '@/i18n/routing'
 import { getDefaultGroupImage } from '@/lib/default-images'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -15,7 +16,6 @@ export default function ProfilePage() {
   const router = useRouter()
   const t = useTranslations('profile')
   const tCommon = useTranslations('common')
-  const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -36,35 +36,43 @@ export default function ProfilePage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [isRemoving, setIsRemoving] = useState(false)
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false)
+  const [profileInitialized, setProfileInitialized] = useState(false)
 
   useEffect(() => {
     document.title = 'ChartsFM - Profile'
   }, [])
 
-  useEffect(() => {
-    fetch('/api/user/profile')
-      .then(res => res.json())
-      .then(data => {
-        if (data.user) {
-          setFormData({
-            name: data.user.name || '',
-            image: data.user.image || '',
-            bio: data.user.bio || '',
-            profilePublic: data.user.profilePublic ?? true,
-            showProfileStats: data.user.showProfileStats ?? true,
-            showProfileGroups: data.user.showProfileGroups ?? true,
-            highlightedGroupId: data.user.highlightedGroupId || null,
-          })
-          setProfileGroups(data.groups || [])
-          setLastfmUsername(data.user.lastfmUsername || null)
-        }
-        setIsLoading(false)
-      })
-      .catch(err => {
-        setError(t('failedToLoad'))
-        setIsLoading(false)
-      })
-  }, [t])
+  interface ProfileData {
+    user?: {
+      name: string | null
+      image: string | null
+      bio: string | null
+      profilePublic: boolean
+      showProfileStats: boolean
+      showProfileGroups: boolean
+      highlightedGroupId: string | null
+      lastfmUsername: string | null
+    }
+    groups?: { id: string; name: string }[]
+  }
+
+  const { data: profileData, isLoading, mutate: mutateProfile } = useSWR<ProfileData>('/api/user/profile')
+
+  // Initialize form data from fetched profile
+  if (profileData?.user && !profileInitialized) {
+    setFormData({
+      name: profileData.user.name || '',
+      image: profileData.user.image || '',
+      bio: profileData.user.bio || '',
+      profilePublic: profileData.user.profilePublic ?? true,
+      showProfileStats: profileData.user.showProfileStats ?? true,
+      showProfileGroups: profileData.user.showProfileGroups ?? true,
+      highlightedGroupId: profileData.user.highlightedGroupId || null,
+    })
+    setProfileGroups(profileData.groups || [])
+    setLastfmUsername(profileData.user.lastfmUsername || null)
+    setProfileInitialized(true)
+  }
 
   // Map API error messages to translation keys
   const translateError = (errorMessage: string): string => {
@@ -178,18 +186,17 @@ export default function ProfilePage() {
       }
 
       // Reload profile data to get the updated image
-      const profileResponse = await fetch('/api/user/profile')
-      const profileData = await profileResponse.json()
-      
-      if (profileData.user) {
+      const refreshed = await mutateProfile()
+
+      if (refreshed?.user) {
         setFormData(prev => ({
           ...prev,
-          image: profileData.user.image || '',
+          image: refreshed.user?.image || '',
         }))
       }
-      
+
       setSuccess(true)
-      
+
       // Clear file selection
       setSelectedFile(null)
       setPreviewUrl(null)
@@ -230,16 +237,15 @@ export default function ProfilePage() {
       }
 
       // Reload profile data to get updated state
-      const profileResponse = await fetch('/api/user/profile')
-      const profileData = await profileResponse.json()
-      
-      if (profileData.user) {
+      const refreshed = await mutateProfile()
+
+      if (refreshed?.user) {
         setFormData(prev => ({
           ...prev,
-          image: profileData.user.image || '',
+          image: refreshed.user?.image || '',
         }))
       }
-      
+
       setSuccess(true)
     } catch (err) {
       setError(err instanceof Error ? err.message : t('removePicture.failed'))

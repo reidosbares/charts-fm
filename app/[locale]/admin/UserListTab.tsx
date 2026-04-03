@@ -1,6 +1,8 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import useSWR from 'swr'
+
 interface User {
   id: string
   email: string
@@ -20,8 +22,6 @@ type SortDirection = 'asc' | 'desc'
 export default function UserListTab() {
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
-  const [users, setUsers] = useState<User[]>([])
-  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [updatingUsers, setUpdatingUsers] = useState<Set<string>>(new Set())
   const [sortColumn, setSortColumn] = useState<SortColumn>('lastAccessedAt')
@@ -37,34 +37,12 @@ export default function UserListTab() {
     return () => clearTimeout(timer)
   }, [searchQuery])
 
-  const searchUsers = useCallback(async (query: string) => {
-    setIsLoading(true)
-    setError(null)
+  const searchUrl = debouncedQuery
+    ? `/api/admin/users/search?q=${encodeURIComponent(debouncedQuery)}`
+    : '/api/admin/users/search'
 
-    try {
-      const url = query
-        ? `/api/admin/users/search?q=${encodeURIComponent(query)}`
-        : '/api/admin/users/search'
-      
-      const response = await fetch(url)
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to search users')
-      }
-
-      setUsers(data.users || [])
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-      setUsers([])
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    searchUsers(debouncedQuery)
-  }, [debouncedQuery, searchUsers])
+  const { data: searchData, isLoading, mutate: mutateUsers } = useSWR<{ users?: User[] }>(searchUrl)
+  const users = searchData?.users ?? []
 
   const toggleVerification = async (userId: string, currentStatus: boolean) => {
     setUpdatingUsers(prev => new Set(prev).add(userId))
@@ -85,13 +63,17 @@ export default function UserListTab() {
         throw new Error(data.error || 'Failed to update verification status')
       }
 
-      // Update the user in the local state
-      setUsers(prevUsers =>
-        prevUsers.map(user =>
-          user.id === userId
-            ? { ...user, emailVerified: !currentStatus }
-            : user
-        )
+      // Update the user in the local SWR cache
+      mutateUsers(
+        (current) => current ? {
+          ...current,
+          users: (current.users || []).map(user =>
+            user.id === userId
+              ? { ...user, emailVerified: !currentStatus }
+              : user
+          ),
+        } : current,
+        false
       )
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update verification status')

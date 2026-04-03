@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useMemo, memo } from 'react'
+import { useMemo, memo } from 'react'
+import useSWR from 'swr'
 import { Link } from '@/i18n/routing'
 import SafeImage from '@/components/SafeImage'
 import { getDefaultGroupImage } from '@/lib/default-images'
@@ -136,42 +137,8 @@ interface QuickActionsData {
 export default function GroupQuickViewCards() {
   const t = useSafeTranslations('dashboard.groupQuickView')
   const tQuick = useSafeTranslations('dashboard.quickActions')
-  const [groups, setGroups] = useState<GroupQuickView[]>([])
-  const [quickActions, setQuickActions] = useState<QuickActionsData | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetch('/api/dashboard/groups')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          setError(data.error)
-        } else {
-          setGroups(data)
-        }
-        setIsLoading(false)
-      })
-      .catch((err) => {
-        setError(t('failedToLoad'))
-        setIsLoading(false)
-        console.error('Error fetching groups:', err)
-      })
-  }, [t])
-
-  useEffect(() => {
-    fetch('/api/dashboard/quick-actions')
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.error) {
-          setQuickActions({
-            pendingInvitesCount: data.pendingInvitesCount ?? 0,
-            pendingRequestsCount: data.pendingRequestsCount ?? 0,
-          })
-        }
-      })
-      .catch(() => {})
-  }, [])
+  const { data: groups, error, isLoading } = useSWR<GroupQuickView[]>('/api/dashboard/groups')
+  const { data: quickActions } = useSWR<QuickActionsData>('/api/dashboard/quick-actions')
 
   const glassStyle = {
     background: 'rgba(255, 255, 255, 0.6)',
@@ -193,7 +160,7 @@ export default function GroupQuickViewCards() {
     )
   }
 
-  if (error || groups.length === 0) {
+  if (error || !groups || groups.length === 0) {
     const pendingInvites = quickActions?.pendingInvitesCount ?? 0
     const pendingRequests = quickActions?.pendingRequestsCount ?? 0
     const hasNotificationBanners = pendingInvites > 0 || pendingRequests > 0

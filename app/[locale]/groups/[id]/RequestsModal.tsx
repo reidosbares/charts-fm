@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import useSWR from 'swr'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
@@ -34,8 +35,6 @@ export default function RequestsModal({
   onRequestProcessed,
 }: RequestsModalProps) {
   const t = useSafeTranslations('groups.members.requestsModal')
-  const [requests, setRequests] = useState<Request[]>([])
-  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [processingId, setProcessingId] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
@@ -46,31 +45,10 @@ export default function RequestsModal({
     return () => setMounted(false)
   }, [])
 
-  const fetchRequests = useCallback(async () => {
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      const response = await fetch(`/api/groups/${groupId}/requests`)
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || t('error.failedToFetch'))
-      }
-
-      setRequests(data.requests || [])
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('error.failedToFetch'))
-    } finally {
-      setIsLoading(false)
-    }
-  }, [groupId, t])
-
-  useEffect(() => {
-    if (isOpen) {
-      fetchRequests()
-    }
-  }, [isOpen, fetchRequests])
+  const { data: requestsData, isLoading, mutate: mutateRequests } = useSWR<{ requests?: Request[] }>(
+    isOpen ? `/api/groups/${groupId}/requests` : null
+  )
+  const requests = requestsData?.requests ?? []
 
   const handleAccept = async (requestId: string) => {
     setProcessingId(requestId)
@@ -90,8 +68,11 @@ export default function RequestsModal({
         throw new Error(data.error || t('error.failedToAccept'))
       }
 
-      // Remove the accepted request from the list
-      setRequests((prev) => prev.filter((r) => r.id !== requestId))
+      // Remove the accepted request from the local cache
+      mutateRequests(
+        (current) => current ? { ...current, requests: (current.requests || []).filter((r) => r.id !== requestId) } : current,
+        false
+      )
       // Optionally notify parent (without forcing page reload)
       onRequestProcessed?.()
     } catch (err) {
@@ -119,8 +100,11 @@ export default function RequestsModal({
         throw new Error(data.error || t('error.failedToReject'))
       }
 
-      // Remove the rejected request from the list
-      setRequests((prev) => prev.filter((r) => r.id !== requestId))
+      // Remove the rejected request from the local cache
+      mutateRequests(
+        (current) => current ? { ...current, requests: (current.requests || []).filter((r) => r.id !== requestId) } : current,
+        false
+      )
       // Optionally notify parent (without forcing page reload)
       onRequestProcessed?.()
     } catch (err) {

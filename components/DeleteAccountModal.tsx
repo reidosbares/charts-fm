@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
+import useSWR from 'swr'
 import { useRouter } from '@/i18n/routing'
 import { signOut } from 'next-auth/react'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
@@ -23,33 +24,13 @@ export default function DeleteAccountModal({
   const t = useSafeTranslations('profile.deleteAccountModal')
   const tCommon = useSafeTranslations('common')
   const [isLoading, setIsLoading] = useState(false)
-  const [isLoadingGroups, setIsLoadingGroups] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [confirmText, setConfirmText] = useState('')
-  const [ownedGroups, setOwnedGroups] = useState<OwnedGroup[]>([])
 
-  useEffect(() => {
-    if (isOpen) {
-      // Fetch user's owned groups
-      fetch('/api/user/owned-groups')
-        .then(res => res.json())
-        .then(data => {
-          if (data.groups) {
-            setOwnedGroups(data.groups)
-          }
-          setIsLoadingGroups(false)
-        })
-        .catch(err => {
-          console.error('Error fetching owned groups:', err)
-          setIsLoadingGroups(false)
-        })
-    } else {
-      // Reset state when modal closes
-      setConfirmText('')
-      setError(null)
-      setOwnedGroups([])
-    }
-  }, [isOpen])
+  const { data: groupsData, isLoading: isLoadingGroups } = useSWR<{ groups?: OwnedGroup[] }>(
+    isOpen ? '/api/user/owned-groups' : null
+  )
+  const ownedGroups = groupsData?.groups ?? []
 
   const handleDelete = async () => {
     if (confirmText !== 'DELETE') {

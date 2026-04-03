@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { Link } from '@/i18n/routing'
 import SafeImage from '@/components/SafeImage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -13,31 +13,7 @@ interface GroupHeroProps {
 }
 
 export default function GroupHero({ groupId }: GroupHeroProps) {
-  const [data, setData] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    // Add cache-busting parameter to ensure fresh data, especially for dynamic covers
-    const cacheBuster = Date.now()
-    fetch(`/api/groups/${groupId}/hero?t=${cacheBuster}`, {
-      cache: 'no-store',
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          setError(data.error)
-        } else {
-          setData(data)
-        }
-        setIsLoading(false)
-      })
-      .catch((err) => {
-        setError('Failed to load group data')
-        setIsLoading(false)
-        console.error('Error fetching group hero:', err)
-      })
-  }, [groupId])
+  const { data, error, isLoading, mutate } = useSWR<any>(`/api/groups/${groupId}/hero`)
 
   if (isLoading) {
     return (
@@ -51,12 +27,12 @@ export default function GroupHero({ groupId }: GroupHeroProps) {
     )
   }
 
-  if (error || !data) {
+  if (error || !data || data.error) {
     return (
       <div className="mb-6 md:mb-8 relative">
         <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm p-4 md:p-6 lg:p-8 border border-gray-200">
           <div className="text-center py-6 md:py-8 text-gray-500 text-sm md:text-base">
-            <p>{error || 'Failed to load group data'}</p>
+            <p>{data?.error || 'Failed to load group data'}</p>
           </div>
         </div>
       </div>
@@ -68,19 +44,7 @@ export default function GroupHero({ groupId }: GroupHeroProps) {
   
   const handleUpdateComplete = () => {
     // Refresh data after update completes
-    const cacheBuster = Date.now()
-    fetch(`/api/groups/${groupId}/hero?t=${cacheBuster}`, {
-      cache: 'no-store',
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.error) {
-          setData(data)
-        }
-      })
-      .catch((err) => {
-        console.error('Error refreshing group hero:', err)
-      })
+    mutate()
   }
 
   return (

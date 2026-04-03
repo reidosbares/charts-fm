@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState, memo } from 'react'
+import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 import { Link } from '@/i18n/routing'
 import ChartHistoryTimeline from '@/components/charts/ChartHistoryTimeline'
 import QuickStats from '@/components/charts/QuickStats'
@@ -115,55 +116,34 @@ export default function DeepDiveClient({
   albumNameForImage,
 }: DeepDiveClientProps) {
   const t = useSafeTranslations('deepDive.client')
-  const [stats, setStats] = useState<EntryStats | null>(null)
-  const [majorDriver, setMajorDriver] = useState<MajorDriver | null>(null)
-  const [totals, setTotals] = useState<{ totalVS: number | null; totalPlays: number; weeksAtNumberOne: number } | null>(null)
-  const [artistEntries, setArtistEntries] = useState<{ tracks: ArtistChartEntry[]; albums: ArtistChartEntry[] } | null>(null)
-  const [numberOnes, setNumberOnes] = useState<{ numberOneTracks: number; numberOneAlbums: number } | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: deepDiveData, isLoading: loading } = useSWR<any>(
+    `/api/groups/${groupId}/charts/${chartType}/${encodeURIComponent(slug)}`
+  )
+
+  // Parse dates from API response
+  const stats: EntryStats | null = deepDiveData?.stats
+    ? {
+        ...deepDiveData.stats,
+        debutDate: deepDiveData.stats.debutDate ? new Date(deepDiveData.stats.debutDate) : null,
+        latestAppearance: deepDiveData.stats.latestAppearance ? new Date(deepDiveData.stats.latestAppearance) : null,
+        longestStreakStartDate: deepDiveData.stats.longestStreakStartDate ? new Date(deepDiveData.stats.longestStreakStartDate) : null,
+        longestStreakEndDate: deepDiveData.stats.longestStreakEndDate ? new Date(deepDiveData.stats.longestStreakEndDate) : null,
+      }
+    : null
+  const majorDriver: MajorDriver | null = deepDiveData?.majorDriver || null
+  const totals: { totalVS: number | null; totalPlays: number; weeksAtNumberOne: number } | null = deepDiveData?.totals || null
+  const artistEntries: { tracks: ArtistChartEntry[]; albums: ArtistChartEntry[] } | null = isArtist ? (deepDiveData?.artistEntries || null) : null
+  const numberOnes: { numberOneTracks: number; numberOneAlbums: number } | null = isArtist ? (deepDiveData?.numberOnes || null) : null
+
   const [imageUrl, setImageUrl] = useState<string | null | undefined>(initialImageUrl)
   const [newDriverNotification, setNewDriverNotification] = useState<{ name: string } | null>(null)
 
+  // Show notification if major driver was newly claimed
   useEffect(() => {
-    async function loadData() {
-      try {
-        const response = await fetch(`/api/groups/${groupId}/charts/${chartType}/${encodeURIComponent(slug)}`)
-        if (!response.ok) {
-          console.error('Failed to load deep dive data')
-          return
-        }
-
-        const data = await response.json()
-        // Parse dates from API response
-        if (data.stats) {
-          setStats({
-            ...data.stats,
-            debutDate: data.stats.debutDate ? new Date(data.stats.debutDate) : null,
-            latestAppearance: data.stats.latestAppearance ? new Date(data.stats.latestAppearance) : null,
-            longestStreakStartDate: data.stats.longestStreakStartDate ? new Date(data.stats.longestStreakStartDate) : null,
-            longestStreakEndDate: data.stats.longestStreakEndDate ? new Date(data.stats.longestStreakEndDate) : null,
-          })
-        }
-        setMajorDriver(data.majorDriver)
-        setTotals(data.totals)
-        if (isArtist) {
-          setArtistEntries(data.artistEntries)
-          setNumberOnes(data.numberOnes)
-        }
-        
-        // Show notification if major driver was newly claimed
-        if (data.majorDriverNewlyClaimed && data.majorDriver) {
-          setNewDriverNotification({ name: data.majorDriver.name })
-        }
-      } catch (error) {
-        console.error('Error loading deep dive data:', error)
-      } finally {
-        setLoading(false)
-      }
+    if (deepDiveData?.majorDriverNewlyClaimed && deepDiveData?.majorDriver) {
+      setNewDriverNotification({ name: deepDiveData.majorDriver.name })
     }
-
-    loadData()
-  }, [groupId, chartType, slug, isArtist])
+  }, [deepDiveData])
 
   // Auto-dismiss notification after 5 seconds
   useEffect(() => {

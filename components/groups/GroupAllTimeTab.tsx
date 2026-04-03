@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { Link } from '@/i18n/routing'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -94,65 +95,18 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
   const t = useSafeTranslations('groups.allTimeStats')
   const tImpact = useSafeTranslations('records.myContribution')
   const tUserRecords = useSafeTranslations('records.userRecords')
-  const [data, setData] = useState<any>(null)
-  const [recordsData, setRecordsData] = useState<any>(null)
-  const [impactStats, setImpactStats] = useState<any>(null)
-  const [impactLoading, setImpactLoading] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [recordsLoading, setRecordsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+
+  const { data, error: statsError, isLoading } = useSWR<any>(`/api/groups/${groupId}/alltime-stats`)
+  const error = statsError ? t('failedToLoad') : data?.error || null
+
+  const { data: recordsData, isLoading: recordsLoading } = useSWR<any>(`/api/groups/${groupId}/records`)
+
+  const { data: rawImpactStats, isLoading: impactLoading } = useSWR<any>(
+    userId ? `/api/groups/${groupId}/records/personalized` : null
+  )
+  const impactStats = rawImpactStats && !rawImpactStats.error && rawImpactStats.hasStats ? rawImpactStats : null
+
   const [recordImages, setRecordImages] = useState<Record<string, string | null>>({})
-
-  useEffect(() => {
-    fetch(`/api/groups/${groupId}/alltime-stats`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          setError(data.error)
-        } else {
-          setData(data)
-        }
-        setIsLoading(false)
-      })
-      .catch((err) => {
-        setError(t('failedToLoad'))
-        setIsLoading(false)
-        console.error('Error fetching all-time stats:', err)
-      })
-
-    fetch(`/api/groups/${groupId}/records`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.error) {
-          setRecordsData(data)
-        }
-        setRecordsLoading(false)
-      })
-      .catch(() => setRecordsLoading(false))
-  }, [groupId, t])
-
-  useEffect(() => {
-    if (!userId) {
-      setImpactStats(null)
-      setImpactLoading(false)
-      return
-    }
-    setImpactLoading(true)
-    fetch(`/api/groups/${groupId}/records/personalized`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.error && data.hasStats) {
-          setImpactStats(data)
-        } else {
-          setImpactStats(null)
-        }
-        setImpactLoading(false)
-      })
-      .catch(() => {
-        setImpactStats(null)
-        setImpactLoading(false)
-      })
-  }, [groupId, userId])
 
   // Fetch images for record entries (most weeks on chart, most at #1, most plays, etc.)
   useEffect(() => {

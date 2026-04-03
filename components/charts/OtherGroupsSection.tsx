@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
+import useSWR from 'swr'
 import { Link } from '@/i18n/routing'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 import SafeImage from '@/components/SafeImage'
@@ -36,42 +37,14 @@ export default function OtherGroupsSection({
   slug,
 }: OtherGroupsSectionProps) {
   const t = useSafeTranslations('deepDive.otherGroups')
-  const [loading, setLoading] = useState(true)
-  const [otherGroups, setOtherGroups] = useState<OtherGroup[] | null>(null)
-  const [error, setError] = useState(false)
+  const { data, error, isLoading: loading } = useSWR<{ otherGroups: OtherGroup[] }>(
+    `/api/groups/${groupId}/charts/${chartType}/${encodeURIComponent(slug)}/other-groups`
+  )
   const [index, setIndex] = useState(0)
   const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('right')
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  useEffect(() => {
-    let cancelled = false
-    setLoading(true)
-    setError(false)
-    setIndex(0)
-    fetch(
-      `/api/groups/${groupId}/charts/${chartType}/${encodeURIComponent(slug)}/other-groups`
-    )
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to load')
-        return res.json()
-      })
-      .then((data) => {
-        if (!cancelled) {
-          setOtherGroups(data.otherGroups ?? [])
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setError(true)
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [groupId, chartType, slug])
-
-  const groups = otherGroups ?? []
+  const groups = data?.otherGroups ?? []
   const hasGroups = groups.length > 0
   const currentGroup = hasGroups ? groups[index] : null
 
@@ -121,9 +94,7 @@ export default function OtherGroupsSection({
     )
   }
 
-  if (error) {
-    return null
-  }
+  if (error) return null
 
   return (
     <section

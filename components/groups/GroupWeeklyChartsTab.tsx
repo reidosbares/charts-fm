@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { Link } from '@/i18n/routing'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMusic, faMicrophone, faCompactDisc, faSpinner, faTrophy } from '@fortawesome/free-solid-svg-icons'
@@ -185,9 +186,8 @@ function formatDisplayValue(
 
 export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = false }: GroupWeeklyChartsTabProps) {
   const t = useSafeTranslations('groups.weeklyCharts')
-  const [data, setData] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { data, error: swrError, isLoading } = useSWR<any>(`/api/groups/${groupId}/weekly-charts`)
+  const error = swrError ? t('failedToLoad') : data?.error || null
   const [images, setImages] = useState<{
     topArtist: string | null
     topTrackArtist: string | null
@@ -210,109 +210,89 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
   useEffect(() => {
     // Clean up expired cache entries on mount
     clearExpiredCache()
-    
-    fetch(`/api/groups/${groupId}/weekly-charts`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          setError(data.error)
-        } else {
-          setData(data)
-          
-          // Fetch images for top items with caching
-          if (data.latestWeek) {
-            const { topArtists, topTracks, topAlbums } = data.latestWeek
-            
-            // Fetch top artist image
-            if (topArtists && topArtists.length > 0) {
-              const artistName = topArtists[0].name
-              const cachedUrl = getCachedImage('artist', artistName)
-              
-              if (cachedUrl !== undefined) {
-                // Use cached image (could be URL string or null for failed attempts)
-                setImages((prev) => ({ ...prev, topArtist: cachedUrl }))
-              } else {
-                // Not cached yet, fetch from API
-                setImagesLoading((prev) => ({ ...prev, topArtist: true }))
-                fetch(`/api/images/artist?artist=${encodeURIComponent(artistName)}`)
-                  .then((res) => res.json())
-                  .then((result) => {
-                    const imageUrl = result.imageUrl || null
-                    setImages((prev) => ({ ...prev, topArtist: imageUrl }))
-                    setCachedImage('artist', artistName, imageUrl) // Cache result (URL or null)
-                    setImagesLoading((prev) => ({ ...prev, topArtist: false }))
-                  })
-                  .catch(() => {
-                    setImages((prev) => ({ ...prev, topArtist: null }))
-                    setCachedImage('artist', artistName, null) // Cache null to avoid repeated failed requests
-                    setImagesLoading((prev) => ({ ...prev, topArtist: false }))
-                  })
-              }
-            }
-            
-            // Fetch top track artist image
-            if (topTracks && topTracks.length > 0 && topTracks[0].artist) {
-              const artistName = topTracks[0].artist
-              const cachedUrl = getCachedImage('artist', artistName)
-              
-              if (cachedUrl !== undefined) {
-                // Use cached image (could be URL string or null for failed attempts)
-                setImages((prev) => ({ ...prev, topTrackArtist: cachedUrl }))
-              } else {
-                // Not cached yet, fetch from API
-                setImagesLoading((prev) => ({ ...prev, topTrackArtist: true }))
-                fetch(`/api/images/artist?artist=${encodeURIComponent(artistName)}`)
-                  .then((res) => res.json())
-                  .then((result) => {
-                    const imageUrl = result.imageUrl || null
-                    setImages((prev) => ({ ...prev, topTrackArtist: imageUrl }))
-                    setCachedImage('artist', artistName, imageUrl) // Cache result (URL or null)
-                    setImagesLoading((prev) => ({ ...prev, topTrackArtist: false }))
-                  })
-                  .catch(() => {
-                    setImages((prev) => ({ ...prev, topTrackArtist: null }))
-                    setCachedImage('artist', artistName, null) // Cache null to avoid repeated failed requests
-                    setImagesLoading((prev) => ({ ...prev, topTrackArtist: false }))
-                  })
-              }
-            }
-            
-            // Fetch top album image
-            if (topAlbums && topAlbums.length > 0 && topAlbums[0].artist && topAlbums[0].name) {
-              const albumKey = `${topAlbums[0].artist}|${topAlbums[0].name}`
-              const cachedUrl = getCachedImage('album', albumKey)
-              
-              if (cachedUrl !== undefined) {
-                // Use cached image (could be URL string or null for failed attempts)
-                setImages((prev) => ({ ...prev, topAlbum: cachedUrl }))
-              } else {
-                // Not cached yet, fetch from API
-                setImagesLoading((prev) => ({ ...prev, topAlbum: true }))
-                fetch(`/api/images/album?artist=${encodeURIComponent(topAlbums[0].artist)}&album=${encodeURIComponent(topAlbums[0].name)}`)
-                  .then((res) => res.json())
-                  .then((result) => {
-                    const imageUrl = result.imageUrl || null
-                    setImages((prev) => ({ ...prev, topAlbum: imageUrl }))
-                    setCachedImage('album', albumKey, imageUrl) // Cache result (URL or null)
-                    setImagesLoading((prev) => ({ ...prev, topAlbum: false }))
-                  })
-                  .catch(() => {
-                    setImages((prev) => ({ ...prev, topAlbum: null }))
-                    setCachedImage('album', albumKey, null) // Cache null to avoid repeated failed requests
-                    setImagesLoading((prev) => ({ ...prev, topAlbum: false }))
-                  })
-              }
-            }
-          }
-        }
-        setIsLoading(false)
-      })
-      .catch((err) => {
-        setError(t('failedToLoad'))
-        setIsLoading(false)
-        console.error('Error fetching weekly charts:', err)
-      })
-  }, [groupId, t])
+  }, [])
+
+  // Fetch images for top items with caching when data loads
+  useEffect(() => {
+    if (!data?.latestWeek) return
+
+    const { topArtists, topTracks, topAlbums } = data.latestWeek
+
+    // Fetch top artist image
+    if (topArtists && topArtists.length > 0) {
+      const artistName = topArtists[0].name
+      const cachedUrl = getCachedImage('artist', artistName)
+
+      if (cachedUrl !== undefined) {
+        setImages((prev) => ({ ...prev, topArtist: cachedUrl }))
+      } else {
+        setImagesLoading((prev) => ({ ...prev, topArtist: true }))
+        fetch(`/api/images/artist?artist=${encodeURIComponent(artistName)}`)
+          .then((res) => res.json())
+          .then((result) => {
+            const imageUrl = result.imageUrl || null
+            setImages((prev) => ({ ...prev, topArtist: imageUrl }))
+            setCachedImage('artist', artistName, imageUrl)
+            setImagesLoading((prev) => ({ ...prev, topArtist: false }))
+          })
+          .catch(() => {
+            setImages((prev) => ({ ...prev, topArtist: null }))
+            setCachedImage('artist', artistName, null)
+            setImagesLoading((prev) => ({ ...prev, topArtist: false }))
+          })
+      }
+    }
+
+    // Fetch top track artist image
+    if (topTracks && topTracks.length > 0 && topTracks[0].artist) {
+      const artistName = topTracks[0].artist
+      const cachedUrl = getCachedImage('artist', artistName)
+
+      if (cachedUrl !== undefined) {
+        setImages((prev) => ({ ...prev, topTrackArtist: cachedUrl }))
+      } else {
+        setImagesLoading((prev) => ({ ...prev, topTrackArtist: true }))
+        fetch(`/api/images/artist?artist=${encodeURIComponent(artistName)}`)
+          .then((res) => res.json())
+          .then((result) => {
+            const imageUrl = result.imageUrl || null
+            setImages((prev) => ({ ...prev, topTrackArtist: imageUrl }))
+            setCachedImage('artist', artistName, imageUrl)
+            setImagesLoading((prev) => ({ ...prev, topTrackArtist: false }))
+          })
+          .catch(() => {
+            setImages((prev) => ({ ...prev, topTrackArtist: null }))
+            setCachedImage('artist', artistName, null)
+            setImagesLoading((prev) => ({ ...prev, topTrackArtist: false }))
+          })
+      }
+    }
+
+    // Fetch top album image
+    if (topAlbums && topAlbums.length > 0 && topAlbums[0].artist && topAlbums[0].name) {
+      const albumKey = `${topAlbums[0].artist}|${topAlbums[0].name}`
+      const cachedUrl = getCachedImage('album', albumKey)
+
+      if (cachedUrl !== undefined) {
+        setImages((prev) => ({ ...prev, topAlbum: cachedUrl }))
+      } else {
+        setImagesLoading((prev) => ({ ...prev, topAlbum: true }))
+        fetch(`/api/images/album?artist=${encodeURIComponent(topAlbums[0].artist)}&album=${encodeURIComponent(topAlbums[0].name)}`)
+          .then((res) => res.json())
+          .then((result) => {
+            const imageUrl = result.imageUrl || null
+            setImages((prev) => ({ ...prev, topAlbum: imageUrl }))
+            setCachedImage('album', albumKey, imageUrl)
+            setImagesLoading((prev) => ({ ...prev, topAlbum: false }))
+          })
+          .catch(() => {
+            setImages((prev) => ({ ...prev, topAlbum: null }))
+            setCachedImage('album', albumKey, null)
+            setImagesLoading((prev) => ({ ...prev, topAlbum: false }))
+          })
+      }
+    }
+  }, [data])
 
   const cardBase = 'rounded-2xl p-4 md:p-5 backdrop-blur-md bg-white/70 border border-white/50 shadow-lg'
 

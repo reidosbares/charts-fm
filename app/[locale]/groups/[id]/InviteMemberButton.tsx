@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import useSWR from 'swr'
 import dynamic from 'next/dynamic'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
@@ -21,28 +22,11 @@ interface InviteMemberButtonProps {
 export default function InviteMemberButton({ groupId, onInviteSent }: InviteMemberButtonProps) {
   const t = useSafeTranslations('groups.members')
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [memberCount, setMemberCount] = useState<number | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchMemberCount = async () => {
-      try {
-        const res = await fetch(`/api/groups/${groupId}/members`)
-        const data = await res.json()
-        if (data.members) {
-          setMemberCount(data.members.length)
-        }
-      } catch (err) {
-        console.error('Error fetching member count:', err)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    if (groupId) {
-      fetchMemberCount()
-    }
-  }, [groupId, isModalOpen])
+  const { data: membersData, mutate: mutateMembers } = useSWR<{ members?: any[] }>(
+    groupId ? `/api/groups/${groupId}/members` : null
+  )
+  const memberCount = membersData?.members?.length ?? null
 
   const isAtLimit = memberCount !== null && memberCount >= MAX_GROUP_MEMBERS
 
@@ -64,7 +48,7 @@ export default function InviteMemberButton({ groupId, onInviteSent }: InviteMemb
         groupId={groupId}
         onInviteSent={() => {
           if (onInviteSent) onInviteSent()
-          setMemberCount(prev => prev !== null ? prev + 1 : null)
+          mutateMembers()
         }}
         memberCount={memberCount}
       />

@@ -1,5 +1,8 @@
 'use client'
 
+// TODO: This component's pagination/infinite scroll pattern could be migrated to useSWRInfinite
+// for better caching and revalidation. Keeping current implementation for now due to complexity
+// of the filter combination + client-side post-filtering.
 import { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react'
 import { useRouter } from '@/i18n/routing'
 import { Link } from '@/i18n/routing'
