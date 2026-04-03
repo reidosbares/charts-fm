@@ -39,11 +39,11 @@ const awardColorSchemes: Record<string, {
   ribbonColor: string
 }> = {
   'VS Virtuoso': {
-    bgGradient: 'from-slate-50 to-gray-50',
-    borderColor: 'border-slate-300',
-    titleColor: 'text-slate-700',
-    accentColor: 'text-slate-600',
-    ribbonColor: 'bg-slate-400',
+    bgGradient: 'from-amber-50 to-yellow-50',
+    borderColor: 'border-amber-300',
+    titleColor: 'text-amber-700',
+    accentColor: 'text-amber-600',
+    ribbonColor: 'bg-amber-500',
   },
   'Play Powerhouse': {
     bgGradient: 'from-red-50 to-rose-50',
@@ -53,18 +53,18 @@ const awardColorSchemes: Record<string, {
     ribbonColor: 'bg-red-500',
   },
   'Chart Connoisseur': {
-    bgGradient: 'from-yellow-50 to-amber-50',
-    borderColor: 'border-yellow-300',
-    titleColor: 'text-yellow-700',
-    accentColor: 'text-yellow-600',
-    ribbonColor: 'bg-orange-500',
+    bgGradient: 'from-sky-50 to-blue-50',
+    borderColor: 'border-sky-300',
+    titleColor: 'text-sky-700',
+    accentColor: 'text-sky-600',
+    ribbonColor: 'bg-sky-500',
   },
   'Hidden Gem Hunter': {
-    bgGradient: 'from-cyan-50 to-blue-50',
-    borderColor: 'border-cyan-300',
-    titleColor: 'text-cyan-700',
-    accentColor: 'text-cyan-600',
-    ribbonColor: 'bg-blue-500',
+    bgGradient: 'from-teal-50 to-cyan-50',
+    borderColor: 'border-teal-300',
+    titleColor: 'text-teal-700',
+    accentColor: 'text-teal-600',
+    ribbonColor: 'bg-teal-500',
   },
   'One Track Mind': {
     bgGradient: 'from-violet-50 to-purple-50',

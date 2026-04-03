@@ -16,10 +16,10 @@ import ClearHighlightedGroupButton from '@/components/profile/ClearHighlightedGr
 
 // Same award colors as RecordBlock on the records page
 const AWARD_BADGE_CLASSES: Record<string, string> = {
-  vsVirtuoso: 'bg-gradient-to-br from-slate-50 to-gray-50 border-slate-300 text-slate-700',
+  vsVirtuoso: 'bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-300 text-amber-700',
   playPowerhouse: 'bg-gradient-to-br from-red-50 to-rose-50 border-red-300 text-red-700',
-  chartConnoisseur: 'bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-300 text-yellow-700',
-  hiddenGemHunter: 'bg-gradient-to-br from-cyan-50 to-blue-50 border-cyan-300 text-cyan-700',
+  chartConnoisseur: 'bg-gradient-to-br from-sky-50 to-blue-50 border-sky-300 text-sky-700',
+  hiddenGemHunter: 'bg-gradient-to-br from-teal-50 to-cyan-50 border-teal-300 text-teal-700',
   oneTrackMind: 'bg-gradient-to-br from-violet-50 to-purple-50 border-violet-300 text-violet-700',
   tasteMaker: 'bg-gradient-to-br from-pink-50 to-fuchsia-50 border-pink-300 text-pink-700',
 }

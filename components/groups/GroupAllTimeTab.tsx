@@ -40,10 +40,10 @@ const USER_RECORD_AWARD_KEYS: Record<string, string> = {
 
 // Ribbon colors per award key – same scheme as RecordBlock on the records page
 const AWARD_RIBBON_COLORS: Record<string, string> = {
-  vsVirtuoso: 'bg-slate-400',
+  vsVirtuoso: 'bg-amber-500',
   playPowerhouse: 'bg-red-500',
-  chartConnoisseur: 'bg-orange-500',
-  hiddenGemHunter: 'bg-blue-500',
+  chartConnoisseur: 'bg-sky-500',
+  hiddenGemHunter: 'bg-teal-500',
   oneTrackMind: 'bg-violet-500',
   tasteMaker: 'bg-pink-500',
 }
