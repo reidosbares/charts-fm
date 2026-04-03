@@ -2,7 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { DayPicker } from 'react-day-picker'
-import { getWeekStart, getWeekStartForDay, formatWeekDate, utcToLocalDate } from '@/lib/weekly-utils'
+import {
+  getWeekStartForDay,
+  formatWeekDate,
+  formatChartWeekDate,
+  getChartWeekReferenceDate,
+  utcToLocalDate,
+} from '@/lib/weekly-utils'
 import { useRouter } from '@/i18n/routing'
 import { useSearchParams } from 'next/navigation'
 import { useNavigation } from '@/contexts/NavigationContext'
@@ -54,7 +60,7 @@ export default function WeekCalendar({ availableWeeks, currentWeek, trackingDayO
     onWeekChange?.()
     triggerPulse()
     const params = new URLSearchParams(searchParams.toString())
-    params.set('week', weekStartStr)
+    params.set('week', formatChartWeekDate(weekStart))
     router.push(`?${params.toString()}`)
     setIsOpen(false)
   }
@@ -116,7 +122,7 @@ export default function WeekCalendar({ availableWeeks, currentWeek, trackingDayO
             
             <DayPicker
               mode="single"
-              selected={utcToLocalDate(currentWeek)}
+              selected={utcToLocalDate(getChartWeekReferenceDate(currentWeek))}
               onSelect={handleDateSelect}
               disabled={disabled}
               modifiers={{

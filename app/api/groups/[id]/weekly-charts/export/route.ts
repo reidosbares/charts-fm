@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { requireGroupMembership } from '@/lib/group-auth'
 import { prisma } from '@/lib/prisma'
-import { getWeekStart } from '@/lib/weekly-utils'
+import { formatChartWeekDate } from '@/lib/weekly-utils'
 import ExcelJS from 'exceljs'
 
 export async function GET(
@@ -311,7 +311,7 @@ export async function GET(
     const buffer = await workbook.xlsx.writeBuffer()
 
     // Create filename
-    const weekStr = normalizedWeekStart.toISOString().split('T')[0]
+    const weekStr = formatChartWeekDate(normalizedWeekStart)
     const groupName = group.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
     const filename = `${groupName}_week-${weekStr}.xlsx`
 

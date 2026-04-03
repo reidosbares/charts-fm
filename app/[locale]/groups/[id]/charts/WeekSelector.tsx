@@ -2,7 +2,7 @@
 
 import { useRouter } from '@/i18n/routing'
 import { useSearchParams } from 'next/navigation'
-import { formatWeekDate, formatWeekLabel } from '@/lib/weekly-utils'
+import { formatChartWeekDate, formatChartWeekLabel } from '@/lib/weekly-utils'
 import { useNavigation } from '@/contexts/NavigationContext'
 import WeekCalendar from './WeekCalendar'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
@@ -24,7 +24,7 @@ export default function WeekSelector({ weeks, currentWeek, trackingDayOfWeek, on
     onWeekChange?.()
     triggerPulse()
     const params = new URLSearchParams(searchParams.toString())
-    params.set('week', formatWeekDate(weekStart))
+    params.set('week', formatChartWeekDate(weekStart))
     router.push(`?${params.toString()}`)
   }
 
@@ -86,7 +86,7 @@ export default function WeekSelector({ weeks, currentWeek, trackingDayOfWeek, on
                 }
               }}
             >
-              {formatWeekLabel(week.weekStart)}
+              {formatChartWeekLabel(week.weekStart)}
             </button>
           )
         })}

@@ -6,6 +6,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { Link } from '@/i18n/routing'
 import SafeImage from '@/components/SafeImage'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import { formatChartWeekLabel } from '@/lib/weekly-utils'
 
 interface MVPByWeekRow {
   weekStart: string
@@ -20,15 +21,6 @@ interface MVPByWeekRow {
 
 interface MVPByWeekClientProps {
   groupId: string
-}
-
-function formatWeekDate(iso: string): string {
-  const d = new Date(iso)
-  return d.toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
 }
 
 export default function MVPByWeekClient({ groupId }: MVPByWeekClientProps) {
@@ -108,7 +100,7 @@ export default function MVPByWeekClient({ groupId }: MVPByWeekClientProps) {
           >
             <div className="flex items-center justify-between gap-2 mb-1.5">
               <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('weekNumber')} {row.weekNumber}</span>
-              <span className="text-sm text-gray-600">{formatWeekDate(row.weekStart)}</span>
+              <span className="text-sm text-gray-600">{formatChartWeekLabel(new Date(row.weekStart))}</span>
             </div>
             <div className="mb-1.5 min-h-[44px]">
               {row.mvpUserId && row.mvpLastfmUsername ? (
@@ -161,7 +153,7 @@ export default function MVPByWeekClient({ groupId }: MVPByWeekClientProps) {
             {rows.map((row) => (
               <tr key={row.weekStart} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3 font-medium text-gray-900 tabular-nums">{row.weekNumber}</td>
-                <td className="px-4 py-3 text-gray-700">{formatWeekDate(row.weekStart)}</td>
+                <td className="px-4 py-3 text-gray-700">{formatChartWeekLabel(new Date(row.weekStart))}</td>
                 <td className="px-4 py-3">
                   {row.mvpUserId && row.mvpLastfmUsername ? (
                     <Link

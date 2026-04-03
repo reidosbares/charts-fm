@@ -3,7 +3,7 @@ import { requireGroupMembership } from '@/lib/group-auth'
 import { prisma } from '@/lib/prisma'
 import { getGroupChartEntries } from '@/lib/group-queries'
 import { GROUP_THEMES, type ThemeName } from '@/lib/group-themes'
-import { formatWeekLabel } from '@/lib/weekly-utils'
+import { formatChartWeekLabel } from '@/lib/weekly-utils'
 import { getArtistImage } from '@/lib/lastfm'
 
 export async function GET(
@@ -83,7 +83,7 @@ export async function GET(
     }
 
     // Format week label
-    const weekLabel = formatWeekLabel(normalizedWeekStart)
+    const weekLabel = formatChartWeekLabel(normalizedWeekStart)
 
     // Generate HTML
     const html = generateChartHTML(

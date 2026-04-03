@@ -2,7 +2,7 @@
 
 import { memo, useMemo, useCallback } from 'react'
 import { EntryStats } from '@/lib/chart-deep-dive'
-import { formatWeekLabel } from '@/lib/weekly-utils'
+import { formatChartWeekLabel, formatWeekLabel, getChartWeekReferenceDate } from '@/lib/weekly-utils'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 interface EntryStatsTableProps {
@@ -23,59 +23,38 @@ function EntryStatsTable({ stats }: EntryStatsTableProps) {
     return t('daysAgo', { count: diffDays })
   }, [t])
 
-  const formatDate = useCallback((date: Date | null): string => {
-    if (!date) return t('notAvailable')
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  }, [t])
-
-  const calculateWeeksAgo = (date: Date | null): number | null => {
-    if (!date) return null
+  const calculateWeeksAgo = (refDate: Date): number => {
     const now = new Date()
-    const diffTime = now.getTime() - new Date(date).getTime()
-    const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7))
-    return diffWeeks
+    const diffTime = now.getTime() - refDate.getTime()
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7))
   }
 
   const formatDebutDate = useCallback((date: Date | null) => {
-    const formattedDate = formatDate(date)
-    const weeksAgo = calculateWeeksAgo(date)
+    if (!date) return t('notAvailable')
+    const ref = getChartWeekReferenceDate(date)
+    const formattedDate = formatWeekLabel(ref)
+    const weeksAgo = calculateWeeksAgo(ref)
     
-    if (!date || weeksAgo === null) {
-      return formattedDate
-    }
-
     return (
       <>
         {formattedDate}
-        {weeksAgo !== null && (
-          <span className="text-gray-500 font-normal">
-            {' '}({weeksAgo === 1 ? t('weeksAgo', { count: weeksAgo }) : t('weeksAgoPlural', { count: weeksAgo })})
-          </span>
-        )}
+        <span className="text-gray-500 font-normal">
+          {' '}({weeksAgo === 1 ? t('weeksAgo', { count: weeksAgo }) : t('weeksAgoPlural', { count: weeksAgo })})
+        </span>
       </>
     )
-  }, [t, formatDate])
+  }, [t])
 
   const formatStreakDates = (startDate: Date | null, endDate: Date | null): string | null => {
     if (!startDate || !endDate) return null
-    
-    // Format start as week label (e.g., "Jan 16, 2025")
-    const startFormatted = formatWeekLabel(startDate)
-    
-    // End date should represent the end of the last week (start of next week)
-    const endOfLastWeek = new Date(endDate)
-    endOfLastWeek.setUTCDate(endOfLastWeek.getUTCDate() + 7)
-    const endFormatted = formatWeekLabel(endOfLastWeek)
-    
-    // If start and end are the same week, just show one date
+
+    const startFormatted = formatChartWeekLabel(startDate)
+    const endFormatted = formatChartWeekLabel(endDate)
+
     if (startDate.getTime() === endDate.getTime()) {
       return startFormatted
     }
-    
+
     return `${startFormatted} - ${endFormatted}`
   }
 
@@ -116,7 +95,11 @@ function EntryStatsTable({ stats }: EntryStatsTableProps) {
     },
     {
       label: t('latestAppearance'),
-      value: stats.currentlyCharting ? t('currentlyCharting') : formatDaysAgo(stats.latestAppearance),
+      value: stats.currentlyCharting
+        ? t('currentlyCharting')
+        : formatDaysAgo(
+            stats.latestAppearance ? getChartWeekReferenceDate(stats.latestAppearance) : null
+          ),
     },
   ], [stats, t, formatDaysAgo, formatDebutDate])
 

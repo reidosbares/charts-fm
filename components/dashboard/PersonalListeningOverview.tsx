@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMusic, faMicrophone, faCompactDisc, faArrowUp, faArrowDown, faMinus, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { Link } from '@/i18n/routing'
-import { formatWeekLabel } from '@/lib/weekly-utils'
+import { formatChartWeekLabel, getChartWeekReferenceDate } from '@/lib/weekly-utils'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 import type { StatsRange } from '@/lib/dashboard-queries'
 
@@ -84,22 +84,26 @@ export default function PersonalListeningOverview({
 
   const periodLabel = useMemo(() => {
     if (range === 'week') {
-      return t('weekOf', { date: formatWeekLabel(weekStartDate) })
+      return t('weekOf', { date: formatChartWeekLabel(weekStartDate) })
     }
     if (range === '4weeks') {
       return periodEndDate
-        ? `${formatWeekLabel(weekStartDate)} – ${formatWeekLabel(periodEndDate)}`
-        : formatWeekLabel(weekStartDate)
+        ? `${formatChartWeekLabel(weekStartDate)} – ${formatChartWeekLabel(periodEndDate)}`
+        : formatChartWeekLabel(weekStartDate)
     }
-    // alltime
+    // alltime (labels use chart-reference day for each compiled week)
     if (periodEndDate) {
-      const startYear = weekStartDate.getUTCFullYear()
-      const endYear = periodEndDate.getUTCFullYear()
-      const startStr = weekStartDate.toLocaleString('default', { month: 'short', year: 'numeric', timeZone: 'UTC' })
-      const endStr = periodEndDate.toLocaleString('default', { month: 'short', year: 'numeric', timeZone: 'UTC' })
-      return startYear === endYear ? `${startStr} – ${periodEndDate.toLocaleString('default', { month: 'short', timeZone: 'UTC' })} ${endYear}` : `${startStr} – ${endStr}`
+      const startRef = getChartWeekReferenceDate(weekStartDate)
+      const endRef = getChartWeekReferenceDate(periodEndDate)
+      const startYear = startRef.getUTCFullYear()
+      const endYear = endRef.getUTCFullYear()
+      const startStr = startRef.toLocaleString('default', { month: 'short', year: 'numeric', timeZone: 'UTC' })
+      const endStr = endRef.toLocaleString('default', { month: 'short', year: 'numeric', timeZone: 'UTC' })
+      return startYear === endYear
+        ? `${startStr} – ${endRef.toLocaleString('default', { month: 'short', timeZone: 'UTC' })} ${endYear}`
+        : `${startStr} – ${endStr}`
     }
-    return formatWeekLabel(weekStartDate)
+    return formatChartWeekLabel(weekStartDate)
   }, [range, weekStartDate, periodEndDate, t])
 
   // Memoize computed values - safe to call even if data is null

@@ -7,7 +7,7 @@ import { EnrichedChartItem } from '@/lib/group-chart-metrics'
 import ChartTypeSelector from './ChartTypeSelector'
 import ChartTable from './ChartTable'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
-import { formatWeekDate } from '@/lib/weekly-utils'
+import { formatChartWeekDate } from '@/lib/weekly-utils'
 import { useNavigation } from '@/contexts/NavigationContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
@@ -55,9 +55,9 @@ export default function ChartDisplay({
   const previousItemsRef = useRef<EnrichedChartItem[] | null>(null)
   const t = useSafeTranslations('charts')
 
-  const currentWeekKey = formatWeekDate(new Date(toWeekStartTime(currentWeek)))
+  const currentWeekKey = formatChartWeekDate(new Date(toWeekStartTime(currentWeek)))
   const currentWeekIndex = useMemo(
-    () => weeks.findIndex((w) => formatWeekDate(new Date(w.weekStart)) === currentWeekKey),
+    () => weeks.findIndex((w) => formatChartWeekDate(new Date(w.weekStart)) === currentWeekKey),
     [weeks, currentWeekKey]
   )
   const weekOrdinal =
@@ -69,7 +69,7 @@ export default function ChartDisplay({
     onWeekNavigate?.()
     triggerPulse()
     const params = new URLSearchParams(searchParams.toString())
-    params.set('week', formatWeekDate(weekStart))
+    params.set('week', formatChartWeekDate(weekStart))
     router.push(`?${params.toString()}`)
   }
 

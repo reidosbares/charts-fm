@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import { formatChartWeekDate } from '@/lib/weekly-utils'
 
 interface WeeklyChartDownloadButtonProps {
   groupId: string
@@ -35,7 +36,7 @@ export default function WeeklyChartDownloadButton({
       
       // Get filename from Content-Disposition header or use default
       const contentDisposition = response.headers.get('Content-Disposition')
-      let filename = `charts_${weekStartStr}.xlsx`
+      let filename = `charts_${formatChartWeekDate(weekStart)}.xlsx`
       if (contentDisposition) {
         const filenameMatch = contentDisposition.match(/filename="(.+)"/)
         if (filenameMatch) {

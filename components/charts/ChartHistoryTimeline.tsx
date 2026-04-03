@@ -3,7 +3,7 @@
 import { memo, useMemo } from 'react'
 import { ChartHistoryEntry } from '@/lib/chart-deep-dive'
 import PositionBubble from './PositionBubble'
-import { formatWeekDate, formatWeekLabel } from '@/lib/weekly-utils'
+import { formatChartWeekLabel } from '@/lib/weekly-utils'
 import Tooltip from '@/components/Tooltip'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
@@ -159,7 +159,7 @@ function ChartHistoryTimeline({
                   />
                   {item.isFirst && firstAppearanceDate && (
                     <span className="absolute bottom-full mb-1 md:mb-2 left-1/2 -translate-x-1/2 text-[10px] md:text-xs text-gray-600 font-medium whitespace-nowrap">
-                      {formatWeekLabel(firstAppearanceDate)}
+                      {formatChartWeekLabel(firstAppearanceDate)}
                     </span>
                   )}
                 </div>

@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { getGroupChartEntries } from '@/lib/group-queries'
 import { GROUP_THEMES, type ThemeName } from '@/lib/group-themes'
 import { generateCombinedChartSVG, loadLogoAsBase64 } from '@/lib/chart-image-generator'
+import { formatChartWeekDate } from '@/lib/weekly-utils'
 import sharp from 'sharp'
 
 export async function GET(
@@ -114,7 +115,7 @@ export async function GET(
       .toBuffer()
 
     // Create filename
-    const weekStr = normalizedWeekStart.toISOString().split('T')[0]
+    const weekStr = formatChartWeekDate(normalizedWeekStart)
     const groupName = group.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
     const filename = `${groupName}_combined_${weekStr}.png`
 

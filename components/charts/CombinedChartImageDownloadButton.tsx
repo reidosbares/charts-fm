@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import { formatChartWeekDate } from '@/lib/weekly-utils'
 
 interface CombinedChartImageDownloadButtonProps {
   groupId: string
@@ -35,7 +36,7 @@ export default function CombinedChartImageDownloadButton({
       
       // Get filename from Content-Disposition header or use default
       const contentDisposition = response.headers.get('Content-Disposition')
-      let filename = `charts_combined_${weekStartStr}.png`
+      let filename = `charts_combined_${formatChartWeekDate(weekStart)}.png`
       if (contentDisposition) {
         const filenameMatch = contentDisposition.match(/filename="(.+)"/)
         if (filenameMatch) {

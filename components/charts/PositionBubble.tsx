@@ -2,7 +2,7 @@
 
 import { memo, useMemo } from 'react'
 import { Link } from '@/i18n/routing'
-import { formatWeekDate, formatWeekLabel } from '@/lib/weekly-utils'
+import { formatWeekDate, formatWeekLabel, getChartWeekReferenceDate } from '@/lib/weekly-utils'
 import Tooltip from '@/components/Tooltip'
 
 interface PositionBubbleProps {
@@ -22,7 +22,8 @@ function PositionBubble({
 }: PositionBubbleProps) {
   // Memoize expensive calculations
   const { weekDateStr, href, sizeClass, colorClass, formattedDate, baseStyles } = useMemo(() => {
-    const weekDateStr = formatWeekDate(weekStart)
+    const ref = getChartWeekReferenceDate(weekStart)
+    const weekDateStr = formatWeekDate(ref)
     const href = `/groups/${groupId}/charts?week=${weekDateStr}&type=${chartType}`
     
     // Size based on position (higher position = smaller, but we want top positions to be larger)
@@ -53,7 +54,7 @@ function PositionBubble({
       colorClass = 'text-gray-700'
     }
 
-    const formattedDate = formatWeekLabel(weekStart)
+    const formattedDate = formatWeekLabel(ref)
 
     const baseStyles = {
       background: 'rgba(255, 255, 255, 0.4)',

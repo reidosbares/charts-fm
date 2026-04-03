@@ -8,6 +8,7 @@ import { faMicrophone, faMusic, faCompactDisc, faXmark, faSpinner, faCheck, faRo
 import LiquidGlassButton from '@/components/LiquidGlassButton'
 import Toggle from '@/components/Toggle'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import { formatChartWeekDate } from '@/lib/weekly-utils'
 
 interface ShareChartModalProps {
   isOpen: boolean
@@ -326,13 +327,13 @@ export default function ShareChartModal({
   const handleDownloadImage = async () => {
     if (!cachedBlob) return
     
-    const weekStartStr = weekStart.toISOString().split('T')[0]
-    
+    const chartWeekStr = formatChartWeekDate(weekStart)
+
     // Download the image
     const downloadUrl = window.URL.createObjectURL(cachedBlob)
     const link = document.createElement('a')
     link.href = downloadUrl
-    link.download = `chart_${selectedChartType}_${weekStartStr}.png`
+    link.download = `chart_${selectedChartType}_${chartWeekStr}.png`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)

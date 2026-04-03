@@ -6,6 +6,7 @@ import GroupPageHero from '@/components/groups/GroupPageHero'
 import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
 import { getGroupImageUrl } from '@/lib/group-image-utils'
+import { formatChartWeekDateWritten } from '@/lib/weekly-utils'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string; locale: string }> }): Promise<Metadata> {
   const { id, locale } = await params;
@@ -107,6 +108,7 @@ export default async function TrendsPage({ params }: { params: { id: string } })
     )
   }
 
+  const chartWeekFormatted = formatChartWeekDateWritten(trends.weekStart)
   const weekStartFormatted = formatDateWritten(trends.weekStart)
   const weekEndFormatted = formatDateWritten(trends.weekEnd)
 
@@ -126,7 +128,7 @@ export default async function TrendsPage({ params }: { params: { id: string } })
           ]}
           subheader={
             <>
-              {tTrends('weekOf', { date: weekStartFormatted })}
+              {tTrends('weekOf', { date: chartWeekFormatted })}
               <span className="text-xs italic text-gray-500 ml-1">
                 ({tTrends('from')} {weekStartFormatted} {tTrends('to')} {weekEndFormatted})
               </span>

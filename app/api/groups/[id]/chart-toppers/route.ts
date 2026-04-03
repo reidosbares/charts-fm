@@ -2,15 +2,7 @@ import { NextResponse } from 'next/server'
 import { checkGroupAccessForAPI } from '@/lib/group-auth'
 import { prisma } from '@/lib/prisma'
 import { ChartType } from '@/lib/chart-slugs'
-
-// Helper function to format date as "Dec. 28, 2025"
-function formatDateWritten(date: Date): string {
-  const monthNames = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.']
-  const month = monthNames[date.getUTCMonth()]
-  const day = date.getUTCDate()
-  const year = date.getUTCFullYear()
-  return `${month} ${day}, ${year}`
-}
+import { formatChartWeekDateWritten } from '@/lib/weekly-utils'
 
 export async function GET(
   request: Request,
@@ -54,7 +46,7 @@ export async function GET(
 
     // Format entries with week information
     const entries = numberOneEntries.map((entry) => {
-      const weekStartFormatted = formatDateWritten(entry.weekStart)
+      const weekStartFormatted = formatChartWeekDateWritten(entry.weekStart)
       
       // Determine value to display (VS score if available and showVS is true, otherwise playcount)
       let value: number

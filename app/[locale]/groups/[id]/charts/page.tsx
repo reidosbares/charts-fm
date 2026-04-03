@@ -1,6 +1,10 @@
 import { getGroupAccess } from '@/lib/group-auth'
 import { getGroupChartEntries, getGroupAvailableWeeks } from '@/lib/group-queries'
-import { formatWeekDate, formatWeekLabel } from '@/lib/weekly-utils'
+import {
+  formatChartWeekDate,
+  formatChartWeekDateWritten,
+  weekStartFromWeekQueryParam,
+} from '@/lib/weekly-utils'
 import { Link } from '@/i18n/routing'
 import ChartsClient from './ChartsClient'
 import { getCachedChartEntries } from '@/lib/group-chart-metrics'
@@ -129,11 +133,13 @@ export default async function ChartsPage({
     )
   }
 
-  // Parse selected week (default to latest)
-  const selectedWeekStr = searchParams.week || formatWeekDate(availableWeeks[0].weekStart)
-  // Parse the date string (YYYY-MM-DD) and create a Date object
-  const [year, month, day] = selectedWeekStr.split('-').map(Number)
-  const selectedWeek = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0))
+  // Parse selected week (default to latest). ?week= is chart reference day (legacy: tracking start).
+  const selectedWeekStr =
+    searchParams.week || formatChartWeekDate(availableWeeks[0].weekStart)
+  const selectedWeek = weekStartFromWeekQueryParam(
+    selectedWeekStr,
+    availableWeeks.map((w) => w.weekStart)
+  )
 
   // Parse selected chart type (default to artists)
   const selectedType = (searchParams.type || 'artists') as ChartType
@@ -145,8 +151,9 @@ export default async function ChartsPage({
     getCachedChartEntries(group.id, selectedWeek, 'albums'),
   ])
 
-  const weekStartFormatted = formatDateWritten(selectedWeek)
+  const chartWeekFormatted = formatChartWeekDateWritten(selectedWeek)
   const weekEndDate = getWeekEndDate(selectedWeek)
+  const weekStartFormatted = formatDateWritten(selectedWeek)
   const weekEndFormatted = formatDateWritten(weekEndDate)
 
   return (
@@ -165,7 +172,7 @@ export default async function ChartsPage({
           ]}
           subheader={
             <>
-              {t('weekOf', { date: weekStartFormatted })}
+              {t('weekOf', { date: chartWeekFormatted })}
               <span className="text-xs italic text-gray-500 ml-1">
                 {t('fromTo', { start: weekStartFormatted, end: weekEndFormatted })}
               </span>

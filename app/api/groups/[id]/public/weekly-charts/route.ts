@@ -3,6 +3,7 @@ import { getGroupByIdForAccess } from '@/lib/group-queries'
 import { getGroupWeeklyStats } from '@/lib/group-queries'
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth'
+import { formatChartWeekDateWritten } from '@/lib/weekly-utils'
 
 // Helper function to get week end date (6 days after week start)
 function getWeekEndDate(weekStart: Date): Date {
@@ -90,6 +91,7 @@ export async function GET(
           weekStart: week.weekStart.toISOString(),
           weekStartFormatted: formatDateWritten(weekStartDate),
           weekEndFormatted: formatDateWritten(weekEndDate),
+          chartWeekFormatted: formatChartWeekDateWritten(weekStartDate),
           topArtists: (week.topArtists as any[]) || [],
           topTracks: (week.topTracks as any[]) || [],
           topAlbums: (week.topAlbums as any[]) || [],

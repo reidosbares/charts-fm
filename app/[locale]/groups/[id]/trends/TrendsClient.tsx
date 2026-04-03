@@ -21,7 +21,7 @@ import {
   faArrowRight
 } from '@fortawesome/free-solid-svg-icons'
 import Tooltip from '@/components/Tooltip'
-import { formatWeekDate } from '@/lib/weekly-utils'
+import { formatChartWeekDate } from '@/lib/weekly-utils'
 import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
 import { generateSlug, ChartType } from '@/lib/chart-slugs'
@@ -975,7 +975,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
               </p>
             </div>
             <LiquidGlassLink
-              href={`/groups/${groupId}/charts?week=${formatWeekDate(new Date(trends.weekStart))}`}
+              href={`/groups/${groupId}/charts?week=${formatChartWeekDate(new Date(trends.weekStart))}`}
               variant="primary"
               useTheme
               size="md"

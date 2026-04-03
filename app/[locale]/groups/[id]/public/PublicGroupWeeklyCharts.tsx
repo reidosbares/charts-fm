@@ -119,7 +119,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
             return (
               <div key={week.id} className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-4 md:p-6 border border-theme">
                 <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">
-                  {t('weekOf', { date: week.weekStartFormatted })}
+                  {t('weekOf', { date: week.chartWeekFormatted ?? week.weekStartFormatted })}
                   <span className="text-xs md:text-sm font-normal italic text-gray-500 ml-1 md:ml-2 block sm:inline">
                     ({t('fromTo', { start: week.weekStartFormatted, end: week.weekEndFormatted })})
                   </span>

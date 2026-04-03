@@ -152,3 +152,102 @@ export function getLastNFinishedWeeksForDay(n: number, dayOfWeek: number): Date[
   return weeks
 }
 
+// ── Chart week label (day charts are associated with / generated) ─────────────
+// Stored `weekStart` is the first day of the tracking window (UTC midnight).
+// We refer to that chart week by the following calendar day: the day after the
+// last day of tracking — i.e. weekStart + 7 days UTC.
+
+/**
+ * Calendar day (UTC midnight) used as the public "chart week" label and in ?week= URLs.
+ */
+export function getChartWeekReferenceDate(weekStart: Date): Date {
+  const d = new Date(weekStart)
+  d.setUTCHours(0, 0, 0, 0)
+  d.setUTCDate(d.getUTCDate() + 7)
+  return d
+}
+
+/** Inverse of getChartWeekReferenceDate (for parsing ?week=). */
+export function weekStartFromChartReferenceDate(chartReferenceDate: Date): Date {
+  const d = new Date(chartReferenceDate)
+  d.setUTCHours(0, 0, 0, 0)
+  d.setUTCDate(d.getUTCDate() - 7)
+  return d
+}
+
+/** YYYY-MM-DD for URLs and keys — chart reference day, not tracking start. */
+export function formatChartWeekDate(weekStart: Date): string {
+  return formatWeekDate(getChartWeekReferenceDate(weekStart))
+}
+
+/** Short label e.g. "Jan 3, 2026" (UTC) for the chart reference day. */
+export function formatChartWeekLabel(weekStart: Date): string {
+  return formatWeekLabel(getChartWeekReferenceDate(weekStart))
+}
+
+const WRITTEN_MONTH_NAMES = [
+  'Jan.',
+  'Feb.',
+  'Mar.',
+  'Apr.',
+  'May',
+  'Jun.',
+  'Jul.',
+  'Aug.',
+  'Sep.',
+  'Oct.',
+  'Nov.',
+  'Dec.',
+] as const
+
+/** "Jan. 3, 2026" style (UTC) — chart reference day. */
+export function formatChartWeekDateWritten(weekStart: Date): string {
+  const d = getChartWeekReferenceDate(weekStart)
+  const month = WRITTEN_MONTH_NAMES[d.getUTCMonth()]
+  const day = d.getUTCDate()
+  const year = d.getUTCFullYear()
+  return `${month} ${day}, ${year}`
+}
+
+/**
+ * Resolve `?week=` value to stored tracking weekStart.
+ * New URLs use chart reference day; legacy URLs used tracking week start.
+ */
+export function weekStartFromWeekQueryParam(
+  param: string,
+  availableTrackingWeekStarts: Date[]
+): Date {
+  if (availableTrackingWeekStarts.length === 0) {
+    return new Date()
+  }
+
+  const normalize = (dt: Date) => {
+    const x = new Date(dt)
+    x.setUTCHours(0, 0, 0, 0)
+    return x
+  }
+
+  const availableSet = new Set(
+    availableTrackingWeekStarts.map((w) => formatWeekDate(normalize(w)))
+  )
+
+  const parts = param.split('-').map(Number)
+  if (parts.length !== 3 || parts.some((n) => Number.isNaN(n))) {
+    return normalize(availableTrackingWeekStarts[0])
+  }
+
+  const [y, m, day] = parts
+  const parsed = new Date(Date.UTC(y, m - 1, day, 0, 0, 0, 0))
+
+  const fromChart = weekStartFromChartReferenceDate(parsed)
+  if (availableSet.has(formatWeekDate(fromChart))) {
+    return fromChart
+  }
+
+  if (availableSet.has(formatWeekDate(parsed))) {
+    return parsed
+  }
+
+  return normalize(availableTrackingWeekStarts[0])
+}
+

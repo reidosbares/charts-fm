@@ -3,7 +3,7 @@
 import fs from 'fs'
 import path from 'path'
 import { ThemeColors } from './group-themes'
-import { formatWeekLabel } from './weekly-utils'
+import { formatChartWeekLabel } from './weekly-utils'
 
 export type ChartType = 'artists' | 'tracks' | 'albums'
 
@@ -69,7 +69,7 @@ export function generateChartSVG(
   const contentHeight = height - footerHeight
   
   const showVS = chartMode === 'vs' || chartMode === 'vs_weighted'
-  const weekLabel = formatWeekLabel(weekStart)
+  const weekLabel = formatChartWeekLabel(weekStart)
   
   // Chart type labels
   const chartTypeLabels: Record<ChartType, string> = {
@@ -186,7 +186,7 @@ export function generateCombinedChartSVG(
   const contentHeight = height - footerHeight
   
   const showVS = chartMode === 'vs' || chartMode === 'vs_weighted'
-  const weekLabel = formatWeekLabel(weekStart)
+  const weekLabel = formatChartWeekLabel(weekStart)
   
   // Header styling
   const headerHeight = 100

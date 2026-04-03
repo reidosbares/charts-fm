@@ -3,7 +3,7 @@ import { requireGroupMembership } from '@/lib/group-auth'
 import { prisma } from '@/lib/prisma'
 import { getGroupChartEntries } from '@/lib/group-queries'
 import { GROUP_THEMES, type ThemeName } from '@/lib/group-themes'
-import { formatWeekLabel } from '@/lib/weekly-utils'
+import { formatChartWeekDate, formatChartWeekLabel } from '@/lib/weekly-utils'
 import { getArtistImage, getAlbumImage } from '@/lib/lastfm'
 import fs from 'fs'
 import path from 'path'
@@ -500,7 +500,7 @@ export async function GET(
     console.log(`Loaded ${itemImages.filter(img => img.imageBase64).length} images out of ${itemImages.length} attempts`)
 
     // Format week label
-    const weekLabel = formatWeekLabel(normalizedWeekStart)
+    const weekLabel = formatChartWeekLabel(normalizedWeekStart)
 
     // Load logo
     const logoBase64 = loadLogoAsBase64()
@@ -716,8 +716,8 @@ export async function GET(
       })
       console.log('Screenshot taken successfully')
       
-      // Create filename
-      const weekStr = weekStartParam
+      // Create filename (chart reference day)
+      const weekStr = formatChartWeekDate(normalizedWeekStart)
       const groupNameSlug = group.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
       const filename = `${groupNameSlug}_${chartType}_${weekStr}_square.png`
       
