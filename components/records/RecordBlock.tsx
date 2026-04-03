@@ -104,6 +104,19 @@ function getRecordTypeFromTitle(title: string, tChartRecords: (key: string) => s
   return titleToType[title] || null
 }
 
+// Map user award title to awards page hash slug
+function getAwardSlugFromTitle(title: string, tUserRecords: (key: string) => string): string | null {
+  const titleToSlug: Record<string, string> = {
+    [tUserRecords('vsVirtuoso')]: 'vs-virtuoso',
+    [tUserRecords('playPowerhouse')]: 'play-powerhouse',
+    [tUserRecords('chartConnoisseur')]: 'chart-connoisseur',
+    [tUserRecords('hiddenGemHunter')]: 'hidden-gem-hunter',
+    [tUserRecords('oneTrackMind')]: 'one-track-mind',
+    [tUserRecords('tasteMaker')]: 'taste-maker',
+  }
+  return titleToSlug[title] || null
+}
+
 export default function RecordBlock({ title, record, value, groupId, isUser, activeTab }: RecordBlockProps) {
   const tAwardDescriptions = useSafeTranslations('records.userRecords.awardDescriptions')
   const tUserRecords = useSafeTranslations('records.userRecords')
@@ -216,6 +229,10 @@ export default function RecordBlock({ title, record, value, groupId, isUser, act
     }
   }
   
+  // Build awards page link for user awards
+  const awardSlug = isUser ? getAwardSlugFromTitle(title, tUserRecords) : null
+  const awardsPageLink = awardSlug ? `/groups/${groupId}/records/awards#${awardSlug}` : null
+
   // Map translated award title back to English key for color scheme lookup
   const getAwardEnglishKey = (awardTitle: string): string | null => {
     if (!isUser) return null
@@ -295,6 +312,17 @@ export default function RecordBlock({ title, record, value, groupId, isUser, act
               {title}
               <FontAwesomeIcon 
                 icon={faChevronRight} 
+                className="text-[10px] md:text-xs opacity-70"
+              />
+            </Link>
+          ) : awardsPageLink ? (
+            <Link
+              href={awardsPageLink}
+              className={`flex items-center gap-1.5 text-xs md:text-sm font-semibold ${colorScheme.titleColor} hover:underline transition-colors cursor-pointer`}
+            >
+              {title}
+              <FontAwesomeIcon
+                icon={faChevronRight}
                 className="text-[10px] md:text-xs opacity-70"
               />
             </Link>
