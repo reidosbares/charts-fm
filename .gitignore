@@ -42,6 +42,9 @@ next-env.d.ts
 .cursorrules*
 /cursorrules/
 
+# docs
+/docs
+
 # logs
 /logs
 

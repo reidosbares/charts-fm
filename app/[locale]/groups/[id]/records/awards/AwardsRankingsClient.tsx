@@ -154,8 +154,21 @@ export default function AwardsRankingsClient({ groupId, records }: AwardsRanking
   const rankings = (recordsData[currentAwardDef.dataKey] || []) as (UserRanking | UserOneTrackMindRanking)[]
   const rankedList = assignRanks(rankings)
 
+  // Compute the 10-week window dates (same logic as getTenWeekCutoffDate in group-records.ts)
+  const now = new Date()
+  const cutoff = new Date(now)
+  cutoff.setUTCDate(cutoff.getUTCDate() - (10 * 7))
+  cutoff.setUTCHours(0, 0, 0, 0)
+
+  const formatDate = (d: Date) => d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+
   return (
     <div className="mt-6">
+      {/* Date range subtitle */}
+      <p className="text-xs sm:text-sm text-gray-500 mb-4">
+        {tUserRecords('sectionSubtitle')} ({formatDate(cutoff)} — {formatDate(now)})
+      </p>
+
       {/* Tab selector — horizontally scrollable on mobile with mask fade */}
       <div className="mb-6 -mx-4 px-4 md:mx-0 md:px-0" style={{ WebkitMaskImage: 'linear-gradient(to right, black calc(100% - 3rem), transparent)', maskImage: 'linear-gradient(to right, black calc(100% - 3rem), transparent)' }}>
         <div className="overflow-x-auto pb-2 scrollbar-hide">

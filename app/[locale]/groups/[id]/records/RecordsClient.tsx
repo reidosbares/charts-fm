@@ -798,12 +798,14 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
                   <h3 className="text-lg md:text-xl font-bold text-gray-900">{tUserRecords('sectionTitle')}</h3>
                   <p className="text-sm text-gray-500">{tUserRecords('sectionSubtitle')}</p>
                 </div>
-                <Link
+                <LiquidGlassLink
                   href={`/groups/${groupId}/records/awards`}
-                  className="text-xs md:text-sm text-[var(--theme-primary)] hover:underline whitespace-nowrap mt-1"
+                  variant="secondary"
+                  size="sm"
+                  useTheme
                 >
                   {tAwards('viewAllRankings')} →
-                </Link>
+                </LiquidGlassLink>
               </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
