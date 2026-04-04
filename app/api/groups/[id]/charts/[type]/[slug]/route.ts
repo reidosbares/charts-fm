@@ -79,16 +79,32 @@ export async function GET(
     })
     const isSoloGroup = memberCount <= 1
 
+    // Fetch certification settings for this group
+    const certSettings = await prisma.group.findUnique({
+      where: { id: group.id },
+      select: {
+        certificationsEnabled: true,
+        certGoldThreshold: true,
+        certPlatinumThreshold: true,
+        certDiamondThreshold: true,
+      },
+    })
+
     // Fetch all data in parallel
-    const [stats, majorDriverResult, totals, artistEntries, numberOnes] = await Promise.all([
+    const [stats, majorDriverResult, totals, artistEntries, numberOnes, certifications] = await Promise.all([
       getEntryStats(group.id, chartType, entry.entryKey),
       // Skip major driver calculation for solo groups
-      isSoloGroup 
+      isSoloGroup
         ? Promise.resolve({ majorDriver: null, newlyCalculated: false })
         : getEntryMajorDriver(group.id, chartType, entry.entryKey, group.chartMode || 'vs'),
       getEntryTotals(group.id, chartType, entry.entryKey),
       chartType === 'artists' ? getArtistChartEntries(group.id, entry.name) : Promise.resolve(null),
       chartType === 'artists' ? getArtistNumberOnes(group.id, entry.name) : Promise.resolve(null),
+      prisma.certification.findMany({
+        where: { groupId: group.id, chartType, entryKey: entry.entryKey },
+        include: { awardedBy: { select: { id: true, name: true } } },
+        orderBy: { awardedAt: 'asc' },
+      }),
     ])
 
     return NextResponse.json({
@@ -98,6 +114,13 @@ export async function GET(
       totals,
       artistEntries: chartType === 'artists' ? artistEntries : null,
       numberOnes: chartType === 'artists' ? numberOnes : null,
+      certifications,
+      certificationThresholds: certSettings ? {
+        enabled: certSettings.certificationsEnabled,
+        gold: certSettings.certGoldThreshold,
+        platinum: certSettings.certPlatinumThreshold,
+        diamond: certSettings.certDiamondThreshold,
+      } : null,
     })
   } catch (error) {
     console.error('Error fetching deep dive data:', error)
