@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import useSWR from 'swr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMicrophone, faMusic, faCompactDisc, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
@@ -134,10 +133,36 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
     ? `/api/groups/${groupId}/records/${recordType}`
     : `/api/groups/${groupId}/records/${recordType}?type=${activeTab}`
 
-  const { data: fetchData, error: fetchError, isLoading } = useSWR<any>(fetchUrl)
-  // Filter out entries with value 0
-  const entries: RankedEntry[] = (fetchData?.entries || []).filter((entry: RankedEntry) => entry.value > 0)
-  const error = fetchError ? t('error') : null
+  // Track which tab the current displayed data belongs to
+  const [displayedTab, setDisplayedTab] = useState<ChartType>(activeTab)
+  const [displayedEntries, setDisplayedEntries] = useState<RankedEntry[]>([])
+  const [isFetching, setIsFetching] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    setIsFetching(true)
+
+    fetch(fetchUrl)
+      .then(res => res.json())
+      .then(data => {
+        if (cancelled) return
+        const filtered = (data?.entries || []).filter((entry: RankedEntry) => entry.value > 0)
+        setDisplayedEntries(filtered)
+        setDisplayedTab(activeTab)
+        setIsFetching(false)
+      })
+      .catch(() => {
+        if (cancelled) return
+        setDisplayedEntries([])
+        setIsFetching(false)
+      })
+
+    return () => { cancelled = true }
+  }, [fetchUrl, activeTab])
+
+  const entries = displayedEntries
+  const showLoading = isFetching || displayedTab !== activeTab
+  const error = null
 
   const getEntryLink = (entry: RankedEntry) => {
     // Artist-specific records always link to artist pages
@@ -182,7 +207,7 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
         </div>
       )}
 
-      {isLoading ? (
+      {showLoading ? (
         <div className="flex items-center justify-center py-8 md:py-12">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-2xl md:text-3xl lg:text-4xl text-[var(--theme-primary)]" />
         </div>

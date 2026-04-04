@@ -238,12 +238,17 @@ export async function GET(
         await calculateEntryStatsBatch(group.id, entryType as ChartType, allEntryKeysToCalculate)
       }
 
-      // Exclude entries where the field is null to avoid NULLs sorting first in DESC
+      // For nullable fields (totalVS, peakWeeklyVS, peakWeeklyPlays), exclude NULLs
+      // to avoid them sorting first in DESC order
+      const nullableFields = ['totalVS', 'peakWeeklyVS', 'peakWeeklyPlays']
+      const fieldFilter = nullableFields.includes(fieldName)
+        ? { [fieldName]: { not: null } }
+        : {}
       const stats = await prisma.chartEntryStats.findMany({
         where: {
           groupId: group.id,
           chartType: entryType as ChartType,
-          [fieldName]: { not: null },
+          ...fieldFilter,
         },
         orderBy: {
           [fieldName]: 'desc',
