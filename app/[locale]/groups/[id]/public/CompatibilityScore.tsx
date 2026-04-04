@@ -4,8 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import useSWR from 'swr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHeart, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
-import Tooltip from '@/components/Tooltip'
+import { faHeart, faInfoCircle, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassButton from '@/components/LiquidGlassButton'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
@@ -98,31 +97,20 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
     return null // Don't show anything if there's an error
   }
 
-  // If no score exists, show button to calculate
-  // TEMPORARY: Recommendations system hidden for launch - button is faint and disabled
   if (!score) {
     return (
-      <Tooltip 
-        content={t('comingSoon')}
-        position="top"
+      <button
+        ref={buttonRef}
+        onClick={handleCalculate}
+        disabled={isLoading}
+        className="shrink-0 px-2.5 py-1.5 text-xs sm:px-3 sm:py-1.5 sm:text-sm whitespace-nowrap bg-white text-gray-900 font-semibold rounded-full border border-gray-200 shadow-sm flex items-center gap-2 transition-all duration-200 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <LiquidGlassButton
-          ref={buttonRef}
-          onClick={(e) => {
-            // TEMPORARY: Prevent click - recommendations system hidden for launch
-            e.preventDefault()
-            e.stopPropagation()
-          }}
-          disabled
-          variant="neutral"
-          size="sm"
-          useTheme={false}
-          icon={<FontAwesomeIcon icon={faHeart} className="text-red-500" />}
-        >
-          {t('checkMatch')}
-          <FontAwesomeIcon icon={faInfoCircle} className="text-gray-400 text-xs" />
-        </LiquidGlassButton>
-      </Tooltip>
+        {isLoading
+          ? <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
+          : <FontAwesomeIcon icon={faHeart} className="text-red-500" />
+        }
+        {t('checkMatch')}
+      </button>
     )
   }
 
@@ -134,19 +122,14 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
 
   return (
     <div className="relative">
-      <LiquidGlassButton
+      <button
         ref={buttonRef}
         onClick={handleToggleDetails}
-        variant="secondary"
-        size="sm"
-        useTheme={false}
-        icon={<FontAwesomeIcon icon={faHeart} className="text-red-500" />}
+        className="shrink-0 px-2.5 py-1.5 text-xs sm:px-3 sm:py-1.5 sm:text-sm whitespace-nowrap bg-white text-gray-900 font-semibold rounded-full border border-gray-200 shadow-sm flex items-center gap-2 transition-all duration-200 hover:shadow-lg active:scale-95"
       >
-        <span className={scoreColor}>
-          {t('matchPercentage', { score: Math.round(score.score) })}
-        </span>
-        <FontAwesomeIcon icon={faInfoCircle} className="text-gray-400 text-xs" />
-      </LiquidGlassButton>
+        <FontAwesomeIcon icon={faHeart} className="text-red-500" />
+        <span className={scoreColor}>{t('matchPercentage', { score: Math.round(score.score) })}</span>
+      </button>
 
       {showDetails && mounted && typeof window !== 'undefined' && createPortal(
         <>

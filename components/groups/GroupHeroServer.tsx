@@ -8,6 +8,7 @@ import SoloChartsEmptyOverlay from './SoloChartsEmptyOverlay'
 import ShareGroupButton from '@/app/[locale]/groups/[id]/ShareGroupButton'
 import QuickAccessButton from '@/app/[locale]/groups/[id]/QuickAccessButton'
 import RequestToJoinButton from '@/app/[locale]/groups/[id]/public/RequestToJoinButton'
+import CompatibilityScore from '@/app/[locale]/groups/[id]/public/CompatibilityScore'
 import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 import { getTranslations } from 'next-intl/server'
 import { getSession } from '@/lib/auth'
@@ -221,13 +222,16 @@ export default async function GroupHeroServer({ groupId, isOwner, colorTheme, is
                   </LiquidGlassLink>
                 )}
                 {!isMember && userId && (
-                  <RequestToJoinButton
-                    groupId={groupId}
-                    hasPendingRequest={hasPendingRequest}
-                    hasPendingInvite={hasPendingInvite}
-                    allowFreeJoin={group.allowFreeJoin ?? false}
-                    memberCount={group._count.members}
-                  />
+                  <>
+                    <CompatibilityScore groupId={groupId} />
+                    <RequestToJoinButton
+                      groupId={groupId}
+                      hasPendingRequest={hasPendingRequest}
+                      hasPendingInvite={hasPendingInvite}
+                      allowFreeJoin={group.allowFreeJoin ?? false}
+                      memberCount={group._count.members}
+                    />
+                  </>
                 )}
                 {isMember && <ShareGroupButton groupId={groupId} />}
               </div>
