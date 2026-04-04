@@ -394,15 +394,19 @@ export default function CertificationsSection({
                     className="text-[10px] sm:text-xs font-bold tracking-widest"
                     style={{ color: tier.colors.text }}
                   >
-                    {t(tier.key)}
-                  </div>
-                  <div className="text-[9px] sm:text-[10px] mt-0.5" style={{ color: tier.colors.text, opacity: 0.6 }}>
-                    {threshold.toFixed(1)} VS
+                    {t(tier.key)} · {Math.round(threshold)} VS
                   </div>
                   {awarded && cert && (
-                    <div className="text-[9px] sm:text-[10px] mt-0.5" style={{ color: tier.colors.text, opacity: 0.5 }}>
-                      {formatDate(cert.awardedAt)}
-                    </div>
+                    <>
+                      <div className="text-[9px] sm:text-[10px] mt-0.5" style={{ color: tier.colors.text, opacity: 0.5 }}>
+                        {formatDate(cert.awardedAt)}
+                      </div>
+                      {cert.awardedBy?.name && (
+                        <div className="text-[8px] sm:text-[9px] mt-0.5 truncate" style={{ color: tier.colors.text, opacity: 0.4 }}>
+                          {t('awardedBy', { user: cert.awardedBy.name })}
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>

@@ -1221,7 +1221,8 @@
       "eligible": "Elegível!",
       "gold": "OURO",
       "platinum": "PLATINA",
-      "diamond": "DIAMANTE"
+      "diamond": "DIAMANTE",
+      "awardedBy": "Concedido por {user}"
     }
   },
   "certificationsTab": {

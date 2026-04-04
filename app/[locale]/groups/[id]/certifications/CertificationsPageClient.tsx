@@ -108,6 +108,42 @@ function CarouselPlaque({ cert, entry, groupId, t }: {
   )
 }
 
+const DISC_COLORS: Record<string, { fill: string; stroke: string; shine: string }> = {
+  gold: { fill: '#D4A017', stroke: '#B8860B', shine: '#FFD700' },
+  platinum: { fill: '#A8B4C0', stroke: '#8899AA', shine: '#D4DEE8' },
+  diamond: { fill: '#7BD4F0', stroke: '#5BACC8', shine: '#B8EAFF' },
+}
+
+function MiniDisc({ tier }: { tier: string }) {
+  const colors = DISC_COLORS[tier] || DISC_COLORS.gold
+  return (
+    <svg width={14} height={14} viewBox="0 0 14 14" className="inline-block flex-shrink-0">
+      <ellipse cx={7} cy={7} rx={6} ry={5} fill={colors.fill} stroke={colors.stroke} strokeWidth={0.8} />
+      <circle cx={7} cy={7} r={1.5} fill={colors.stroke} opacity={0.6} />
+      <ellipse cx={6} cy={5.5} rx={2.7} ry={1.5} fill={colors.shine} opacity={0.5} />
+    </svg>
+  )
+}
+
+function TierCounts({ awarded }: { awarded: any[] }) {
+  const counts: Record<string, number> = { diamond: 0, platinum: 0, gold: 0 }
+  for (const item of awarded) {
+    const tier = item.certification.tier
+    if (tier in counts) counts[tier]++
+  }
+
+  return (
+    <span className="inline-flex items-center gap-2">
+      {(['diamond', 'platinum', 'gold'] as const).map(tier => (
+        <span key={tier} className="inline-flex items-center gap-0.5">
+          <MiniDisc tier={tier} />
+          <span className="text-xs text-gray-500">×{counts[tier]}</span>
+        </span>
+      ))}
+    </span>
+  )
+}
+
 function ArtistSection({ artist, groupId, canCertify, t, onAward }: {
   artist: {
     artistName: string; artistSlug: string; totalCertifications: number
@@ -136,14 +172,14 @@ function ArtistSection({ artist, groupId, canCertify, t, onAward }: {
         />
         <div className="flex-1 min-w-0">
           <p className="font-bold text-base truncate">{artist.artistName}</p>
-          <p className="text-xs text-gray-500">
-            {t('certifications', { count: artist.totalCertifications })}
+          <div className="flex items-center gap-2 text-xs text-gray-500">
+            <TierCounts awarded={[...artist.tracks.awarded, ...artist.albums.awarded]} />
             {eligibleCount > 0 && (
-              <span className="ml-2 text-yellow-600 font-medium">
+              <span className="text-yellow-600 font-medium">
                 · {t('eligibleCount', { count: eligibleCount })}
               </span>
             )}
-          </p>
+          </div>
         </div>
       </button>
 
