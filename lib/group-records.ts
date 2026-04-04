@@ -1,6 +1,7 @@
 // Functions to calculate and cache group records
 import { prisma } from './prisma'
 import { ChartType, generateSlug } from './chart-slugs'
+import { calculateEntryStatsBatch } from './chart-deep-dive'
 
 /**
  * Calculate the cutoff date for rolling 10-week metrics
@@ -1775,6 +1776,39 @@ export async function calculateGroupRecords(
   }
 
   try {
+    // Refresh stale ChartEntryStats before querying them
+    const chartTypes: ChartType[] = ['artists', 'tracks', 'albums']
+    for (const chartType of chartTypes) {
+      const staleEntries = await prisma.chartEntryStats.findMany({
+        where: { groupId, chartType, statsStale: true },
+        select: { entryKey: true },
+      })
+
+      const entriesWithoutStats = await prisma.groupChartEntry.findMany({
+        where: {
+          groupId,
+          chartType,
+          entryKey: {
+            notIn: (await prisma.chartEntryStats.findMany({
+              where: { groupId, chartType },
+              select: { entryKey: true },
+            })).map(e => e.entryKey),
+          },
+        },
+        select: { entryKey: true },
+        distinct: ['entryKey'],
+      })
+
+      const allToCalculate = Array.from(new Set([
+        ...staleEntries.map(e => e.entryKey),
+        ...entriesWithoutStats.map(e => e.entryKey),
+      ]))
+
+      if (allToCalculate.length > 0) {
+        await calculateEntryStatsBatch(groupId, chartType, allToCalculate)
+      }
+    }
+
     // Phase 1: ChartEntryStats cache
     const phase1 = await calculatePhase1Records(groupId)
 
