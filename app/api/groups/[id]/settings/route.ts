@@ -59,10 +59,10 @@ export async function GET(
     chartMode: group.chartMode || 'plays_only',
     trackingDayOfWeek: group.trackingDayOfWeek ?? 0,
     colorTheme: (group as any).colorTheme || 'white',
-    certificationsEnabled: (group as any).certificationsEnabled,
-    certGoldThreshold: (group as any).certGoldThreshold,
-    certPlatinumThreshold: (group as any).certPlatinumThreshold,
-    certDiamondThreshold: (group as any).certDiamondThreshold,
+    certificationsEnabled: group.certificationsEnabled,
+    certGoldThreshold: group.certGoldThreshold,
+    certPlatinumThreshold: group.certPlatinumThreshold,
+    certDiamondThreshold: group.certDiamondThreshold,
   })
 }
 
@@ -97,6 +97,10 @@ export async function PATCH(
       chartMode: true,
       trackingDayOfWeek: true,
       colorTheme: true,
+      certificationsEnabled: true,
+      certGoldThreshold: true,
+      certPlatinumThreshold: true,
+      certDiamondThreshold: true,
     },
   })
 
@@ -156,9 +160,21 @@ export async function PATCH(
     }
   }
 
-  // Validate certification thresholds
-  if (certGoldThreshold !== undefined && certPlatinumThreshold !== undefined && certDiamondThreshold !== undefined) {
-    if (certGoldThreshold >= certPlatinumThreshold || certPlatinumThreshold >= certDiamondThreshold) {
+  // Validate certification thresholds (resolve against existing values for partial updates)
+  if (certGoldThreshold !== undefined || certPlatinumThreshold !== undefined || certDiamondThreshold !== undefined) {
+    const finalGold = certGoldThreshold ?? group.certGoldThreshold
+    const finalPlatinum = certPlatinumThreshold ?? group.certPlatinumThreshold
+    const finalDiamond = certDiamondThreshold ?? group.certDiamondThreshold
+
+    if (typeof finalGold !== 'number' || typeof finalPlatinum !== 'number' || typeof finalDiamond !== 'number' ||
+        finalGold <= 0 || finalPlatinum <= 0 || finalDiamond <= 0) {
+      return NextResponse.json(
+        { error: 'Thresholds must be positive numbers' },
+        { status: 400 }
+      )
+    }
+
+    if (finalGold >= finalPlatinum || finalPlatinum >= finalDiamond) {
       return NextResponse.json(
         { error: 'Thresholds must be in ascending order: Gold < Platinum < Diamond' },
         { status: 400 }

@@ -79,19 +79,8 @@ export async function GET(
     })
     const isSoloGroup = memberCount <= 1
 
-    // Fetch certification settings for this group
-    const certSettings = await prisma.group.findUnique({
-      where: { id: group.id },
-      select: {
-        certificationsEnabled: true,
-        certGoldThreshold: true,
-        certPlatinumThreshold: true,
-        certDiamondThreshold: true,
-      },
-    })
-
     // Fetch all data in parallel
-    const [stats, majorDriverResult, totals, artistEntries, numberOnes, certifications] = await Promise.all([
+    const [stats, majorDriverResult, totals, artistEntries, numberOnes, certifications, certSettings] = await Promise.all([
       getEntryStats(group.id, chartType, entry.entryKey),
       // Skip major driver calculation for solo groups
       isSoloGroup
@@ -104,6 +93,15 @@ export async function GET(
         where: { groupId: group.id, chartType, entryKey: entry.entryKey },
         include: { awardedBy: { select: { id: true, name: true } } },
         orderBy: { awardedAt: 'asc' },
+      }),
+      prisma.group.findUnique({
+        where: { id: group.id },
+        select: {
+          certificationsEnabled: true,
+          certGoldThreshold: true,
+          certPlatinumThreshold: true,
+          certDiamondThreshold: true,
+        },
       }),
     ])
 

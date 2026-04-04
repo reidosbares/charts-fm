@@ -28,6 +28,14 @@ interface CachedImage {
   timestamp: number
 }
 
+interface CertificationData {
+  id: string
+  tier: string
+  awardedAt: string
+  thresholdAtAward: number
+  awardedBy: { id: string; name: string | null }
+}
+
 function getCacheKey(type: 'artist' | 'album', identifier: string): string {
   return `${IMAGE_CACHE_PREFIX}${type}_${identifier.toLowerCase().trim()}`
 }
@@ -138,7 +146,7 @@ export default function DeepDiveClient({
   const artistEntries: { tracks: ArtistChartEntry[]; albums: ArtistChartEntry[] } | null = isArtist ? (deepDiveData?.artistEntries || null) : null
   const numberOnes: { numberOneTracks: number; numberOneAlbums: number } | null = isArtist ? (deepDiveData?.numberOnes || null) : null
 
-  const [certificationsList, setCertificationsList] = useState<any[]>([])
+  const [certificationsList, setCertificationsList] = useState<CertificationData[]>([])
 
   useEffect(() => {
     if (deepDiveData?.certifications) {
