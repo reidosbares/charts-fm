@@ -395,7 +395,7 @@ async function calculatePhase2Records(
         chartType,
         name: mostWeeklyVS.name,
         artist: mostWeeklyVS.artist,
-        value: Math.round(mostWeeklyVS.vibeScore),
+        value: Math.round(mostWeeklyVS.vibeScore * 100) / 100,
         slug: mostWeeklyVS.slug || generateSlug(mostWeeklyVS.entryKey, chartType),
         weekStart: mostWeeklyVS.weekStart.toISOString(),
       }

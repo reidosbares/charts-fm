@@ -578,7 +578,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
       records.push({
         title: tChartRecords('totalAllTimeVS'),
         record: recordsData.mostTotalVS[chartType],
-        value: recordsData.mostTotalVS[chartType].value.toLocaleString(),
+        value: recordsData.mostTotalVS[chartType].value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
       })
     }
 
@@ -600,8 +600,8 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
         title: tChartRecords('mostVSInSingleWeek'),
         record: recordsData.mostVSInSingleWeek[chartType],
         value: weekLabel
-          ? `${recordsData.mostVSInSingleWeek[chartType].value.toLocaleString()} VS · ${weekLabel}`
-          : `${recordsData.mostVSInSingleWeek[chartType].value.toLocaleString()} VS`,
+          ? `${recordsData.mostVSInSingleWeek[chartType].value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} VS · ${weekLabel}`
+          : `${recordsData.mostVSInSingleWeek[chartType].value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} VS`,
       })
     }
 
@@ -694,7 +694,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
       records.push({
         title: tUserRecords('vsVirtuoso'),
         record: recordsData.userMostVS,
-        value: recordsData.userMostVS.value.toLocaleString(),
+        value: recordsData.userMostVS.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
         isUser: true,
       })
     }
@@ -733,7 +733,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
       records.push({
         title: tUserRecords('oneTrackMind'),
         record: recordsData.userOneTrackMind,
-        value: `${recordsData.userOneTrackMind.value.toLocaleString()} VS · ${entryLabel}`,
+        value: `${recordsData.userOneTrackMind.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} VS · ${entryLabel}`,
         isUser: true,
       })
     }

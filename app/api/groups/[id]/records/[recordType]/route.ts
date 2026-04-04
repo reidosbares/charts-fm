@@ -153,7 +153,7 @@ export async function GET(
         name: row.name,
         artist: row.artist,
         slug: row.slug || '',
-        value: orderField === 'vibeScore' ? Math.round(row.vibeScore as number) : row.playcount,
+        value: orderField === 'vibeScore' ? Math.round((row.vibeScore as number) * 100) / 100 : row.playcount,
         weekStart: row.weekStart.toISOString(),
       }))
     } else {

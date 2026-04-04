@@ -173,8 +173,11 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
   const formatValue = (value: number) => {
     // For numeric values, add commas and suffix based on record type
     if (typeof value === 'number') {
-      const formatted = value.toLocaleString()
-      if (recordType === 'most-vs-in-single-week' || recordType === 'most-total-vs') {
+      const isVS = recordType === 'most-vs-in-single-week' || recordType === 'most-total-vs'
+      const formatted = isVS
+        ? value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        : value.toLocaleString()
+      if (isVS) {
         return `${formatted} VS`
       }
       if (recordType === 'most-plays-in-single-week' || recordType === 'most-plays') {
