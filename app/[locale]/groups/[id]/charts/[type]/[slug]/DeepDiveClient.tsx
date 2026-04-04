@@ -8,6 +8,7 @@ import QuickStats from '@/components/charts/QuickStats'
 import EntryStatsTable from '@/components/charts/EntryStatsTable'
 import CertificationsSection from '@/components/charts/CertificationsSection'
 import ArtistEntriesTable from '@/components/charts/ArtistEntriesTable'
+import ArtistCertificationsGallery from '@/components/charts/ArtistCertificationsGallery'
 import OtherGroupsSection from '@/components/charts/OtherGroupsSection'
 import { ChartHistoryEntry, EntryStats, MajorDriver, ArtistChartEntry } from '@/lib/chart-deep-dive'
 import { ChartType } from '@/lib/chart-slugs'
@@ -145,6 +146,7 @@ export default function DeepDiveClient({
   const totals: { totalVS: number | null; totalPlays: number; weeksAtNumberOne: number } | null = deepDiveData?.totals || null
   const artistEntries: { tracks: ArtistChartEntry[]; albums: ArtistChartEntry[] } | null = isArtist ? (deepDiveData?.artistEntries || null) : null
   const numberOnes: { numberOneTracks: number; numberOneAlbums: number } | null = isArtist ? (deepDiveData?.numberOnes || null) : null
+  const artistCertifications: { entryKey: string; chartType: string; tier: string; awardedAt: string }[] | null = isArtist ? (deepDiveData?.artistCertifications || null) : null
 
   const [certificationsList, setCertificationsList] = useState<CertificationData[]>([])
 
@@ -419,7 +421,18 @@ export default function DeepDiveClient({
           </div>
         </div>
       ) : stats && (
-        <EntryStatsTable stats={stats} />
+        <EntryStatsTable
+          stats={stats}
+          certificationCounts={isArtist && certificationThresholds?.enabled ? (() => {
+            const counts = { gold: 0, platinum: 0, diamond: 0 }
+            if (artistCertifications) {
+              for (const cert of artistCertifications) {
+                if (cert.tier in counts) counts[cert.tier as keyof typeof counts]++
+              }
+            }
+            return counts
+          })() : undefined}
+        />
       )}
 
       {/* Certifications */}
@@ -443,6 +456,16 @@ export default function DeepDiveClient({
         />
       )}
 
+      {/* Artist Certifications Gallery - only for artists with certifications */}
+      {isArtist && !loading && artistCertifications && artistCertifications.length > 0 && artistEntries && (
+        <ArtistCertificationsGallery
+          certifications={artistCertifications}
+          tracks={artistEntries.tracks}
+          albums={artistEntries.albums}
+          groupId={groupId}
+        />
+      )}
+
       {/* Artist Entries Table - only for artists, loaded asynchronously */}
       {isArtist && (
         loading ? (
@@ -462,6 +485,7 @@ export default function DeepDiveClient({
             tracks={artistEntries.tracks}
             albums={artistEntries.albums}
             groupId={groupId}
+            certifications={artistCertifications}
           />
         )
       )}

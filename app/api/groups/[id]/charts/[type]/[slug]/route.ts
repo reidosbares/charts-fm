@@ -108,6 +108,25 @@ export async function GET(
       }),
     ])
 
+    // Fetch certifications for all artist track/album entries (needs artistEntries result)
+    let artistCertifications: { entryKey: string; chartType: string; tier: string }[] | null = null
+    if (chartType === 'artists' && artistEntries) {
+      const allEntryKeys = [
+        ...artistEntries.tracks.map(e => e.entryKey),
+        ...artistEntries.albums.map(e => e.entryKey),
+      ]
+      if (allEntryKeys.length > 0) {
+        artistCertifications = await prisma.certification.findMany({
+          where: {
+            groupId: group.id,
+            chartType: { in: ['tracks', 'albums'] },
+            entryKey: { in: allEntryKeys },
+          },
+          select: { entryKey: true, chartType: true, tier: true, awardedAt: true },
+        })
+      }
+    }
+
     return NextResponse.json({
       stats,
       majorDriver: majorDriverResult.majorDriver,
@@ -115,6 +134,7 @@ export async function GET(
       totals,
       artistEntries: chartType === 'artists' ? artistEntries : null,
       numberOnes: chartType === 'artists' ? numberOnes : null,
+      artistCertifications: chartType === 'artists' ? artistCertifications : null,
       certifications,
       certificationThresholds: certSettings ? {
         enabled: certSettings.certificationsEnabled,

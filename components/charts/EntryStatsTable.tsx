@@ -5,11 +5,35 @@ import { EntryStats } from '@/lib/chart-deep-dive'
 import { formatChartWeekLabel, formatWeekLabel, getChartWeekReferenceDate } from '@/lib/weekly-utils'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
-interface EntryStatsTableProps {
-  stats: EntryStats
+interface CertificationCounts {
+  gold: number
+  platinum: number
+  diamond: number
 }
 
-function EntryStatsTable({ stats }: EntryStatsTableProps) {
+interface EntryStatsTableProps {
+  stats: EntryStats
+  certificationCounts?: CertificationCounts
+}
+
+const TIER_COLORS: Record<string, { fill: string; stroke: string; shine: string }> = {
+  gold: { fill: '#D4A017', stroke: '#B8860B', shine: '#FFD700' },
+  platinum: { fill: '#A8B4C0', stroke: '#8899AA', shine: '#D4DEE8' },
+  diamond: { fill: '#7BD4F0', stroke: '#5BACC8', shine: '#B8EAFF' },
+}
+
+function Disc({ tier }: { tier: string }) {
+  const colors = TIER_COLORS[tier] || TIER_COLORS.gold
+  return (
+    <svg width={14} height={12} viewBox="0 0 14 12" className="inline-block flex-shrink-0">
+      <ellipse cx={7} cy={6} rx={6} ry={5} fill={colors.fill} stroke={colors.stroke} strokeWidth={0.8} />
+      <circle cx={7} cy={6} r={1.5} fill={colors.stroke} opacity={0.6} />
+      <ellipse cx={6} cy={4.5} rx={2.7} ry={1.5} fill={colors.shine} opacity={0.5} />
+    </svg>
+  )
+}
+
+function EntryStatsTable({ stats, certificationCounts }: EntryStatsTableProps) {
   const t = useSafeTranslations('deepDive.entryStats')
   const formatDaysAgo = useCallback((date: Date | null): string => {
     if (!date) return t('never')
@@ -118,6 +142,23 @@ function EntryStatsTable({ stats }: EntryStatsTableProps) {
               </td>
             </tr>
           ))}
+          {certificationCounts && (
+            <tr className="hover:bg-white/20 transition-colors">
+              <td className="py-2 md:py-3 px-2 md:px-4 text-sm font-medium text-gray-700 w-1/2">
+                {t('certifications')}
+              </td>
+              <td className="py-2 md:py-3 px-2 md:px-4 text-sm text-gray-900 font-semibold">
+                <span className="inline-flex items-center gap-3">
+                  {(['diamond', 'platinum', 'gold'] as const).map(tier => (
+                    <span key={tier} className="inline-flex items-center gap-1">
+                      <Disc tier={tier} />
+                      <span>x{certificationCounts[tier]}</span>
+                    </span>
+                  ))}
+                </span>
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

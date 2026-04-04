@@ -280,7 +280,7 @@ export default function CertificationsSection({
 
       <Fanfare particles={fanfareParticles} tierColor={fanfareTierColor} />
 
-      <div className="flex gap-4 sm:gap-5 md:gap-7 overflow-x-auto py-8 px-4 -my-8 -mx-4">
+      <div className="flex gap-4 sm:gap-5 md:gap-7 overflow-x-auto py-8 px-4 -my-8 -mx-4 scrollbar-hide">
         {TIERS.map((tier) => {
           const awarded = isAwarded(tier.key)
           const eligible = isEligible(tier.key)
