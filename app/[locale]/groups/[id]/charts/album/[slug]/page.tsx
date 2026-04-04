@@ -55,6 +55,7 @@ export default async function AlbumDeepDivePage({
   params: { id: string; slug: string }
 }) {
   const { user, group } = await getGroupAccess(params.id)
+  const isCreator = user?.id === group?.creatorId
 
   if (!group) {
     notFound()
@@ -166,6 +167,7 @@ export default async function AlbumDeepDivePage({
           initialHistory={history}
           chartMode={group!.chartMode || 'vs'}
           isArtist={false}
+          isCreator={isCreator}
           albumArtistForImage={entry!.artist}
           albumNameForImage={entry!.name}
         />

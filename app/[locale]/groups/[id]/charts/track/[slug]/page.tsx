@@ -41,6 +41,7 @@ export default async function TrackDeepDivePage({
   params: { id: string; slug: string }
 }) {
   const { user, group } = await getGroupAccess(params.id)
+  const isCreator = user?.id === group?.creatorId
 
   if (!group) {
     notFound()
@@ -154,6 +155,7 @@ export default async function TrackDeepDivePage({
           initialHistory={history}
           chartMode={group!.chartMode || 'vs'}
           isArtist={false}
+          isCreator={isCreator}
           artistNameForImage={entry!.artist}
           imageLinkUrl={artistImagesPageSlug ? `/artist/${artistImagesPageSlug}/images` : null}
         />

@@ -6,6 +6,7 @@ import { Link } from '@/i18n/routing'
 import ChartHistoryTimeline from '@/components/charts/ChartHistoryTimeline'
 import QuickStats from '@/components/charts/QuickStats'
 import EntryStatsTable from '@/components/charts/EntryStatsTable'
+import CertificationsSection from '@/components/charts/CertificationsSection'
 import ArtistEntriesTable from '@/components/charts/ArtistEntriesTable'
 import OtherGroupsSection from '@/components/charts/OtherGroupsSection'
 import { ChartHistoryEntry, EntryStats, MajorDriver, ArtistChartEntry } from '@/lib/chart-deep-dive'
@@ -96,6 +97,7 @@ interface DeepDiveClientProps {
   artistNameForImage?: string | null
   albumArtistForImage?: string | null
   albumNameForImage?: string | null
+  isCreator?: boolean
 }
 
 export default function DeepDiveClient({
@@ -109,6 +111,7 @@ export default function DeepDiveClient({
   initialHistory,
   chartMode,
   isArtist = false,
+  isCreator = false,
   imageUrl: initialImageUrl,
   imageLinkUrl,
   artistNameForImage,
@@ -134,6 +137,16 @@ export default function DeepDiveClient({
   const totals: { totalVS: number | null; totalPlays: number; weeksAtNumberOne: number } | null = deepDiveData?.totals || null
   const artistEntries: { tracks: ArtistChartEntry[]; albums: ArtistChartEntry[] } | null = isArtist ? (deepDiveData?.artistEntries || null) : null
   const numberOnes: { numberOneTracks: number; numberOneAlbums: number } | null = isArtist ? (deepDiveData?.numberOnes || null) : null
+
+  const [certificationsList, setCertificationsList] = useState<any[]>([])
+
+  useEffect(() => {
+    if (deepDiveData?.certifications) {
+      setCertificationsList(deepDiveData.certifications)
+    }
+  }, [deepDiveData?.certifications])
+
+  const certificationThresholds = deepDiveData?.certificationThresholds || null
 
   const [imageUrl, setImageUrl] = useState<string | null | undefined>(initialImageUrl)
   const [newDriverNotification, setNewDriverNotification] = useState<{ name: string } | null>(null)
@@ -399,6 +412,22 @@ export default function DeepDiveClient({
         </div>
       ) : stats && (
         <EntryStatsTable stats={stats} />
+      )}
+
+      {/* Certifications */}
+      {!isArtist && certificationThresholds?.enabled && totals && (
+        <CertificationsSection
+          groupId={groupId}
+          chartType={chartType}
+          entryKey={entryKey}
+          totalVS={totals.totalVS ?? 0}
+          certifications={certificationsList}
+          thresholds={certificationThresholds}
+          isCreator={isCreator}
+          onCertificationAwarded={(cert) => {
+            setCertificationsList(prev => [...prev, cert])
+          }}
+        />
       )}
 
       {/* Artist Entries Table - only for artists, loaded asynchronously */}
