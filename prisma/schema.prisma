@@ -59,6 +59,7 @@ model User {
   artistImagesUploaded          ArtistImage[]
   artistImageVotes              ArtistImageVote[]
   artistImageReports            ArtistImageReport[]
+  certificationsAwarded          Certification[]                @relation("CertificationsAwarded")
 
   @@map("users")
 }
@@ -119,6 +120,10 @@ model Group {
   shoutboxEnabled                Boolean                        @default(true)
   shoutboxRestrictiveMode        Boolean                        @default(false)
   tags                           Json?                          @default("[]")
+  certificationsEnabled          Boolean                        @default(true)
+  certGoldThreshold              Float                          @default(20)
+  certPlatinumThreshold          Float                          @default(40)
+  certDiamondThreshold           Float                          @default(100)
   chartEntryStats                ChartEntryStats[]
   allTimeStats                   GroupAllTimeStats?
   chartEntries                   GroupChartEntry[]
@@ -135,6 +140,7 @@ model Group {
   shoutboxPermissions            GroupShoutboxPermission[]
   trends                         GroupTrends?
   weeklyStats                    GroupWeeklyStats[]
+  certifications                 Certification[]
   creator                        User?                          @relation("GroupCreator", fields: [creatorId], references: [id])
   quickAccessUsers               User[]                         @relation("QuickAccessGroup")
   highlightedByUsers             User[]                         @relation("HighlightedGroup")
@@ -400,6 +406,25 @@ model GroupTrends {
   group             Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@map("group_trends")
+}
+
+model Certification {
+  id               String   @id @default(cuid())
+  groupId          String
+  chartType        String
+  entryKey         String
+  tier             String
+  awardedAt        DateTime @default(now())
+  awardedById      String
+  thresholdAtAward Float
+
+  group            Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  awardedBy        User     @relation("CertificationsAwarded", fields: [awardedById], references: [id])
+
+  @@unique([groupId, chartType, entryKey, tier])
+  @@index([groupId])
+  @@index([groupId, chartType, entryKey])
+  @@map("certifications")
 }
 
 model ChartEntryStats {
