@@ -435,6 +435,11 @@ export default function DeepDiveClient({
           onCertificationAwarded={(cert) => {
             setCertificationsList(prev => [...prev, cert])
           }}
+          onCertificationRevoked={(tier) => {
+            setCertificationsList(prev => prev.filter(c => c.tier !== tier))
+          }}
+          imageUrl={imageUrl}
+          entryName={entryName}
         />
       )}
 

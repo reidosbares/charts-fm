@@ -9,37 +9,58 @@ interface CertificationsTabProps {
   groupId: string
   memberCount: number
   initialEnabled: boolean
-  initialGold: number
-  initialPlatinum: number
-  initialDiamond: number
+  initialTrackGold: number
+  initialTrackPlatinum: number
+  initialTrackDiamond: number
+  initialAlbumGold: number
+  initialAlbumPlatinum: number
+  initialAlbumDiamond: number
 }
 
-const GOLD_BASE = 4
-const PLATINUM_BASE = 8
-const DIAMOND_BASE = 20
+const TRACK_GOLD_BASE = 3
+const TRACK_PLATINUM_BASE = 6
+const TRACK_DIAMOND_BASE = 16
+
+const ALBUM_GOLD_BASE = 4
+const ALBUM_PLATINUM_BASE = 8
+const ALBUM_DIAMOND_BASE = 20
 
 export default function CertificationsTab({
   groupId,
   memberCount,
   initialEnabled,
-  initialGold,
-  initialPlatinum,
-  initialDiamond,
+  initialTrackGold,
+  initialTrackPlatinum,
+  initialTrackDiamond,
+  initialAlbumGold,
+  initialAlbumPlatinum,
+  initialAlbumDiamond,
 }: CertificationsTabProps) {
   const t = useSafeTranslations('groups.settings.certifications')
   const [enabled, setEnabled] = useState(initialEnabled)
-  const [gold, setGold] = useState(initialGold)
-  const [platinum, setPlatinum] = useState(initialPlatinum)
-  const [diamond, setDiamond] = useState(initialDiamond)
+  const [trackGold, setTrackGold] = useState(initialTrackGold)
+  const [trackPlatinum, setTrackPlatinum] = useState(initialTrackPlatinum)
+  const [trackDiamond, setTrackDiamond] = useState(initialTrackDiamond)
+  const [albumGold, setAlbumGold] = useState(initialAlbumGold)
+  const [albumPlatinum, setAlbumPlatinum] = useState(initialAlbumPlatinum)
+  const [albumDiamond, setAlbumDiamond] = useState(initialAlbumDiamond)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
-  const validationError = gold >= platinum
+  const trackValidationError = trackGold >= trackPlatinum
     ? t('goldMustBeLessThanPlatinum')
-    : platinum >= diamond
+    : trackPlatinum >= trackDiamond
     ? t('platinumMustBeLessThanDiamond')
     : null
+
+  const albumValidationError = albumGold >= albumPlatinum
+    ? t('goldMustBeLessThanPlatinum')
+    : albumPlatinum >= albumDiamond
+    ? t('platinumMustBeLessThanDiamond')
+    : null
+
+  const validationError = trackValidationError || albumValidationError
 
   const handleSave = async () => {
     if (validationError) return
@@ -53,9 +74,12 @@ export default function CertificationsTab({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           certificationsEnabled: enabled,
-          certGoldThreshold: gold,
-          certPlatinumThreshold: platinum,
-          certDiamondThreshold: diamond,
+          certTrackGoldThreshold: trackGold,
+          certTrackPlatinumThreshold: trackPlatinum,
+          certTrackDiamondThreshold: trackDiamond,
+          certAlbumGoldThreshold: albumGold,
+          certAlbumPlatinumThreshold: albumPlatinum,
+          certAlbumDiamondThreshold: albumDiamond,
         }),
       })
 
@@ -75,9 +99,18 @@ export default function CertificationsTab({
 
   const handleReset = () => {
     const count = Math.max(memberCount, 1)
-    setGold(GOLD_BASE * count)
-    setPlatinum(PLATINUM_BASE * count)
-    setDiamond(DIAMOND_BASE * count)
+    setTrackGold(TRACK_GOLD_BASE * count)
+    setTrackPlatinum(TRACK_PLATINUM_BASE * count)
+    setTrackDiamond(TRACK_DIAMOND_BASE * count)
+    setAlbumGold(ALBUM_GOLD_BASE * count)
+    setAlbumPlatinum(ALBUM_PLATINUM_BASE * count)
+    setAlbumDiamond(ALBUM_DIAMOND_BASE * count)
+  }
+
+  const inputStyle = {
+    background: 'rgba(255,255,255,0.6)',
+    borderColor: 'rgba(0,0,0,0.1)',
+    color: 'var(--theme-text)',
   }
 
   return (
@@ -105,67 +138,118 @@ export default function CertificationsTab({
         />
 
         {enabled && (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--theme-text)' }}>
-                {t('goldThreshold')}
-              </label>
-              <input
-                type="number"
-                min={0}
-                step={0.1}
-                value={gold}
-                onChange={(e) => setGold(parseFloat(e.target.value) || 0)}
-                className="w-full px-3 py-2 rounded-lg border text-sm"
-                style={{
-                  background: 'rgba(255,255,255,0.6)',
-                  borderColor: 'rgba(0,0,0,0.1)',
-                  color: 'var(--theme-text)',
-                }}
-              />
+          <div className="space-y-6">
+            {/* Track Thresholds */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold" style={{ color: 'var(--theme-text)' }}>
+                {t('trackThresholds')}
+              </h3>
+
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--theme-text)' }}>
+                  {t('trackGoldThreshold')}
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  step={0.1}
+                  value={trackGold}
+                  onChange={(e) => setTrackGold(parseFloat(e.target.value) || 0)}
+                  className="w-full px-3 py-2 rounded-lg border text-sm"
+                  style={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--theme-text)' }}>
+                  {t('trackPlatinumThreshold')}
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  step={0.1}
+                  value={trackPlatinum}
+                  onChange={(e) => setTrackPlatinum(parseFloat(e.target.value) || 0)}
+                  className="w-full px-3 py-2 rounded-lg border text-sm"
+                  style={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--theme-text)' }}>
+                  {t('trackDiamondThreshold')}
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  step={0.1}
+                  value={trackDiamond}
+                  onChange={(e) => setTrackDiamond(parseFloat(e.target.value) || 0)}
+                  className="w-full px-3 py-2 rounded-lg border text-sm"
+                  style={inputStyle}
+                />
+              </div>
+
+              {trackValidationError && (
+                <p className="text-sm text-red-500">{trackValidationError}</p>
+              )}
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--theme-text)' }}>
-                {t('platinumThreshold')}
-              </label>
-              <input
-                type="number"
-                min={0}
-                step={0.1}
-                value={platinum}
-                onChange={(e) => setPlatinum(parseFloat(e.target.value) || 0)}
-                className="w-full px-3 py-2 rounded-lg border text-sm"
-                style={{
-                  background: 'rgba(255,255,255,0.6)',
-                  borderColor: 'rgba(0,0,0,0.1)',
-                  color: 'var(--theme-text)',
-                }}
-              />
-            </div>
+            {/* Album Thresholds */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold" style={{ color: 'var(--theme-text)' }}>
+                {t('albumThresholds')}
+              </h3>
 
-            <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--theme-text)' }}>
-                {t('diamondThreshold')}
-              </label>
-              <input
-                type="number"
-                min={0}
-                step={0.1}
-                value={diamond}
-                onChange={(e) => setDiamond(parseFloat(e.target.value) || 0)}
-                className="w-full px-3 py-2 rounded-lg border text-sm"
-                style={{
-                  background: 'rgba(255,255,255,0.6)',
-                  borderColor: 'rgba(0,0,0,0.1)',
-                  color: 'var(--theme-text)',
-                }}
-              />
-            </div>
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--theme-text)' }}>
+                  {t('albumGoldThreshold')}
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  step={0.1}
+                  value={albumGold}
+                  onChange={(e) => setAlbumGold(parseFloat(e.target.value) || 0)}
+                  className="w-full px-3 py-2 rounded-lg border text-sm"
+                  style={inputStyle}
+                />
+              </div>
 
-            {validationError && (
-              <p className="text-sm text-red-500">{validationError}</p>
-            )}
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--theme-text)' }}>
+                  {t('albumPlatinumThreshold')}
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  step={0.1}
+                  value={albumPlatinum}
+                  onChange={(e) => setAlbumPlatinum(parseFloat(e.target.value) || 0)}
+                  className="w-full px-3 py-2 rounded-lg border text-sm"
+                  style={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--theme-text)' }}>
+                  {t('albumDiamondThreshold')}
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  step={0.1}
+                  value={albumDiamond}
+                  onChange={(e) => setAlbumDiamond(parseFloat(e.target.value) || 0)}
+                  className="w-full px-3 py-2 rounded-lg border text-sm"
+                  style={inputStyle}
+                />
+              </div>
+
+              {albumValidationError && (
+                <p className="text-sm text-red-500">{albumValidationError}</p>
+              )}
+            </div>
 
             <button
               onClick={handleReset}

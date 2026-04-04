@@ -121,9 +121,12 @@ model Group {
   shoutboxRestrictiveMode        Boolean                        @default(false)
   tags                           Json?                          @default("[]")
   certificationsEnabled          Boolean                        @default(true)
-  certGoldThreshold              Float                          @default(20)
-  certPlatinumThreshold          Float                          @default(40)
-  certDiamondThreshold           Float                          @default(100)
+  certTrackGoldThreshold         Float                          @default(15)
+  certTrackPlatinumThreshold     Float                          @default(30)
+  certTrackDiamondThreshold      Float                          @default(80)
+  certAlbumGoldThreshold         Float                          @default(20)
+  certAlbumPlatinumThreshold     Float                          @default(40)
+  certAlbumDiamondThreshold      Float                          @default(100)
   chartEntryStats                ChartEntryStats[]
   allTimeStats                   GroupAllTimeStats?
   chartEntries                   GroupChartEntry[]

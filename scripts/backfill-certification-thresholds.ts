@@ -2,9 +2,13 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-const GOLD_BASE = 4
-const PLATINUM_BASE = 8
-const DIAMOND_BASE = 20
+const TRACK_GOLD_BASE = 3
+const TRACK_PLATINUM_BASE = 6
+const TRACK_DIAMOND_BASE = 16
+
+const ALBUM_GOLD_BASE = 4
+const ALBUM_PLATINUM_BASE = 8
+const ALBUM_DIAMOND_BASE = 20
 
 async function main() {
   const groups = await prisma.group.findMany({
@@ -21,9 +25,12 @@ async function main() {
     await prisma.group.update({
       where: { id: group.id },
       data: {
-        certGoldThreshold: GOLD_BASE * memberCount,
-        certPlatinumThreshold: PLATINUM_BASE * memberCount,
-        certDiamondThreshold: DIAMOND_BASE * memberCount,
+        certTrackGoldThreshold: TRACK_GOLD_BASE * memberCount,
+        certTrackPlatinumThreshold: TRACK_PLATINUM_BASE * memberCount,
+        certTrackDiamondThreshold: TRACK_DIAMOND_BASE * memberCount,
+        certAlbumGoldThreshold: ALBUM_GOLD_BASE * memberCount,
+        certAlbumPlatinumThreshold: ALBUM_PLATINUM_BASE * memberCount,
+        certAlbumDiamondThreshold: ALBUM_DIAMOND_BASE * memberCount,
       },
     })
   }

@@ -934,9 +934,14 @@
         "title": "Certifications",
         "enableLabel": "Enable Certifications",
         "enableDescription": "Show certification plaques on track and album pages",
-        "goldThreshold": "Gold Threshold (VS)",
-        "platinumThreshold": "Platinum Threshold (VS)",
-        "diamondThreshold": "Diamond Threshold (VS)",
+        "trackThresholds": "Track Thresholds",
+        "albumThresholds": "Album Thresholds",
+        "trackGoldThreshold": "Track Gold Threshold (VS)",
+        "trackPlatinumThreshold": "Track Platinum Threshold (VS)",
+        "trackDiamondThreshold": "Track Diamond Threshold (VS)",
+        "albumGoldThreshold": "Album Gold Threshold (VS)",
+        "albumPlatinumThreshold": "Album Platinum Threshold (VS)",
+        "albumDiamondThreshold": "Album Diamond Threshold (VS)",
         "resetToSuggested": "Reset to suggested values",
         "goldMustBeLessThanPlatinum": "Gold threshold must be less than Platinum",
         "platinumMustBeLessThanDiamond": "Platinum threshold must be less than Diamond",
@@ -1208,7 +1213,12 @@
     "certifications": {
       "title": "Certifications",
       "award": "AWARD",
-      "eligible": "Eligible!"
+      "revoke": "REVOKE",
+      "revokeConfirm": "Revoke {tier}?",
+      "eligible": "Eligible!",
+      "gold": "GOLD",
+      "platinum": "PLATINUM",
+      "diamond": "DIAMOND"
     }
   },
   "records": {

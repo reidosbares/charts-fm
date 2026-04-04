@@ -1,0 +1,87 @@
+<h2>How should certifications appear on the deep-dive page?</h2>
+<p class="subtitle">These badges show awarded certifications + eligibility prompts for the group creator</p>
+
+<div class="cards">
+  <!-- Option A: Badge row below entry header -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#1a1a2e;border-radius:8px;padding:20px;font-family:system-ui;">
+        <div style="color:#fff;font-size:18px;font-weight:bold;">Running Up That Hill</div>
+        <div style="color:#999;font-size:14px;margin-bottom:12px;">Kate Bush</div>
+        <div style="display:flex;gap:8px;margin-bottom:16px;">
+          <span style="background:linear-gradient(135deg,#FFD700,#B8860B);color:#000;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;">GOLD</span>
+          <span style="background:linear-gradient(135deg,#E5E4E2,#8E8D8A);color:#000;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;">PLATINUM</span>
+          <span style="background:linear-gradient(135deg,#B9F2FF,#4FC3F7);color:#000;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;border:1px dashed #4FC3F7;">DIAMOND ★</span>
+        </div>
+        <div style="color:#666;font-size:11px;">★ = eligible, click to award (creator only)</div>
+        <div style="display:flex;gap:24px;color:#ccc;font-size:13px;margin-top:8px;">
+          <span>Total VS: 142.5</span>
+          <span>Peak: #1</span>
+          <span>Weeks: 24</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A: Inline Badge Row</h3>
+      <p>Certification pills sit directly below the entry name/artist, before the stats. Eligible-but-unawarded tiers shown with a dashed border. Compact and always visible.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Sidebar card -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#1a1a2e;border-radius:8px;padding:20px;font-family:system-ui;display:flex;gap:16px;">
+        <div style="flex:1;">
+          <div style="color:#fff;font-size:18px;font-weight:bold;">Running Up That Hill</div>
+          <div style="color:#999;font-size:14px;margin-bottom:8px;">Kate Bush</div>
+          <div style="display:flex;gap:24px;color:#ccc;font-size:13px;">
+            <span>Total VS: 142.5</span>
+            <span>Peak: #1</span>
+            <span>Weeks: 24</span>
+          </div>
+        </div>
+        <div style="background:#1e1e3a;border-radius:8px;padding:12px 16px;text-align:center;min-width:100px;border:1px solid #333;">
+          <div style="font-size:11px;color:#999;margin-bottom:6px;text-transform:uppercase;">Certified</div>
+          <div style="font-size:28px;margin-bottom:2px;">💎</div>
+          <div style="background:linear-gradient(135deg,#B9F2FF,#4FC3F7);color:#000;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:bold;">DIAMOND</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B: Certification Card (Side)</h3>
+      <p>A small card to the right of the entry header showing the highest achieved certification. Shows only the top tier prominently. Cleaner but less informative about all tiers.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Record-plaque style -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#1a1a2e;border-radius:8px;padding:20px;font-family:system-ui;">
+        <div style="color:#fff;font-size:18px;font-weight:bold;">Running Up That Hill</div>
+        <div style="color:#999;font-size:14px;margin-bottom:16px;">Kate Bush</div>
+        <div style="background:#12122a;border:2px solid #333;border-radius:12px;padding:16px;text-align:center;max-width:280px;">
+          <div style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Certifications</div>
+          <div style="display:flex;justify-content:center;gap:16px;margin-bottom:8px;">
+            <div>
+              <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#FFD700,#B8860B);margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:16px;">●</div>
+              <div style="color:#FFD700;font-size:10px;">GOLD</div>
+            </div>
+            <div>
+              <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#E5E4E2,#8E8D8A);margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:16px;">●</div>
+              <div style="color:#E5E4E2;font-size:10px;">PLATINUM</div>
+            </div>
+            <div>
+              <div style="width:40px;height:40px;border-radius:50%;background:#2a2a3e;border:2px dashed #4FC3F7;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#4FC3F7;">?</div>
+              <div style="color:#4FC3F7;font-size:10px;">DIAMOND</div>
+            </div>
+          </div>
+          <div style="color:#666;font-size:11px;">Total VS: 142.5 / 100 for Diamond</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C: Plaque Display</h3>
+      <p>A dedicated "plaque" section showing all three tiers as circular disc icons (like actual record plaques). Unearned tiers shown as dashed outlines. More visual weight, feels like a real award display.</p>
+    </div>
+  </div>
+</div>

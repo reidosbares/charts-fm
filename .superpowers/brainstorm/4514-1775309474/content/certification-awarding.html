@@ -1,0 +1,112 @@
+<h2>How should the "Award" interaction look for the group creator?</h2>
+<p class="subtitle">When an entry is eligible for a tier, only the creator sees the option to award it</p>
+
+<div class="cards">
+  <!-- Option A: Pulsing eligible plaque -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#111;border-radius:12px;padding:24px;font-family:system-ui;">
+        <div style="color:#999;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;">Certifications</div>
+        <div style="display:flex;gap:20px;overflow-x:auto;">
+          <!-- Gold - Awarded -->
+          <div style="min-width:150px;text-align:center;">
+            <div style="background:linear-gradient(180deg,#1c1c1c,#141414);border:1px solid #B8860B;border-radius:16px;padding:24px 16px;box-shadow:0 0 12px rgba(255,215,0,0.1);">
+              <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#FFD700 0%,#B8860B 50%,#FFD700 100%);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(255,215,0,0.3);">
+                <div style="width:22px;height:22px;border-radius:50%;background:#141414;border:2px solid #DAA520;"></div>
+              </div>
+              <div style="color:#FFD700;font-size:14px;font-weight:bold;letter-spacing:1.5px;">GOLD</div>
+              <div style="color:#666;font-size:10px;margin-top:4px;">20.0 VS</div>
+            </div>
+            <div style="color:#999;font-size:11px;margin-top:8px;">Mar 12, 2026</div>
+          </div>
+          <!-- Platinum - Eligible, not yet awarded -->
+          <div style="min-width:150px;text-align:center;">
+            <style>
+              @keyframes pulse-plat { 0%,100% { box-shadow:0 0 12px rgba(200,200,200,0.15); } 50% { box-shadow:0 0 24px rgba(200,200,200,0.35); } }
+            </style>
+            <div style="background:linear-gradient(180deg,#1c1c1c,#141414);border:2px solid #8E8D8A;border-radius:16px;padding:24px 16px;animation:pulse-plat 2s ease-in-out infinite;cursor:pointer;">
+              <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#E5E4E2 0%,#A8A8A0 50%,#E5E4E2 100%);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(200,200,200,0.2);">
+                <div style="width:22px;height:22px;border-radius:50%;background:#141414;border:2px solid #C0C0C0;"></div>
+              </div>
+              <div style="color:#E5E4E2;font-size:14px;font-weight:bold;letter-spacing:1.5px;">PLATINUM</div>
+              <div style="color:#666;font-size:10px;margin-top:4px;">30.0 VS</div>
+              <div style="margin-top:10px;background:#E5E4E2;color:#111;font-size:11px;font-weight:bold;padding:4px 14px;border-radius:8px;display:inline-block;">AWARD</div>
+            </div>
+            <div style="color:#A8A8A0;font-size:11px;margin-top:8px;">Eligible!</div>
+          </div>
+          <!-- Diamond - Not eligible -->
+          <div style="min-width:150px;text-align:center;">
+            <div style="background:linear-gradient(180deg,#1c1c1c,#141414);border:1px solid #222;border-radius:16px;padding:24px 16px;opacity:0.3;">
+              <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#B9F2FF 0%,#4FC3F7 50%,#B9F2FF 100%);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;">
+                <div style="width:22px;height:22px;border-radius:50%;background:#141414;border:2px solid #4FC3F7;"></div>
+              </div>
+              <div style="color:#B9F2FF;font-size:14px;font-weight:bold;letter-spacing:1.5px;">DIAMOND</div>
+              <div style="color:#666;font-size:10px;margin-top:4px;">100.0 VS</div>
+            </div>
+            <div style="color:#333;font-size:11px;margin-top:8px;">&nbsp;</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A: Pulsing Glow + Award Button</h3>
+      <p>Eligible plaque has a subtle pulsing glow animation and an "AWARD" button directly on the plaque. "Eligible!" text replaces the date. Only visible to the group creator.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Separate award bar below -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#111;border-radius:12px;padding:24px;font-family:system-ui;">
+        <div style="color:#999;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;">Certifications</div>
+        <div style="display:flex;gap:20px;overflow-x:auto;margin-bottom:16px;">
+          <!-- Gold - Awarded -->
+          <div style="min-width:150px;text-align:center;">
+            <div style="background:linear-gradient(180deg,#1c1c1c,#141414);border:1px solid #B8860B;border-radius:16px;padding:24px 16px;box-shadow:0 0 12px rgba(255,215,0,0.1);">
+              <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#FFD700 0%,#B8860B 50%,#FFD700 100%);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(255,215,0,0.3);">
+                <div style="width:22px;height:22px;border-radius:50%;background:#141414;border:2px solid #DAA520;"></div>
+              </div>
+              <div style="color:#FFD700;font-size:14px;font-weight:bold;letter-spacing:1.5px;">GOLD</div>
+              <div style="color:#666;font-size:10px;margin-top:4px;">20.0 VS</div>
+            </div>
+            <div style="color:#999;font-size:11px;margin-top:8px;">Mar 12, 2026</div>
+          </div>
+          <!-- Platinum - Eligible but shown greyed like unearned -->
+          <div style="min-width:150px;text-align:center;">
+            <div style="background:linear-gradient(180deg,#1c1c1c,#141414);border:1px solid #222;border-radius:16px;padding:24px 16px;opacity:0.3;">
+              <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#E5E4E2 0%,#A8A8A0 50%,#E5E4E2 100%);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;">
+                <div style="width:22px;height:22px;border-radius:50%;background:#141414;border:2px solid #C0C0C0;"></div>
+              </div>
+              <div style="color:#E5E4E2;font-size:14px;font-weight:bold;letter-spacing:1.5px;">PLATINUM</div>
+              <div style="color:#666;font-size:10px;margin-top:4px;">30.0 VS</div>
+            </div>
+            <div style="color:#333;font-size:11px;margin-top:8px;">&nbsp;</div>
+          </div>
+          <!-- Diamond - Not eligible -->
+          <div style="min-width:150px;text-align:center;">
+            <div style="background:linear-gradient(180deg,#1c1c1c,#141414);border:1px solid #222;border-radius:16px;padding:24px 16px;opacity:0.3;">
+              <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#B9F2FF 0%,#4FC3F7 50%,#B9F2FF 100%);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;">
+                <div style="width:22px;height:22px;border-radius:50%;background:#141414;border:2px solid #4FC3F7;"></div>
+              </div>
+              <div style="color:#B9F2FF;font-size:14px;font-weight:bold;letter-spacing:1.5px;">DIAMOND</div>
+              <div style="color:#666;font-size:10px;margin-top:4px;">100.0 VS</div>
+            </div>
+            <div style="color:#333;font-size:11px;margin-top:8px;">&nbsp;</div>
+          </div>
+        </div>
+        <!-- Award bar -->
+        <div style="background:#1a1a2e;border:1px solid #8E8D8A;border-radius:10px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <span style="color:#E5E4E2;font-size:13px;font-weight:bold;">Platinum</span>
+            <span style="color:#999;font-size:12px;"> — eligible (35.2 / 30.0 VS)</span>
+          </div>
+          <div style="background:#E5E4E2;color:#111;font-size:12px;font-weight:bold;padding:6px 16px;border-radius:8px;cursor:pointer;">Award Certification</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B: Separate Award Bar</h3>
+      <p>Plaques stay visually consistent (greyed = not awarded). A separate bar below the plaques shows eligibility with an "Award Certification" button. Keeps the plaque display clean.</p>
+    </div>
+  </div>
+</div>

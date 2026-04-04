@@ -98,9 +98,12 @@ export async function GET(
         where: { id: group.id },
         select: {
           certificationsEnabled: true,
-          certGoldThreshold: true,
-          certPlatinumThreshold: true,
-          certDiamondThreshold: true,
+          certTrackGoldThreshold: true,
+          certTrackPlatinumThreshold: true,
+          certTrackDiamondThreshold: true,
+          certAlbumGoldThreshold: true,
+          certAlbumPlatinumThreshold: true,
+          certAlbumDiamondThreshold: true,
         },
       }),
     ])
@@ -115,9 +118,12 @@ export async function GET(
       certifications,
       certificationThresholds: certSettings ? {
         enabled: certSettings.certificationsEnabled,
-        gold: certSettings.certGoldThreshold,
-        platinum: certSettings.certPlatinumThreshold,
-        diamond: certSettings.certDiamondThreshold,
+        trackGold: certSettings.certTrackGoldThreshold,
+        trackPlatinum: certSettings.certTrackPlatinumThreshold,
+        trackDiamond: certSettings.certTrackDiamondThreshold,
+        albumGold: certSettings.certAlbumGoldThreshold,
+        albumPlatinum: certSettings.certAlbumPlatinumThreshold,
+        albumDiamond: certSettings.certAlbumDiamondThreshold,
       } : null,
     })
   } catch (error) {

@@ -36,9 +36,12 @@ export async function GET(
       trackingDayOfWeek: true,
       colorTheme: true,
       certificationsEnabled: true,
-      certGoldThreshold: true,
-      certPlatinumThreshold: true,
-      certDiamondThreshold: true,
+      certTrackGoldThreshold: true,
+      certTrackPlatinumThreshold: true,
+      certTrackDiamondThreshold: true,
+      certAlbumGoldThreshold: true,
+      certAlbumPlatinumThreshold: true,
+      certAlbumDiamondThreshold: true,
     },
   })
 
@@ -60,9 +63,12 @@ export async function GET(
     trackingDayOfWeek: group.trackingDayOfWeek ?? 0,
     colorTheme: (group as any).colorTheme || 'white',
     certificationsEnabled: group.certificationsEnabled,
-    certGoldThreshold: group.certGoldThreshold,
-    certPlatinumThreshold: group.certPlatinumThreshold,
-    certDiamondThreshold: group.certDiamondThreshold,
+    certTrackGoldThreshold: group.certTrackGoldThreshold,
+    certTrackPlatinumThreshold: group.certTrackPlatinumThreshold,
+    certTrackDiamondThreshold: group.certTrackDiamondThreshold,
+    certAlbumGoldThreshold: group.certAlbumGoldThreshold,
+    certAlbumPlatinumThreshold: group.certAlbumPlatinumThreshold,
+    certAlbumDiamondThreshold: group.certAlbumDiamondThreshold,
   })
 }
 
@@ -98,9 +104,12 @@ export async function PATCH(
       trackingDayOfWeek: true,
       colorTheme: true,
       certificationsEnabled: true,
-      certGoldThreshold: true,
-      certPlatinumThreshold: true,
-      certDiamondThreshold: true,
+      certTrackGoldThreshold: true,
+      certTrackPlatinumThreshold: true,
+      certTrackDiamondThreshold: true,
+      certAlbumGoldThreshold: true,
+      certAlbumPlatinumThreshold: true,
+      certAlbumDiamondThreshold: true,
     },
   })
 
@@ -118,7 +127,11 @@ export async function PATCH(
 
   const body = await request.json()
   const { chartSize, chartMode, trackingDayOfWeek, colorTheme } = body
-  const { certificationsEnabled, certGoldThreshold, certPlatinumThreshold, certDiamondThreshold } = body
+  const {
+    certificationsEnabled,
+    certTrackGoldThreshold, certTrackPlatinumThreshold, certTrackDiamondThreshold,
+    certAlbumGoldThreshold, certAlbumPlatinumThreshold, certAlbumDiamondThreshold,
+  } = body
 
   // Validate chartSize
   if (chartSize !== undefined) {
@@ -160,23 +173,45 @@ export async function PATCH(
     }
   }
 
-  // Validate certification thresholds (resolve against existing values for partial updates)
-  if (certGoldThreshold !== undefined || certPlatinumThreshold !== undefined || certDiamondThreshold !== undefined) {
-    const finalGold = certGoldThreshold ?? group.certGoldThreshold
-    const finalPlatinum = certPlatinumThreshold ?? group.certPlatinumThreshold
-    const finalDiamond = certDiamondThreshold ?? group.certDiamondThreshold
+  // Validate track certification thresholds (resolve against existing values for partial updates)
+  if (certTrackGoldThreshold !== undefined || certTrackPlatinumThreshold !== undefined || certTrackDiamondThreshold !== undefined) {
+    const finalGold = certTrackGoldThreshold ?? group.certTrackGoldThreshold
+    const finalPlatinum = certTrackPlatinumThreshold ?? group.certTrackPlatinumThreshold
+    const finalDiamond = certTrackDiamondThreshold ?? group.certTrackDiamondThreshold
 
     if (typeof finalGold !== 'number' || typeof finalPlatinum !== 'number' || typeof finalDiamond !== 'number' ||
         finalGold <= 0 || finalPlatinum <= 0 || finalDiamond <= 0) {
       return NextResponse.json(
-        { error: 'Thresholds must be positive numbers' },
+        { error: 'Track thresholds must be positive numbers' },
         { status: 400 }
       )
     }
 
     if (finalGold >= finalPlatinum || finalPlatinum >= finalDiamond) {
       return NextResponse.json(
-        { error: 'Thresholds must be in ascending order: Gold < Platinum < Diamond' },
+        { error: 'Track thresholds must be in ascending order: Gold < Platinum < Diamond' },
+        { status: 400 }
+      )
+    }
+  }
+
+  // Validate album certification thresholds (resolve against existing values for partial updates)
+  if (certAlbumGoldThreshold !== undefined || certAlbumPlatinumThreshold !== undefined || certAlbumDiamondThreshold !== undefined) {
+    const finalGold = certAlbumGoldThreshold ?? group.certAlbumGoldThreshold
+    const finalPlatinum = certAlbumPlatinumThreshold ?? group.certAlbumPlatinumThreshold
+    const finalDiamond = certAlbumDiamondThreshold ?? group.certAlbumDiamondThreshold
+
+    if (typeof finalGold !== 'number' || typeof finalPlatinum !== 'number' || typeof finalDiamond !== 'number' ||
+        finalGold <= 0 || finalPlatinum <= 0 || finalDiamond <= 0) {
+      return NextResponse.json(
+        { error: 'Album thresholds must be positive numbers' },
+        { status: 400 }
+      )
+    }
+
+    if (finalGold >= finalPlatinum || finalPlatinum >= finalDiamond) {
+      return NextResponse.json(
+        { error: 'Album thresholds must be in ascending order: Gold < Platinum < Diamond' },
         { status: 400 }
       )
     }
@@ -193,9 +228,12 @@ export async function PATCH(
       ...(trackingDayOfWeek !== undefined && { trackingDayOfWeek: newTrackingDayOfWeek }),
       ...(colorTheme !== undefined && { colorTheme }),
       ...(certificationsEnabled !== undefined && { certificationsEnabled }),
-      ...(certGoldThreshold !== undefined && { certGoldThreshold }),
-      ...(certPlatinumThreshold !== undefined && { certPlatinumThreshold }),
-      ...(certDiamondThreshold !== undefined && { certDiamondThreshold }),
+      ...(certTrackGoldThreshold !== undefined && { certTrackGoldThreshold }),
+      ...(certTrackPlatinumThreshold !== undefined && { certTrackPlatinumThreshold }),
+      ...(certTrackDiamondThreshold !== undefined && { certTrackDiamondThreshold }),
+      ...(certAlbumGoldThreshold !== undefined && { certAlbumGoldThreshold }),
+      ...(certAlbumPlatinumThreshold !== undefined && { certAlbumPlatinumThreshold }),
+      ...(certAlbumDiamondThreshold !== undefined && { certAlbumDiamondThreshold }),
     },
     select: {
       chartSize: true,

@@ -87,9 +87,12 @@ export default async function GroupSettingsPage({ params }: { params: { id: stri
     where: { id: group.id },
     select: {
       certificationsEnabled: true,
-      certGoldThreshold: true,
-      certPlatinumThreshold: true,
-      certDiamondThreshold: true,
+      certTrackGoldThreshold: true,
+      certTrackPlatinumThreshold: true,
+      certTrackDiamondThreshold: true,
+      certAlbumGoldThreshold: true,
+      certAlbumPlatinumThreshold: true,
+      certAlbumDiamondThreshold: true,
     },
   })
 
@@ -158,9 +161,12 @@ export default async function GroupSettingsPage({ params }: { params: { id: stri
               groupId={group.id}
               memberCount={memberCount}
               initialEnabled={certSettings?.certificationsEnabled ?? true}
-              initialGold={certSettings?.certGoldThreshold ?? 20}
-              initialPlatinum={certSettings?.certPlatinumThreshold ?? 40}
-              initialDiamond={certSettings?.certDiamondThreshold ?? 100}
+              initialTrackGold={certSettings?.certTrackGoldThreshold ?? 15}
+              initialTrackPlatinum={certSettings?.certTrackPlatinumThreshold ?? 30}
+              initialTrackDiamond={certSettings?.certTrackDiamondThreshold ?? 80}
+              initialAlbumGold={certSettings?.certAlbumGoldThreshold ?? 20}
+              initialAlbumPlatinum={certSettings?.certAlbumPlatinumThreshold ?? 40}
+              initialAlbumDiamond={certSettings?.certAlbumDiamondThreshold ?? 100}
             />
           }
           shoutboxContent={

@@ -934,9 +934,14 @@
         "title": "Certificações",
         "enableLabel": "Ativar Certificações",
         "enableDescription": "Mostrar certificações nas páginas de faixas e álbuns",
-        "goldThreshold": "Limite Ouro (VS)",
-        "platinumThreshold": "Limite Platina (VS)",
-        "diamondThreshold": "Limite Diamante (VS)",
+        "trackThresholds": "Limites de Faixas",
+        "albumThresholds": "Limites de Álbuns",
+        "trackGoldThreshold": "Limite Ouro Faixas (VS)",
+        "trackPlatinumThreshold": "Limite Platina Faixas (VS)",
+        "trackDiamondThreshold": "Limite Diamante Faixas (VS)",
+        "albumGoldThreshold": "Limite Ouro Álbuns (VS)",
+        "albumPlatinumThreshold": "Limite Platina Álbuns (VS)",
+        "albumDiamondThreshold": "Limite Diamante Álbuns (VS)",
         "resetToSuggested": "Restaurar valores sugeridos",
         "goldMustBeLessThanPlatinum": "Limite Ouro deve ser menor que Platina",
         "platinumMustBeLessThanDiamond": "Limite Platina deve ser menor que Diamante",
@@ -1208,7 +1213,12 @@
     "certifications": {
       "title": "Certificações",
       "award": "CERTIFICAR",
-      "eligible": "Elegível!"
+      "revoke": "REVOGAR",
+      "revokeConfirm": "Revogar {tier}?",
+      "eligible": "Elegível!",
+      "gold": "OURO",
+      "platinum": "PLATINA",
+      "diamond": "DIAMANTE"
     }
   },
   "records": {

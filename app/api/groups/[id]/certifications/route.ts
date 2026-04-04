@@ -5,11 +5,19 @@ import { prisma } from '@/lib/prisma'
 const TIER_ORDER = ['gold', 'platinum', 'diamond'] as const
 type Tier = typeof TIER_ORDER[number]
 
-function getThresholdForTier(group: { certGoldThreshold: number; certPlatinumThreshold: number; certDiamondThreshold: number }, tier: Tier): number {
+function getThresholdForTier(
+  group: {
+    certTrackGoldThreshold: number; certTrackPlatinumThreshold: number; certTrackDiamondThreshold: number
+    certAlbumGoldThreshold: number; certAlbumPlatinumThreshold: number; certAlbumDiamondThreshold: number
+  },
+  tier: Tier,
+  chartType: string
+): number {
+  const isAlbum = chartType === 'albums'
   switch (tier) {
-    case 'gold': return group.certGoldThreshold
-    case 'platinum': return group.certPlatinumThreshold
-    case 'diamond': return group.certDiamondThreshold
+    case 'gold': return isAlbum ? group.certAlbumGoldThreshold : group.certTrackGoldThreshold
+    case 'platinum': return isAlbum ? group.certAlbumPlatinumThreshold : group.certTrackPlatinumThreshold
+    case 'diamond': return isAlbum ? group.certAlbumDiamondThreshold : group.certTrackDiamondThreshold
   }
 }
 
@@ -61,9 +69,12 @@ export async function POST(
       select: {
         creatorId: true,
         certificationsEnabled: true,
-        certGoldThreshold: true,
-        certPlatinumThreshold: true,
-        certDiamondThreshold: true,
+        certTrackGoldThreshold: true,
+        certTrackPlatinumThreshold: true,
+        certTrackDiamondThreshold: true,
+        certAlbumGoldThreshold: true,
+        certAlbumPlatinumThreshold: true,
+        certAlbumDiamondThreshold: true,
       },
     })
 
@@ -104,7 +115,7 @@ export async function POST(
     }
 
     // Check VS threshold
-    const threshold = getThresholdForTier(groupSettings, tier as Tier)
+    const threshold = getThresholdForTier(groupSettings, tier as Tier, chartType)
     const totalVS = Number(entryStats.totalVS ?? 0)
     if (totalVS < threshold) {
       return NextResponse.json({ error: `Entry has not reached the ${tier} threshold (${totalVS.toFixed(1)} / ${threshold} VS)` }, { status: 400 })
@@ -168,5 +179,83 @@ export async function POST(
     }
     console.error('Error awarding certification:', error)
     return NextResponse.json({ error: 'Failed to award certification' }, { status: 500 })
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { user, group } = await checkGroupAccessForAPI(params.id)
+
+    const groupSettings = await prisma.group.findUnique({
+      where: { id: group.id },
+      select: { creatorId: true },
+    })
+
+    if (!groupSettings) {
+      return NextResponse.json({ error: 'Group not found' }, { status: 404 })
+    }
+
+    if (groupSettings.creatorId !== user.id) {
+      return NextResponse.json({ error: 'Only the group creator can revoke certifications' }, { status: 403 })
+    }
+
+    const body = await request.json()
+    const { chartType, entryKey, tier } = body
+
+    if (!['tracks', 'albums'].includes(chartType)) {
+      return NextResponse.json({ error: 'Invalid chart type' }, { status: 400 })
+    }
+    if (!TIER_ORDER.includes(tier)) {
+      return NextResponse.json({ error: 'Invalid tier' }, { status: 400 })
+    }
+    if (!entryKey || typeof entryKey !== 'string') {
+      return NextResponse.json({ error: 'Entry key is required' }, { status: 400 })
+    }
+
+    // Cannot revoke a tier if a higher tier is still awarded
+    const tierIndex = TIER_ORDER.indexOf(tier as Tier)
+    if (tierIndex < TIER_ORDER.length - 1) {
+      const higherTier = TIER_ORDER[tierIndex + 1]
+      const higherCert = await prisma.certification.findUnique({
+        where: {
+          groupId_chartType_entryKey_tier: {
+            groupId: group.id,
+            chartType,
+            entryKey,
+            tier: higherTier,
+          },
+        },
+      })
+      if (higherCert) {
+        return NextResponse.json(
+          { error: `Must revoke ${higherTier} before revoking ${tier}` },
+          { status: 400 }
+        )
+      }
+    }
+
+    const deleted = await prisma.certification.deleteMany({
+      where: {
+        groupId: group.id,
+        chartType,
+        entryKey,
+        tier,
+      },
+    })
+
+    if (deleted.count === 0) {
+      return NextResponse.json({ error: 'Certification not found' }, { status: 404 })
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (error: any) {
+    if (error.status === 401 || error.status === 403 || error.status === 404) {
+      return NextResponse.json({ error: error.message }, { status: error.status })
+    }
+    console.error('Error revoking certification:', error)
+    return NextResponse.json({ error: 'Failed to revoke certification' }, { status: 500 })
   }
 }
