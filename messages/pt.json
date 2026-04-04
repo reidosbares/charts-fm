@@ -710,7 +710,8 @@
         "regenerateCharts": "Re-gerar Charts",
         "deleteGroup": "Excluir Comunidade",
         "showMore": "Mostrar {count} Mais",
-        "showLess": "Mostrar Menos"
+        "showLess": "Mostrar Menos",
+        "certifications": "Certificações"
       },
       "chartCreation": {
         "title": "Configurações dos charts",
@@ -928,6 +929,20 @@
           "pleaseType": "Por favor, digite \"{groupName}\" para confirmar a exclusão",
           "failedToDelete": "Falha ao excluir comunidade"
         }
+      },
+      "certifications": {
+        "title": "Certificações",
+        "enableLabel": "Ativar Certificações",
+        "enableDescription": "Mostrar certificações nas páginas de faixas e álbuns",
+        "goldThreshold": "Limite Ouro (VS)",
+        "platinumThreshold": "Limite Platina (VS)",
+        "diamondThreshold": "Limite Diamante (VS)",
+        "resetToSuggested": "Restaurar valores sugeridos",
+        "goldMustBeLessThanPlatinum": "Limite Ouro deve ser menor que Platina",
+        "platinumMustBeLessThanDiamond": "Limite Platina deve ser menor que Diamante",
+        "saving": "Salvando...",
+        "save": "Salvar",
+        "saved": "Configurações salvas"
       }
     },
     "public": {
@@ -1189,6 +1204,11 @@
       "artist": "Artista",
       "track": "Música",
       "album": "Álbum"
+    },
+    "certifications": {
+      "title": "Certificações",
+      "award": "CERTIFICAR",
+      "eligible": "Elegível!"
     }
   },
   "records": {

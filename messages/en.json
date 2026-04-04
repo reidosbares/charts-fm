@@ -710,7 +710,8 @@
         "regenerateCharts": "Regenerate Charts",
         "deleteGroup": "Delete Group",
         "showMore": "Show {count} More",
-        "showLess": "Show Less"
+        "showLess": "Show Less",
+        "certifications": "Certifications"
       },
       "chartCreation": {
         "title": "Chart Settings",
@@ -928,6 +929,20 @@
           "pleaseType": "Please type \"{groupName}\" to confirm deletion",
           "failedToDelete": "Failed to delete group"
         }
+      },
+      "certifications": {
+        "title": "Certifications",
+        "enableLabel": "Enable Certifications",
+        "enableDescription": "Show certification plaques on track and album pages",
+        "goldThreshold": "Gold Threshold (VS)",
+        "platinumThreshold": "Platinum Threshold (VS)",
+        "diamondThreshold": "Diamond Threshold (VS)",
+        "resetToSuggested": "Reset to suggested values",
+        "goldMustBeLessThanPlatinum": "Gold threshold must be less than Platinum",
+        "platinumMustBeLessThanDiamond": "Platinum threshold must be less than Diamond",
+        "saving": "Saving...",
+        "save": "Save",
+        "saved": "Settings saved"
       }
     },
     "public": {
@@ -1189,6 +1204,11 @@
       "artist": "Artist",
       "track": "Track",
       "album": "Album"
+    },
+    "certifications": {
+      "title": "Certifications",
+      "award": "AWARD",
+      "eligible": "Eligible!"
     }
   },
   "records": {
