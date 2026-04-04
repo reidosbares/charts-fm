@@ -108,6 +108,16 @@ export async function GET(
       }),
     ])
 
+    // For tracks/albums, fetch the artist's major driver so they can also certify
+    let artistMajorDriverUserId: string | null = null
+    if (chartType !== 'artists' && entry.artist) {
+      const artistStats = await prisma.chartEntryStats.findFirst({
+        where: { groupId: group.id, chartType: 'artists', entryKey: entry.artist.toLowerCase().trim() },
+        select: { majorDriverUserId: true },
+      })
+      artistMajorDriverUserId = artistStats?.majorDriverUserId ?? null
+    }
+
     // Fetch certifications for all artist track/album entries (needs artistEntries result)
     let artistCertifications: { entryKey: string; chartType: string; tier: string }[] | null = null
     if (chartType === 'artists' && artistEntries) {
@@ -135,6 +145,7 @@ export async function GET(
       artistEntries: chartType === 'artists' ? artistEntries : null,
       numberOnes: chartType === 'artists' ? numberOnes : null,
       artistCertifications: chartType === 'artists' ? artistCertifications : null,
+      artistMajorDriverUserId,
       certifications,
       certificationThresholds: certSettings ? {
         enabled: certSettings.certificationsEnabled,

@@ -107,6 +107,7 @@ interface DeepDiveClientProps {
   albumArtistForImage?: string | null
   albumNameForImage?: string | null
   isCreator?: boolean
+  currentUserId?: string | null
 }
 
 export default function DeepDiveClient({
@@ -121,6 +122,7 @@ export default function DeepDiveClient({
   chartMode,
   isArtist = false,
   isCreator = false,
+  currentUserId = null,
   imageUrl: initialImageUrl,
   imageLinkUrl,
   artistNameForImage,
@@ -157,6 +159,12 @@ export default function DeepDiveClient({
   }, [deepDiveData?.certifications])
 
   const certificationThresholds = deepDiveData?.certificationThresholds || null
+  const artistMajorDriverUserId: string | null = deepDiveData?.artistMajorDriverUserId || null
+
+  // Can certify if: group creator, entry's major driver, or artist's major driver
+  const canCertify = isCreator
+    || (!!currentUserId && majorDriver?.userId === currentUserId)
+    || (!!currentUserId && artistMajorDriverUserId === currentUserId)
 
   const [imageUrl, setImageUrl] = useState<string | null | undefined>(initialImageUrl)
   const [newDriverNotification, setNewDriverNotification] = useState<{ name: string } | null>(null)
@@ -444,7 +452,7 @@ export default function DeepDiveClient({
           totalVS={totals.totalVS ?? 0}
           certifications={certificationsList}
           thresholds={certificationThresholds}
-          isCreator={isCreator}
+          canCertify={canCertify}
           onCertificationAwarded={(cert) => {
             setCertificationsList(prev => [...prev, cert])
           }}

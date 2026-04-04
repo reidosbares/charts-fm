@@ -168,6 +168,7 @@ export default async function AlbumDeepDivePage({
           chartMode={group!.chartMode || 'vs'}
           isArtist={false}
           isCreator={isCreator}
+          currentUserId={user?.id || null}
           albumArtistForImage={entry!.artist}
           albumNameForImage={entry!.name}
         />

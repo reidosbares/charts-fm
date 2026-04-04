@@ -94,6 +94,22 @@ export async function GET(
       }),
     ])
 
+    // Build artist major driver lookup
+    const artistDrivers = await prisma.chartEntryStats.findMany({
+      where: {
+        groupId: group.id,
+        chartType: 'artists',
+        majorDriverUserId: { not: null },
+      },
+      select: { entryKey: true, majorDriverUserId: true },
+    })
+    const artistDriverLookup = new Map<string, string>()
+    for (const ad of artistDrivers) {
+      if (ad.majorDriverUserId) {
+        artistDriverLookup.set(ad.entryKey, ad.majorDriverUserId)
+      }
+    }
+
     // Build display name lookup from chart entries (proper casing)
     const displayNameLookup = new Map<string, { name: string; artist: string }>()
     for (const entry of chartEntries) {
@@ -151,6 +167,7 @@ export async function GET(
     const artistMap = new Map<string, {
       artistName: string
       artistSlug: string
+      artistMajorDriverUserId: string | null
       tracks: { awarded: any[]; eligible: any[] }
       albums: { awarded: any[]; eligible: any[] }
       totalCertifications: number
@@ -204,6 +221,7 @@ export async function GET(
           artistMap.set(artistKey, {
             artistName: artist,
             artistSlug: entryKeyToSlug(artist, 'artists'),
+            artistMajorDriverUserId: artistDriverLookup.get(artistKey) ?? null,
             tracks: { awarded: [], eligible: [] },
             albums: { awarded: [], eligible: [] },
             totalCertifications: 0,

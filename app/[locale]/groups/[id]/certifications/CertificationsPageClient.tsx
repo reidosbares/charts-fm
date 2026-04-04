@@ -28,6 +28,7 @@ const TIER_COLORS: Record<string, { border: string; text: string; bg: string }> 
 interface CertificationsPageClientProps {
   groupId: string
   isCreator: boolean
+  currentUserId: string | null
 }
 
 function useEntryImage(artist: string, name: string, chartType: string): string | null {
@@ -107,13 +108,14 @@ function CarouselPlaque({ cert, entry, groupId, t }: {
   )
 }
 
-function ArtistSection({ artist, groupId, isCreator, t, onAward }: {
+function ArtistSection({ artist, groupId, canCertify, t, onAward }: {
   artist: {
     artistName: string; artistSlug: string; totalCertifications: number
+    artistMajorDriverUserId?: string | null
     tracks: { awarded: any[]; eligible: any[] }
     albums: { awarded: any[]; eligible: any[] }
   }
-  groupId: string; isCreator: boolean
+  groupId: string; canCertify: boolean
   t: (key: string, values?: Record<string, any>) => string
   onAward: () => void
 }) {
@@ -154,7 +156,7 @@ function ArtistSection({ artist, groupId, isCreator, t, onAward }: {
               eligible={artist.tracks.eligible}
               chartType="tracks"
               groupId={groupId}
-              isCreator={isCreator}
+              canCertify={canCertify}
               t={t}
               onAward={onAward}
             />
@@ -166,7 +168,7 @@ function ArtistSection({ artist, groupId, isCreator, t, onAward }: {
               eligible={artist.albums.eligible}
               chartType="albums"
               groupId={groupId}
-              isCreator={isCreator}
+              canCertify={canCertify}
               t={t}
               onAward={onAward}
             />
@@ -177,9 +179,9 @@ function ArtistSection({ artist, groupId, isCreator, t, onAward }: {
   )
 }
 
-function SubSection({ label, awarded, eligible, chartType, groupId, isCreator, t, onAward }: {
+function SubSection({ label, awarded, eligible, chartType, groupId, canCertify, t, onAward }: {
   label: string; awarded: any[]; eligible: any[]; chartType: string
-  groupId: string; isCreator: boolean
+  groupId: string; canCertify: boolean
   t: (key: string, values?: Record<string, any>) => string
   onAward: () => void
 }) {
@@ -209,7 +211,7 @@ function SubSection({ label, awarded, eligible, chartType, groupId, isCreator, t
             tier={item.tier}
             chartType={chartType}
             groupId={groupId}
-            isCreator={isCreator}
+            canCertify={canCertify}
             t={t}
             onAward={onAward}
           />
@@ -257,9 +259,9 @@ function ArtistPlaque({ name, slug, entryKey, tier, awardedAt, chartType, groupI
   )
 }
 
-function EligiblePlaque({ name, slug, entryKey, tier, chartType, groupId, isCreator, t, onAward }: {
+function EligiblePlaque({ name, slug, entryKey, tier, chartType, groupId, canCertify, t, onAward }: {
   name: string; slug: string; entryKey: string; tier: string; chartType: string
-  groupId: string; isCreator: boolean
+  groupId: string; canCertify: boolean
   t: (key: string, values?: Record<string, any>) => string
   onAward: () => void
 }) {
@@ -295,7 +297,7 @@ function EligiblePlaque({ name, slug, entryKey, tier, chartType, groupId, isCrea
         </div>
       </div>
       <p className="mt-1.5 text-[11px] font-semibold truncate">{name}</p>
-      {isCreator ? (
+      {canCertify ? (
         <button
           onClick={handleAward}
           disabled={awarding}
@@ -363,7 +365,7 @@ function AlmostThereRow({ entry, groupId, t }: {
   )
 }
 
-export default function CertificationsPageClient({ groupId, isCreator }: CertificationsPageClientProps) {
+export default function CertificationsPageClient({ groupId, isCreator, currentUserId }: CertificationsPageClientProps) {
   const t = useSafeTranslations('certificationsPage')
   const { data, error, isLoading, mutate } = useSWR(
     `/api/groups/${groupId}/certifications/overview`,
@@ -424,7 +426,7 @@ export default function CertificationsPageClient({ groupId, isCreator }: Certifi
                 key={artist.artistSlug}
                 artist={artist}
                 groupId={groupId}
-                isCreator={isCreator}
+                canCertify={isCreator || (!!currentUserId && artist.artistMajorDriverUserId === currentUserId)}
                 t={t}
                 onAward={() => mutate()}
               />

@@ -82,11 +82,6 @@ export async function POST(
       return NextResponse.json({ error: 'Group not found' }, { status: 404 })
     }
 
-    // Only group creator can award
-    if (groupSettings.creatorId !== user.id) {
-      return NextResponse.json({ error: 'Only the group creator can award certifications' }, { status: 403 })
-    }
-
     // Check certifications are enabled
     if (!groupSettings.certificationsEnabled) {
       return NextResponse.json({ error: 'Certifications are disabled for this group' }, { status: 400 })
@@ -112,6 +107,30 @@ export async function POST(
     })
     if (!entryStats) {
       return NextResponse.json({ error: 'Entry not found' }, { status: 404 })
+    }
+
+    // Check authorization: creator, entry's major driver, or artist's major driver
+    const isCreator = groupSettings.creatorId === user!.id
+    const isEntryDriver = entryStats.majorDriverUserId === user!.id
+
+    let isArtistDriver = false
+    if (!isCreator && !isEntryDriver) {
+      // For tracks/albums, check if user is the major driver of the artist
+      const entry = await prisma.groupChartEntry.findFirst({
+        where: { groupId: group.id, chartType, entryKey },
+        select: { artist: true },
+      })
+      if (entry?.artist) {
+        const artistStats = await prisma.chartEntryStats.findFirst({
+          where: { groupId: group.id, chartType: 'artists', entryKey: entry.artist.toLowerCase().trim() },
+          select: { majorDriverUserId: true },
+        })
+        isArtistDriver = artistStats?.majorDriverUserId === user!.id
+      }
+    }
+
+    if (!isCreator && !isEntryDriver && !isArtistDriver) {
+      return NextResponse.json({ error: 'Only the group creator or major chart driver can award certifications' }, { status: 403 })
     }
 
     // Check VS threshold
@@ -162,7 +181,7 @@ export async function POST(
         chartType,
         entryKey,
         tier,
-        awardedById: user.id,
+        awardedById: user!.id,
         thresholdAtAward: threshold,
       },
       include: {
@@ -198,10 +217,6 @@ export async function DELETE(
       return NextResponse.json({ error: 'Group not found' }, { status: 404 })
     }
 
-    if (groupSettings.creatorId !== user.id) {
-      return NextResponse.json({ error: 'Only the group creator can revoke certifications' }, { status: 403 })
-    }
-
     const body = await request.json()
     const { chartType, entryKey, tier } = body
 
@@ -213,6 +228,36 @@ export async function DELETE(
     }
     if (!entryKey || typeof entryKey !== 'string') {
       return NextResponse.json({ error: 'Entry key is required' }, { status: 400 })
+    }
+
+    // Check authorization: creator, entry's major driver, or artist's major driver
+    const isCreator = groupSettings.creatorId === user!.id
+    let canRevoke = isCreator
+
+    if (!canRevoke) {
+      const entryStats = await prisma.chartEntryStats.findFirst({
+        where: { groupId: group.id, chartType, entryKey },
+        select: { majorDriverUserId: true },
+      })
+      canRevoke = entryStats?.majorDriverUserId === user!.id
+
+      if (!canRevoke) {
+        const entry = await prisma.groupChartEntry.findFirst({
+          where: { groupId: group.id, chartType, entryKey },
+          select: { artist: true },
+        })
+        if (entry?.artist) {
+          const artistStats = await prisma.chartEntryStats.findFirst({
+            where: { groupId: group.id, chartType: 'artists', entryKey: entry.artist.toLowerCase().trim() },
+            select: { majorDriverUserId: true },
+          })
+          canRevoke = artistStats?.majorDriverUserId === user!.id
+        }
+      }
+    }
+
+    if (!canRevoke) {
+      return NextResponse.json({ error: 'Only the group creator or major chart driver can revoke certifications' }, { status: 403 })
     }
 
     // Cannot revoke a tier if a higher tier is still awarded

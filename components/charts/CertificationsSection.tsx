@@ -30,7 +30,7 @@ interface CertificationsSectionProps {
   totalVS: number
   certifications: Certification[]
   thresholds: CertificationThresholds
-  isCreator: boolean
+  canCertify: boolean
   onCertificationAwarded: (cert: Certification) => void
   onCertificationRevoked: (tier: string) => void
   imageUrl?: string | null
@@ -144,7 +144,7 @@ export default function CertificationsSection({
   totalVS,
   certifications,
   thresholds,
-  isCreator,
+  canCertify,
   onCertificationAwarded,
   onCertificationRevoked,
   imageUrl,
@@ -287,7 +287,7 @@ export default function CertificationsSection({
           const cert = getCertification(tier.key)
           const threshold = getThreshold(thresholds, tier.key, chartType)
           const isCurrentlyAwarding = awarding === tier.key
-          const active = awarded || (eligible && isCreator)
+          const active = awarded || (eligible && canCertify)
 
           return (
             <div key={tier.key} className="flex-shrink-0 md:flex-shrink md:flex-1 flex flex-col items-center w-[150px] md:w-auto md:min-w-0">
@@ -299,7 +299,7 @@ export default function CertificationsSection({
                   background: `linear-gradient(145deg, ${tier.colors.plaque}, #0e0e0e)`,
                   border: awarded
                     ? '2px solid transparent'
-                    : (eligible && isCreator)
+                    : (eligible && canCertify)
                     ? `2px solid ${tier.colors.plaqueBorder}`
                     : '2px solid #222',
                   borderRadius: '12px',
@@ -307,7 +307,7 @@ export default function CertificationsSection({
                     ? undefined
                     : 'inset 0 1px 0 rgba(255,255,255,0.03)',
                   opacity: active ? 1 : 0.3,
-                  animation: eligible && isCreator ? `pulse-${tier.key} 2s ease-in-out infinite` : undefined,
+                  animation: eligible && canCertify ? `pulse-${tier.key} 2s ease-in-out infinite` : undefined,
                   padding: '12px',
                   display: 'flex',
                   flexDirection: 'column',
@@ -408,7 +408,7 @@ export default function CertificationsSection({
               </div>
 
               {/* Award button (below the frame) */}
-              {eligible && isCreator && (
+              {eligible && canCertify && (
                 <button
                   onClick={(e) => handleAward(tier.key, e.currentTarget)}
                   disabled={isCurrentlyAwarding}
@@ -423,7 +423,7 @@ export default function CertificationsSection({
               )}
 
               {/* Revoke button (creator only, awarded, highest tier) */}
-              {awarded && isCreator && canRevoke(tier.key) && (
+              {awarded && canCertify && canRevoke(tier.key) && (
                 confirmingRevoke === tier.key ? (
                   <div className="mt-2 flex items-center gap-1.5">
                     <button
@@ -458,7 +458,7 @@ export default function CertificationsSection({
               )}
 
               {/* Eligible text (below frame, non-creator) */}
-              {eligible && !isCreator && (
+              {eligible && !canCertify && (
                 <div className="mt-2 text-[11px] sm:text-xs" style={{ color: tier.colors.text }}>
                   {t('eligible')}
                 </div>

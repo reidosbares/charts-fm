@@ -85,6 +85,7 @@ export default async function CertificationsPage({ params }: { params: Promise<{
         <CertificationsPageClient
           groupId={group.id}
           isCreator={isCreator}
+          currentUserId={user?.id || null}
         />
       </div>
     </main>

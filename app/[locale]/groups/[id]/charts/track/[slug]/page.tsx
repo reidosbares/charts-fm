@@ -156,6 +156,7 @@ export default async function TrackDeepDivePage({
           chartMode={group!.chartMode || 'vs'}
           isArtist={false}
           isCreator={isCreator}
+          currentUserId={user?.id || null}
           artistNameForImage={entry!.artist}
           imageLinkUrl={artistImagesPageSlug ? `/artist/${artistImagesPageSlug}/images` : null}
         />
