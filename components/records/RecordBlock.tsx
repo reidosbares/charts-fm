@@ -92,6 +92,8 @@ function getRecordTypeFromTitle(title: string, tChartRecords: (key: string) => s
     [tChartRecords('mostConsecutiveWeeks')]: 'most-consecutive-weeks',
     [tChartRecords('mostPlaysReceived')]: 'most-plays',
     [tChartRecords('totalAllTimeVS')]: 'most-total-vs',
+    [tChartRecords('mostVSInSingleWeek')]: 'most-vs-in-single-week',
+    [tChartRecords('mostPlaysInSingleWeek')]: 'most-plays-in-single-week',
     // Artist-specific record types
     [tChartRecords('artistMostNumberOneSongs')]: 'artist-most-number-one-songs',
     [tChartRecords('artistMostNumberOneAlbums')]: 'artist-most-number-one-albums',

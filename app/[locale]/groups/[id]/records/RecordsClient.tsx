@@ -10,6 +10,7 @@ import MyContributionCard from '@/components/records/MyContributionCard'
 import { Link } from '@/i18n/routing'
 import { LiquidGlassLink } from '@/components/LiquidGlassButton'
 import { generateSlug } from '@/lib/chart-slugs'
+import { formatChartWeekLabel } from '@/lib/weekly-utils'
 import SafeImage from '@/components/SafeImage'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 import { useTranslations } from 'next-intl'
@@ -587,6 +588,34 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
         title: tChartRecords('mostPlaysReceived'),
         record: recordsData.mostPlays[chartType],
         value: recordsData.mostPlays[chartType].value.toLocaleString(),
+      })
+    }
+
+    // Most VS in a single week
+    if (recordsData.mostVSInSingleWeek?.[chartType]) {
+      const weekLabel = recordsData.mostVSInSingleWeek[chartType].weekStart
+        ? formatChartWeekLabel(new Date(recordsData.mostVSInSingleWeek[chartType].weekStart))
+        : null
+      records.push({
+        title: tChartRecords('mostVSInSingleWeek'),
+        record: recordsData.mostVSInSingleWeek[chartType],
+        value: weekLabel
+          ? `${recordsData.mostVSInSingleWeek[chartType].value.toLocaleString()} VS · ${weekLabel}`
+          : `${recordsData.mostVSInSingleWeek[chartType].value.toLocaleString()} VS`,
+      })
+    }
+
+    // Most plays in a single week
+    if (recordsData.mostPlaysInSingleWeek?.[chartType]) {
+      const weekLabel = recordsData.mostPlaysInSingleWeek[chartType].weekStart
+        ? formatChartWeekLabel(new Date(recordsData.mostPlaysInSingleWeek[chartType].weekStart))
+        : null
+      records.push({
+        title: tChartRecords('mostPlaysInSingleWeek'),
+        record: recordsData.mostPlaysInSingleWeek[chartType],
+        value: weekLabel
+          ? `${recordsData.mostPlaysInSingleWeek[chartType].value.toLocaleString()} plays · ${weekLabel}`
+          : `${recordsData.mostPlaysInSingleWeek[chartType].value.toLocaleString()} plays`,
       })
     }
 

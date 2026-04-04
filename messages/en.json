@@ -1226,6 +1226,8 @@
       "mostConsecutiveWeeksInTop10": "Most Consecutive Weeks in Top 10",
       "totalAllTimeVS": "Total All-Time VS Received",
       "mostPlaysReceived": "Most Plays Received",
+      "mostVSInSingleWeek": "Most VS in a Single Week",
+      "mostPlaysInSingleWeek": "Most Plays in a Single Week",
       "mostPopular": "Most Popular",
       "longestTimeBetweenAppearances": "Longest Time Between Appearances",
       "artistMostNumberOneSongs": "Artist with Most #1 Songs",
@@ -1324,6 +1326,7 @@
       "rank": "Rank",
       "entry": "Entry",
       "value": "Value",
+      "week": "Week",
       "noEntries": "No entries found for this record type.",
       "error": "Failed to load entries. Please try again later.",
       "by": "by"

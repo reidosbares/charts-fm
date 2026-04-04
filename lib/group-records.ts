@@ -20,6 +20,7 @@ export interface RecordHolder {
   artist?: string | null
   value: number
   slug: string
+  weekStart?: string | null
 }
 
 export interface UserRanking {
@@ -71,6 +72,16 @@ export interface GroupRecordsData {
     albums: RecordHolder | null
   }
   mostPlays: {
+    artists: RecordHolder | null
+    tracks: RecordHolder | null
+    albums: RecordHolder | null
+  }
+  mostVSInSingleWeek: {
+    artists: RecordHolder | null
+    tracks: RecordHolder | null
+    albums: RecordHolder | null
+  }
+  mostPlaysInSingleWeek: {
     artists: RecordHolder | null
     tracks: RecordHolder | null
     albums: RecordHolder | null
@@ -314,6 +325,8 @@ async function calculatePhase2Records(
   const records: Partial<GroupRecordsData> = {
     mostWeeksAtOne: { artists: null, tracks: null, albums: null },
     mostTotalVS: { artists: null, tracks: null, albums: null },
+    mostVSInSingleWeek: { artists: null, tracks: null, albums: null },
+    mostPlaysInSingleWeek: { artists: null, tracks: null, albums: null },
     totalDifferentEntriesAtOne: { artists: 0, tracks: 0, albums: 0 },
     totalDifferentEntriesCharted: { artists: 0, tracks: 0, albums: 0 },
   }
@@ -366,6 +379,44 @@ async function calculatePhase2Records(
           value: mostVSResult.totalVS,
           slug: mostVSResult.slug,
         }
+      }
+    }
+
+    // Most VS in a single week
+    const mostWeeklyVS = await prisma.groupChartEntry.findFirst({
+      where: { groupId, chartType, vibeScore: { not: null } },
+      orderBy: { vibeScore: 'desc' },
+      select: { entryKey: true, name: true, artist: true, vibeScore: true, slug: true, weekStart: true },
+    })
+
+    if (mostWeeklyVS && mostWeeklyVS.vibeScore) {
+      records.mostVSInSingleWeek![chartType] = {
+        entryKey: mostWeeklyVS.entryKey,
+        chartType,
+        name: mostWeeklyVS.name,
+        artist: mostWeeklyVS.artist,
+        value: Math.round(mostWeeklyVS.vibeScore),
+        slug: mostWeeklyVS.slug || generateSlug(mostWeeklyVS.entryKey, chartType),
+        weekStart: mostWeeklyVS.weekStart.toISOString(),
+      }
+    }
+
+    // Most plays in a single week
+    const mostWeeklyPlays = await prisma.groupChartEntry.findFirst({
+      where: { groupId, chartType, playcount: { gt: 0 } },
+      orderBy: { playcount: 'desc' },
+      select: { entryKey: true, name: true, artist: true, playcount: true, slug: true, weekStart: true },
+    })
+
+    if (mostWeeklyPlays) {
+      records.mostPlaysInSingleWeek![chartType] = {
+        entryKey: mostWeeklyPlays.entryKey,
+        chartType,
+        name: mostWeeklyPlays.name,
+        artist: mostWeeklyPlays.artist,
+        value: mostWeeklyPlays.playcount,
+        slug: mostWeeklyPlays.slug || generateSlug(mostWeeklyPlays.entryKey, chartType),
+        weekStart: mostWeeklyPlays.weekStart.toISOString(),
       }
     }
 
@@ -1831,6 +1882,8 @@ export function getRecordTypeFieldMapping(recordType: string): string | null {
     'most-plays': 'totalPlays',
     'most-total-vs': 'totalVS',
     'most-weeks-at-one': 'weeksAtOne',
+    'most-vs-in-single-week': 'peakWeeklyVS',
+    'most-plays-in-single-week': 'peakWeeklyPlays',
   }
   return mapping[recordType] || null
 }
@@ -1853,6 +1906,8 @@ export function getRecordTypeDisplayName(recordType: string): string {
     'most-plays': 'Most Plays',
     'most-total-vs': 'Most Total VS',
     'most-weeks-at-one': 'Most Weeks at #1',
+    'most-vs-in-single-week': 'Most VS in a Single Week',
+    'most-plays-in-single-week': 'Most Plays in a Single Week',
     'artist-most-number-one-songs': 'Artist with Most #1 Songs',
     'artist-most-number-one-albums': 'Artist with Most #1 Albums',
     'artist-most-songs-in-top-10': 'Artist with Most Songs in Top 10',

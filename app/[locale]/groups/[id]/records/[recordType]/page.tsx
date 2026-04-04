@@ -17,6 +17,8 @@ function getRecordTypeTranslationKey(recordType: string): string {
     'most-plays': 'mostPlaysReceived',
     'most-total-vs': 'totalAllTimeVS',
     'most-weeks-at-one': 'mostWeeksAtOne',
+    'most-vs-in-single-week': 'mostVSInSingleWeek',
+    'most-plays-in-single-week': 'mostPlaysInSingleWeek',
     'artist-most-number-one-songs': 'artistMostNumberOneSongs',
     'artist-most-number-one-albums': 'artistMostNumberOneAlbums',
     'artist-most-songs-in-top-10': 'artistMostSongsInTop10',

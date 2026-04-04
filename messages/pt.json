@@ -1226,6 +1226,8 @@
       "mostConsecutiveWeeksInTop10": "Mais semanas consecutivas no top 10",
       "totalAllTimeVS": "Mais VS total recebido",
       "mostPlaysReceived": "Mais plays recebidos",
+      "mostVSInSingleWeek": "Mais VS numa única semana",
+      "mostPlaysInSingleWeek": "Mais plays numa única semana",
       "mostPopular": "Ouvido por mais membros",
       "longestTimeBetweenAppearances": "Maior tempo entre aparições",
       "artistMostNumberOneSongs": "Artista com mais músicas em #1",
@@ -1324,6 +1326,7 @@
       "rank": "Posição",
       "entry": "Item",
       "value": "Valor",
+      "week": "Semana",
       "noEntries": "Nenhum item encontrada para este tipo de recorde.",
       "error": "Falha ao carregar itens. Por favor, tente novamente mais tarde.",
       "by": "de"

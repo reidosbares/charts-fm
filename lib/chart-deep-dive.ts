@@ -266,7 +266,7 @@ export async function getEntryStats(
     // Update or create cache using upsert to handle race conditions
     const slug = generateSlug(entryKey, chartType)
     
-    // Get totals (needed for create, and may need refresh for update)
+    // Get totals and peak weekly values (needed for create, and may need refresh for update)
     const totals = await prisma.groupChartEntry.aggregate({
       where: {
         groupId,
@@ -274,6 +274,10 @@ export async function getEntryStats(
         entryKey,
       },
       _sum: {
+        vibeScore: true,
+        playcount: true,
+      },
+      _max: {
         vibeScore: true,
         playcount: true,
       },
@@ -298,6 +302,8 @@ export async function getEntryStats(
         longestStreak: calculatedStats.longestStreak,
         isStreakOngoing: calculatedStats.isStreakOngoing,
         latestAppearance: calculatedStats.latestAppearance,
+        peakWeeklyVS: totals._max.vibeScore,
+        peakWeeklyPlays: totals._max.playcount,
         statsStale: false,
         statsLastUpdated: new Date(),
       },
@@ -317,6 +323,8 @@ export async function getEntryStats(
         latestAppearance: calculatedStats.latestAppearance,
         totalVS: totals._sum.vibeScore,
         totalPlays: totals._sum.playcount || 0,
+        peakWeeklyVS: totals._max.vibeScore,
+        peakWeeklyPlays: totals._max.playcount,
         statsStale: false,
         statsLastUpdated: new Date(),
       },
@@ -900,27 +908,33 @@ export async function invalidateEntryStatsCacheBatch(
     // Get unique entryKeys to process
     const uniqueEntryKeys = Array.from(new Set(typeEntries.map(e => e.entryKey)))
 
-    // Batch calculate totals and totalWeeksCharting for all entryKeys in a single query
+    // Batch calculate totals, peaks, and totalWeeksCharting for all entryKeys in a single query
     // This is much faster than querying each entryKey individually
-    const totalsByEntryKey = new Map<string, { 
+    const totalsByEntryKey = new Map<string, {
       totalVS: number | null
       totalPlays: number
       totalWeeksCharting: number
+      peakWeeklyVS: number | null
+      peakWeeklyPlays: number | null
     }>()
-    
+
     if (uniqueEntryKeys.length > 0) {
-      // Use raw SQL to get aggregated totals and week counts for all entryKeys at once
+      // Use raw SQL to get aggregated totals, peaks, and week counts for all entryKeys at once
       const totalsResults = await prisma.$queryRaw<Array<{
         entryKey: string
         totalVS: number | null
         totalPlays: number
         totalWeeksCharting: bigint
+        peakWeeklyVS: number | null
+        peakWeeklyPlays: number | null
       }>>`
-        SELECT 
+        SELECT
           "entryKey",
           SUM("vibeScore")::float as "totalVS",
           SUM("playcount")::integer as "totalPlays",
-          COUNT(DISTINCT "weekStart")::bigint as "totalWeeksCharting"
+          COUNT(DISTINCT "weekStart")::bigint as "totalWeeksCharting",
+          MAX("vibeScore")::float as "peakWeeklyVS",
+          MAX("playcount")::integer as "peakWeeklyPlays"
         FROM "group_chart_entries"
         WHERE "groupId" = ${groupId}::text
           AND "chartType" = ${chartType}
@@ -933,16 +947,20 @@ export async function invalidateEntryStatsCacheBatch(
           totalVS: result.totalVS,
           totalPlays: result.totalPlays || 0,
           totalWeeksCharting: Number(result.totalWeeksCharting),
+          peakWeeklyVS: result.peakWeeklyVS,
+          peakWeeklyPlays: result.peakWeeklyPlays,
         })
       }
     }
 
     // Prepare updates and creates
-    const updates: Array<{ 
+    const updates: Array<{
       id: string
       totalVS: number | null
       totalPlays: number
       totalWeeksCharting: number
+      peakWeeklyVS: number | null
+      peakWeeklyPlays: number | null
       latestWeek: Date
     }> = []
     const creates: Array<{
@@ -953,6 +971,8 @@ export async function invalidateEntryStatsCacheBatch(
       totalVS: number | null
       totalPlays: number
       totalWeeksCharting: number
+      peakWeeklyVS: number | null
+      peakWeeklyPlays: number | null
       latestAppearance: Date
     }> = []
 
@@ -967,10 +987,12 @@ export async function invalidateEntryStatsCacheBatch(
       const stats = statsMap.get(entry.entryKey)
       const latestWeek = latestWeekByEntry.get(entry.entryKey)!
       // Get totals from the batched query result (or default to 0 if not found)
-      const totals = totalsByEntryKey.get(entry.entryKey) || { 
-        totalVS: null, 
+      const totals = totalsByEntryKey.get(entry.entryKey) || {
+        totalVS: null,
         totalPlays: 0,
-        totalWeeksCharting: 0
+        totalWeeksCharting: 0,
+        peakWeeklyVS: null,
+        peakWeeklyPlays: null,
       }
 
       if (stats) {
@@ -981,6 +1003,8 @@ export async function invalidateEntryStatsCacheBatch(
           totalVS: totals.totalVS,
           totalPlays: totals.totalPlays,
           totalWeeksCharting: totals.totalWeeksCharting,
+          peakWeeklyVS: totals.peakWeeklyVS,
+          peakWeeklyPlays: totals.peakWeeklyPlays,
           latestWeek,
         })
       } else {
@@ -994,6 +1018,8 @@ export async function invalidateEntryStatsCacheBatch(
           totalVS: totals.totalVS,
           totalPlays: totals.totalPlays,
           totalWeeksCharting: totals.totalWeeksCharting,
+          peakWeeklyVS: totals.peakWeeklyVS,
+          peakWeeklyPlays: totals.peakWeeklyPlays,
           latestAppearance: latestWeek,
         })
       }
@@ -1019,6 +1045,8 @@ export async function invalidateEntryStatsCacheBatch(
                 totalVS: update.totalVS,
                 totalPlays: update.totalPlays,
                 totalWeeksCharting: update.totalWeeksCharting, // Update totalWeeksCharting from actual count
+                peakWeeklyVS: update.peakWeeklyVS,
+                peakWeeklyPlays: update.peakWeeklyPlays,
                 latestAppearance: update.latestWeek,
                 lastUpdated: new Date(),
               },

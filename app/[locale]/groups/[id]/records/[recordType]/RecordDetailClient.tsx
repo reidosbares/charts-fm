@@ -9,6 +9,7 @@ import { Link } from '@/i18n/routing'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 import { ChartType } from '@/lib/chart-slugs'
 import { isArtistSpecificRecordType } from '@/lib/group-records'
+import { formatChartWeekLabel, formatChartWeekDate } from '@/lib/weekly-utils'
 
 // Map record type to translation key
 function getRecordTypeTranslationKey(recordType: string): string {
@@ -19,6 +20,8 @@ function getRecordTypeTranslationKey(recordType: string): string {
     'most-plays': 'mostPlaysReceived',
     'most-total-vs': 'totalAllTimeVS',
     'most-weeks-at-one': 'mostWeeksAtOne',
+    'most-vs-in-single-week': 'mostVSInSingleWeek',
+    'most-plays-in-single-week': 'mostPlaysInSingleWeek',
     'artist-most-number-one-songs': 'artistMostNumberOneSongs',
     'artist-most-number-one-albums': 'artistMostNumberOneAlbums',
     'artist-most-songs-in-top-10': 'artistMostSongsInTop10',
@@ -36,6 +39,7 @@ interface RankedEntry {
   artist: string | null
   slug: string
   value: number
+  weekStart?: string | null
 }
 
 interface RecordDetailClientProps {
@@ -49,7 +53,8 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
   const tChartRecords = useSafeTranslations('records.chartRecords')
   
   const isArtistSpecific = isArtistSpecificRecordType(recordType)
-  
+  const isPeakWeeklyRecord = recordType === 'most-vs-in-single-week' || recordType === 'most-plays-in-single-week'
+
   // Get tab from hash fragment (e.g., #artists) - only for non-artist-specific records
   const getTabFromHash = (): ChartType | null => {
     if (typeof window === 'undefined' || isArtistSpecific) return null
@@ -141,9 +146,16 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
   }
 
   const formatValue = (value: number) => {
-    // For numeric values, add commas
+    // For numeric values, add commas and suffix based on record type
     if (typeof value === 'number') {
-      return value.toLocaleString()
+      const formatted = value.toLocaleString()
+      if (recordType === 'most-vs-in-single-week' || recordType === 'most-total-vs') {
+        return `${formatted} VS`
+      }
+      if (recordType === 'most-plays-in-single-week' || recordType === 'most-plays') {
+        return `${formatted} plays`
+      }
+      return formatted
     }
     return value
   }
@@ -207,6 +219,11 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
                   <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider w-16 sm:w-24 md:w-32">
                     {t('value')}
                   </th>
+                  {isPeakWeeklyRecord && (
+                    <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider w-24 sm:w-32 md:w-40">
+                      {t('week')}
+                    </th>
+                  )}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -234,6 +251,20 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
                     <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-right whitespace-nowrap">
                       <span className="text-gray-900 font-medium">{formatValue(entry.value)}</span>
                     </td>
+                    {isPeakWeeklyRecord && (
+                      <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-right whitespace-nowrap">
+                        {entry.weekStart ? (
+                          <Link
+                            href={`/groups/${groupId}/charts?week=${formatChartWeekDate(new Date(entry.weekStart))}`}
+                            className="text-[var(--theme-primary)] hover:text-[var(--theme-primary-dark)] transition-colors text-xs sm:text-sm"
+                          >
+                            {formatChartWeekLabel(new Date(entry.weekStart))}
+                          </Link>
+                        ) : (
+                          <span className="text-gray-400 text-xs">—</span>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
