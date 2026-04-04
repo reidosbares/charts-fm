@@ -380,6 +380,7 @@
       "trends": "Trends",
       "weeklyCharts": "Charts",
       "allTimeStats": "Records",
+      "certifications": "Certs",
       "members": "Members",
       "search": "Search"
     },
@@ -945,6 +946,7 @@
         "resetToSuggested": "Reset to suggested values",
         "goldMustBeLessThanPlatinum": "Gold threshold must be less than Platinum",
         "platinumMustBeLessThanDiamond": "Platinum threshold must be less than Diamond",
+        "thresholdsMustBePositive": "All thresholds must be greater than 0",
         "saving": "Saving...",
         "save": "Save",
         "saved": "Settings saved"
@@ -1221,6 +1223,40 @@
       "platinum": "PLATINUM",
       "diamond": "DIAMOND"
     }
+  },
+  "certificationsTab": {
+    "title": "Certifications",
+    "readyToAward": "Ready to Award",
+    "recentlyAwarded": "Recently Awarded",
+    "almostThere": "Almost There",
+    "eligibleFor": "Eligible for {tier}",
+    "award": "Award",
+    "vsOfThreshold": "{current} / {threshold} VS",
+    "percentToTier": "{percent}% to {tier}",
+    "awardedOn": "Awarded on {date}",
+    "viewAll": "View all certifications",
+    "empty": "No certifications yet",
+    "emptyDescription": "Certifications are awarded to tracks and albums that reach VS milestones. Keep charting to earn Gold, Platinum, and Diamond!",
+    "gold": "Gold",
+    "platinum": "Platinum",
+    "diamond": "Diamond"
+  },
+  "certificationsPage": {
+    "title": "Certifications",
+    "backToGroup": "Back to group",
+    "recentAwards": "Recent Awards",
+    "almostThere": "Almost There",
+    "tracks": "Tracks",
+    "albums": "Albums",
+    "certifications": "{count} {count, plural, one {certification} other {certifications}}",
+    "noCertifications": "No certifications awarded yet",
+    "noCertificationsDescription": "Certifications are awarded when tracks or albums reach VS milestones. Start charting to earn Gold, Platinum, and Diamond!",
+    "eligible": "Eligible",
+    "eligibleCount": "{count} eligible",
+    "percentToTier": "{percent}% to {tier}",
+    "gold": "Gold",
+    "platinum": "Platinum",
+    "diamond": "Diamond"
   },
   "records": {
     "title": "Records",

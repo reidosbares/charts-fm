@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import useSWR from 'swr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMusic, faMicrophone, faCompactDisc, faUsers, faSpinner, faMedal, faTrophy } from '@fortawesome/free-solid-svg-icons'
+import { faMusic, faMicrophone, faCompactDisc, faUsers, faSpinner, faTrophy } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
 import RecordBlock from '@/components/records/RecordBlock'
 import MyContributionCard from '@/components/records/MyContributionCard'
@@ -378,7 +378,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
     return (
       <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-4 md:p-6 border border-theme mb-4 md:mb-6">
         <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-gray-900 flex items-center gap-2">
-          <FontAwesomeIcon icon={faMedal} className="text-[var(--theme-primary)] text-lg md:text-xl" />
+          <FontAwesomeIcon icon={faTrophy} className="text-[var(--theme-primary)] text-lg md:text-xl" />
           {tPreview('mostWeeksOnChart')}
         </h3>
         {isLoadingPreview ? (

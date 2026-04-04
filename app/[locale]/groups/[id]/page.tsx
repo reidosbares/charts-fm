@@ -8,6 +8,7 @@ import GroupWeeklyChartsTab from '@/components/groups/GroupWeeklyChartsTab'
 import GroupAllTimeTab from '@/components/groups/GroupAllTimeTab'
 import GroupMembersTab from '@/components/groups/GroupMembersTab'
 import GroupTrendsTab from '@/components/groups/GroupTrendsTab'
+import GroupCertificationsTab from '@/components/groups/GroupCertificationsTab'
 import GroupShoutbox from '@/components/groups/GroupShoutbox'
 import { prisma } from '@/lib/prisma'
 import { getTranslations } from 'next-intl/server'
@@ -105,6 +106,12 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
     where: { groupId: group.id },
   })
 
+  const groupCertSettings = await prisma.group.findUnique({
+    where: { id: group.id },
+    select: { certificationsEnabled: true },
+  })
+  const certificationsEnabled = groupCertSettings?.certificationsEnabled ?? false
+
   return (
     <main 
       className={`flex min-h-screen flex-col ${themeClass} bg-gradient-to-b from-[var(--theme-background-from)] to-[var(--theme-background-to)]`}
@@ -119,6 +126,7 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
         <GroupTabs
           defaultTab="trends"
           pendingRequestsCount={pendingRequestsCount}
+          certificationsEnabled={certificationsEnabled}
           chartsContent={
             <GroupWeeklyChartsTab groupId={group.id} isOwner={isOwner || false} isSuperuser={isSuperuser} />
           }
@@ -127,6 +135,9 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
           }
           trendsContent={
             <GroupTrendsTab groupId={group.id} />
+          }
+          certificationsContent={
+            certificationsEnabled ? <GroupCertificationsTab groupId={group.id} isCreator={isOwner || false} /> : null
           }
           membersContent={
             isMember ? <GroupMembersTab groupId={group.id} /> : null

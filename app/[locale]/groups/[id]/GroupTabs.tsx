@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
-import { faChartBar, faTrophy, faUsers, faFire } from '@fortawesome/free-solid-svg-icons'
+import { faChartBar, faTrophy, faUsers, faFire, faMedal } from '@fortawesome/free-solid-svg-icons'
 import LiquidGlassTabs, { TabItem } from '@/components/LiquidGlassTabs'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
-type Tab = 'charts' | 'members' | 'alltime' | 'trends'
+type Tab = 'charts' | 'members' | 'alltime' | 'trends' | 'certifications'
 
 interface GroupTabsProps {
   defaultTab?: Tab
@@ -13,16 +13,20 @@ interface GroupTabsProps {
   chartsContent: React.ReactNode
   allTimeContent: React.ReactNode
   trendsContent?: React.ReactNode
+  certificationsContent?: React.ReactNode
+  certificationsEnabled?: boolean
   pendingRequestsCount?: number
   isMember?: boolean
 }
 
-export default function GroupTabs({ 
-  defaultTab = 'trends', 
-  membersContent, 
+export default function GroupTabs({
+  defaultTab = 'trends',
+  membersContent,
   chartsContent,
   allTimeContent,
   trendsContent,
+  certificationsContent,
+  certificationsEnabled = false,
   pendingRequestsCount = 0,
   isMember = true
 }: GroupTabsProps) {
@@ -32,9 +36,11 @@ export default function GroupTabs({
   const getTabFromHash = (): Tab | null => {
     if (typeof window === 'undefined') return null
     const hash = window.location.hash.slice(1) // Remove the #
-    const validTabs: Tab[] = isMember 
-      ? ['charts', 'members', 'alltime', 'trends']
-      : ['charts', 'alltime', 'trends']
+    const validTabs: Tab[] = [
+      'charts', 'alltime', 'trends',
+      ...(certificationsEnabled ? ['certifications' as Tab] : []),
+      ...(isMember ? ['members' as Tab] : []),
+    ]
     return validTabs.includes(hash as Tab) ? (hash as Tab) : null
   }
   
@@ -47,9 +53,11 @@ export default function GroupTabs({
     const getTabFromHash = (): Tab | null => {
       if (typeof window === 'undefined') return null
       const hash = window.location.hash.slice(1) // Remove the #
-      const validTabs: Tab[] = isMember 
-        ? ['charts', 'members', 'alltime', 'trends']
-        : ['charts', 'alltime', 'trends']
+      const validTabs: Tab[] = [
+        'charts', 'alltime', 'trends',
+        ...(certificationsEnabled ? ['certifications' as Tab] : []),
+        ...(isMember ? ['members' as Tab] : []),
+      ]
       return validTabs.includes(hash as Tab) ? (hash as Tab) : null
     }
     
@@ -72,7 +80,7 @@ export default function GroupTabs({
     
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
-  }, [activeTab, defaultTab, isMember])
+  }, [activeTab, defaultTab, isMember, certificationsEnabled])
   
   // Update hash when tab changes (no page refresh, preserves scroll position)
   const handleTabChange = (tabId: string) => {
@@ -89,14 +97,18 @@ export default function GroupTabs({
       { id: 'charts', label: t('weeklyCharts'), icon: faChartBar },
       { id: 'alltime', label: t('allTimeStats'), icon: faTrophy },
     ]
-    
+
+    if (certificationsEnabled) {
+      baseTabs.push({ id: 'certifications', label: t('certifications'), icon: faMedal })
+    }
+
     // Only include members tab if user is a member
     if (isMember) {
       baseTabs.push({ id: 'members', label: t('members'), icon: faUsers, badge: pendingRequestsCount })
     }
-    
+
     return baseTabs
-  }, [t, pendingRequestsCount, isMember])
+  }, [t, pendingRequestsCount, isMember, certificationsEnabled])
 
   return (
     <div className="mt-6 md:mt-10">
@@ -127,6 +139,12 @@ export default function GroupTabs({
       {visited.has('alltime') && (
         <div className="min-w-0" style={{ display: activeTab === 'alltime' ? 'block' : 'none' }}>
           {allTimeContent}
+        </div>
+      )}
+
+      {certificationsEnabled && visited.has('certifications') && (
+        <div className="min-w-0" style={{ display: activeTab === 'certifications' ? 'block' : 'none' }}>
+          {certificationsContent}
         </div>
       )}
 

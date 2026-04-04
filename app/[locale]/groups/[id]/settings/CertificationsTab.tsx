@@ -38,25 +38,39 @@ export default function CertificationsTab({
 }: CertificationsTabProps) {
   const t = useSafeTranslations('groups.settings.certifications')
   const [enabled, setEnabled] = useState(initialEnabled)
-  const [trackGold, setTrackGold] = useState(initialTrackGold)
-  const [trackPlatinum, setTrackPlatinum] = useState(initialTrackPlatinum)
-  const [trackDiamond, setTrackDiamond] = useState(initialTrackDiamond)
-  const [albumGold, setAlbumGold] = useState(initialAlbumGold)
-  const [albumPlatinum, setAlbumPlatinum] = useState(initialAlbumPlatinum)
-  const [albumDiamond, setAlbumDiamond] = useState(initialAlbumDiamond)
+  const [trackGold, setTrackGold] = useState(String(initialTrackGold))
+  const [trackPlatinum, setTrackPlatinum] = useState(String(initialTrackPlatinum))
+  const [trackDiamond, setTrackDiamond] = useState(String(initialTrackDiamond))
+  const [albumGold, setAlbumGold] = useState(String(initialAlbumGold))
+  const [albumPlatinum, setAlbumPlatinum] = useState(String(initialAlbumPlatinum))
+  const [albumDiamond, setAlbumDiamond] = useState(String(initialAlbumDiamond))
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
-  const trackValidationError = trackGold >= trackPlatinum
+  const numTrackGold = parseFloat(trackGold)
+  const numTrackPlatinum = parseFloat(trackPlatinum)
+  const numTrackDiamond = parseFloat(trackDiamond)
+  const numAlbumGold = parseFloat(albumGold)
+  const numAlbumPlatinum = parseFloat(albumPlatinum)
+  const numAlbumDiamond = parseFloat(albumDiamond)
+
+  const allValues = [numTrackGold, numTrackPlatinum, numTrackDiamond, numAlbumGold, numAlbumPlatinum, numAlbumDiamond]
+  const hasEmptyOrInvalid = allValues.some(v => isNaN(v) || v <= 0)
+
+  const trackValidationError = hasEmptyOrInvalid
+    ? t('thresholdsMustBePositive')
+    : numTrackGold >= numTrackPlatinum
     ? t('goldMustBeLessThanPlatinum')
-    : trackPlatinum >= trackDiamond
+    : numTrackPlatinum >= numTrackDiamond
     ? t('platinumMustBeLessThanDiamond')
     : null
 
-  const albumValidationError = albumGold >= albumPlatinum
+  const albumValidationError = hasEmptyOrInvalid
+    ? null
+    : numAlbumGold >= numAlbumPlatinum
     ? t('goldMustBeLessThanPlatinum')
-    : albumPlatinum >= albumDiamond
+    : numAlbumPlatinum >= numAlbumDiamond
     ? t('platinumMustBeLessThanDiamond')
     : null
 
@@ -74,12 +88,12 @@ export default function CertificationsTab({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           certificationsEnabled: enabled,
-          certTrackGoldThreshold: trackGold,
-          certTrackPlatinumThreshold: trackPlatinum,
-          certTrackDiamondThreshold: trackDiamond,
-          certAlbumGoldThreshold: albumGold,
-          certAlbumPlatinumThreshold: albumPlatinum,
-          certAlbumDiamondThreshold: albumDiamond,
+          certTrackGoldThreshold: numTrackGold,
+          certTrackPlatinumThreshold: numTrackPlatinum,
+          certTrackDiamondThreshold: numTrackDiamond,
+          certAlbumGoldThreshold: numAlbumGold,
+          certAlbumPlatinumThreshold: numAlbumPlatinum,
+          certAlbumDiamondThreshold: numAlbumDiamond,
         }),
       })
 
@@ -99,12 +113,12 @@ export default function CertificationsTab({
 
   const handleReset = () => {
     const count = Math.max(memberCount, 1)
-    setTrackGold(TRACK_GOLD_BASE * count)
-    setTrackPlatinum(TRACK_PLATINUM_BASE * count)
-    setTrackDiamond(TRACK_DIAMOND_BASE * count)
-    setAlbumGold(ALBUM_GOLD_BASE * count)
-    setAlbumPlatinum(ALBUM_PLATINUM_BASE * count)
-    setAlbumDiamond(ALBUM_DIAMOND_BASE * count)
+    setTrackGold(String(TRACK_GOLD_BASE * count))
+    setTrackPlatinum(String(TRACK_PLATINUM_BASE * count))
+    setTrackDiamond(String(TRACK_DIAMOND_BASE * count))
+    setAlbumGold(String(ALBUM_GOLD_BASE * count))
+    setAlbumPlatinum(String(ALBUM_PLATINUM_BASE * count))
+    setAlbumDiamond(String(ALBUM_DIAMOND_BASE * count))
   }
 
   const inputStyle = {
@@ -114,16 +128,14 @@ export default function CertificationsTab({
   }
 
   return (
-    <div
-      className="rounded-xl p-4 sm:p-6"
-      style={{
-        background: 'rgba(255, 255, 255, 0.4)',
-        backdropFilter: 'blur(12px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-        border: '1px solid rgba(255, 255, 255, 0.3)',
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-      }}
-    >
+    <>
+      <Toast
+        message={t('saved')}
+        type="success"
+        isVisible={success}
+        onClose={() => setSuccess(false)}
+      />
+    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
       <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--theme-text)' }}>
         {t('title')}
       </h2>
@@ -154,7 +166,7 @@ export default function CertificationsTab({
                   min={0}
                   step={0.1}
                   value={trackGold}
-                  onChange={(e) => setTrackGold(parseFloat(e.target.value) || 0)}
+                  onChange={(e) => setTrackGold(e.target.value)}
                   className="w-full px-3 py-2 rounded-lg border text-sm"
                   style={inputStyle}
                 />
@@ -169,7 +181,7 @@ export default function CertificationsTab({
                   min={0}
                   step={0.1}
                   value={trackPlatinum}
-                  onChange={(e) => setTrackPlatinum(parseFloat(e.target.value) || 0)}
+                  onChange={(e) => setTrackPlatinum(e.target.value)}
                   className="w-full px-3 py-2 rounded-lg border text-sm"
                   style={inputStyle}
                 />
@@ -184,7 +196,7 @@ export default function CertificationsTab({
                   min={0}
                   step={0.1}
                   value={trackDiamond}
-                  onChange={(e) => setTrackDiamond(parseFloat(e.target.value) || 0)}
+                  onChange={(e) => setTrackDiamond(e.target.value)}
                   className="w-full px-3 py-2 rounded-lg border text-sm"
                   style={inputStyle}
                 />
@@ -210,7 +222,7 @@ export default function CertificationsTab({
                   min={0}
                   step={0.1}
                   value={albumGold}
-                  onChange={(e) => setAlbumGold(parseFloat(e.target.value) || 0)}
+                  onChange={(e) => setAlbumGold(e.target.value)}
                   className="w-full px-3 py-2 rounded-lg border text-sm"
                   style={inputStyle}
                 />
@@ -225,7 +237,7 @@ export default function CertificationsTab({
                   min={0}
                   step={0.1}
                   value={albumPlatinum}
-                  onChange={(e) => setAlbumPlatinum(parseFloat(e.target.value) || 0)}
+                  onChange={(e) => setAlbumPlatinum(e.target.value)}
                   className="w-full px-3 py-2 rounded-lg border text-sm"
                   style={inputStyle}
                 />
@@ -240,7 +252,7 @@ export default function CertificationsTab({
                   min={0}
                   step={0.1}
                   value={albumDiamond}
-                  onChange={(e) => setAlbumDiamond(parseFloat(e.target.value) || 0)}
+                  onChange={(e) => setAlbumDiamond(e.target.value)}
                   className="w-full px-3 py-2 rounded-lg border text-sm"
                   style={inputStyle}
                 />
@@ -253,8 +265,12 @@ export default function CertificationsTab({
 
             <button
               onClick={handleReset}
-              className="text-sm underline"
-              style={{ color: 'var(--theme-text)', opacity: 0.7 }}
+              className="px-4 py-2 rounded-lg text-sm font-semibold transition-all"
+              style={{
+                background: 'rgba(255, 255, 255, 0.5)',
+                color: 'var(--theme-text)',
+                border: '1px solid rgba(0, 0, 0, 0.1)',
+              }}
             >
               {t('resetToSuggested')}
             </button>
@@ -274,8 +290,8 @@ export default function CertificationsTab({
         </button>
 
         {error && <p className="text-sm text-red-500">{error}</p>}
-        {success && <Toast message={t('saved')} onClose={() => setSuccess(false)} />}
       </div>
     </div>
+    </>
   )
 }

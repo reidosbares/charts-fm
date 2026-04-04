@@ -380,6 +380,7 @@
       "trends": "Trends",
       "weeklyCharts": "Charts",
       "allTimeStats": "Recordes",
+      "certifications": "Certif.",
       "members": "Membros",
       "search": "Buscar"
     },
@@ -711,7 +712,7 @@
         "deleteGroup": "Excluir Comunidade",
         "showMore": "Mostrar {count} Mais",
         "showLess": "Mostrar Menos",
-        "certifications": "Certificações"
+        "certifications": "Certificados"
       },
       "chartCreation": {
         "title": "Configurações dos charts",
@@ -931,20 +932,21 @@
         }
       },
       "certifications": {
-        "title": "Certificações",
-        "enableLabel": "Ativar Certificações",
-        "enableDescription": "Mostrar certificações nas páginas de faixas e álbuns",
-        "trackThresholds": "Limites de Faixas",
-        "albumThresholds": "Limites de Álbuns",
-        "trackGoldThreshold": "Limite Ouro Faixas (VS)",
-        "trackPlatinumThreshold": "Limite Platina Faixas (VS)",
-        "trackDiamondThreshold": "Limite Diamante Faixas (VS)",
-        "albumGoldThreshold": "Limite Ouro Álbuns (VS)",
-        "albumPlatinumThreshold": "Limite Platina Álbuns (VS)",
-        "albumDiamondThreshold": "Limite Diamante Álbuns (VS)",
+        "title": "Certificados",
+        "enableLabel": "Ativar Certificados",
+        "enableDescription": "Mostrar certificados nas páginas de faixas e álbuns",
+        "trackThresholds": "Valores para certificar (faixas)",
+        "albumThresholds": "Valores para certificar (álbuns)",
+        "trackGoldThreshold": "Ouro (VS)",
+        "trackPlatinumThreshold": "Platina (VS)",
+        "trackDiamondThreshold": "Diamante (VS)",
+        "albumGoldThreshold": "Ouro (VS)",
+        "albumPlatinumThreshold": "Platina (VS)",
+        "albumDiamondThreshold": "Diamante (VS)",
         "resetToSuggested": "Restaurar valores sugeridos",
         "goldMustBeLessThanPlatinum": "Limite Ouro deve ser menor que Platina",
         "platinumMustBeLessThanDiamond": "Limite Platina deve ser menor que Diamante",
+        "thresholdsMustBePositive": "Todos os limites devem ser maiores que 0",
         "saving": "Salvando...",
         "save": "Salvar",
         "saved": "Configurações salvas"
@@ -1173,7 +1175,7 @@
       "weeksAgo": "há {count} semana",
       "weeksAgoPlural": "há {count} semanas",
       "notAvailable": "N/A",
-      "certifications": "Certificações"
+      "certifications": "Certificados"
     },
     "artistEntries": {
       "title": "Itens deste artista nos charts",
@@ -1212,7 +1214,7 @@
       "album": "Álbum"
     },
     "certifications": {
-      "title": "Certificações",
+      "title": "Certificados",
       "award": "CERTIFICAR",
       "revoke": "REVOGAR",
       "revokeConfirm": "Revogar {tier}?",
@@ -1221,6 +1223,40 @@
       "platinum": "PLATINA",
       "diamond": "DIAMANTE"
     }
+  },
+  "certificationsTab": {
+    "title": "Certificados",
+    "readyToAward": "Pronto para certificar",
+    "recentlyAwarded": "Recentemente certificados",
+    "almostThere": "Quase lá",
+    "eligibleFor": "Elegível para {tier}",
+    "award": "Certificar",
+    "vsOfThreshold": "{current} / {threshold} VS",
+    "percentToTier": "{percent}% para {tier}",
+    "awardedOn": "Certificado em {date}",
+    "viewAll": "Ver todos os certificados",
+    "empty": "Nenhum certificado ainda",
+    "emptyDescription": "Certificados são concedidos a músicas e álbuns que atingem marcos de VS. Continue ouvindo para ganhar Ouro, Platina e Diamante!",
+    "gold": "Ouro",
+    "platinum": "Platina",
+    "diamond": "Diamante"
+  },
+  "certificationsPage": {
+    "title": "Certificados",
+    "backToGroup": "Voltar para a comunidade",
+    "recentAwards": "Certificados recentes",
+    "almostThere": "Quase Lá",
+    "tracks": "Músicas",
+    "albums": "Álbuns",
+    "certifications": "{count} {count, plural, one {certificado} other {certificados}}",
+    "noCertifications": "Nenhum certificado concedido ainda",
+    "noCertificationsDescription": "Certificados são concedidos quando músicas ou álbuns atingem marcos de VS. Comece a ouvir para ganhar Ouro, Platina e Diamante!",
+    "eligible": "Elegível",
+    "eligibleCount": "{count} {count, plural, one {elegível} other {elegíveis}}",
+    "percentToTier": "{percent}% para {tier}",
+    "gold": "Ouro",
+    "platinum": "Platina",
+    "diamond": "Diamante"
   },
   "records": {
     "title": "Recordes",

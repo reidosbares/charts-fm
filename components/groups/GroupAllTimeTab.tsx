@@ -10,7 +10,6 @@ import {
   faCompactDisc,
   faTrophy,
   faSpinner,
-  faMedal,
   faCrown,
   faChartLine,
   faUser,
@@ -295,8 +294,7 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
       {/* Records section – prominent bento */}
       <div className="mb-4 md:mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3 md:mb-4">
-          <h2 className="text-xl md:text-2xl font-bold text-[var(--theme-primary-dark)] flex items-center gap-2">
-            <FontAwesomeIcon icon={faMedal} className="text-[var(--theme-primary)] flex-shrink-0" />
+          <h2 className="text-xl md:text-2xl font-bold text-[var(--theme-primary-dark)]">
             {t('records')}
           </h2>
           <LiquidGlassLink href={`/groups/${groupId}/records`} variant="primary" useTheme>
