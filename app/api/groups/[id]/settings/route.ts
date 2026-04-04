@@ -35,6 +35,10 @@ export async function GET(
       chartMode: true,
       trackingDayOfWeek: true,
       colorTheme: true,
+      certificationsEnabled: true,
+      certGoldThreshold: true,
+      certPlatinumThreshold: true,
+      certDiamondThreshold: true,
     },
   })
 
@@ -55,6 +59,10 @@ export async function GET(
     chartMode: group.chartMode || 'plays_only',
     trackingDayOfWeek: group.trackingDayOfWeek ?? 0,
     colorTheme: (group as any).colorTheme || 'white',
+    certificationsEnabled: (group as any).certificationsEnabled,
+    certGoldThreshold: (group as any).certGoldThreshold,
+    certPlatinumThreshold: (group as any).certPlatinumThreshold,
+    certDiamondThreshold: (group as any).certDiamondThreshold,
   })
 }
 
@@ -106,6 +114,7 @@ export async function PATCH(
 
   const body = await request.json()
   const { chartSize, chartMode, trackingDayOfWeek, colorTheme } = body
+  const { certificationsEnabled, certGoldThreshold, certPlatinumThreshold, certDiamondThreshold } = body
 
   // Validate chartSize
   if (chartSize !== undefined) {
@@ -147,6 +156,16 @@ export async function PATCH(
     }
   }
 
+  // Validate certification thresholds
+  if (certGoldThreshold !== undefined && certPlatinumThreshold !== undefined && certDiamondThreshold !== undefined) {
+    if (certGoldThreshold >= certPlatinumThreshold || certPlatinumThreshold >= certDiamondThreshold) {
+      return NextResponse.json(
+        { error: 'Thresholds must be in ascending order: Gold < Platinum < Diamond' },
+        { status: 400 }
+      )
+    }
+  }
+
   const newTrackingDayOfWeek = trackingDayOfWeek !== undefined ? trackingDayOfWeek : (group.trackingDayOfWeek ?? 0)
 
   // Update group settings
@@ -157,6 +176,10 @@ export async function PATCH(
       ...(chartMode !== undefined && { chartMode }),
       ...(trackingDayOfWeek !== undefined && { trackingDayOfWeek: newTrackingDayOfWeek }),
       ...(colorTheme !== undefined && { colorTheme }),
+      ...(certificationsEnabled !== undefined && { certificationsEnabled }),
+      ...(certGoldThreshold !== undefined && { certGoldThreshold }),
+      ...(certPlatinumThreshold !== undefined && { certPlatinumThreshold }),
+      ...(certDiamondThreshold !== undefined && { certDiamondThreshold }),
     },
     select: {
       chartSize: true,

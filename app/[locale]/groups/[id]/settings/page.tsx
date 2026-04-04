@@ -10,6 +10,7 @@ import GroupDetailsTab from './GroupDetailsTab'
 import StylingTab from './StylingTab'
 import ShoutboxSettingsTab from './ShoutboxSettingsTab'
 import DeleteGroupTab from './DeleteGroupTab'
+import CertificationsTab from './CertificationsTab'
 import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
 import { getGroupImageUrl } from '@/lib/group-image-utils'
@@ -78,6 +79,20 @@ export default async function GroupSettingsPage({ params }: { params: { id: stri
   const isSuperuser = superuser !== null
   const chartGenerationInProgress = latestGroup?.chartGenerationInProgress || false
 
+  const memberCount = await prisma.groupMember.count({
+    where: { groupId: group.id },
+  })
+
+  const certSettings = await prisma.group.findUnique({
+    where: { id: group.id },
+    select: {
+      certificationsEnabled: true,
+      certGoldThreshold: true,
+      certPlatinumThreshold: true,
+      certDiamondThreshold: true,
+    },
+  })
+
   // Get dynamic group image (includes user-chosen artist images if dynamic covers are enabled)
   const dynamicGroupImage = await getGroupImageUrl({
     id: group.id,
@@ -136,6 +151,16 @@ export default async function GroupSettingsPage({ params }: { params: { id: stri
             <StylingTab
               groupId={group.id}
               initialColorTheme={(group as any).colorTheme}
+            />
+          }
+          certificationsContent={
+            <CertificationsTab
+              groupId={group.id}
+              memberCount={memberCount}
+              initialEnabled={certSettings?.certificationsEnabled ?? true}
+              initialGold={certSettings?.certGoldThreshold ?? 20}
+              initialPlatinum={certSettings?.certPlatinumThreshold ?? 40}
+              initialDiamond={certSettings?.certDiamondThreshold ?? 100}
             />
           }
           shoutboxContent={

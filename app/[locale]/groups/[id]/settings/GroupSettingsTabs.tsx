@@ -6,13 +6,14 @@ import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 
-type TabId = 'regenerate' | 'chart-creation' | 'group-details' | 'styling' | 'shoutbox' | 'delete'
+type TabId = 'regenerate' | 'chart-creation' | 'group-details' | 'styling' | 'certifications' | 'shoutbox' | 'delete'
 
 interface GroupSettingsTabsProps {
   regenerateChartsContent: React.ReactNode
   chartCreationContent: React.ReactNode
   groupDetailsContent: React.ReactNode
   stylingContent: React.ReactNode
+  certificationsContent: React.ReactNode
   shoutboxContent: React.ReactNode
   deleteGroupContent: React.ReactNode
 }
@@ -22,6 +23,7 @@ export default function GroupSettingsTabs({
   chartCreationContent,
   groupDetailsContent,
   stylingContent,
+  certificationsContent,
   shoutboxContent,
   deleteGroupContent,
 }: GroupSettingsTabsProps) {
@@ -30,7 +32,7 @@ export default function GroupSettingsTabs({
   const tabFromUrl = searchParams.get('tab') as TabId | null
   
   // Validate tab from URL, default to 'group-details' if invalid
-  const validTabs: TabId[] = ['regenerate', 'chart-creation', 'group-details', 'styling', 'shoutbox', 'delete']
+  const validTabs: TabId[] = ['regenerate', 'chart-creation', 'group-details', 'styling', 'certifications', 'shoutbox', 'delete']
   const initialTab = tabFromUrl && validTabs.includes(tabFromUrl) ? tabFromUrl : 'group-details'
   
   const [activeTab, setActiveTab] = useState<TabId>(initialTab)
@@ -38,7 +40,7 @@ export default function GroupSettingsTabs({
 
   // Update active tab when URL changes
   useEffect(() => {
-    const validTabs: TabId[] = ['regenerate', 'chart-creation', 'group-details', 'styling', 'shoutbox', 'delete']
+    const validTabs: TabId[] = ['regenerate', 'chart-creation', 'group-details', 'styling', 'certifications', 'shoutbox', 'delete']
     if (tabFromUrl && validTabs.includes(tabFromUrl)) {
       setActiveTab(tabFromUrl)
       // Auto-expand if active tab is in collapsed section
@@ -61,6 +63,7 @@ export default function GroupSettingsTabs({
     { id: 'group-details' as TabId, label: t('groupDetails') },
     { id: 'chart-creation' as TabId, label: t('charts') },
     { id: 'styling' as TabId, label: t('styling') },
+    { id: 'certifications' as TabId, label: t('certifications') },
     { id: 'shoutbox' as TabId, label: t('shoutbox') },
     { id: 'regenerate' as TabId, label: t('regenerateCharts') },
     { id: 'delete' as TabId, label: t('deleteGroup') },
@@ -80,6 +83,8 @@ export default function GroupSettingsTabs({
         return groupDetailsContent
       case 'styling':
         return stylingContent
+      case 'certifications':
+        return certificationsContent
       case 'shoutbox':
         return shoutboxContent
       case 'delete':
