@@ -121,20 +121,19 @@ export async function POST(
   // Check if user is a superuser and get request body
   const superuser = await getSuperuser()
   const isSuperuser = superuser !== null
-  
-  let numberOfWeeks = 10 // Default to 10 weeks
-  if (isSuperuser) {
-    try {
-      const body = await request.json()
-      if (body.weeks !== undefined) {
-        const requestedWeeks = parseInt(body.weeks, 10)
-        if (!isNaN(requestedWeeks) && requestedWeeks > 0 && requestedWeeks <= 52) {
-          numberOfWeeks = requestedWeeks
-        }
+
+  let numberOfWeeks = 5 // Default to 5 weeks
+  try {
+    const body = await request.json()
+    if (body.weeks !== undefined) {
+      const requestedWeeks = parseInt(body.weeks, 10)
+      const maxWeeks = isSuperuser ? 52 : 5
+      if (!isNaN(requestedWeeks) && requestedWeeks > 0 && requestedWeeks <= maxWeeks) {
+        numberOfWeeks = requestedWeeks
       }
-    } catch {
-      // If body parsing fails, use default
     }
+  } catch {
+    // If body parsing fails, use default
   }
 
   // Calculate stats for last N finished weeks using group's tracking day

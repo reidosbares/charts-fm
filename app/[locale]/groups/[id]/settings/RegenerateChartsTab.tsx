@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from '@/i18n/routing'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+import CustomSelect from '@/components/CustomSelect'
 import ChartGenerationErrorModal from '@/components/ChartGenerationErrorModal'
 
 interface RegenerateChartsTabProps {
@@ -38,6 +39,13 @@ export default function RegenerateChartsTab({
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
   const [showFirstMessage, setShowFirstMessage] = useState(true)
   const [weeks, setWeeks] = useState<number>(5)
+  const weeksOptions = useMemo(() => {
+    const max = isSuperuser ? 52 : 5
+    return Array.from({ length: max }, (_, i) => ({
+      value: i + 1,
+      label: `${i + 1} ${i + 1 === 1 ? t('week') : t('weeks')}`,
+    }))
+  }, [isSuperuser, t])
   const [showErrorModal, setShowErrorModal] = useState(false)
   const [failedUsers, setFailedUsers] = useState<string[]>([])
   const [aborted, setAborted] = useState(false)
@@ -141,10 +149,7 @@ export default function RegenerateChartsTab({
     setProgress(null)
 
     try {
-      const body: { weeks?: number } = {}
-      if (isSuperuser) {
-        body.weeks = weeks
-      }
+      const body: { weeks?: number } = { weeks }
 
       const response = await fetch(`/api/groups/${groupId}/charts`, {
         method: 'POST',
@@ -321,34 +326,21 @@ export default function RegenerateChartsTab({
       )}
 
       <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
-        {t('description', { weeks: isSuperuser ? weeks : 10 })}
+        {t('description', { weeks })}
       </p>
 
-      {isSuperuser && (
-        <div className="mb-4 md:mb-6">
-          <label htmlFor="weeks" className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
-            {t('weeksToGenerate')}
-          </label>
-          <input
-            id="weeks"
-            type="number"
-            min="1"
-            max="52"
-            value={weeks}
-            onChange={(e) => {
-              const value = parseInt(e.target.value, 10)
-              if (!isNaN(value) && value > 0 && value <= 52) {
-                setWeeks(value)
-              }
-            }}
-            disabled={isLoading}
-            className="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          />
-          <p className="mt-1 text-xs text-gray-500">
-            {t('weeksToGenerateDescription')}
-          </p>
-        </div>
-      )}
+      <div className="mb-4 md:mb-6">
+        <label htmlFor="weeks" className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
+          {t('weeksToGenerate')}
+        </label>
+        <CustomSelect
+          id="weeks"
+          options={weeksOptions}
+          value={weeks}
+          onChange={(value) => setWeeks(Number(value))}
+          disabled={isLoading}
+        />
+      </div>
 
       {isLoading && !success && (
         <div className="mb-3 md:mb-4 p-3 md:p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded-lg text-sm md:text-base">
