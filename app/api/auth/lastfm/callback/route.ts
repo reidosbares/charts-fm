@@ -7,7 +7,17 @@ import { detectLocale, getLocalizedPath } from '@/lib/locale-utils'
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const token = searchParams.get('token')
-  
+
+  // Build redirect base from the Host header so we stay on the origin the
+  // browser actually used (localhost vs 0.0.0.0). In `next dev -H 0.0.0.0`
+  // request.url is anchored to the bound interface and would otherwise swap
+  // the user's origin, breaking cookies set during authorize.
+  const forwardedProto = request.headers.get('x-forwarded-proto')
+  const requestUrl = new URL(request.url)
+  const host = request.headers.get('host') ?? requestUrl.host
+  const protocol = forwardedProto ?? requestUrl.protocol.replace(':', '')
+  const redirectBase = `${protocol}://${host}`
+
   // Detect locale for redirects (Last.fm callback doesn't include locale in URL)
   const locale = await detectLocale(request)
   
@@ -30,7 +40,7 @@ export async function GET(request: Request) {
       ? '/?error=no_token&signin=true'
       : '/auth/signup?error=no_token'
     const errorUrl = getLocalizedPath(errorPath, locale)
-    return NextResponse.redirect(new URL(errorUrl, request.url))
+    return NextResponse.redirect(new URL(errorUrl, redirectBase))
   }
 
   const apiKey = process.env.LASTFM_API_KEY
@@ -42,7 +52,7 @@ export async function GET(request: Request) {
       ? '/?error=config&signin=true'
       : '/auth/signup?error=config'
     const errorUrl = getLocalizedPath(errorPath, locale)
-    return NextResponse.redirect(new URL(errorUrl, request.url))
+    return NextResponse.redirect(new URL(errorUrl, redirectBase))
   }
 
   try {
@@ -87,7 +97,7 @@ export async function GET(request: Request) {
 
       // Redirect to a page that will handle the client-side signin
       const signinPath = getLocalizedPath('/auth/signin/lastfm', locale)
-      return NextResponse.redirect(new URL(signinPath, request.url))
+      return NextResponse.redirect(new URL(signinPath, redirectBase))
     }
 
     // User doesn't exist - proceed with signup flow
@@ -112,14 +122,14 @@ export async function GET(request: Request) {
         : '/auth/signup/complete',
       locale
     )
-    return NextResponse.redirect(new URL(completePath, request.url))
+    return NextResponse.redirect(new URL(completePath, redirectBase))
   } catch (error) {
     console.error('Last.fm callback error:', error)
     const errorPath = mode === 'signin'
       ? `/?error=${encodeURIComponent(error instanceof Error ? error.message : 'authentication_failed')}&signin=true`
       : `/auth/signup?error=${encodeURIComponent(error instanceof Error ? error.message : 'authentication_failed')}`
     const errorUrl = getLocalizedPath(errorPath, locale)
-    return NextResponse.redirect(new URL(errorUrl, request.url))
+    return NextResponse.redirect(new URL(errorUrl, redirectBase))
   }
 }
 
