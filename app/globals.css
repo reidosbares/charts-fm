@@ -179,6 +179,17 @@ div.rdp-root {
   --rdp-accent-color: rgb(234 179 8);
 }
 
+@media (max-width: 420px) {
+  .rdp-root,
+  .rdp,
+  div.rdp-root {
+    --rdp-day-height: 36px;
+    --rdp-day-width: 36px;
+    --rdp-day_button-height: 34px;
+    --rdp-day_button-width: 34px;
+  }
+}
+
 svg.rdp-chevron {
   fill: rgb(234 179 8);
 }

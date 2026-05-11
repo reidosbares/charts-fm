@@ -28,7 +28,17 @@ export default function WeekSelector({ weeks, currentWeek, trackingDayOfWeek, on
     router.push(`?${params.toString()}`)
   }
 
-  const displayedWeeks = weeks.slice(0, 5)
+  const defaultWeeks = weeks.slice(0, 5)
+  const currentWeekTime = currentWeek.getTime()
+  const isCurrentInDefault = defaultWeeks.some(
+    (week) => week.weekStart.getTime() === currentWeekTime
+  )
+  const currentWeekEntry = isCurrentInDefault
+    ? null
+    : weeks.find((week) => week.weekStart.getTime() === currentWeekTime)
+  const displayedWeeks = currentWeekEntry
+    ? [...defaultWeeks, currentWeekEntry]
+    : defaultWeeks
 
   return (
     <div 
