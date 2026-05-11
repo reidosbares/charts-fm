@@ -1,8 +1,6 @@
----
-description: Next.js, React, and TypeScript development guidelines
-globs: app/**/*.{ts,tsx},components/**/*.{ts,tsx},lib/**/*.ts,contexts/**/*.{ts,tsx}
-alwaysApply: false
----
+# Next.js, React, and TypeScript development guidelines
+
+Applies to: `app/**/*.{ts,tsx}`, `components/**/*.{ts,tsx}`, `lib/**/*.ts`, `contexts/**/*.{ts,tsx}`
 
 You are an expert in TypeScript, Next.js, React, and scalable web application development.
 
@@ -108,12 +106,12 @@ Refer to Next.js documentation for best practices in routing, data fetching, and
   'use client'
   import { Suspense } from 'react'
   import { useSearchParams } from 'next/navigation'
-  
+
   function MyPageContent() {
     const searchParams = useSearchParams()
     // ... component logic
   }
-  
+
   export default function MyPage() {
     return (
       <Suspense fallback={<LoadingComponent />}>
@@ -135,9 +133,9 @@ Refer to Next.js documentation for best practices in routing, data fetching, and
 - Example:
   ```tsx
   import { NextResponse } from 'next/server'
-  
+
   export const dynamic = 'force-dynamic'
-  
+
   export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     // ...
@@ -152,11 +150,11 @@ Refer to Next.js documentation for best practices in routing, data fetching, and
   ```tsx
   // lib/auth-config.ts
   export const authOptions: NextAuthOptions = { ... }
-  
+
   // app/api/auth/[...nextauth]/route.ts
   import NextAuth from "next-auth"
   import { authOptions } from "@/lib/auth-config"
-  
+
   const handler = NextAuth(authOptions)
   export { handler as GET, handler as POST }
   ```

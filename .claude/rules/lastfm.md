@@ -1,8 +1,6 @@
----
-description: Last.fm API integration guidelines
-globs: lib/lastfm*.ts,app/api/auth/lastfm/**/*.ts,lib/group-service.ts,lib/group-stats.ts,lib/weekly-utils.ts,app/api/groups/**/charts/**/*.ts
-alwaysApply: false
----
+# Last.fm API integration guidelines
+
+Applies to: `lib/lastfm*.ts`, `app/api/auth/lastfm/**/*.ts`, `lib/group-service.ts`, `lib/group-stats.ts`, `lib/weekly-utils.ts`, `app/api/groups/**/charts/**/*.ts`
 
 # Last.fm API Integration
 

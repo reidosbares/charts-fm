@@ -1,8 +1,4 @@
----
-description: General rules for chartsfm development
-globs: 
-alwaysApply: true
----
+# General rules for chartsfm development
 
 # Deployment Environment
 
