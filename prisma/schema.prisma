@@ -8,58 +8,58 @@ datasource db {
 }
 
 model User {
-  id                            String                         @id @default(cuid())
-  email                         String                         @unique
-  name                          String?
-  password                      String?
-  image                         String?
-  lastfmUsername                String                         @unique
-  lastfmSessionKey              String?
-  bio                           String?
-  profilePublic                 Boolean                        @default(true)
-  showProfileStats              Boolean                        @default(true)
-  showProfileGroups             Boolean                        @default(true)
-  isSuperuser                   Boolean                        @default(false)
-  createdAt                     DateTime                       @default(now())
-  updatedAt                     DateTime                       @updatedAt
-  quickAccessGroupId            String?
-  highlightedGroupId           String?
+  id                              String                         @id @default(cuid())
+  email                           String                         @unique
+  name                            String?
+  password                        String?
+  image                           String?
+  lastfmUsername                  String                         @unique
+  lastfmSessionKey                String?
+  bio                             String?
+  profilePublic                   Boolean                        @default(true)
+  showProfileStats                Boolean                        @default(true)
+  showProfileGroups               Boolean                        @default(true)
+  isSuperuser                     Boolean                        @default(false)
+  createdAt                       DateTime                       @default(now())
+  updatedAt                       DateTime                       @updatedAt
+  quickAccessGroupId              String?
+  highlightedGroupId              String?
   highlightedGroupDriverArtistKey String?
-  emailVerificationToken        String?
-  emailVerificationTokenExpires DateTime?
-  emailVerified                 Boolean                        @default(false)
-  lastVerificationEmailSentAt   DateTime?
-  lastPasswordResetEmailSentAt  DateTime?
-  passwordResetToken            String?
-  passwordResetTokenExpires     DateTime?
-  locale                        String?
-  lastAccessedAt                DateTime?
-  chartEntryStatsAsMajorDriver  ChartEntryStats[]
-  friendshipsAsFriend           Friendship[]                   @relation("FriendFriendships")
-  friendshipsAsUser             Friendship[]                   @relation("UserFriendships")
-  comments                      GroupComment[]
-  groupCompatibilityScores      GroupCompatibilityScore[]
-  groupInvites                  GroupInvite[]
-  groupJoinRequests             GroupJoinRequest[]
-  groupMemberships              GroupMember[]
-  memberGroupStats              MemberGroupStats[]
-  groupWeeksAsMVP               GroupWeekMVP[]                 @relation("UserAsWeekMVP")
-  recommendationCache           GroupRecommendationCache?
-  groupRecommendationRejections GroupRecommendationRejection[]
-  shoutboxPermissionsGranted    GroupShoutboxPermission[]      @relation("ShoutboxPermissionsGranted")
-  shoutboxPermissions           GroupShoutboxPermission[]
-  groupsCreated                 Group[]                        @relation("GroupCreator")
-  listeningStats                ListeningStat[]
-  chartEntryVS                  UserChartEntryVS[]
-  commentBansIssued             UserCommentBan[]               @relation("CommentBansIssued")
-  commentBans                   UserCommentBan?                @relation("UserCommentBans")
-  weeklyStats                   UserWeeklyStats[]
-  quickAccessGroup              Group?                         @relation("QuickAccessGroup", fields: [quickAccessGroupId], references: [id])
-  highlightedGroup              Group?                         @relation("HighlightedGroup", fields: [highlightedGroupId], references: [id])
-  artistImagesUploaded          ArtistImage[]
-  artistImageVotes              ArtistImageVote[]
-  artistImageReports            ArtistImageReport[]
-  certificationsAwarded          Certification[]                @relation("CertificationsAwarded")
+  emailVerificationToken          String?
+  emailVerificationTokenExpires   DateTime?
+  emailVerified                   Boolean                        @default(false)
+  lastVerificationEmailSentAt     DateTime?
+  lastPasswordResetEmailSentAt    DateTime?
+  passwordResetToken              String?
+  passwordResetTokenExpires       DateTime?
+  locale                          String?
+  lastAccessedAt                  DateTime?
+  chartEntryStatsAsMajorDriver    ChartEntryStats[]
+  friendshipsAsFriend             Friendship[]                   @relation("FriendFriendships")
+  friendshipsAsUser               Friendship[]                   @relation("UserFriendships")
+  comments                        GroupComment[]
+  groupCompatibilityScores        GroupCompatibilityScore[]
+  groupInvites                    GroupInvite[]
+  groupJoinRequests               GroupJoinRequest[]
+  groupMemberships                GroupMember[]
+  memberGroupStats                MemberGroupStats[]
+  groupWeeksAsMVP                 GroupWeekMVP[]                 @relation("UserAsWeekMVP")
+  recommendationCache             GroupRecommendationCache?
+  groupRecommendationRejections   GroupRecommendationRejection[]
+  shoutboxPermissionsGranted      GroupShoutboxPermission[]      @relation("ShoutboxPermissionsGranted")
+  shoutboxPermissions             GroupShoutboxPermission[]
+  groupsCreated                   Group[]                        @relation("GroupCreator")
+  listeningStats                  ListeningStat[]
+  chartEntryVS                    UserChartEntryVS[]
+  commentBansIssued               UserCommentBan[]               @relation("CommentBansIssued")
+  commentBans                     UserCommentBan?                @relation("UserCommentBans")
+  weeklyStats                     UserWeeklyStats[]
+  quickAccessGroup                Group?                         @relation("QuickAccessGroup", fields: [quickAccessGroupId], references: [id])
+  highlightedGroup                Group?                         @relation("HighlightedGroup", fields: [highlightedGroupId], references: [id])
+  artistImagesUploaded            ArtistImage[]
+  artistImageVotes                ArtistImageVote[]
+  artistImageReports              ArtistImageReport[]
+  certificationsAwarded           Certification[]                @relation("CertificationsAwarded")
 
   @@map("users")
 }
@@ -165,22 +165,22 @@ model GroupMember {
 
 /// Long-running per-member-per-group stats (all-time). Updated each week when charts are generated.
 model MemberGroupStats {
-  id                          String   @id @default(cuid())
-  groupId                     String
-  userId                      String
-  totalVS                     Float    @default(0)
-  totalPlays                  Int      @default(0)
-  entriesHelpedDebutArtists   Int      @default(0)
-  entriesHelpedDebutTracks    Int      @default(0)
-  entriesHelpedDebutAlbums    Int      @default(0)
-  weeksAtOneContributedArtists Int     @default(0)
-  weeksAtOneContributedTracks  Int     @default(0)
-  weeksAtOneContributedAlbums  Int     @default(0)
-  weeksAsMVP                   Int     @default(0)
-  lastUpdated                 DateTime @updatedAt
-  createdAt                   DateTime @default(now())
-  group                       Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  user                        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                           String   @id @default(cuid())
+  groupId                      String
+  userId                       String
+  totalVS                      Float    @default(0)
+  totalPlays                   Int      @default(0)
+  entriesHelpedDebutArtists    Int      @default(0)
+  entriesHelpedDebutTracks     Int      @default(0)
+  entriesHelpedDebutAlbums     Int      @default(0)
+  weeksAtOneContributedArtists Int      @default(0)
+  weeksAtOneContributedTracks  Int      @default(0)
+  weeksAtOneContributedAlbums  Int      @default(0)
+  weeksAsMVP                   Int      @default(0)
+  lastUpdated                  DateTime @updatedAt
+  createdAt                    DateTime @default(now())
+  group                        Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user                         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([groupId, userId])
   @@index([groupId])
@@ -190,14 +190,14 @@ model MemberGroupStats {
 
 /// Cached MVP per week (groupId + weekStart). Backfilled on first access if empty.
 model GroupWeekMVP {
-  id          String    @id @default(cuid())
-  groupId     String
-  weekStart   DateTime
-  mvpUserId   String?
-  totalVS     Float     @default(0)
-  totalPlays  Int       @default(0)
-  group       Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  mvpUser     User?     @relation("UserAsWeekMVP", fields: [mvpUserId], references: [id], onDelete: SetNull)
+  id         String   @id @default(cuid())
+  groupId    String
+  weekStart  DateTime
+  mvpUserId  String?
+  totalVS    Float    @default(0)
+  totalPlays Int      @default(0)
+  group      Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  mvpUser    User?    @relation("UserAsWeekMVP", fields: [mvpUserId], references: [id], onDelete: SetNull)
 
   @@unique([groupId, weekStart])
   @@index([groupId])
@@ -421,8 +421,8 @@ model Certification {
   awardedById      String
   thresholdAtAward Float
 
-  group            Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  awardedBy        User     @relation("CertificationsAwarded", fields: [awardedById], references: [id])
+  group     Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  awardedBy User  @relation("CertificationsAwarded", fields: [awardedById], references: [id])
 
   @@unique([groupId, chartType, entryKey, tier])
   @@index([groupId])
@@ -591,4 +591,20 @@ model ArtistImageReport {
   @@index([reportedBy])
   @@index([status])
   @@map("artist_image_reports")
+}
+
+model CachedExternalImage {
+  id          String    @id @default(cuid())
+  kind        String // 'artist' (album/track reserved for future use)
+  cacheKey    String // normalized lowercase identifier (e.g. artist name)
+  sourceUrl   String? // original external URL we resolved (null if MB returned no image)
+  blobUrl     String? // Vercel Blob URL; null when negative-cached
+  contentType String?
+  byteSize    Int?
+  fetchedAt   DateTime  @default(now())
+  refreshedAt DateTime?
+
+  @@unique([kind, cacheKey])
+  @@index([kind, cacheKey])
+  @@map("cached_external_images")
 }

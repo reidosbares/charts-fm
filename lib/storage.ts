@@ -15,7 +15,7 @@ export async function uploadFile(
   fileName: string,
   file: File | Buffer,
   contentType: string,
-  folder: 'profile-pictures' | 'group-pictures' | 'artist-images' = 'profile-pictures'
+  folder: 'profile-pictures' | 'group-pictures' | 'artist-images' | 'artist-images-cached' = 'profile-pictures'
 ): Promise<UploadResult> {
   // Check if we should use local storage
   const useLocalStorage = 
@@ -36,7 +36,7 @@ async function uploadToLocal(
   fileName: string,
   file: File | Buffer,
   contentType: string,
-  folder: 'profile-pictures' | 'group-pictures' | 'artist-images' = 'profile-pictures'
+  folder: 'profile-pictures' | 'group-pictures' | 'artist-images' | 'artist-images-cached' = 'profile-pictures'
 ): Promise<UploadResult> {
   const uploadsDir = join(process.cwd(), 'public', 'uploads', folder)
   
@@ -75,7 +75,7 @@ async function uploadToBlob(
   fileName: string,
   file: File | Buffer,
   contentType: string,
-  folder: 'profile-pictures' | 'group-pictures' | 'artist-images' = 'profile-pictures'
+  folder: 'profile-pictures' | 'group-pictures' | 'artist-images' | 'artist-images-cached' = 'profile-pictures'
 ): Promise<UploadResult> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     throw new Error('BLOB_READ_WRITE_TOKEN is required for blob storage')
@@ -106,14 +106,17 @@ async function uploadToBlob(
  */
 export async function deleteFile(
   fileUrl: string,
-  folder?: 'profile-pictures' | 'group-pictures' | 'artist-images'
+  folder?: 'profile-pictures' | 'group-pictures' | 'artist-images' | 'artist-images-cached'
 ): Promise<void> {
   // Auto-detect folder from URL if not provided
   if (!folder) {
-    if (fileUrl.includes('/uploads/group-pictures/') || 
+    if (fileUrl.includes('/uploads/group-pictures/') ||
         (fileUrl.includes('blob.vercel-storage.com') && fileUrl.includes('group-pictures'))) {
       folder = 'group-pictures'
-    } else if (fileUrl.includes('/uploads/artist-images/') || 
+    } else if (fileUrl.includes('/uploads/artist-images-cached/') ||
+        (fileUrl.includes('blob.vercel-storage.com') && fileUrl.includes('artist-images-cached'))) {
+      folder = 'artist-images-cached'
+    } else if (fileUrl.includes('/uploads/artist-images/') ||
         (fileUrl.includes('blob.vercel-storage.com') && fileUrl.includes('artist-images'))) {
       folder = 'artist-images'
     } else {
@@ -138,7 +141,7 @@ export async function deleteFile(
  */
 async function deleteFromLocal(
   fileUrl: string,
-  folder: 'profile-pictures' | 'group-pictures' | 'artist-images' = 'profile-pictures'
+  folder: 'profile-pictures' | 'group-pictures' | 'artist-images' | 'artist-images-cached' = 'profile-pictures'
 ): Promise<void> {
   // Extract file path from URL (e.g., /uploads/profile-pictures/userId/filename.jpg)
   const expectedPrefix = `/uploads/${folder}/`

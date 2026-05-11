@@ -1,6 +1,10 @@
 // Last.fm API client utilities
 
 import { acquireLastFMRateLimit } from './lastfm-rate-limiter'
+import {
+  lookupCachedExternalImage,
+  resolveAndCacheExternalImage,
+} from './external-image-cache'
 
 const LASTFM_API_BASE = 'https://ws.audioscrobbler.com/2.0/'
 
@@ -289,14 +293,17 @@ async function getArtistImageFromMusicBrainz(artist: string): Promise<string | n
 }
 
 /**
- * Get artist image - checks uploaded images first, then falls back to MusicBrainz API
- * Returns image URL from uploaded images (highest score) or Wikimedia Commons, or null if not available
+ * Get artist image — checks uploaded images first, then a cached external image,
+ * then falls back to resolving from MusicBrainz/Wikimedia and caching the result
+ * in Vercel Blob.
+ *
+ * `apiKey` is retained for call-site compatibility; MusicBrainz lookups don't need it.
  */
 export async function getArtistImage(
   artist: string,
   apiKey: string
 ): Promise<string | null> {
-  // First, check for uploaded images
+  // 1. User-uploaded images (highest-scored).
   try {
     const { getSelectedArtistImage } = await import('./artist-images')
     const uploadedImage = await getSelectedArtistImage(artist)
@@ -304,12 +311,30 @@ export async function getArtistImage(
       return uploadedImage
     }
   } catch (error) {
-    // If there's an error (e.g., database not migrated yet), continue to fallback
     console.error('Error checking uploaded artist images:', error)
   }
 
-  // Fallback to MusicBrainz
-  return await getArtistImageFromMusicBrainz(artist)
+  // 2. External image cache (positive OR negative hit short-circuits MusicBrainz).
+  const cacheKey = artist.toLowerCase().trim()
+  try {
+    const cached = await lookupCachedExternalImage('artist', cacheKey)
+    if (cached.hit) {
+      return cached.blobUrl // may be null (negative cache hit) — caller treats as "no image"
+    }
+  } catch (error) {
+    console.error('Error looking up cached external image:', error)
+    // Fall through to resolve-and-cache.
+  }
+
+  // 3. Resolve via MusicBrainz/Wikimedia and cache the resulting bytes.
+  try {
+    return await resolveAndCacheExternalImage('artist', cacheKey, () =>
+      getArtistImageFromMusicBrainz(artist),
+    )
+  } catch (error) {
+    console.error('Error resolving + caching artist image:', error)
+    return null
+  }
 }
 
 /**
