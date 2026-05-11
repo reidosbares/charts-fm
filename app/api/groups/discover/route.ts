@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { getGroupImageUrl } from '@/lib/group-image-utils'
 
 // GET - List all public groups for discovery
 export async function GET(request: Request) {
@@ -25,215 +24,182 @@ export async function GET(request: Request) {
   const minMembersParam = searchParams.get('minMembers')
   const tagsParam = searchParams.get('tags')?.trim() || ''
   const sort = searchParams.get('sort') || 'newest'
-  // Validate and parse page and limit
   const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1)
-  const limit = Math.max(1, Math.min(100, parseInt(searchParams.get('limit') || '20', 10) || 20)) // Max 100 items per page
+  const limit = Math.max(1, Math.min(100, parseInt(searchParams.get('limit') || '20', 10) || 20))
   const skip = (page - 1) * limit
 
-  // Build where clause
   const where: any = {
-    isPrivate: false, // Only public groups
-    isSolo: false, // Exclude solo groups
+    isPrivate: false,
+    isSolo: false,
   }
-
-  // Search filter
   if (search) {
-    where.name = {
-      contains: search,
-      mode: 'insensitive',
-    }
+    where.name = { contains: search, mode: 'insensitive' }
   }
-
-  // Tags filter
-  if (tagsParam) {
-    const searchTags = tagsParam
-      .split(/\s+/)
-      .map(tag => tag.trim().toLowerCase())
-      .filter(tag => tag.length > 0)
-    
-    if (searchTags.length > 0) {
-      // Filter groups that have at least one matching tag (case-insensitive)
-      // Since tags is stored as JSON, we need to filter after fetching
-      // We'll add this filter in post-processing
-    }
-  }
-
-  // Free join filter
   if (allowFreeJoinParam === 'true') {
     where.allowFreeJoin = true
   }
 
-  // Min members filter
-  if (minMembersParam) {
-    const minMembers = Math.max(0, parseInt(minMembersParam, 10) || 0)
-    if (!isNaN(minMembers) && minMembers > 0) {
-      // This will be handled via having clause or post-query filtering
-      // For now, we'll filter after fetching
-    }
-  }
+  const minMembers = minMembersParam
+    ? Math.max(0, parseInt(minMembersParam, 10) || 0)
+    : 0
+  const searchTags = tagsParam
+    ? tagsParam.split(/\s+/).map((t) => t.trim().toLowerCase()).filter(Boolean)
+    : []
 
-  // Get total count for pagination
-  const totalCount = await prisma.group.count({ where })
-
-  // Determine orderBy based on sort parameter
-  let orderBy: any = { createdAt: 'desc' } // Default
-  if (sort === 'newest') {
-    orderBy = { createdAt: 'desc' }
-  } else if (sort === 'oldest') {
-    orderBy = { createdAt: 'asc' }
-  } else if (sort === 'most_members' || sort === 'least_members') {
-    // For member count sorting, we'll need to sort after fetching _count
-    // For now, use createdAt as fallback and sort after
-    orderBy = { createdAt: 'desc' }
-  } else if (sort === 'most_active') {
-    // For activity sorting, we'll sort after fetching activity data
-    orderBy = { createdAt: 'desc' }
-  }
-
-  // Get paginated public groups with member counts
-  const groups = await prisma.group.findMany({
-    where,
-    select: {
-      id: true,
-      name: true,
-      image: true,
-      colorTheme: true,
-      allowFreeJoin: true,
-      createdAt: true,
-      tags: true,
-      dynamicIconEnabled: true,
-      dynamicIconSource: true,
-      creator: {
-        select: {
-          id: true,
-          name: true,
-          lastfmUsername: true,
-        },
-      },
-      _count: {
-        select: {
-          members: true,
-        },
-      },
-      weeklyStats: {
-        select: {
-          weekStart: true,
-        },
-        orderBy: {
-          weekStart: 'desc',
-        },
-        take: 1,
-      },
-    },
-    orderBy,
-    skip,
-    take: limit,
-  })
-
-  // Filter by min members if specified
-  let filteredGroups = groups
-  if (minMembersParam) {
-    const minMembers = Math.max(0, parseInt(minMembersParam, 10) || 0)
-    if (!isNaN(minMembers) && minMembers > 0) {
-      filteredGroups = groups.filter((g) => g._count.members >= minMembers)
-    }
-  }
-
-  // Get latest chart update and week count for activity sorting
-  const groupsWithActivity = await Promise.all(
-    filteredGroups.map(async (group) => {
-      const [latestChart, weekCount, dynamicImage] = await Promise.all([
-        prisma.groupChartEntry.findFirst({
-          where: { groupId: group.id },
-          orderBy: { updatedAt: 'desc' },
-          select: { updatedAt: true },
-        }),
-        prisma.groupWeeklyStats.count({
-          where: { groupId: group.id },
-        }),
-        getGroupImageUrl({
-          id: group.id,
-          image: group.image,
-          dynamicIconEnabled: (group as any).dynamicIconEnabled,
-          dynamicIconSource: (group as any).dynamicIconSource,
-        }),
-      ])
-
-      // Get tags from group (stored as JSON)
-      const groupTags = Array.isArray((group as any).tags) 
-        ? (group as any).tags.map((tag: string) => String(tag).toLowerCase())
-        : []
-
-      return {
-        id: group.id,
-        name: group.name,
-        image: dynamicImage,
-        colorTheme: group.colorTheme,
-        allowFreeJoin: group.allowFreeJoin,
-        createdAt: group.createdAt.toISOString(),
-        creator: group.creator,
-        _count: group._count,
-        lastChartUpdate: latestChart?.updatedAt.toISOString() || null,
-        weekCount,
-        tags: groupTags,
-      }
-    })
-  )
-
-  // Filter by tags if specified
-  let tagFilteredGroups = groupsWithActivity
-  if (tagsParam) {
-    const searchTags = tagsParam
-      .split(/\s+/)
-      .map(tag => tag.trim().toLowerCase())
-      .filter(tag => tag.length > 0)
-    
-    if (searchTags.length > 0) {
-      tagFilteredGroups = groupsWithActivity.filter((group: any) => {
-        const groupTags = group.tags || []
-        // Check if any of the search tags matches any of the group's tags
-        return searchTags.some(searchTag => groupTags.includes(searchTag))
-      })
-    }
-  }
-
-  // Sort groups
-  let sortedGroups = tagFilteredGroups
+  // DB-level orderBy where possible. `most_active` is re-sorted in app
+  // after enrichment because Prisma can't order by a related table's max().
+  let orderBy: any
   switch (sort) {
-    case 'newest':
-      sortedGroups.sort((a, b) => 
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )
-      break
     case 'oldest':
-      sortedGroups.sort((a, b) => 
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      )
+      orderBy = { createdAt: 'asc' }
       break
     case 'most_members':
-      sortedGroups.sort((a, b) => b._count.members - a._count.members)
+      orderBy = { members: { _count: 'desc' } }
       break
     case 'least_members':
-      sortedGroups.sort((a, b) => a._count.members - b._count.members)
+      orderBy = { members: { _count: 'asc' } }
       break
     case 'most_active':
-      sortedGroups.sort((a, b) => {
-        const aTime = a.lastChartUpdate ? new Date(a.lastChartUpdate).getTime() : 0
-        const bTime = b.lastChartUpdate ? new Date(b.lastChartUpdate).getTime() : 0
-        return bTime - aTime
-      })
-      break
+    case 'newest':
     default:
-      // Default to newest
-      sortedGroups.sort((a, b) => 
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )
+      orderBy = { createdAt: 'desc' }
   }
 
-  const hasMore = skip + sortedGroups.length < totalCount
+  const selectShape = {
+    id: true,
+    name: true,
+    image: true,
+    colorTheme: true,
+    allowFreeJoin: true,
+    createdAt: true,
+    tags: true,
+    creator: {
+      select: { id: true, name: true, lastfmUsername: true },
+    },
+    _count: { select: { members: true } },
+  } as const
 
-  return NextResponse.json({ 
-    groups: sortedGroups,
+  // Filters/sorts that can't be expressed in Prisma's where/orderBy force a
+  // full scan over base-matching candidates so filtering and pagination stay
+  // consistent. Tags are stored as JSON with mixed case, minMembers needs a
+  // _count predicate, most_active needs ORDER BY MAX(updatedAt) on a relation.
+  const needsFullScan =
+    minMembers > 0 || searchTags.length > 0 || sort === 'most_active'
+
+  const fetchActivityMaps = async (ids: string[]) => {
+    if (ids.length === 0) {
+      return {
+        lastChartByGroup: new Map<string, Date>(),
+        weekCountByGroup: new Map<string, number>(),
+      }
+    }
+    const [latestChartRows, weekCountRows] = await Promise.all([
+      prisma.groupChartEntry.groupBy({
+        by: ['groupId'],
+        where: { groupId: { in: ids } },
+        _max: { updatedAt: true },
+      }),
+      prisma.groupWeeklyStats.groupBy({
+        by: ['groupId'],
+        where: { groupId: { in: ids } },
+        _count: { _all: true },
+      }),
+    ])
+    const lastChartByGroup = new Map<string, Date>()
+    for (const r of latestChartRows) {
+      if (r._max.updatedAt) lastChartByGroup.set(r.groupId, r._max.updatedAt)
+    }
+    const weekCountByGroup = new Map(
+      weekCountRows.map((r) => [r.groupId, r._count._all] as const)
+    )
+    return { lastChartByGroup, weekCountByGroup }
+  }
+
+  const enrich = (
+    group: any,
+    lastChartByGroup: Map<string, Date>,
+    weekCountByGroup: Map<string, number>
+  ) => {
+    const groupTags = Array.isArray(group.tags)
+      ? group.tags.map((t: unknown) => String(t).toLowerCase())
+      : []
+    const lastChartUpdate = lastChartByGroup.get(group.id)
+    return {
+      id: group.id,
+      name: group.name,
+      image: group.image,
+      colorTheme: group.colorTheme,
+      allowFreeJoin: group.allowFreeJoin,
+      createdAt: group.createdAt.toISOString(),
+      creator: group.creator,
+      _count: group._count,
+      lastChartUpdate: lastChartUpdate ? lastChartUpdate.toISOString() : null,
+      weekCount: weekCountByGroup.get(group.id) ?? 0,
+      tags: groupTags,
+    }
+  }
+
+  let pageGroups: ReturnType<typeof enrich>[]
+  let totalCount: number
+
+  if (needsFullScan) {
+    const allGroups = await prisma.group.findMany({
+      where,
+      select: selectShape,
+      orderBy,
+    })
+
+    const { lastChartByGroup, weekCountByGroup } = await fetchActivityMaps(
+      allGroups.map((g) => g.id)
+    )
+
+    let enriched = allGroups.map((g) =>
+      enrich(g, lastChartByGroup, weekCountByGroup)
+    )
+
+    if (minMembers > 0) {
+      enriched = enriched.filter((e) => e._count.members >= minMembers)
+    }
+    if (searchTags.length > 0) {
+      enriched = enriched.filter((e) =>
+        searchTags.some((st) => e.tags.includes(st))
+      )
+    }
+
+    if (sort === 'most_active') {
+      enriched.sort((a, b) => {
+        const aT = a.lastChartUpdate ? new Date(a.lastChartUpdate).getTime() : 0
+        const bT = b.lastChartUpdate ? new Date(b.lastChartUpdate).getTime() : 0
+        return bT - aT
+      })
+    }
+
+    totalCount = enriched.length
+    pageGroups = enriched.slice(skip, skip + limit)
+  } else {
+    totalCount = await prisma.group.count({ where })
+
+    const groups = await prisma.group.findMany({
+      where,
+      select: selectShape,
+      orderBy,
+      skip,
+      take: limit,
+    })
+
+    const { lastChartByGroup, weekCountByGroup } = await fetchActivityMaps(
+      groups.map((g) => g.id)
+    )
+
+    pageGroups = groups.map((g) =>
+      enrich(g, lastChartByGroup, weekCountByGroup)
+    )
+  }
+
+  const hasMore = skip + pageGroups.length < totalCount
+
+  return NextResponse.json({
+    groups: pageGroups,
     pagination: {
       page,
       limit,
