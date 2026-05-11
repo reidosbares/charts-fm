@@ -1172,17 +1172,18 @@ async function calculatePhase6Records(
 
   // Rankings: Most VS (all members)
   const allUserVS = await prisma.$queryRaw<Array<{ userId: string; total_vs: number }>>`
-    SELECT ucvs."userId", COALESCE(SUM(ucvs."vibeScore"), 0)::float as total_vs
-    FROM "group_members" gm
-    LEFT JOIN "user_chart_entry_vs" ucvs ON ucvs."userId" = gm."userId"
-      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
-    LEFT JOIN "group_chart_entries" gce ON
+    SELECT ucvs."userId", SUM(ucvs."vibeScore")::float as total_vs
+    FROM "user_chart_entry_vs" ucvs
+    INNER JOIN "group_members" gm ON ucvs."userId" = gm."userId"
+    INNER JOIN "group_chart_entries" gce ON
       gce."groupId" = ${groupId}::text AND
-      gce."weekStart" = ucvs."weekStart" AND
       gce."chartType" = ucvs."chartType" AND
-      gce."entryKey" = ucvs."entryKey"
+      gce."entryKey" = ucvs."entryKey" AND
+      gce."weekStart" = ucvs."weekStart"
     WHERE gm."groupId" = ${groupId}::text
-    GROUP BY ucvs."userId", gm."userId"
+      AND ucvs."userId" IS NOT NULL
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
+    GROUP BY ucvs."userId"
     ORDER BY total_vs DESC
   `
   const userMostVSRankings: UserRanking[] = allMembers.map(m => {
@@ -1226,17 +1227,18 @@ async function calculatePhase6Records(
 
   // Rankings: Most Plays (all members)
   const allUserPlays = await prisma.$queryRaw<Array<{ userId: string; total_plays: bigint }>>`
-    SELECT ucvs."userId", COALESCE(SUM(ucvs.playcount), 0)::bigint as total_plays
-    FROM "group_members" gm
-    LEFT JOIN "user_chart_entry_vs" ucvs ON ucvs."userId" = gm."userId"
-      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
-    LEFT JOIN "group_chart_entries" gce ON
+    SELECT ucvs."userId", SUM(ucvs.playcount)::bigint as total_plays
+    FROM "user_chart_entry_vs" ucvs
+    INNER JOIN "group_members" gm ON ucvs."userId" = gm."userId"
+    INNER JOIN "group_chart_entries" gce ON
       gce."groupId" = ${groupId}::text AND
-      gce."weekStart" = ucvs."weekStart" AND
       gce."chartType" = ucvs."chartType" AND
-      gce."entryKey" = ucvs."entryKey"
+      gce."entryKey" = ucvs."entryKey" AND
+      gce."weekStart" = ucvs."weekStart"
     WHERE gm."groupId" = ${groupId}::text
-    GROUP BY ucvs."userId", gm."userId"
+      AND ucvs."userId" IS NOT NULL
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
+    GROUP BY ucvs."userId"
     ORDER BY total_plays DESC
   `
   const userMostPlaysRankings: UserRanking[] = allMembers.map(m => {
@@ -1280,17 +1282,18 @@ async function calculatePhase6Records(
 
   // Rankings: Most Entries (all members)
   const allUserEntries = await prisma.$queryRaw<Array<{ userId: string; distinct_entries: bigint }>>`
-    SELECT gm."userId", COUNT(DISTINCT CASE WHEN ucvs."entryKey" IS NOT NULL THEN CONCAT(ucvs."entryKey", '|', ucvs."chartType") END)::bigint as distinct_entries
-    FROM "group_members" gm
-    LEFT JOIN "user_chart_entry_vs" ucvs ON ucvs."userId" = gm."userId"
-      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
-    LEFT JOIN "group_chart_entries" gce ON
+    SELECT ucvs."userId", COUNT(DISTINCT CONCAT(ucvs."entryKey", '|', ucvs."chartType"))::bigint as distinct_entries
+    FROM "user_chart_entry_vs" ucvs
+    INNER JOIN "group_members" gm ON ucvs."userId" = gm."userId"
+    INNER JOIN "group_chart_entries" gce ON
       gce."groupId" = ${groupId}::text AND
-      gce."weekStart" = ucvs."weekStart" AND
       gce."chartType" = ucvs."chartType" AND
-      gce."entryKey" = ucvs."entryKey"
+      gce."entryKey" = ucvs."entryKey" AND
+      gce."weekStart" = ucvs."weekStart"
     WHERE gm."groupId" = ${groupId}::text
-    GROUP BY gm."userId"
+      AND ucvs."userId" IS NOT NULL
+      AND ucvs."weekStart" >= ${tenWeekCutoff}::timestamp
+    GROUP BY ucvs."userId"
     ORDER BY distinct_entries DESC
   `
   const userMostEntriesRankings: UserRanking[] = allMembers.map(m => {
