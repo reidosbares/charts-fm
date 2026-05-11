@@ -55,3 +55,6 @@ next-env.d.ts
 /public/uploads
 
 .worktrees/
+
+# local admin scripts
+/scripts
