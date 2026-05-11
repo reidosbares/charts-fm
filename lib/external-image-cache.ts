@@ -1,8 +1,12 @@
+import { access } from 'fs/promises'
+import { join } from 'path'
+
 import { prisma } from './prisma'
 import { compressImage } from './image-compression'
 import { uploadFile } from './storage'
 
 const DOWNLOAD_TIMEOUT_MS = 8000
+const PROBE_TIMEOUT_MS = 2000
 const MAX_BYTES = 10 * 1024 * 1024 // 10 MB ceiling per source image
 const CACHE_MAX_DIMENSION = 1920
 const CACHE_QUALITY = 85
@@ -10,12 +14,14 @@ const CACHE_QUALITY = 85
 type CacheKind = 'artist' // album/track will be added later
 
 /**
- * Look up a cached external image by (kind, cacheKey).
+ * Look up a cached external image by (kind, cacheKey). Positive hits are probed
+ * (HEAD / fs.access); if the blob is gone, the row is reaped and the result is
+ * reported as a miss so the caller re-resolves and re-caches.
  *
  * Returns:
  *   - { hit: true, blobUrl: string }   — positive cache hit; use this URL
  *   - { hit: true, blobUrl: null }     — negative cache hit; caller should treat as "no image"
- *   - { hit: false }                   — cache miss; caller should resolve + cache
+ *   - { hit: false }                   — cache miss (or reaped dead row); caller should resolve + cache
  */
 export async function lookupCachedExternalImage(
   kind: CacheKind,
@@ -26,7 +32,48 @@ export async function lookupCachedExternalImage(
     select: { blobUrl: true },
   })
   if (!row) return { hit: false }
-  return { hit: true, blobUrl: row.blobUrl }
+  if (row.blobUrl === null) return { hit: true, blobUrl: null }
+
+  if (await isBlobAlive(row.blobUrl)) {
+    return { hit: true, blobUrl: row.blobUrl }
+  }
+
+  // Blob is gone — reap the row so the caller re-resolves and rewrites.
+  try {
+    await prisma.cachedExternalImage.delete({
+      where: { kind_cacheKey: { kind, cacheKey } },
+    })
+  } catch (err) {
+    // P2025 (row already deleted by concurrent reaper) is fine; log anything else.
+    console.error('[external-image-cache] reap failed', { kind, cacheKey, err })
+  }
+  return { hit: false }
+}
+
+/**
+ * Probe whether a cached blob URL still resolves. Fail-safe: any uncertain
+ * result (timeout, network error, non-404 HTTP) returns true so we don't
+ * accidentally reap live rows.
+ */
+async function isBlobAlive(url: string): Promise<boolean> {
+  // Local-mode URLs are served by Next.js from public/.
+  if (url.startsWith('/uploads/')) {
+    try {
+      await access(join(process.cwd(), 'public', url))
+      return true
+    } catch {
+      return false
+    }
+  }
+  try {
+    const res = await fetch(url, {
+      method: 'HEAD',
+      signal: AbortSignal.timeout(PROBE_TIMEOUT_MS),
+    })
+    return res.status !== 404
+  } catch {
+    return true
+  }
 }
 
 /**
@@ -83,7 +130,7 @@ export async function resolveAndCacheExternalImage(
   const fileName = buildBlobFileName(kind, cacheKey, compressed.contentType)
   let blobUrl: string
   try {
-    const result = await uploadFile(fileName, compressed.buffer, compressed.contentType, 'artist-images-cached')
+    const result = await uploadFile(fileName, compressed.buffer, compressed.contentType, 'artist-images-cached', { addRandomSuffix: false })
     blobUrl = result.url
   } catch (err) {
     console.error('[external-image-cache] blob upload failed', { kind, cacheKey, sourceUrl, err })
@@ -145,8 +192,9 @@ function buildBlobFileName(kind: CacheKind, cacheKey: string, contentType: strin
     .replace(/[^a-z0-9]+/gi, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 80) || 'image'
-  const stamp = Date.now().toString(36)
-  return `${kind}/${safeKey}-${stamp}.${ext}`
+  // Deterministic path: concurrent cold-cache writes for the same key land on the
+  // same pathname so the second write overwrites the first instead of orphaning it.
+  return `${kind}/${safeKey}.${ext}`
 }
 
 async function persistRow(args: {

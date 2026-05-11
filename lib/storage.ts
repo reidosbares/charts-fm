@@ -11,21 +11,28 @@ export interface UploadResult {
  * Storage abstraction that supports both local filesystem (development) 
  * and Vercel Blob (production)
  */
+export interface UploadOptions {
+  // When false, Vercel Blob will use the exact pathname (deterministic).
+  // Subsequent puts to the same pathname overwrite. Defaults to true.
+  addRandomSuffix?: boolean
+}
+
 export async function uploadFile(
   fileName: string,
   file: File | Buffer,
   contentType: string,
-  folder: 'profile-pictures' | 'group-pictures' | 'artist-images' | 'artist-images-cached' = 'profile-pictures'
+  folder: 'profile-pictures' | 'group-pictures' | 'artist-images' | 'artist-images-cached' = 'profile-pictures',
+  options?: UploadOptions
 ): Promise<UploadResult> {
   // Check if we should use local storage
-  const useLocalStorage = 
+  const useLocalStorage =
     process.env.STORAGE_TYPE === 'local' ||
     (!process.env.BLOB_READ_WRITE_TOKEN && process.env.NODE_ENV !== 'production')
 
   if (useLocalStorage) {
     return uploadToLocal(fileName, file, contentType, folder)
   } else {
-    return uploadToBlob(fileName, file, contentType, folder)
+    return uploadToBlob(fileName, file, contentType, folder, options)
   }
 }
 
@@ -75,7 +82,8 @@ async function uploadToBlob(
   fileName: string,
   file: File | Buffer,
   contentType: string,
-  folder: 'profile-pictures' | 'group-pictures' | 'artist-images' | 'artist-images-cached' = 'profile-pictures'
+  folder: 'profile-pictures' | 'group-pictures' | 'artist-images' | 'artist-images-cached' = 'profile-pictures',
+  options?: UploadOptions
 ): Promise<UploadResult> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     throw new Error('BLOB_READ_WRITE_TOKEN is required for blob storage')
@@ -83,7 +91,7 @@ async function uploadToBlob(
 
   // Use the same path structure for blob storage
   const blobFileName = `${folder}/${fileName}`
-  
+
   // Convert File to ArrayBuffer if needed, otherwise use Buffer as-is
   let body: ArrayBuffer | Buffer
   if (file instanceof File) {
@@ -91,10 +99,11 @@ async function uploadToBlob(
   } else {
     body = file
   }
-  
+
   const blob = await put(blobFileName, body as any, {
     access: 'public',
     contentType,
+    addRandomSuffix: options?.addRandomSuffix ?? true,
   })
 
   return { url: blob.url }
