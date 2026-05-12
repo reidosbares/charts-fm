@@ -5,7 +5,18 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  
+
+  /* Semantic surface/text/border tokens — appearance-dependent, theme-independent.
+     Light values here; .dark block overrides below. */
+  --surface-base: rgb(255 254 250);
+  --surface-card: rgb(255 255 255);
+  --surface-elevated: rgb(255 255 255);
+  --text-primary: rgb(17 24 39);
+  --text-secondary: rgb(75 85 99);
+  --text-muted: rgb(107 114 128);
+  --border-subtle: rgb(229 231 235);
+  --border-strong: rgb(209 213 219);
+
   /* Default theme (white) - CSS variables */
   --theme-primary: rgb(234 179 8);
   --theme-primary-light: rgb(250 204 21);
