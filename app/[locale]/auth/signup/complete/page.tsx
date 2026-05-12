@@ -106,7 +106,7 @@ function CompleteSignUpPageContent() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden flex items-center justify-center">
+      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden flex items-center justify-center">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 w-48 h-48 md:w-72 md:h-72 bg-yellow-400/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute top-40 right-20 w-64 h-64 md:w-96 md:h-96 bg-pink-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
@@ -121,12 +121,12 @@ function CompleteSignUpPageContent() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 dark:bg-yellow-400/[0.04] rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-96 h-96 bg-pink-400/20 dark:bg-pink-400/[0.04] rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 dark:bg-orange-400/[0.04] rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-24">
@@ -289,7 +289,7 @@ function CompleteSignUpPageContent() {
 export default function CompleteSignUpPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden flex items-center justify-center">
+      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-yellow-500 mx-auto mb-3 md:mb-4"></div>
           <p className="text-sm md:text-base text-[var(--text-secondary)]">Loading...</p>

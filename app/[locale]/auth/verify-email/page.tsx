@@ -129,7 +129,7 @@ function VerifyEmailPageContent() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-48 h-48 md:w-72 md:h-72 bg-yellow-400/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute top-40 right-20 w-64 h-64 md:w-96 md:h-96 bg-pink-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
@@ -325,7 +325,7 @@ function VerifyEmailPageContent() {
 export default function VerifyEmailPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden flex items-center justify-center">
+      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-yellow-500 mx-auto mb-3 md:mb-4"></div>
           <p className="text-sm md:text-base text-[var(--text-secondary)]">Loading...</p>
