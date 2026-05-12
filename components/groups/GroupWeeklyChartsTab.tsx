@@ -294,7 +294,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
     }
   }, [data])
 
-  const cardBase = 'rounded-2xl p-4 md:p-5 backdrop-blur-md bg-white/70 border border-white/50 shadow-lg'
+  const cardBase = 'rounded-2xl p-4 md:p-5 backdrop-blur-md bg-white/70 dark:bg-[rgb(var(--surface-card-rgb)/0.7)] border border-white/50 dark:border-white/10 shadow-lg'
 
   if (isLoading) {
     return (
@@ -313,8 +313,8 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
           <div className="mb-4 text-[var(--theme-primary)]">
             <FontAwesomeIcon icon={faMusic} className="text-4xl md:text-5xl" />
           </div>
-          <p className="text-gray-700 text-base md:text-lg mb-2 font-medium">{t('noChartsAvailable')}</p>
-          <p className="text-gray-500 text-sm mb-4 md:mb-6">{t('startTracking')}</p>
+          <p className="text-[var(--text-secondary)] text-base md:text-lg mb-2 font-medium">{t('noChartsAvailable')}</p>
+          <p className="text-[var(--text-muted)] text-sm mb-4 md:mb-6">{t('startTracking')}</p>
           {isOwner && (
             <LiquidGlassLink
               href={`/groups/${groupId}/settings?tab=regenerate`}
@@ -350,7 +350,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
             <h2 className="text-2xl sm:text-3xl font-bold text-[var(--theme-primary-dark)] leading-tight">
               {t('weekNumber', { number: weekNumber })}
             </h2>
-            <p className="text-sm md:text-base text-gray-600 break-words">
+            <p className="text-sm md:text-base text-[var(--text-secondary)] break-words">
               {t('fromTo', { start: latestWeek.weekStartFormatted, end: latestWeek.weekEndFormatted })}
             </p>
           </div>
@@ -383,9 +383,9 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
             </h4>
             {topArtists && topArtists.length > 0 && (
               <div className="mb-4 flex justify-center">
-                <div className="w-24 h-24 rounded-lg border-2 border-[var(--theme-border)] overflow-hidden bg-gray-100">
+                <div className="w-24 h-24 rounded-lg border-2 border-[var(--theme-border)] overflow-hidden bg-[var(--surface-base)]">
                   {imagesLoading.topArtist ? (
-                    <div className="w-full h-full bg-gray-200 animate-pulse" />
+                    <div className="w-full h-full bg-[var(--surface-base)] animate-pulse" />
                   ) : images.topArtist ? (
                     <SafeImage
                       src={images.topArtist}
@@ -395,7 +395,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                       height={96}
                     />
                   ) : (
-                    <div className="w-full h-full bg-gray-200" />
+                    <div className="w-full h-full bg-[var(--surface-base)]" />
                   )}
                 </div>
               </div>
@@ -416,7 +416,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="font-semibold text-sm md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 min-w-0">
+                      <span className="font-semibold text-sm md:text-sm text-[var(--text-primary)] flex items-center gap-1.5 md:gap-2 min-w-0">
                         <span className="truncate">{artist.name}</span>
                         <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs md:text-sm flex-shrink-0" />
                       </span>
@@ -435,10 +435,10 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                       const entryType = entryTypeMapObj[`artists|${entryKey}`]
                       return (
                         <div key={idx + 3} className="flex items-center min-h-0 py-0.5">
-                          <span className="flex-shrink-0 w-5 text-right text-sm text-gray-500 tabular-nums">{position}.</span>
+                          <span className="flex-shrink-0 w-5 text-right text-sm text-[var(--text-muted)] tabular-nums">{position}.</span>
                           <Link
                             href={`/groups/${groupId}/charts/artist/${generateSlug(entryKey, 'artists')}`}
-                            className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 py-1 pl-1.5 pr-2 rounded-lg hover:bg-[var(--theme-primary-lighter)]/30 active:bg-[var(--theme-primary-lighter)]/50 transition-colors touch-manipulation text-sm text-gray-700 hover:text-[var(--theme-primary)] flex-nowrap"
+                            className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 py-1 pl-1.5 pr-2 rounded-lg hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.3)] active:bg-[rgb(var(--theme-primary-lighter-rgb)/0.5)] transition-colors touch-manipulation text-sm text-[var(--text-secondary)] hover:text-[var(--theme-primary)] flex-nowrap"
                           >
                             <span className="truncate min-w-0 flex-1">{artist.name}</span>
                             <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs flex-shrink-0" />
@@ -449,7 +449,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                     })}
                   </div>
                   {topArtists.length > 10 && (
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs text-[var(--text-muted)] mt-2">
                       {t('andMore', { count: topArtists.length - 10 })}
                     </p>
                   )}
@@ -466,9 +466,9 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
             </h4>
             {topTracks && topTracks.length > 0 && topTracks[0].artist && (
               <div className="mb-4 flex justify-center">
-                <div className="w-24 h-24 rounded-lg border-2 border-[var(--theme-border)] overflow-hidden bg-gray-100">
+                <div className="w-24 h-24 rounded-lg border-2 border-[var(--theme-border)] overflow-hidden bg-[var(--surface-base)]">
                   {imagesLoading.topTrackArtist ? (
-                    <div className="w-full h-full bg-gray-200 animate-pulse" />
+                    <div className="w-full h-full bg-[var(--surface-base)] animate-pulse" />
                   ) : images.topTrackArtist ? (
                     <SafeImage
                       src={images.topTrackArtist}
@@ -478,7 +478,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                       height={96}
                     />
                   ) : (
-                    <div className="w-full h-full bg-gray-200" />
+                    <div className="w-full h-full bg-[var(--surface-base)]" />
                   )}
                 </div>
               </div>
@@ -499,11 +499,11 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="font-semibold text-sm md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 min-w-0">
+                      <span className="font-semibold text-sm md:text-sm text-[var(--text-primary)] flex items-center gap-1.5 md:gap-2 min-w-0">
                         <span className="truncate">{track.name}</span>
                         <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs md:text-sm flex-shrink-0" />
                       </span>
-                      <div className="text-xs text-gray-600 truncate">{t('by', { artist: track.artist })}</div>
+                      <div className="text-xs text-[var(--text-secondary)] truncate">{t('by', { artist: track.artist })}</div>
                       <div className="text-xs md:text-sm text-[var(--theme-text)] font-medium mt-0.5 truncate">{displayValue}</div>
                     </div>
                   </Link>
@@ -519,10 +519,10 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                       const entryType = entryTypeMapObj[`tracks|${entryKey}`]
                       return (
                         <div key={idx + 3} className="flex items-center min-h-0 py-0.5">
-                          <span className="flex-shrink-0 w-5 text-right text-sm text-gray-500 tabular-nums">{position}.</span>
+                          <span className="flex-shrink-0 w-5 text-right text-sm text-[var(--text-muted)] tabular-nums">{position}.</span>
                           <Link
                             href={`/groups/${groupId}/charts/track/${generateSlug(entryKey, 'tracks')}`}
-                            className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 py-1 pl-1.5 pr-2 rounded-lg hover:bg-[var(--theme-primary-lighter)]/30 active:bg-[var(--theme-primary-lighter)]/50 transition-colors touch-manipulation text-sm text-gray-700 hover:text-[var(--theme-primary)] flex-nowrap"
+                            className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 py-1 pl-1.5 pr-2 rounded-lg hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.3)] active:bg-[rgb(var(--theme-primary-lighter-rgb)/0.5)] transition-colors touch-manipulation text-sm text-[var(--text-secondary)] hover:text-[var(--theme-primary)] flex-nowrap"
                           >
                             <span className="truncate min-w-0 flex-1">{track.name} · {track.artist}</span>
                             <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs flex-shrink-0" />
@@ -533,7 +533,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                     })}
                   </div>
                   {topTracks.length > 10 && (
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs text-[var(--text-muted)] mt-2">
                       {t('andMore', { count: topTracks.length - 10 })}
                     </p>
                   )}
@@ -550,9 +550,9 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
             </h4>
             {topAlbums && topAlbums.length > 0 && (
               <div className="mb-4 flex justify-center">
-                <div className="w-24 h-24 rounded-lg border-2 border-[var(--theme-border)] overflow-hidden bg-gray-100">
+                <div className="w-24 h-24 rounded-lg border-2 border-[var(--theme-border)] overflow-hidden bg-[var(--surface-base)]">
                   {imagesLoading.topAlbum ? (
-                    <div className="w-full h-full bg-gray-200 animate-pulse" />
+                    <div className="w-full h-full bg-[var(--surface-base)] animate-pulse" />
                   ) : images.topAlbum ? (
                     <SafeImage
                       src={images.topAlbum}
@@ -562,7 +562,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                       height={96}
                     />
                   ) : (
-                    <div className="w-full h-full bg-gray-200" />
+                    <div className="w-full h-full bg-[var(--surface-base)]" />
                   )}
                 </div>
               </div>
@@ -583,11 +583,11 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="font-semibold text-sm md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 min-w-0">
+                      <span className="font-semibold text-sm md:text-sm text-[var(--text-primary)] flex items-center gap-1.5 md:gap-2 min-w-0">
                         <span className="truncate">{album.name}</span>
                         <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs md:text-sm flex-shrink-0" />
                       </span>
-                      <div className="text-xs text-gray-600 truncate">{t('by', { artist: album.artist })}</div>
+                      <div className="text-xs text-[var(--text-secondary)] truncate">{t('by', { artist: album.artist })}</div>
                       <div className="text-xs md:text-sm text-[var(--theme-text)] font-medium mt-0.5 truncate">{displayValue}</div>
                     </div>
                   </Link>
@@ -603,10 +603,10 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                       const entryType = entryTypeMapObj[`albums|${entryKey}`]
                       return (
                         <div key={idx + 3} className="flex items-center min-h-0 py-0.5">
-                          <span className="flex-shrink-0 w-5 text-right text-sm text-gray-500 tabular-nums">{position}.</span>
+                          <span className="flex-shrink-0 w-5 text-right text-sm text-[var(--text-muted)] tabular-nums">{position}.</span>
                           <Link
                             href={`/groups/${groupId}/charts/album/${generateSlug(entryKey, 'albums')}`}
-                            className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 py-1 pl-1.5 pr-2 rounded-lg hover:bg-[var(--theme-primary-lighter)]/30 active:bg-[var(--theme-primary-lighter)]/50 transition-colors touch-manipulation text-sm text-gray-700 hover:text-[var(--theme-primary)] flex-nowrap"
+                            className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 py-1 pl-1.5 pr-2 rounded-lg hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.3)] active:bg-[rgb(var(--theme-primary-lighter-rgb)/0.5)] transition-colors touch-manipulation text-sm text-[var(--text-secondary)] hover:text-[var(--theme-primary)] flex-nowrap"
                           >
                             <span className="truncate min-w-0 flex-1">{album.name} · {album.artist}</span>
                             <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs flex-shrink-0" />
@@ -617,7 +617,7 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
                     })}
                   </div>
                   {topAlbums.length > 10 && (
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs text-[var(--text-muted)] mt-2">
                       {t('andMore', { count: topAlbums.length - 10 })}
                     </p>
                   )}
@@ -628,17 +628,17 @@ export default function GroupWeeklyChartsTab({ groupId, isOwner, isSuperuser = f
         </div>
 
       {/* Chart toppers callout */}
-      <div className="mt-6 md:mt-8 rounded-2xl p-4 md:p-6 backdrop-blur-md border border-[var(--theme-primary)]/30 shadow-lg bg-gradient-to-br from-[var(--theme-primary-lighter)]/40 via-white/70 to-white/80">
+      <div className="mt-6 md:mt-8 rounded-2xl p-4 md:p-6 backdrop-blur-md border border-[rgb(var(--theme-primary-rgb)/0.3)] shadow-lg bg-gradient-to-br from-[rgb(var(--theme-primary-lighter-rgb)/0.4)] via-white/70 dark:via-[rgb(var(--surface-card-rgb)/0.7)] to-white/80 dark:to-[rgb(var(--surface-card-rgb)/0.8)]">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-start gap-3 md:gap-4 min-w-0">
-            <div className="w-11 h-11 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[var(--theme-primary)]/20 text-[var(--theme-primary)] flex-shrink-0">
+            <div className="w-11 h-11 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[rgb(var(--theme-primary-rgb)/0.2)] text-[var(--theme-primary)] flex-shrink-0">
               <FontAwesomeIcon icon={faTrophy} className="text-xl md:text-2xl" />
             </div>
             <div className="min-w-0">
               <h3 className="text-base md:text-xl font-bold text-[var(--theme-primary-dark)] mb-0.5">
                 {t('chartToppersCalloutTitle')}
               </h3>
-              <p className="text-sm md:text-base text-gray-600 break-words">
+              <p className="text-sm md:text-base text-[var(--text-secondary)] break-words">
                 {t('chartToppersCalloutDescription')}
               </p>
             </div>

@@ -178,7 +178,7 @@ export default function GenerateChartsClient({
         <h1 className="text-4xl font-bold text-center mb-8">Generate Charts</h1>
 
         {isLoading && (
-          <div className="mb-4 p-4 bg-blue-100 border border-blue-400 text-blue-700 rounded-lg flex items-center gap-3">
+          <div className="mb-4 p-4 bg-blue-100 dark:bg-blue-950/40 border border-blue-400 dark:border-blue-700 text-blue-700 dark:text-blue-300 rounded-lg flex items-center gap-3">
             <svg
               className="animate-spin h-5 w-5 text-blue-600"
               xmlns="http://www.w3.org/2000/svg"
@@ -204,26 +204,26 @@ export default function GenerateChartsClient({
         )}
 
         {success && (
-          <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+          <div className="mb-4 p-4 bg-green-100 dark:bg-green-950/40 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-300 rounded-lg">
             Charts generated successfully! Redirecting...
           </div>
         )}
 
         {error && (
-          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+          <div className="mb-4 p-4 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 rounded-lg">
             {error}
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <p className="text-gray-600 mb-6">
+        <div className="bg-[var(--surface-card)] rounded-lg shadow-lg p-8">
+          <p className="text-[var(--text-secondary)] mb-6">
             This will fetch the latest listening data from Last.fm for all group members
             and generate weekly charts for the last {isSuperuser ? weeks : 10} weeks. This may take a few moments.
           </p>
 
           {isSuperuser && (
             <div className="mb-6">
-              <label htmlFor="weeks" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="weeks" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Number of weeks to generate (Superuser only)
               </label>
               <input
@@ -239,16 +239,16 @@ export default function GenerateChartsClient({
                   }
                 }}
                 disabled={isLoading}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] text-[var(--text-primary)]"
               />
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-[var(--text-muted)]">
                 Enter the number of weeks in the past to generate charts for (1-52)
               </p>
             </div>
           )}
 
           {isLoading && !success && (
-            <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded-lg">
+            <div className="mb-4 p-4 bg-yellow-100 dark:bg-yellow-950/40 border border-yellow-400 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300 rounded-lg">
               Chart generation is already in progress. Please wait for it to complete.
             </div>
           )}
@@ -276,7 +276,7 @@ export default function GenerateChartsClient({
               type="button"
               onClick={() => router.back()}
               disabled={isLoading}
-              className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 bg-[var(--surface-base)] text-[var(--text-primary)] rounded-lg hover:brightness-95 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>

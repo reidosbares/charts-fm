@@ -101,8 +101,8 @@ function CarouselPlaque({ cert, entry, groupId, t }: {
           </div>
         </div>
         <p className="mt-2 text-xs font-semibold truncate group-hover:underline">{entry.name}</p>
-        <p className="text-[10px] text-gray-500 truncate">{entry.artist}</p>
-        <p className="text-[10px] text-gray-400 uppercase font-bold mt-0.5">{t(cert.tier)} · {date}</p>
+        <p className="text-[10px] text-[var(--text-muted)] truncate">{entry.artist}</p>
+        <p className="text-[10px] text-[var(--text-muted)] uppercase font-bold mt-0.5">{t(cert.tier)} · {date}</p>
       </div>
     </Link>
   )
@@ -137,7 +137,7 @@ function TierCounts({ awarded }: { awarded: any[] }) {
       {(['diamond', 'platinum', 'gold'] as const).map(tier => (
         <span key={tier} className="inline-flex items-center gap-0.5">
           <MiniDisc tier={tier} />
-          <span className="text-xs text-gray-500">×{counts[tier]}</span>
+          <span className="text-xs text-[var(--text-muted)]">×{counts[tier]}</span>
         </span>
       ))}
     </span>
@@ -161,18 +161,18 @@ function ArtistSection({ artist, groupId, canCertify, t, onAward }: {
   const eligibleCount = artist.tracks.eligible.length + artist.albums.eligible.length
 
   return (
-    <div className="border border-white/40 rounded-2xl overflow-hidden bg-white/30 backdrop-blur-sm">
+    <div className="border border-white/40 dark:border-white/10 rounded-2xl overflow-hidden bg-white/30 dark:bg-[rgb(var(--surface-card-rgb)/0.3)] backdrop-blur-sm">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center gap-3 p-4 hover:bg-white/20 transition-colors text-left"
+        className="w-full flex items-center gap-3 p-4 hover:bg-white/20 dark:hover:bg-[rgb(var(--surface-card-rgb)/0.2)] transition-colors text-left"
       >
         <FontAwesomeIcon
           icon={expanded ? faChevronDown : faChevronRight}
-          className="text-gray-400 text-sm flex-shrink-0"
+          className="text-[var(--text-muted)] text-sm flex-shrink-0"
         />
         <div className="flex-1 min-w-0">
           <p className="font-bold text-base truncate">{artist.artistName}</p>
-          <div className="flex items-center gap-2 text-xs text-gray-500">
+          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
             <TierCounts awarded={[...artist.tracks.awarded, ...artist.albums.awarded]} />
             {eligibleCount > 0 && (
               <span className="text-yellow-600 font-medium">
@@ -223,7 +223,7 @@ function SubSection({ label, awarded, eligible, chartType, groupId, canCertify, 
 }) {
   return (
     <div>
-      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">{label}</h4>
+      <h4 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wide mb-2">{label}</h4>
       <div className="flex gap-4 overflow-x-auto py-2 px-1">
         {awarded.map((item: any) => (
           <ArtistPlaque
@@ -288,8 +288,8 @@ function ArtistPlaque({ name, slug, entryKey, tier, awardedAt, chartType, groupI
           </div>
         </div>
         <p className="mt-1.5 text-[11px] font-semibold truncate group-hover:underline">{name}</p>
-        <p className="text-[10px] text-gray-400 uppercase font-bold">{t(tier)}</p>
-        <p className="text-[9px] text-gray-400">{new Date(awardedAt).toLocaleDateString()}</p>
+        <p className="text-[10px] text-[var(--text-muted)] uppercase font-bold">{t(tier)}</p>
+        <p className="text-[9px] text-[var(--text-muted)]">{new Date(awardedAt).toLocaleDateString()}</p>
       </div>
     </Link>
   )
@@ -362,26 +362,26 @@ function AlmostThereRow({ entry, groupId, t }: {
 
   return (
     <Link href={getEntryDrillDownPath(groupId, entry.chartType as ChartType, entry.slug)}>
-      <div className="flex items-center gap-3 p-3 rounded-xl bg-white/40 backdrop-blur-sm border border-white/30 hover:bg-white/60 transition-colors">
-        <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
+      <div className="flex items-center gap-3 p-3 rounded-xl bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] backdrop-blur-sm border border-white/30 dark:border-white/10 hover:bg-white/60 dark:hover:bg-[rgb(var(--surface-card-rgb)/0.6)] transition-colors">
+        <div className="w-10 h-10 rounded-lg overflow-hidden bg-[var(--surface-base)] flex-shrink-0">
           {imageUrl ? (
             <SafeImage src={imageUrl} alt={entry.name} width={40} height={40} className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-200" />
+            <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-200 dark:from-gray-700 dark:to-gray-600" />
           )}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <p className="font-semibold text-sm truncate">{entry.name}</p>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-200 text-gray-500 flex-shrink-0 uppercase font-medium">
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--surface-base)] text-[var(--text-muted)] flex-shrink-0 uppercase font-medium">
               {entry.chartType === 'tracks' ? t('tracks') : t('albums')}
             </span>
           </div>
-          <p className="text-xs text-gray-500 truncate">{entry.artist}</p>
+          <p className="text-xs text-[var(--text-muted)] truncate">{entry.artist}</p>
         </div>
         <div className="flex-shrink-0 w-32 md:w-40">
           <div className="flex items-center gap-2">
-            <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div className="flex-1 h-1.5 bg-[var(--surface-base)] rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full ${
                   entry.nextTier === 'gold' ? 'bg-yellow-500'
@@ -426,9 +426,9 @@ export default function CertificationsPageClient({ groupId, isCreator, currentUs
   if (!hasAnyContent) {
     return (
       <div className="text-center py-16">
-        <FontAwesomeIcon icon={faCertificate} className="text-5xl text-gray-300 mb-4" />
-        <p className="text-gray-600 font-medium text-lg">{t('noCertifications')}</p>
-        <p className="text-gray-400 text-sm mt-2 max-w-md mx-auto">{t('noCertificationsDescription')}</p>
+        <FontAwesomeIcon icon={faCertificate} className="text-5xl text-[var(--text-muted)] mb-4" />
+        <p className="text-[var(--text-secondary)] font-medium text-lg">{t('noCertifications')}</p>
+        <p className="text-[var(--text-muted)] text-sm mt-2 max-w-md mx-auto">{t('noCertificationsDescription')}</p>
       </div>
     )
   }

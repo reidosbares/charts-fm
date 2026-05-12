@@ -19,37 +19,37 @@ export default function AllTimeChartTable({ items, chartType }: AllTimeChartTabl
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="bg-[var(--surface-card)] rounded-lg shadow-lg overflow-hidden">
       <table className="w-full">
-        <thead className="bg-gray-50">
+        <thead className="bg-[var(--surface-base)]">
           <tr>
-            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
+            <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider w-32">
               {tTable('position')}
             </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+            <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
               {getTypeLabel()}
             </th>
-            <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
+            <th className="px-6 py-4 text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider w-32">
               {tTable('plays')}
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="divide-y divide-[var(--border-subtle)]">
           {items.map((item) => (
-            <tr key={item.position} className="hover:bg-gray-50 transition-colors">
+            <tr key={item.position} className="hover:bg-[var(--surface-base)] transition-colors">
               <td className="px-6 py-5 text-sm">
-                <span className="font-bold text-gray-900">{item.position}</span>
+                <span className="font-bold text-[var(--text-primary)]">{item.position}</span>
               </td>
               <td className="px-6 py-5 text-sm">
                 <div>
-                  <div className="font-medium text-gray-900 break-words">{item.name}</div>
+                  <div className="font-medium text-[var(--text-primary)] break-words">{item.name}</div>
                   {item.artist && (
-                    <div className="text-gray-500 text-xs mt-1 break-words">{t('by', { artist: item.artist })}</div>
+                    <div className="text-[var(--text-muted)] text-xs mt-1 break-words">{t('by', { artist: item.artist })}</div>
                   )}
                 </div>
               </td>
               <td className="px-6 py-5 text-sm text-right">
-                <span className="text-gray-900 font-medium">{item.playcount}</span>
+                <span className="text-[var(--text-primary)] font-medium">{item.playcount}</span>
               </td>
             </tr>
           ))}

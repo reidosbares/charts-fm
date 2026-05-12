@@ -96,8 +96,8 @@ export default function SoloChartsEmptyOverlay({ groupId, enabled }: SoloChartsE
         }}
       >
         <div className="text-center">
-          <div className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{t('title')}</div>
-          <div className="text-sm sm:text-base text-gray-600 mb-4">{t('description')}</div>
+          <div className="text-lg sm:text-xl font-bold text-[var(--text-primary)] mb-2">{t('title')}</div>
+          <div className="text-sm sm:text-base text-[var(--text-secondary)] mb-4">{t('description')}</div>
 
           {error && (
             <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">

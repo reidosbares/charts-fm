@@ -60,12 +60,12 @@ export default function DeleteGroupModal({
         onClick={onClose}
       />
       <div className="fixed inset-0 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+        <div className="bg-[var(--surface-card)] rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-red-600">{t('title')}</h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-2xl leading-none w-8 h-8 flex items-center justify-center"
+              className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl leading-none w-8 h-8 flex items-center justify-center"
               aria-label="Close"
               disabled={isLoading}
             >
@@ -80,20 +80,20 @@ export default function DeleteGroupModal({
           )}
 
           <div className="mb-6">
-            <p className="text-gray-700 mb-4">
+            <p className="text-[var(--text-secondary)] mb-4">
               {t('confirmMessage', { groupName })}
             </p>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-[var(--text-secondary)] mb-4">
               {t('willPermanentlyDelete')}
             </p>
-            <ul className="text-sm text-gray-600 list-disc list-inside mb-4 space-y-1">
+            <ul className="text-sm text-[var(--text-secondary)] list-disc list-inside mb-4 space-y-1">
               <li>{tDelete('allCharts')}</li>
               <li>{tDelete('allInvites')}</li>
               <li>{tDelete('allRequests')}</li>
               <li>{tDelete('allMembers')}</li>
             </ul>
             <div>
-              <label htmlFor="confirmText" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="confirmText" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 {t('typeToConfirm', { groupName })}
               </label>
               <input
@@ -101,7 +101,7 @@ export default function DeleteGroupModal({
                 id="confirmText"
                 value={confirmText}
                 onChange={(e) => setConfirmText(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-lg bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] text-[var(--text-primary)] focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 placeholder={groupName}
                 disabled={isLoading}
                 autoFocus
@@ -113,7 +113,7 @@ export default function DeleteGroupModal({
             <button
               onClick={onClose}
               disabled={isLoading}
-              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-[var(--surface-base)] text-[var(--text-primary)] rounded-lg hover:brightness-95 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t('cancel')}
             </button>

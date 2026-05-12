@@ -67,7 +67,7 @@ export default function InviteNotification({ groupId, inviteId }: InviteNotifica
 
   if (isAccepted) {
     return (
-      <div className="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
+      <div className="mb-6 bg-green-100 dark:bg-green-950/40 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg">
         <p className="font-semibold">{t('inviteAccepted')}</p>
       </div>
     )
@@ -78,9 +78,9 @@ export default function InviteNotification({ groupId, inviteId }: InviteNotifica
   }
 
   return (
-    <div className="mb-4 md:mb-6 bg-yellow-100 border border-yellow-400 text-yellow-900 px-3 md:px-4 py-2.5 md:py-3 rounded-lg">
+    <div className="mb-4 md:mb-6 bg-yellow-100 dark:bg-yellow-950/40 border border-yellow-400 dark:border-yellow-700 text-yellow-900 dark:text-yellow-300 px-3 md:px-4 py-2.5 md:py-3 rounded-lg">
       {error && (
-        <div className="mb-2 p-2 bg-red-100 border border-red-400 text-red-700 rounded text-xs md:text-sm">
+        <div className="mb-2 p-2 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 rounded text-xs md:text-sm">
           {error}
         </div>
       )}

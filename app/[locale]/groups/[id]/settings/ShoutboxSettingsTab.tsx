@@ -221,9 +221,9 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
+      <div className="bg-[var(--surface-card)] rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
         <div className="flex justify-center py-6 md:py-8">
-          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-xl md:text-2xl text-gray-400" />
+          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-xl md:text-2xl text-[var(--text-muted)]" />
         </div>
       </div>
     )
@@ -245,11 +245,11 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
         onClose={() => setError(null)}
       />
 
-      <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
+      <div className="bg-[var(--surface-card)] rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
 
       <form onSubmit={handleSave} className="space-y-4 md:space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
             {t('shoutboxSettings')}
           </label>
           <Toggle
@@ -259,7 +259,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
             disabled={isSaving}
             label={t('enableShoutbox')}
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-[var(--text-muted)] mt-1">
             {t('enableShoutboxDescription')}
           </p>
         </div>
@@ -272,17 +272,17 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
             disabled={isSaving}
             label={t('restrictiveMode')}
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-[var(--text-muted)] mt-1">
             {t('restrictiveModeDescription')}
           </p>
         </div>
 
         {/* Silenced Users */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
             {t('silencedUsers')}
           </label>
-          <p className="text-xs text-gray-500 mb-3">
+          <p className="text-xs text-[var(--text-muted)] mb-3">
             {t('silencedUsersDescription')}
           </p>
 
@@ -299,7 +299,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
                   }
                 }}
                 placeholder={t('searchByUsername')}
-                className="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                className="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border border-[var(--border-strong)] rounded-lg bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] text-[var(--text-primary)] focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                 disabled={isSearching}
               />
               <button
@@ -319,7 +319,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
               <p className="text-xs text-red-600 mt-1">{searchError}</p>
             )}
             {searchResult && (
-              <div className="mt-2 p-2 md:p-3 bg-gray-50 rounded-lg flex items-center justify-between gap-2">
+              <div className="mt-2 p-2 md:p-3 bg-[var(--surface-base)] rounded-lg flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                   <SafeImage
                     src={null}
@@ -350,7 +350,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
               {silencedUsers.map((user) => (
                 <div
                   key={user.id}
-                  className="p-2 md:p-3 bg-gray-50 rounded-lg flex items-center justify-between gap-2"
+                  className="p-2 md:p-3 bg-[var(--surface-base)] rounded-lg flex items-center justify-between gap-2"
                 >
                   <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                     <SafeImage
@@ -379,17 +379,17 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
               ))}
             </div>
           ) : (
-            <p className="text-xs md:text-sm text-gray-500 italic">{t('noSilencedUsers')}</p>
+            <p className="text-xs md:text-sm text-[var(--text-muted)] italic">{t('noSilencedUsers')}</p>
           )}
         </div>
 
         {/* Allowed Users (only show in restrictive mode) */}
         {shoutboxRestrictiveMode && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               {t('allowedUsers')}
             </label>
-            <p className="text-xs text-gray-500 mb-3">
+            <p className="text-xs text-[var(--text-muted)] mb-3">
               {t('allowedUsersDescription')}
             </p>
 
@@ -406,14 +406,14 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
                     }
                   }}
                   placeholder={t('searchByUsername')}
-                  className="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                  className="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border border-[var(--border-strong)] rounded-lg bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] text-[var(--text-primary)] focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                   disabled={isSearching}
                 />
                 <button
                   type="button"
                   onClick={searchUser}
                   disabled={isSearching || !searchUsername.trim()}
-                  className="px-3 md:px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                  className="px-3 md:px-4 py-2 bg-[var(--surface-base)] text-[var(--text-secondary)] rounded-lg hover:brightness-95 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
                 >
                   {isSearching ? (
                     <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
@@ -426,7 +426,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
                 <p className="text-xs text-red-600 mt-1">{searchError}</p>
               )}
               {searchResult && (
-                <div className="mt-2 p-2 md:p-3 bg-gray-50 rounded-lg flex items-center justify-between gap-2">
+                <div className="mt-2 p-2 md:p-3 bg-[var(--surface-base)] rounded-lg flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                     <SafeImage
                       src={null}
@@ -453,7 +453,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
                 {allowedUsers.map((user) => (
                   <div
                     key={user.id}
-                    className="p-2 md:p-3 bg-gray-50 rounded-lg flex items-center justify-between gap-2"
+                    className="p-2 md:p-3 bg-[var(--surface-base)] rounded-lg flex items-center justify-between gap-2"
                   >
                     <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                       <SafeImage
@@ -477,7 +477,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
                 ))}
               </div>
             ) : (
-              <p className="text-xs md:text-sm text-gray-500 italic">{t('noAllowedUsers')}</p>
+              <p className="text-xs md:text-sm text-[var(--text-muted)] italic">{t('noAllowedUsers')}</p>
             )}
           </div>
         )}
@@ -493,7 +493,7 @@ export default function ShoutboxSettingsTab({ groupId }: ShoutboxSettingsTabProp
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+            className="px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-[var(--surface-base)] text-[var(--text-primary)] rounded-lg hover:brightness-95 transition-colors"
           >
             {t('cancel')}
           </button>

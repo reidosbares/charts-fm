@@ -125,14 +125,14 @@ export default function GroupSettingsForm({
         onClose={() => setError(null)}
       />
 
-      <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
+      <div className="bg-[var(--surface-card)] rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
 
       <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
         <div>
-          <label htmlFor="chartSize" className="block text-base md:text-lg font-bold text-gray-900 mb-2">
+          <label htmlFor="chartSize" className="block text-base md:text-lg font-bold text-[var(--text-primary)] mb-2">
             {t('chartSize')}
           </label>
-          <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
+          <p className="text-xs md:text-sm text-[var(--text-muted)] mb-3 md:mb-4">
             {t('chartSizeDescription')}
           </p>
           <div className="flex flex-wrap gap-2 md:gap-4">
@@ -141,8 +141,8 @@ export default function GroupSettingsForm({
                 key={size}
                 className={`flex items-center px-3 md:px-4 py-2 text-sm md:text-base border-2 rounded-lg cursor-pointer transition-colors ${
                   chartSize === size
-                    ? 'border-yellow-500 bg-yellow-50'
-                    : 'border-gray-300 hover:border-gray-400'
+                    ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/40'
+                    : 'border-[var(--border-strong)] hover:border-[var(--border-strong)]'
                 }`}
               >
                 <input
@@ -160,10 +160,10 @@ export default function GroupSettingsForm({
         </div>
 
         <div>
-          <label htmlFor="chartMode" className="block text-base md:text-lg font-bold text-gray-900 mb-2">
+          <label htmlFor="chartMode" className="block text-base md:text-lg font-bold text-[var(--text-primary)] mb-2">
             {t('chartMode')}
           </label>
-          <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
+          <p className="text-xs md:text-sm text-[var(--text-muted)] mb-3 md:mb-4">
             {t('chartModeDescription')}
           </p>
           
@@ -188,10 +188,10 @@ export default function GroupSettingsForm({
 
               {/* Carousel Card */}
               <div className="flex-1 max-w-md w-full">
-                <div className="relative bg-white border-2 border-yellow-500 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-lg min-h-[380px] md:min-h-[400px] lg:min-h-[420px] flex flex-col">
+                <div className="relative bg-[var(--surface-card)] border-2 border-yellow-500 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-lg min-h-[380px] md:min-h-[400px] lg:min-h-[420px] flex flex-col">
                   <div className="flex flex-col items-center flex-1">
                     {/* Icon */}
-                    <div className="mb-3 md:mb-4 w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 flex items-center justify-center bg-white rounded-xl p-2 flex-shrink-0">
+                    <div className="mb-3 md:mb-4 w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 flex items-center justify-center bg-[var(--surface-base)] rounded-xl p-2 flex-shrink-0">
                       <img
                         src={CHART_MODES[carouselIndex].icon}
                         alt={CHART_MODES[carouselIndex].label}
@@ -200,12 +200,12 @@ export default function GroupSettingsForm({
                     </div>
                     
                     {/* Title (outside bubble) */}
-                    <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2 flex-shrink-0 text-center w-full px-2">
+                    <h3 className="text-lg md:text-xl font-semibold text-[var(--text-primary)] mb-2 flex-shrink-0 text-center w-full px-2">
                       {CHART_MODES[carouselIndex].label}
                     </h3>
-                    
+
                     {/* Description */}
-                    <p className="text-xs md:text-sm text-gray-600 text-left break-words w-full px-2 md:px-3">
+                    <p className="text-xs md:text-sm text-[var(--text-secondary)] text-left break-words w-full px-2 md:px-3">
                       {CHART_MODES[carouselIndex].description}
                     </p>
                   </div>
@@ -242,7 +242,7 @@ export default function GroupSettingsForm({
                   className={`h-2 rounded-full transition-all min-w-[8px] min-h-[8px] ${
                     carouselIndex === index
                       ? 'bg-yellow-500 w-8'
-                      : 'bg-gray-300 hover:bg-gray-400 w-2'
+                      : 'bg-[var(--border-strong)] hover:brightness-90 w-2'
                   }`}
                   aria-label={t('selectMode', { mode: mode.label })}
                 />
@@ -261,7 +261,7 @@ export default function GroupSettingsForm({
           </div>
           
           {/* FAQ Link */}
-          <p className="text-xs md:text-sm text-gray-500 mt-3 md:mt-4">
+          <p className="text-xs md:text-sm text-[var(--text-muted)] mt-3 md:mt-4">
             {tRich.rich('chartModeFAQLink', {
               link: (chunks) => (
                 <Link
@@ -276,10 +276,10 @@ export default function GroupSettingsForm({
         </div>
 
         <div>
-          <label htmlFor="trackingDayOfWeek" className="block text-base md:text-lg font-bold text-gray-900 mb-2">
+          <label htmlFor="trackingDayOfWeek" className="block text-base md:text-lg font-bold text-[var(--text-primary)] mb-2">
             {t('trackingDayOfWeek')}
           </label>
-          <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
+          <p className="text-xs md:text-sm text-[var(--text-muted)] mb-3 md:mb-4">
             {t('trackingDayOfWeekDescription')}
           </p>
           <CustomSelect
@@ -301,7 +301,7 @@ export default function GroupSettingsForm({
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+            className="px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-[var(--surface-base)] text-[var(--text-primary)] rounded-lg hover:brightness-95 transition-colors"
           >
             {t('cancel')}
           </button>

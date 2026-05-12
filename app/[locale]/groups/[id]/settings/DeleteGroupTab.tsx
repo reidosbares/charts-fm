@@ -18,22 +18,22 @@ export default function DeleteGroupTab({
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
+      <div className="bg-[var(--surface-card)] rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
         <div className="mb-4 md:mb-6">
           <h2 className="text-xl md:text-2xl font-bold mb-2 text-red-600">{t('title')}</h2>
-          <p className="text-sm md:text-base text-gray-600">
+          <p className="text-sm md:text-base text-[var(--text-secondary)]">
             {t('description')}
           </p>
         </div>
 
-        <div className="border border-red-200 rounded-lg p-4 md:p-6 bg-red-50">
-          <h3 className="text-base md:text-lg font-semibold text-red-800 mb-2 md:mb-3">
+        <div className="border border-red-200 dark:border-red-800 rounded-lg p-4 md:p-6 bg-red-50 dark:bg-red-950/40">
+          <h3 className="text-base md:text-lg font-semibold text-red-800 dark:text-red-300 mb-2 md:mb-3">
             {t('warning')}
           </h3>
-          <p className="text-xs md:text-sm text-gray-700 mb-3 md:mb-4">
+          <p className="text-xs md:text-sm text-[var(--text-secondary)] mb-3 md:mb-4">
             {t('willDelete')}
           </p>
-          <ul className="text-xs md:text-sm text-gray-700 list-disc list-inside mb-4 md:mb-6 space-y-1">
+          <ul className="text-xs md:text-sm text-[var(--text-secondary)] list-disc list-inside mb-4 md:mb-6 space-y-1">
             <li>{t('allCharts')}</li>
             <li>{t('allInvites')}</li>
             <li>{t('allRequests')}</li>

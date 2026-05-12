@@ -52,7 +52,7 @@ export default function GroupSearchTab({ groupId }: GroupSearchTabProps) {
           />
           <FontAwesomeIcon
             icon={faSearch}
-            className="absolute right-3 md:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm md:text-base"
+            className="absolute right-3 md:right-4 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] text-sm md:text-base"
           />
         </div>
         <button

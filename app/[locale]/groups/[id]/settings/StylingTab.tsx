@@ -96,14 +96,14 @@ export default function StylingTab({
         onClose={() => setError(null)}
       />
 
-      <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
+      <div className="bg-[var(--surface-card)] rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
 
       <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
         <div>
-          <label htmlFor="colorTheme" className="block text-base md:text-lg font-bold text-gray-900 mb-2">
+          <label htmlFor="colorTheme" className="block text-base md:text-lg font-bold text-[var(--text-primary)] mb-2">
             {t('colorTheme')}
           </label>
-          <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
+          <p className="text-xs md:text-sm text-[var(--text-muted)] mb-3 md:mb-4">
             {t('colorThemeDescription')}
           </p>
           
@@ -118,7 +118,7 @@ export default function StylingTab({
                   className={`relative cursor-pointer border-2 rounded-xl p-4 transition-all ${
                     isSelected
                       ? 'border-[var(--theme-primary)] bg-[var(--theme-primary-lighter)]/20'
-                      : 'border-gray-300 hover:border-gray-400'
+                      : 'border-[var(--border-strong)] hover:border-[var(--border-strong)]'
                   }`}
                   style={isSelected ? {
                     '--theme-primary': theme.primary,
@@ -136,9 +136,9 @@ export default function StylingTab({
                   
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-gray-900">
+                      <h3 className="font-semibold text-[var(--text-primary)]">
                         {THEME_DISPLAY_NAMES[themeName]}
-                        {themeName === 'white' && <span className="ml-2 text-xs text-gray-500">{t('default')}</span>}
+                        {themeName === 'white' && <span className="ml-2 text-xs text-[var(--text-muted)]">{t('default')}</span>}
                       </h3>
                       {isSelected && (
                         <div className="w-5 h-5 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: theme.primary }}></div>
@@ -148,9 +148,9 @@ export default function StylingTab({
                     {/* Color preview - three colors only */}
                     <div className="flex gap-2 pt-2">
                       <div className="flex-1 space-y-1">
-                        <div className="text-xs text-gray-500">{t('background')}</div>
-                        <div 
-                          className="h-12 rounded border border-gray-200"
+                        <div className="text-xs text-[var(--text-muted)]">{t('background')}</div>
+                        <div
+                          className="h-12 rounded border border-[var(--border-subtle)]"
                           style={
                             themeName === 'rainbow'
                               ? {
@@ -162,17 +162,17 @@ export default function StylingTab({
                         ></div>
                       </div>
                       <div className="flex-1 space-y-1">
-                        <div className="text-xs text-gray-500">{t('button')}</div>
-                        <div 
-                          className="h-12 rounded border border-gray-200"
+                        <div className="text-xs text-[var(--text-muted)]">{t('button')}</div>
+                        <div
+                          className="h-12 rounded border border-[var(--border-subtle)]"
                           style={{ backgroundColor: theme.primaryLight }}
                           title={t('button')}
                         ></div>
                       </div>
                       <div className="flex-1 space-y-1">
-                        <div className="text-xs text-gray-500">{t('titleColor')}</div>
-                        <div 
-                          className="h-12 rounded border border-gray-200"
+                        <div className="text-xs text-[var(--text-muted)]">{t('titleColor')}</div>
+                        <div
+                          className="h-12 rounded border border-[var(--border-subtle)]"
                           style={{ backgroundColor: theme.primaryDark }}
                           title="Title color"
                         ></div>
@@ -196,7 +196,7 @@ export default function StylingTab({
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+            className="px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-[var(--surface-base)] text-[var(--text-primary)] rounded-lg hover:brightness-95 transition-colors"
           >
             {t('cancel')}
           </button>

@@ -150,7 +150,7 @@ export default function GroupTabs({
 
       {/* Members: inside glass container */}
       {isMember && visited.has('members') && (
-        <div className="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-white/50 shadow-lg" style={{ display: activeTab === 'members' ? 'block' : 'none' }}>
+        <div className="bg-white/70 dark:bg-[rgb(var(--surface-card-rgb)/0.7)] backdrop-blur-md rounded-2xl p-4 md:p-6 border border-white/50 dark:border-white/10 shadow-lg" style={{ display: activeTab === 'members' ? 'block' : 'none' }}>
           {membersContent}
         </div>
       )}

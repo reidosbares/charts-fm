@@ -135,7 +135,7 @@ export default function CertificationsTab({
         isVisible={success}
         onClose={() => setSuccess(false)}
       />
-    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+    <div className="bg-[var(--surface-card)] rounded-lg shadow-lg p-4 sm:p-6">
       <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--theme-text)' }}>
         {t('title')}
       </h2>

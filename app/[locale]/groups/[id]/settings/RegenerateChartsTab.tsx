@@ -253,11 +253,11 @@ export default function RegenerateChartsTab({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
+    <div className="bg-[var(--surface-card)] rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
       <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">{t('title')}</h2>
       
       {isLoading && (
-        <div className="mb-3 md:mb-4 p-3 md:p-4 bg-blue-100 border border-blue-400 text-blue-700 rounded-lg text-sm md:text-base">
+        <div className="mb-3 md:mb-4 p-3 md:p-4 bg-blue-100 dark:bg-blue-950/40 border border-blue-400 dark:border-blue-700 text-blue-700 dark:text-blue-300 rounded-lg text-sm md:text-base">
           <div className="flex items-center gap-2 md:gap-3 mb-3">
             <svg
               className="animate-spin h-4 w-4 md:h-5 md:w-5 text-blue-600 flex-shrink-0"
@@ -305,7 +305,7 @@ export default function RegenerateChartsTab({
 
           {getFunnyMessage() && (
             <div className={`text-center ${progress && progress.totalWeeks > 0 ? 'mt-4' : 'mt-3'}`}>
-              <p className="font-serif text-sm md:text-base italic text-blue-600">
+              <p className="font-serif text-sm md:text-base italic text-blue-600 dark:text-blue-400">
                 {getFunnyMessage()}
               </p>
             </div>
@@ -314,23 +314,23 @@ export default function RegenerateChartsTab({
       )}
 
       {success && (
-        <div className="mb-3 md:mb-4 p-3 md:p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm md:text-base">
+        <div className="mb-3 md:mb-4 p-3 md:p-4 bg-green-100 dark:bg-green-950/40 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-300 rounded-lg text-sm md:text-base">
           {t('generatedSuccessfully')}
         </div>
       )}
 
       {error && (
-        <div className="mb-3 md:mb-4 p-3 md:p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm md:text-base">
+        <div className="mb-3 md:mb-4 p-3 md:p-4 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 rounded-lg text-sm md:text-base">
           {error}
         </div>
       )}
 
-      <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
+      <p className="text-sm md:text-base text-[var(--text-secondary)] mb-4 md:mb-6">
         {t('description', { weeks })}
       </p>
 
       <div className="mb-4 md:mb-6">
-        <label htmlFor="weeks" className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="weeks" className="block text-xs md:text-sm font-medium text-[var(--text-secondary)] mb-2">
           {t('weeksToGenerate')}
         </label>
         <CustomSelect
@@ -343,7 +343,7 @@ export default function RegenerateChartsTab({
       </div>
 
       {isLoading && !success && (
-        <div className="mb-3 md:mb-4 p-3 md:p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded-lg text-sm md:text-base">
+        <div className="mb-3 md:mb-4 p-3 md:p-4 bg-yellow-100 dark:bg-yellow-950/40 border border-yellow-400 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300 rounded-lg text-sm md:text-base">
           {t('alreadyInProgress')}
         </div>
       )}

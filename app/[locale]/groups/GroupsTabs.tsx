@@ -127,10 +127,10 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
                 {group.name}
               </h3>
             </div>
-            <div className="text-xs md:text-sm text-gray-600 space-y-1">
+            <div className="text-xs md:text-sm text-[var(--text-secondary)] space-y-1">
               <p className="flex items-center gap-2 flex-wrap min-w-0">
                 <span>{tHero('owner')}</span>
-                <span className="font-semibold text-gray-900 truncate max-w-[120px] md:max-w-[200px]">{group.creator.name || group.creator.lastfmUsername}</span>
+                <span className="font-semibold text-[var(--text-primary)] truncate max-w-[120px] md:max-w-[200px]">{group.creator.name || group.creator.lastfmUsername}</span>
                 {isOwner && (
                   <span className="text-xs bg-[var(--theme-primary)] text-[var(--theme-button-text)] px-1.5 md:px-2 py-0.5 rounded-full font-bold flex-shrink-0">
                     {t('you')}
@@ -141,7 +141,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
                 <FontAwesomeIcon icon={faUsers} className="text-[var(--theme-primary)] font-medium text-xs md:text-sm" />
                 <span>{t('memberCount', { count: group._count.members })}</span>
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-[var(--text-muted)]">
                 {t('created', { date: new Date(group.createdAt).toLocaleDateString() })}
               </p>
             </div>
@@ -161,7 +161,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
     return (
       <div
         key={invite.id}
-        className={`bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-200 transition-all ${
+        className={`bg-[var(--surface-card)] rounded-xl shadow-sm p-4 md:p-6 border border-[var(--border-subtle)] transition-all ${
           isRejected ? 'opacity-50' : 'hover:shadow-md'
         }`}
       >
@@ -171,7 +171,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
         >
           <div className="flex items-start gap-3 md:gap-4 mb-3 md:mb-4">
             <div className="relative w-16 h-16 md:w-20 md:h-20 flex-shrink-0">
-              <div className={`w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden ring-2 ring-gray-300 bg-gray-100 ${themeClass}`}>
+              <div className={`w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden ring-2 ring-[var(--border-strong)] bg-[var(--surface-base)] ${themeClass}`}>
                 <SafeImage
                   src={groupImage}
                   alt={invite.group.name}
@@ -181,21 +181,21 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2">
-                <h3 className="text-xl md:text-2xl font-bold text-gray-900 truncate">{invite.group.name}</h3>
-                <span className="flex-shrink-0 text-xs bg-gray-900 text-white px-1.5 md:px-2 py-0.5 rounded-full font-bold">
+                <h3 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] truncate">{invite.group.name}</h3>
+                <span className="flex-shrink-0 text-xs bg-gray-900 dark:bg-gray-700 text-white px-1.5 md:px-2 py-0.5 rounded-full font-bold">
                   {t('invited')}
                 </span>
               </div>
-              <div className="text-xs md:text-sm text-gray-600 space-y-1">
+              <div className="text-xs md:text-sm text-[var(--text-secondary)] space-y-1">
                 <p className="flex items-center gap-1 min-w-0">
                   <span>{tHero('owner')}</span>
-                  <span className="font-semibold text-gray-900 truncate max-w-[120px] md:max-w-[200px]">{invite.group.creator.name || invite.group.creator.lastfmUsername}</span>
+                  <span className="font-semibold text-[var(--text-primary)] truncate max-w-[120px] md:max-w-[200px]">{invite.group.creator.name || invite.group.creator.lastfmUsername}</span>
                 </p>
                 <p className="flex items-center gap-2">
-                  <FontAwesomeIcon icon={faUsers} className="text-gray-500 font-medium text-xs md:text-sm" />
+                  <FontAwesomeIcon icon={faUsers} className="text-[var(--text-muted)] font-medium text-xs md:text-sm" />
                   <span>{t('memberCount', { count: invite.group._count.members })}</span>
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-[var(--text-muted)]">
                   {t('created', { date: new Date(invite.group.createdAt).toLocaleDateString() })}
                 </p>
               </div>
@@ -209,7 +209,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
               handleAcceptInvite(invite.id, invite.groupId)
             }}
             disabled={isProcessing || isRejected}
-            className="flex-1 px-3 md:px-4 py-2 md:py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-lg transition-all font-semibold text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-3 md:px-4 py-2 md:py-2.5 bg-gray-900 dark:bg-gray-700 hover:bg-gray-800 dark:hover:bg-gray-600 text-white rounded-lg transition-all font-semibold text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isProcessing ? t('processing') : t('accept')}
           </button>
@@ -219,7 +219,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
               handleRejectInvite(invite.id, invite.groupId)
             }}
             disabled={isProcessing || isRejected}
-            className="flex-1 px-3 md:px-4 py-2 md:py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg transition-all font-semibold text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-3 md:px-4 py-2 md:py-2.5 bg-[var(--surface-base)] hover:brightness-95 text-[var(--text-primary)] rounded-lg transition-all font-semibold text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isProcessing ? t('processing') : t('reject')}
           </button>
@@ -247,7 +247,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
       {/* Tab Content */}
       {activeTab === 'groups' && (
         <div 
-          className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200 bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+          className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)] bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
           style={{
             backdropFilter: 'blur(12px) saturate(180%)',
             WebkitBackdropFilter: 'blur(12px) saturate(180%)',
@@ -259,11 +259,11 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
             </div>
           ) : (
             <div className="p-8 md:p-12 text-center">
-              <div className="mb-4 text-gray-400">
+              <div className="mb-4 text-[var(--text-muted)]">
                 <FontAwesomeIcon icon={faMusic} className="text-4xl md:text-5xl" />
               </div>
-              <p className="text-gray-700 text-base md:text-lg mb-2 font-medium">{t('noGroupsYet')}</p>
-              <p className="text-gray-500 text-sm mb-6">{t('noGroupsDescription')}</p>
+              <p className="text-[var(--text-secondary)] text-base md:text-lg mb-2 font-medium">{t('noGroupsYet')}</p>
+              <p className="text-[var(--text-muted)] text-sm mb-6">{t('noGroupsDescription')}</p>
             </div>
           )}
         </div>
@@ -271,7 +271,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
 
       {activeTab === 'invites' && (
         <div 
-          className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200 bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+          className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)] bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
           style={{
             backdropFilter: 'blur(12px) saturate(180%)',
             WebkitBackdropFilter: 'blur(12px) saturate(180%)',
@@ -283,11 +283,11 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
             </div>
           ) : (
             <div className="p-8 md:p-12 text-center">
-              <div className="mb-4 text-gray-400">
+              <div className="mb-4 text-[var(--text-muted)]">
                 <FontAwesomeIcon icon={faEnvelope} className="text-4xl md:text-5xl" />
               </div>
-              <p className="text-gray-700 text-base md:text-lg mb-2 font-medium">{t('noInvitesYet')}</p>
-              <p className="text-gray-500 text-sm">{t('noInvitesDescription')}</p>
+              <p className="text-[var(--text-secondary)] text-base md:text-lg mb-2 font-medium">{t('noInvitesYet')}</p>
+              <p className="text-[var(--text-muted)] text-sm">{t('noInvitesDescription')}</p>
             </div>
           )}
         </div>

@@ -53,7 +53,7 @@ export default function HeroSearchBar({ groupId }: HeroSearchBarProps) {
       />
       <FontAwesomeIcon
         icon={isSearching ? faSpinner : faSearch}
-        className={`absolute left-3.5 md:left-4 top-1/2 -translate-y-1/2 text-gray-800 text-sm md:text-base ${isSearching ? 'animate-spin' : ''}`}
+        className={`absolute left-3.5 md:left-4 top-1/2 -translate-y-1/2 text-[var(--text-primary)] text-sm md:text-base ${isSearching ? 'animate-spin' : ''}`}
       />
     </div>
   )

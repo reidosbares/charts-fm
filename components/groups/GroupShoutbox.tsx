@@ -226,7 +226,7 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
         <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-[var(--theme-primary-dark)]">{t('title')}</h2>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          <div className="mb-4 p-3 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 rounded">
             {error}
           </div>
         )}
@@ -239,7 +239,7 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder={t('placeholder')}
-                className="flex-1 px-3 md:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] resize-none text-sm md:text-base"
+                className="flex-1 px-3 md:px-4 py-2 border border-[var(--border-strong)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] resize-none text-sm md:text-base bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] text-[var(--text-primary)]"
                 rows={3}
                 maxLength={MAX_CONTENT_LENGTH}
                 disabled={isSubmitting}
@@ -257,14 +257,14 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
                 {t('post')}
               </button>
             </div>
-            <div className="mt-1 text-xs text-gray-500">
+            <div className="mt-1 text-xs text-[var(--text-muted)]">
               {t('characters', { current: content.length, max: MAX_CONTENT_LENGTH })}
             </div>
           </form>
         )}
 
         {postError && (
-          <div className="mb-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+          <div className="mb-4 p-3 bg-yellow-100 dark:bg-yellow-950/40 border border-yellow-400 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300 rounded">
             {postError}
           </div>
         )}
@@ -272,10 +272,10 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
         {/* Comments List */}
         {isLoading ? (
           <div className="flex justify-center py-6 md:py-8">
-            <FontAwesomeIcon icon={faSpinner} className="animate-spin text-xl md:text-2xl text-gray-400" />
+            <FontAwesomeIcon icon={faSpinner} className="animate-spin text-xl md:text-2xl text-[var(--text-muted)]" />
           </div>
         ) : comments.length === 0 ? (
-          <div className="text-center py-6 md:py-8 text-gray-500 text-sm md:text-base">
+          <div className="text-center py-6 md:py-8 text-[var(--text-muted)] text-sm md:text-base">
             {t('noComments')}
           </div>
         ) : (
@@ -301,15 +301,15 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
                       <div className="flex flex-wrap items-center gap-1 md:gap-2 mb-1">
                         <Link
                           href={`/u/${encodeURIComponent(comment.user.lastfmUsername)}`}
-                          className="font-semibold text-gray-900 text-sm md:text-base hover:underline"
+                          className="font-semibold text-[var(--text-primary)] text-sm md:text-base hover:underline"
                         >
                           {comment.user.name || comment.user.lastfmUsername}
                         </Link>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-[var(--text-muted)]">
                           {formatRelativeTime(new Date(comment.createdAt), t)}
                         </span>
                         {comment.createdAt !== comment.updatedAt && (
-                          <span className="text-xs text-gray-400 italic">{t('edited')}</span>
+                          <span className="text-xs text-[var(--text-muted)] italic">{t('edited')}</span>
                         )}
                       </div>
                       {editingId === comment.id ? (
@@ -317,7 +317,7 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
                           <textarea
                             value={editContent}
                             onChange={(e) => setEditContent(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] resize-none text-sm md:text-base"
+                            className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] resize-none text-sm md:text-base bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] text-[var(--text-primary)]"
                             rows={3}
                             maxLength={MAX_CONTENT_LENGTH}
                           />
@@ -336,14 +336,14 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
                                 setEditContent('')
                               }}
                               disabled={isSaving}
-                              className="px-3 md:px-4 py-1 bg-gray-200 text-gray-700 rounded text-xs md:text-sm font-semibold hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="px-3 md:px-4 py-1 bg-[var(--surface-base)] text-[var(--text-primary)] rounded text-xs md:text-sm font-semibold hover:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               {t('cancel')}
                             </button>
                           </div>
                         </div>
                       ) : (
-                        <p className="text-gray-800 whitespace-pre-wrap break-words text-sm md:text-base">{comment.content}</p>
+                        <p className="text-[var(--text-primary)] whitespace-pre-wrap break-words text-sm md:text-base">{comment.content}</p>
                       )}
                     </div>
                     {(comment.user.id === userId || isOwner) && editingId !== comment.id && (
@@ -354,7 +354,7 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
                               setEditingId(comment.id)
                               setEditContent(comment.content)
                             }}
-                            className="p-1.5 md:p-2 text-gray-500 hover:text-[var(--theme-primary)] transition-colors"
+                            className="p-1.5 md:p-2 text-[var(--text-muted)] hover:text-[var(--theme-primary)] transition-colors"
                             title={t('editComment')}
                           >
                             <FontAwesomeIcon icon={faEdit} className="text-sm md:text-base" />
@@ -362,7 +362,7 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
                         )}
                         <button
                           onClick={() => handleDeleteClick(comment.id)}
-                          className="p-1.5 md:p-2 text-gray-500 hover:text-red-600 transition-colors"
+                          className="p-1.5 md:p-2 text-[var(--text-muted)] hover:text-red-600 transition-colors"
                           title={comment.user.id === userId ? t('deleteComment') : t('deleteCommentAsOwner')}
                         >
                           <FontAwesomeIcon icon={faTrash} className="text-sm md:text-base" />
@@ -380,17 +380,17 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
                 <button
                   onClick={() => setPage((p) => p - 1)}
                   disabled={page === 1}
-                  className="px-3 md:px-4 py-1.5 md:py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base w-full sm:w-auto"
+                  className="px-3 md:px-4 py-1.5 md:py-2 bg-[var(--surface-base)] text-[var(--text-primary)] rounded-lg font-semibold hover:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base w-full sm:w-auto"
                 >
                   {t('previous')}
                 </button>
-                <span className="text-gray-600 text-xs md:text-sm text-center">
+                <span className="text-[var(--text-secondary)] text-xs md:text-sm text-center">
                   {t('pageOf', { page, totalPages, total })}
                 </span>
                 <button
                   onClick={() => setPage((p) => p + 1)}
                   disabled={page === totalPages}
-                  className="px-3 md:px-4 py-1.5 md:py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base w-full sm:w-auto"
+                  className="px-3 md:px-4 py-1.5 md:py-2 bg-[var(--surface-base)] text-[var(--text-primary)] rounded-lg font-semibold hover:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base w-full sm:w-auto"
                 >
                   {t('next')}
                 </button>
@@ -421,10 +421,10 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
                 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="bg-white rounded-lg shadow-2xl p-4 md:p-6 relative">
+                <div className="bg-[var(--surface-card)] rounded-lg shadow-2xl p-4 md:p-6 relative">
                   <div className="space-y-3 md:space-y-4 mb-4 md:mb-6">
-                    <h3 className="text-base md:text-lg font-semibold text-gray-900">{t('deleteCommentTitle')}</h3>
-                    <p className="text-xs md:text-sm text-gray-700">
+                    <h3 className="text-base md:text-lg font-semibold text-[var(--text-primary)]">{t('deleteCommentTitle')}</h3>
+                    <p className="text-xs md:text-sm text-[var(--text-secondary)]">
                       {t('deleteCommentConfirm')}
                     </p>
                   </div>

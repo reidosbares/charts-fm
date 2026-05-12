@@ -64,12 +64,12 @@ function useEntryImage(artist: string, name: string, chartType: string): string 
 function EntryThumbnail({ artist, name, chartType }: { artist: string; name: string; chartType: string }) {
   const imageUrl = useEntryImage(artist, name, chartType)
   return (
-    <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
+    <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg overflow-hidden bg-[var(--surface-base)] flex-shrink-0">
       {imageUrl ? (
         <SafeImage src={imageUrl} alt={name} width={48} height={48} className="w-full h-full object-cover" />
       ) : (
-        <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-200 flex items-center justify-center">
-          <FontAwesomeIcon icon={faCertificate} className="text-gray-400 text-sm" />
+        <div className="w-full h-full bg-gradient-to-br from-gray-300 dark:from-gray-600 to-gray-200 dark:to-gray-700 flex items-center justify-center">
+          <FontAwesomeIcon icon={faCertificate} className="text-[var(--text-muted)] text-sm" />
         </div>
       )}
     </div>
@@ -109,8 +109,8 @@ function EligibleCard({
         <Link href={getEntryDrillDownPath(groupId, entry.chartType as ChartType, entry.slug)}>
           <p className="font-semibold text-sm truncate hover:underline">{entry.name}</p>
         </Link>
-        <p className="text-xs text-gray-500 truncate">{entry.artist}</p>
-        <p className="text-xs text-gray-400 mt-0.5">
+        <p className="text-xs text-[var(--text-muted)] truncate">{entry.artist}</p>
+        <p className="text-xs text-[var(--text-muted)] mt-0.5">
           {t('vsOfThreshold', { current: entry.currentVS.toFixed(1), threshold: entry.threshold.toFixed(0) })}
         </p>
       </div>
@@ -150,17 +150,17 @@ function RecentAwardCard({
 
   return (
     <Link href={getEntryDrillDownPath(groupId, award.entry.chartType as ChartType, award.entry.slug)}>
-      <div className="flex items-center gap-4 p-4 rounded-xl bg-white/60 backdrop-blur-sm border border-white/40 hover:bg-white/80 transition-colors">
+      <div className="flex items-center gap-4 p-4 rounded-xl bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] backdrop-blur-sm border border-white/40 dark:border-white/10 hover:bg-white/80 dark:hover:bg-[rgb(var(--surface-card-rgb)/0.8)] transition-colors">
         <EntryThumbnail artist={award.entry.artist} name={award.entry.name} chartType={award.entry.chartType} />
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-sm truncate">{award.entry.name}</p>
-          <p className="text-xs text-gray-500 truncate">{award.entry.artist}</p>
+          <p className="text-xs text-[var(--text-muted)] truncate">{award.entry.artist}</p>
         </div>
         <div className="flex-shrink-0 text-right">
           <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${tierColor.bg} ${tierColor.text} border ${tierColor.border}`}>
             {tierLabel}
           </span>
-          <p className="text-[10px] text-gray-400 mt-0.5">{t('awardedOn', { date: awardDate })}</p>
+          <p className="text-[10px] text-[var(--text-muted)] mt-0.5">{t('awardedOn', { date: awardDate })}</p>
         </div>
       </div>
     </Link>
@@ -179,13 +179,13 @@ function ApproachingCard({
 
   return (
     <Link href={getEntryDrillDownPath(groupId, entry.chartType as ChartType, entry.slug)}>
-      <div className="flex items-center gap-4 p-4 rounded-xl bg-white/40 backdrop-blur-sm border border-white/30 hover:bg-white/60 transition-colors">
+      <div className="flex items-center gap-4 p-4 rounded-xl bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] backdrop-blur-sm border border-white/30 dark:border-white/10 hover:bg-white/60 dark:hover:bg-[rgb(var(--surface-card-rgb)/0.6)] transition-colors">
         <EntryThumbnail artist={entry.artist} name={entry.name} chartType={entry.chartType} />
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-sm truncate">{entry.name}</p>
-          <p className="text-xs text-gray-500 truncate">{entry.artist}</p>
+          <p className="text-xs text-[var(--text-muted)] truncate">{entry.artist}</p>
           <div className="mt-1.5 flex items-center gap-2">
-            <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div className="flex-1 h-1.5 bg-[var(--surface-base)] rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full ${
                   entry.nextTier === 'gold' ? 'bg-yellow-500'
@@ -231,9 +231,9 @@ export default function GroupCertificationsTab({ groupId, isCreator }: GroupCert
   if (!hasContent) {
     return (
       <div className="text-center py-12 px-4">
-        <FontAwesomeIcon icon={faCertificate} className="text-4xl text-gray-300 mb-3" />
-        <p className="text-gray-600 font-medium">{t('empty')}</p>
-        <p className="text-gray-400 text-sm mt-1 max-w-md mx-auto">{t('emptyDescription')}</p>
+        <FontAwesomeIcon icon={faCertificate} className="text-4xl text-[var(--text-muted)] mb-3" />
+        <p className="text-[var(--text-secondary)] font-medium">{t('empty')}</p>
+        <p className="text-[var(--text-muted)] text-sm mt-1 max-w-md mx-auto">{t('emptyDescription')}</p>
       </div>
     )
   }

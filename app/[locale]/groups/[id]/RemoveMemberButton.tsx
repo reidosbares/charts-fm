@@ -29,7 +29,7 @@ export default function RemoveMemberButton({
 
   if (isRemoved) {
     return (
-      <span className="px-3 py-1 text-sm bg-gray-200 text-gray-600 rounded">
+      <span className="px-3 py-1 text-sm bg-[var(--surface-base)] text-[var(--text-secondary)] rounded">
         {t('removed')}
       </span>
     )
@@ -40,7 +40,7 @@ export default function RemoveMemberButton({
       <>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors flex-shrink-0"
+          className="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 rounded transition-colors flex-shrink-0"
           title={t('removeFromGroup', { memberName })}
         >
           <FontAwesomeIcon icon={faTrash} className="text-sm" />

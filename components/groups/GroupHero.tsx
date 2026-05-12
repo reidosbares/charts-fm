@@ -18,7 +18,7 @@ export default function GroupHero({ groupId }: GroupHeroProps) {
   if (isLoading) {
     return (
       <div className="mb-6 md:mb-8 relative">
-        <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm p-4 md:p-6 lg:p-8 border border-gray-200">
+        <div className="bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-md rounded-2xl shadow-sm p-4 md:p-6 lg:p-8 border border-[var(--border-subtle)]">
           <div className="flex items-center justify-center py-8 md:py-12">
             <FontAwesomeIcon icon={faSpinner} className="animate-spin text-3xl md:text-4xl text-[var(--theme-primary)]" />
           </div>
@@ -30,8 +30,8 @@ export default function GroupHero({ groupId }: GroupHeroProps) {
   if (error || !data || data.error) {
     return (
       <div className="mb-6 md:mb-8 relative">
-        <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm p-4 md:p-6 lg:p-8 border border-gray-200">
-          <div className="text-center py-6 md:py-8 text-gray-500 text-sm md:text-base">
+        <div className="bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-md rounded-2xl shadow-sm p-4 md:p-6 lg:p-8 border border-[var(--border-subtle)]">
+          <div className="text-center py-6 md:py-8 text-[var(--text-muted)] text-sm md:text-base">
             <p>{data?.error || 'Failed to load group data'}</p>
           </div>
         </div>
@@ -49,17 +49,17 @@ export default function GroupHero({ groupId }: GroupHeroProps) {
 
   return (
     <div className={`mb-6 md:mb-8 relative ${themeClass}`}>
-      <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm p-4 md:p-6 lg:p-8 border border-theme">
+      <div className="bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-md rounded-2xl shadow-sm p-4 md:p-6 lg:p-8 border border-theme">
         {/* Breadcrumb Navigation */}
         <nav className="mb-4 md:mb-6 flex items-center gap-2 text-xs md:text-sm">
-          <Link 
-            href="/groups" 
-            className="text-gray-500 hover:text-[var(--theme-text)] transition-colors"
+          <Link
+            href="/groups"
+            className="text-[var(--text-muted)] hover:text-[var(--theme-text)] transition-colors"
           >
             Groups
           </Link>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-900 font-medium truncate">{group.name}</span>
+          <span className="text-[var(--text-muted)]">/</span>
+          <span className="text-[var(--text-primary)] font-medium truncate">{group.name}</span>
         </nav>
         
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6">
@@ -88,20 +88,20 @@ export default function GroupHero({ groupId }: GroupHeroProps) {
               </h1>
               <div className="flex flex-wrap items-center gap-2 md:gap-3 lg:gap-4 mb-3 md:mb-4 text-xs md:text-sm">
                 <div className="flex items-center gap-1 md:gap-2 min-w-0">
-                  <span className="text-gray-600">Owner:</span>
-                  <span className="font-semibold text-gray-900 truncate max-w-[120px] md:max-w-[200px]">
+                  <span className="text-[var(--text-secondary)]">Owner:</span>
+                  <span className="font-semibold text-[var(--text-primary)] truncate max-w-[120px] md:max-w-[200px]">
                     {group.creator ? (group.creator.name || group.creator.lastfmUsername) : 'Deleted User'}
                   </span>
                 </div>
-                <span className="text-gray-300 hidden sm:inline">•</span>
+                <span className="text-[var(--text-muted)] hidden sm:inline">•</span>
                 <div className="flex items-center gap-1 md:gap-2">
-                  <span className="text-gray-600">Members:</span>
-                  <span className="font-semibold text-gray-900">{group.memberCount}</span>
+                  <span className="text-[var(--text-secondary)]">Members:</span>
+                  <span className="font-semibold text-[var(--text-primary)]">{group.memberCount}</span>
                 </div>
-                <span className="text-gray-300 hidden sm:inline">•</span>
+                <span className="text-[var(--text-muted)] hidden sm:inline">•</span>
                 <div className="flex items-center gap-1 md:gap-2">
-                  <span className="text-gray-600">Tracking:</span>
-                  <span className="font-semibold text-gray-900">{group.trackingDayName}</span>
+                  <span className="text-[var(--text-secondary)]">Tracking:</span>
+                  <span className="font-semibold text-[var(--text-primary)]">{group.trackingDayName}</span>
                 </div>
               </div>
               
@@ -124,7 +124,7 @@ export default function GroupHero({ groupId }: GroupHeroProps) {
                     ))}
                   </div>
                   {members.length > 6 && (
-                    <span className="text-xs md:text-sm text-gray-600 ml-1 md:ml-2 flex-shrink-0 whitespace-nowrap">+{members.length - 6} more</span>
+                    <span className="text-xs md:text-sm text-[var(--text-secondary)] ml-1 md:ml-2 flex-shrink-0 whitespace-nowrap">+{members.length - 6} more</span>
                   )}
                 </div>
               )}
@@ -164,7 +164,6 @@ export default function GroupHero({ groupId }: GroupHeroProps) {
                   color: 'var(--theme-button-text)',
                   backdropFilter: 'blur(12px) saturate(180%)',
                   WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
                 }}
               >

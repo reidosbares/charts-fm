@@ -318,11 +318,11 @@ export default function GroupDetailsTab({
         onConfirm={handleRemovePicture}
       />
 
-      <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
+      <div className="bg-[var(--surface-card)] rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
 
       <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
         <div>
-          <label htmlFor="groupName" className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="groupName" className="block text-xs md:text-sm font-medium text-[var(--text-secondary)] mb-2">
             {t('groupName')}
           </label>
           <input
@@ -330,14 +330,14 @@ export default function GroupDetailsTab({
             id="groupName"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+            className="w-full px-3 md:px-4 py-2 text-sm md:text-base border border-[var(--border-strong)] rounded-lg bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] text-[var(--text-primary)] focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
             required
             disabled={isLoading}
           />
         </div>
 
         <div>
-          <label htmlFor="groupIcon" className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="groupIcon" className="block text-xs md:text-sm font-medium text-[var(--text-secondary)] mb-2">
             {t('groupIcon')}
           </label>
           
@@ -348,7 +348,7 @@ export default function GroupDetailsTab({
                 <img
                   src={displayImage}
                   alt="Group icon preview"
-                  className="rounded-lg object-cover w-full h-full border-2 border-gray-200"
+                  className="rounded-lg object-cover w-full h-full border-2 border-[var(--border-subtle)]"
                   onError={(e) => {
                     e.currentTarget.src = getDefaultGroupImage()
                   }}
@@ -372,10 +372,10 @@ export default function GroupDetailsTab({
           <div className="mb-4">
             <label
               htmlFor="group-file-upload"
-              className="flex items-center justify-center w-full px-4 py-3 text-sm md:text-base rounded-lg border-2 border-dashed border-gray-300 cursor-pointer hover:border-yellow-500 transition-colors"
+              className="flex items-center justify-center w-full px-4 py-3 text-sm md:text-base rounded-lg border-2 border-dashed border-[var(--border-strong)] cursor-pointer hover:border-yellow-500 transition-colors"
             >
-              <FontAwesomeIcon icon={faUpload} className="mr-2 text-gray-500" />
-              <span className="text-gray-700">{t('upload.selectFile')}</span>
+              <FontAwesomeIcon icon={faUpload} className="mr-2 text-[var(--text-muted)]" />
+              <span className="text-[var(--text-secondary)]">{t('upload.selectFile')}</span>
               <input
                 id="group-file-upload"
                 type="file"
@@ -387,10 +387,10 @@ export default function GroupDetailsTab({
             </label>
             
             {selectedFile && (
-              <div className="mt-3 p-3 rounded-lg border border-gray-200">
+              <div className="mt-3 p-3 rounded-lg border border-[var(--border-subtle)]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden bg-gray-100">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden bg-[var(--surface-base)]">
                       {previewUrl && (
                         <img
                           src={previewUrl}
@@ -400,10 +400,10 @@ export default function GroupDetailsTab({
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
+                      <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {selectedFile.name}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-[var(--text-muted)]">
                         {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                       </p>
                     </div>
@@ -423,7 +423,7 @@ export default function GroupDetailsTab({
                         <button
                           type="button"
                           onClick={handleRemoveFile}
-                          className="p-2 text-gray-500 hover:text-red-600 transition-colors"
+                          className="p-2 text-[var(--text-muted)] hover:text-red-600 transition-colors"
                           disabled={isLoading || isUploading}
                         >
                           <FontAwesomeIcon icon={faTimes} />
@@ -433,7 +433,7 @@ export default function GroupDetailsTab({
                     {isUploading && (
                       <div className="flex items-center gap-2">
                         <FontAwesomeIcon icon={faSpinner} className="animate-spin text-yellow-500" />
-                        <span className="text-sm text-gray-600">{t('upload.uploading')}</span>
+                        <span className="text-sm text-[var(--text-secondary)]">{t('upload.uploading')}</span>
                       </div>
                     )}
                   </div>
@@ -445,9 +445,9 @@ export default function GroupDetailsTab({
           {/* URL Input (Alternative) */}
           <div className="relative">
             <div className="flex items-center gap-2 mb-2">
-              <div className="flex-1 h-px bg-gray-300"></div>
-              <span className="text-xs text-gray-500 px-2">{t('upload.or')}</span>
-              <div className="flex-1 h-px bg-gray-300"></div>
+              <div className="flex-1 h-px bg-[var(--border-strong)]"></div>
+              <span className="text-xs text-[var(--text-muted)] px-2">{t('upload.or')}</span>
+              <div className="flex-1 h-px bg-[var(--border-strong)]"></div>
             </div>
             <input
               type="text"
@@ -461,18 +461,18 @@ export default function GroupDetailsTab({
                   setDynamicIconEnabled(false)
                 }
               }}
-              className="w-full px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-3 md:px-4 py-2 text-sm md:text-base border border-[var(--border-strong)] rounded-lg bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] text-[var(--text-primary)] focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder={isUploadedImage ? t('upload.urlDisabledPlaceholder') : t('iconUrlPlaceholder')}
               disabled={isLoading || isUploading || isUploadedImage}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-[var(--text-muted)] mt-1">
               {t('iconUrlDescription')}
             </p>
           </div>
         </div>
 
         <div>
-          <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs md:text-sm font-medium text-[var(--text-secondary)] mb-2">
             {t('privacySettings')}
           </label>
           <Toggle
@@ -482,14 +482,14 @@ export default function GroupDetailsTab({
             disabled={isLoading}
             label={t('privateGroup')}
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-[var(--text-muted)] mt-1">
             {t('privateGroupDescription')}
           </p>
         </div>
 
         {!isPrivate && (
           <div>
-            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs md:text-sm font-medium text-[var(--text-secondary)] mb-2">
               {t('joinSettings')}
             </label>
             <Toggle
@@ -499,17 +499,17 @@ export default function GroupDetailsTab({
               disabled={isLoading}
               label={t('usersCanJoinFreely')}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-[var(--text-muted)] mt-1">
               {t('usersCanJoinFreelyDescription')}
             </p>
           </div>
         )}
 
         <div>
-          <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs md:text-sm font-medium text-[var(--text-secondary)] mb-2">
             {t('dynamicIcon')}
           </label>
-          <p className="text-xs text-gray-500 mb-3">
+          <p className="text-xs text-[var(--text-muted)] mb-3">
             {t('dynamicIconDescription')}
           </p>
           
@@ -525,7 +525,7 @@ export default function GroupDetailsTab({
 
           {dynamicIconEnabled && (
             <div>
-              <label htmlFor="dynamicIconSource" className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="dynamicIconSource" className="block text-xs md:text-sm font-medium text-[var(--text-secondary)] mb-2">
                 {t('iconSource')}
               </label>
               <CustomSelect
@@ -534,7 +534,7 @@ export default function GroupDetailsTab({
                 value={dynamicIconSource}
                 onChange={(value) => setDynamicIconSource(String(value))}
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-[var(--text-muted)] mt-1">
                 {t('iconSourceDescription')}
               </p>
             </div>
@@ -542,7 +542,7 @@ export default function GroupDetailsTab({
         </div>
 
         <div>
-          <label htmlFor="tags" className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="tags" className="block text-xs md:text-sm font-medium text-[var(--text-secondary)] mb-2">
             {t('tags')}
           </label>
           <input
@@ -550,11 +550,11 @@ export default function GroupDetailsTab({
             id="tags"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="w-full px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+            className="w-full px-3 md:px-4 py-2 text-sm md:text-base border border-[var(--border-strong)] rounded-lg bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] text-[var(--text-primary)] focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
             placeholder={t('tagsPlaceholder')}
             disabled={isLoading}
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-[var(--text-muted)] mt-1">
             {t('tagsDescription')}
           </p>
           {tags && (
@@ -568,8 +568,8 @@ export default function GroupDetailsTab({
                     key={index}
                     className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
                       /\s/.test(tag)
-                        ? 'bg-red-100 text-red-800'
-                        : 'bg-yellow-100 text-yellow-800'
+                        ? 'bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-400'
+                        : 'bg-yellow-100 dark:bg-yellow-950/40 text-yellow-800 dark:text-yellow-400'
                     }`}
                   >
                     {tag.trim()}
@@ -595,7 +595,7 @@ export default function GroupDetailsTab({
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+            className="px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-[var(--surface-base)] text-[var(--text-primary)] rounded-lg hover:brightness-95 transition-colors"
           >
             {t('cancel')}
           </button>
