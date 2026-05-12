@@ -59,7 +59,7 @@ export default async function TrendsPage({ params }: { params: { id: string } })
       <main className="flex min-h-screen flex-col items-center justify-center p-24">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">{t('notFound')}</h1>
-          <Link href="/groups" className="text-gray-600 hover:underline">
+          <Link href="/groups" className="text-[var(--text-secondary)] hover:underline">
             {t('backToGroups')}
           </Link>
         </div>
@@ -99,9 +99,9 @@ export default async function TrendsPage({ params }: { params: { id: string } })
             ]}
             subheader={tTrends('title')}
           />
-          <div className="bg-white rounded-lg shadow-sm p-6 md:p-8 text-center">
-            <p className="text-gray-600 mb-3 md:mb-4 text-sm md:text-base">{tTrends('noTrendsAvailable')}</p>
-            <p className="text-gray-500 text-xs md:text-sm">{tTrends('generateChartsToSee')}</p>
+          <div className="bg-[var(--surface-card)] rounded-lg shadow-sm p-6 md:p-8 text-center">
+            <p className="text-[var(--text-secondary)] mb-3 md:mb-4 text-sm md:text-base">{tTrends('noTrendsAvailable')}</p>
+            <p className="text-[var(--text-muted)] text-xs md:text-sm">{tTrends('generateChartsToSee')}</p>
           </div>
         </div>
       </main>
@@ -129,7 +129,7 @@ export default async function TrendsPage({ params }: { params: { id: string } })
           subheader={
             <>
               {tTrends('weekOf', { date: chartWeekFormatted })}
-              <span className="text-xs italic text-gray-500 ml-1">
+              <span className="text-xs italic text-[var(--text-muted)] ml-1">
                 ({tTrends('from')} {weekStartFormatted} {tTrends('to')} {weekEndFormatted})
               </span>
             </>

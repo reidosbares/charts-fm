@@ -55,11 +55,11 @@ export default function ActivityFeed() {
 
   if (isLoading) {
     return (
-      <div 
-        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
+      <div
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)]"
         style={glassStyle}
       >
-        <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
+        <h2 className="text-xl md:text-2xl font-bold mb-4 text-[var(--text-primary)]">{t('title')}</h2>
         <div className="flex items-center justify-center py-12">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
         </div>
@@ -69,12 +69,12 @@ export default function ActivityFeed() {
 
   if (error || !activities || activities.length === 0) {
     return (
-      <div 
-        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
+      <div
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)]"
         style={glassStyle}
       >
         <h2 className="text-xl md:text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">{t('title')}</h2>
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-[var(--text-muted)]">
           <p>{t('noActivity')}</p>
         </div>
       </div>
@@ -101,17 +101,17 @@ export default function ActivityFeed() {
   const getActivityColor = (type: ActivityItem['type']) => {
     switch (type) {
       case 'chart_update':
-        return 'bg-blue-100 text-blue-600'
+        return 'bg-blue-100 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400'
       case 'new_member':
-        return 'bg-green-100 text-green-600'
+        return 'bg-green-100 dark:bg-green-950/40 text-green-600 dark:text-green-400'
       case 'invite':
-        return 'bg-yellow-100 text-yellow-600'
+        return 'bg-yellow-100 dark:bg-yellow-950/40 text-yellow-600 dark:text-yellow-400'
       case 'join_request':
-        return 'bg-purple-100 text-purple-600'
+        return 'bg-purple-100 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400'
       case 'position_change':
-        return 'bg-orange-100 text-orange-600'
+        return 'bg-orange-100 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400'
       default:
-        return 'bg-gray-100 text-gray-600'
+        return 'bg-[var(--surface-base)] text-[var(--text-secondary)]'
     }
   }
 
@@ -146,7 +146,7 @@ export default function ActivityFeed() {
               <FontAwesomeIcon icon={getActivityIcon(activity.type)} className="text-xs md:text-sm" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium text-[var(--text-primary)]">
                 {(() => {
                   // Translate activity messages based on type
                   switch (activity.type) {
@@ -169,7 +169,7 @@ export default function ActivityFeed() {
                   }
                 })()}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-[var(--text-muted)] mt-1">
                 {formatRelativeTime(new Date(activity.timestamp))}
               </p>
             </div>

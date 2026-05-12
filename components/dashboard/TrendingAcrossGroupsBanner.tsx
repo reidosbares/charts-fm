@@ -147,7 +147,7 @@ export default function TrendingAcrossGroupsBanner() {
             <button
               type="button"
               onClick={goPrev}
-              className="hidden md:flex flex-shrink-0 self-center w-11 h-11 rounded-full bg-white/90 hover:bg-white active:bg-amber-50 shadow-md border border-gray-200/60 items-center justify-center text-gray-400 hover:text-amber-600 transition-all touch-manipulation z-10 hover:scale-105 active:scale-95"
+              className="hidden md:flex flex-shrink-0 self-center w-11 h-11 rounded-full bg-white/90 dark:bg-[var(--surface-card)] hover:bg-white active:bg-amber-50 shadow-md border border-gray-200/60 dark:border-white/10 items-center justify-center text-[var(--text-muted)] hover:text-amber-600 transition-all touch-manipulation z-10 hover:scale-105 active:scale-95"
               aria-label={t('prev')}
             >
               <FontAwesomeIcon icon={faChevronLeft} className="text-sm" />
@@ -196,17 +196,17 @@ export default function TrendingAcrossGroupsBanner() {
                 {/* Text + pills */}
                 <div className="flex-1 min-w-0 flex flex-col justify-center py-1">
                   <p
-                    className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight"
+                    className="text-xl md:text-2xl lg:text-3xl font-bold text-[var(--text-primary)] leading-tight"
                     title={currentItem.artist ? `${currentItem.name} — ${currentItem.artist}` : currentItem.name}
                   >
                     <span className="block truncate">{currentItem.name}</span>
                     {currentItem.artist && (
-                      <span className="text-gray-600 font-normal block truncate mt-0.5 md:mt-1 text-base md:text-xl lg:text-2xl">
+                      <span className="text-[var(--text-secondary)] font-normal block truncate mt-0.5 md:mt-1 text-base md:text-xl lg:text-2xl">
                         {currentItem.artist}
                       </span>
                     )}
                   </p>
-                  <p className="text-xs md:text-base text-gray-600 mt-1 md:mt-3">
+                  <p className="text-xs md:text-base text-[var(--text-secondary)] mt-1 md:mt-3">
                     {currentItem.forYou && currentItem.subtitleKey
                       ? t(currentItem.subtitleKey as 'yourTopArtist' | 'yourTopTrack')
                       : t('chartingInGroups', { count: currentItem.groupCount })}
@@ -217,7 +217,7 @@ export default function TrendingAcrossGroupsBanner() {
                         <Link
                           key={group.id}
                           href={getEntryDrillDownPath(group.id, currentItem.chartType, currentItem.slug)}
-                          className="inline-flex items-center gap-2 md:gap-2.5 px-3 md:px-3.5 py-2 md:py-2.5 rounded-lg md:rounded-xl bg-white/80 hover:bg-white border border-gray-200/60 shadow-sm hover:shadow-md hover:border-amber-200 transition-all touch-manipulation min-h-[44px] md:min-h-[48px] flex-shrink-0"
+                          className="inline-flex items-center gap-2 md:gap-2.5 px-3 md:px-3.5 py-2 md:py-2.5 rounded-lg md:rounded-xl bg-white/80 dark:bg-[var(--surface-card)] hover:bg-white border border-gray-200/60 dark:border-white/10 shadow-sm hover:shadow-md hover:border-amber-200 transition-all touch-manipulation min-h-[44px] md:min-h-[48px] flex-shrink-0"
                         >
                           <span className="relative w-7 h-7 md:w-9 md:h-9 rounded-md md:rounded-lg overflow-hidden flex-shrink-0 bg-gray-200 block">
                             {group.image ? (
@@ -229,12 +229,12 @@ export default function TrendingAcrossGroupsBanner() {
                                 sizes="36px"
                               />
                             ) : (
-                              <span className="absolute inset-0 flex items-center justify-center text-gray-500 text-sm font-bold">
+                              <span className="absolute inset-0 flex items-center justify-center text-[var(--text-muted)] text-sm font-bold">
                                 {group.name.charAt(0).toUpperCase()}
                               </span>
                             )}
                           </span>
-                          <span className="text-sm font-medium text-gray-800 truncate max-w-[140px] md:max-w-[180px]" title={group.name}>
+                          <span className="text-sm font-medium text-[var(--text-primary)] truncate max-w-[140px] md:max-w-[180px]" title={group.name}>
                             {group.name}
                           </span>
                         </Link>
@@ -251,7 +251,7 @@ export default function TrendingAcrossGroupsBanner() {
             <button
               type="button"
               onClick={goNext}
-              className="hidden md:flex flex-shrink-0 self-center w-11 h-11 rounded-full bg-white/90 hover:bg-white active:bg-amber-50 shadow-md border border-gray-200/60 items-center justify-center text-gray-400 hover:text-amber-600 transition-all touch-manipulation z-10 hover:scale-105 active:scale-95"
+              className="hidden md:flex flex-shrink-0 self-center w-11 h-11 rounded-full bg-white/90 dark:bg-[var(--surface-card)] hover:bg-white active:bg-amber-50 shadow-md border border-gray-200/60 dark:border-white/10 items-center justify-center text-[var(--text-muted)] hover:text-amber-600 transition-all touch-manipulation z-10 hover:scale-105 active:scale-95"
               aria-label={t('next')}
             >
               <FontAwesomeIcon icon={faChevronRight} className="text-sm" />
@@ -277,7 +277,7 @@ export default function TrendingAcrossGroupsBanner() {
                 className={`rounded-full transition-all touch-manipulation ${
                   i === index
                     ? 'w-2.5 h-2.5 bg-amber-500'
-                    : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
+                    : 'w-2 h-2 bg-[var(--border-strong)] hover:bg-[var(--text-muted)]'
                 }`}
               />
             ))}

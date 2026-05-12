@@ -41,7 +41,7 @@ const GroupCard = memo(({ group, t }: { group: GroupQuickView; t: any }) => {
       className={`block bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-background-to)] rounded-xl p-3 md:p-4 border border-[var(--theme-border)] hover:shadow-md transition-all ${themeClass}`}
     >
       <div className="flex items-start gap-2 md:gap-3 mb-2 md:mb-3">
-        <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg overflow-hidden ring-1 ring-black/10 shadow-sm bg-[var(--theme-primary-lighter)]">
+        <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg overflow-hidden ring-1 ring-black/10 dark:ring-white/10 shadow-sm bg-[var(--theme-primary-lighter)]">
           <SafeImage
             src={groupImage}
             alt={group.name}
@@ -55,7 +55,7 @@ const GroupCard = memo(({ group, t }: { group: GroupQuickView; t: any }) => {
               <FontAwesomeIcon icon={faCrown} className="text-[var(--theme-primary)] text-xs" title={t('owner')} />
             )}
           </div>
-          <div className="flex items-center gap-2 text-xs text-gray-600">
+          <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
             <FontAwesomeIcon icon={faUsers} className="text-xs" />
             <span>{group.memberCount} {group.memberCount === 1 ? t('member') : t('members')}</span>
           </div>
@@ -75,8 +75,8 @@ const GroupCard = memo(({ group, t }: { group: GroupQuickView; t: any }) => {
             >
               <FontAwesomeIcon icon={faMicrophone} className="text-[var(--theme-primary)] text-xs" />
               <div className="flex-1 min-w-0">
-                <div className="font-medium text-gray-900 truncate">{group.latestWeek.topArtist.name}</div>
-                <div className="text-xs text-gray-500">{t('plays', { count: group.latestWeek.topArtist.playcount })}</div>
+                <div className="font-medium text-[var(--text-primary)] truncate">{group.latestWeek.topArtist.name}</div>
+                <div className="text-xs text-[var(--text-muted)]">{t('plays', { count: group.latestWeek.topArtist.playcount })}</div>
               </div>
             </div>
           )}
@@ -91,29 +91,29 @@ const GroupCard = memo(({ group, t }: { group: GroupQuickView; t: any }) => {
             >
               <FontAwesomeIcon icon={faMusic} className="text-[var(--theme-primary)] text-xs" />
               <div className="flex-1 min-w-0">
-                <div className="font-medium text-gray-900 truncate">{group.latestWeek.topTrack.name}</div>
-                <div className="text-xs text-gray-500">{t('by', { artist: group.latestWeek.topTrack.artist })}</div>
+                <div className="font-medium text-[var(--text-primary)] truncate">{group.latestWeek.topTrack.name}</div>
+                <div className="text-xs text-[var(--text-muted)]">{t('by', { artist: group.latestWeek.topTrack.artist })}</div>
               </div>
             </div>
           )}
         </div>
       ) : (
-        <div className="text-sm text-gray-500 mb-3 italic">{t('noCharts')}</div>
+        <div className="text-sm text-[var(--text-muted)] mb-3 italic">{t('noCharts')}</div>
       )}
 
       {group.userContributions.tracksInChart > 0 && (
-        <div className="text-xs text-gray-600 mb-2">
+        <div className="text-xs text-[var(--text-secondary)] mb-2">
           <span className="font-medium">{t('youContributed', { count: group.userContributions.tracksInChart })}</span>
           {group.userContributions.topContribution && (
-            <span className="text-gray-500">
+            <span className="text-[var(--text-muted)]">
               {' '}• #{group.userContributions.topContribution.position} {group.userContributions.topContribution.name}
             </span>
           )}
         </div>
       )}
 
-      <div className="flex items-center justify-between pt-2 border-t border-[var(--theme-border)]/50">
-        <span className="text-xs text-gray-500">
+      <div className="flex items-center justify-between pt-2 border-t border-[rgb(var(--theme-border-rgb)/0.5)]">
+        <span className="text-xs text-[var(--text-muted)]">
           {group.daysUntilNextChart === 0
             ? t('chartsUpdateToday')
             : group.daysUntilNextChart === 1
@@ -148,11 +148,11 @@ export default function GroupQuickViewCards() {
 
   if (isLoading) {
     return (
-      <div 
-        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
+      <div
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)]"
         style={glassStyle}
       >
-        <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
+        <h2 className="text-xl md:text-2xl font-bold mb-4 text-[var(--text-primary)]">{t('title')}</h2>
         <div className="flex items-center justify-center py-12">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500" />
         </div>
@@ -166,8 +166,8 @@ export default function GroupQuickViewCards() {
     const hasNotificationBanners = pendingInvites > 0 || pendingRequests > 0
 
     return (
-      <div 
-        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
+      <div
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)]"
         style={glassStyle}
       >
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
@@ -194,15 +194,15 @@ export default function GroupQuickViewCards() {
                   border: '1px solid rgba(255, 255, 255, 0.3)',
                 }}
               >
-                <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-yellow-100 text-yellow-700 flex-shrink-0">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-yellow-100 dark:bg-yellow-950/40 text-yellow-700 dark:text-yellow-300 flex-shrink-0">
                   <FontAwesomeIcon icon={faEnvelope} className="text-sm" />
                   <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold">
                     {pendingInvites}
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <div className="font-semibold text-gray-900 text-sm">{tQuick('pendingInvites')}</div>
-                  <div className="text-xs text-gray-600">
+                  <div className="font-semibold text-[var(--text-primary)] text-sm">{tQuick('pendingInvites')}</div>
+                  <div className="text-xs text-[var(--text-secondary)]">
                     {pendingInvites} {pendingInvites === 1 ? tQuick('invite') : tQuick('invites')}
                   </div>
                 </div>
@@ -219,15 +219,15 @@ export default function GroupQuickViewCards() {
                   border: '1px solid rgba(255, 255, 255, 0.3)',
                 }}
               >
-                <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-purple-100 text-purple-700 flex-shrink-0">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 flex-shrink-0">
                   <FontAwesomeIcon icon={faHandPaper} className="text-sm" />
                   <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold">
                     {pendingRequests}
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <div className="font-semibold text-gray-900 text-sm">{tQuick('joinRequests')}</div>
-                  <div className="text-xs text-gray-600">
+                  <div className="font-semibold text-[var(--text-primary)] text-sm">{tQuick('joinRequests')}</div>
+                  <div className="text-xs text-[var(--text-secondary)]">
                     {pendingRequests} {pendingRequests === 1 ? tQuick('request') : tQuick('requests')}
                   </div>
                 </div>
@@ -236,7 +236,7 @@ export default function GroupQuickViewCards() {
           </div>
         )}
 
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-[var(--text-muted)]">
           <p className="mb-4">{t('noGroups')}</p>
           <Link
             href="/groups/create"
@@ -261,9 +261,9 @@ export default function GroupQuickViewCards() {
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 md:mb-6">
         <div>
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900">{t('title')}</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-[var(--text-primary)]">{t('title')}</h2>
           {groups.some(group => group.canUpdateCharts) && (
-            <p className="text-sm text-gray-600 mt-1">{t('chartsCanBeUpdated')}</p>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">{t('chartsCanBeUpdated')}</p>
           )}
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -276,7 +276,7 @@ export default function GroupQuickViewCards() {
           </Link>
           <Link
             href="/groups"
-            className="inline-flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 rounded-lg border border-gray-300 bg-white/80 text-gray-700 hover:bg-gray-100 transition-colors font-semibold text-sm"
+            className="inline-flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 rounded-lg border border-[var(--border-strong)] bg-[var(--surface-card)] text-[var(--text-secondary)] hover:bg-[var(--surface-base)] transition-colors font-semibold text-sm"
           >
             {t('viewAll')}
           </Link>
@@ -296,15 +296,15 @@ export default function GroupQuickViewCards() {
                 border: '1px solid rgba(255, 255, 255, 0.3)',
               }}
             >
-              <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-yellow-100 text-yellow-700 flex-shrink-0">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-yellow-100 dark:bg-yellow-950/40 text-yellow-700 dark:text-yellow-300 flex-shrink-0">
                 <FontAwesomeIcon icon={faEnvelope} className="text-sm" />
                 <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold">
                   {pendingInvites}
                 </span>
               </div>
               <div className="min-w-0">
-                <div className="font-semibold text-gray-900 text-sm">{tQuick('pendingInvites')}</div>
-                <div className="text-xs text-gray-600">
+                <div className="font-semibold text-[var(--text-primary)] text-sm">{tQuick('pendingInvites')}</div>
+                <div className="text-xs text-[var(--text-secondary)]">
                   {pendingInvites} {pendingInvites === 1 ? tQuick('invite') : tQuick('invites')}
                 </div>
               </div>
@@ -321,15 +321,15 @@ export default function GroupQuickViewCards() {
                 border: '1px solid rgba(255, 255, 255, 0.3)',
               }}
             >
-              <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-purple-100 text-purple-700 flex-shrink-0">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 flex-shrink-0">
                 <FontAwesomeIcon icon={faHandPaper} className="text-sm" />
                 <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold">
                   {pendingRequests}
                 </span>
               </div>
               <div className="min-w-0">
-                <div className="font-semibold text-gray-900 text-sm">{tQuick('joinRequests')}</div>
-                <div className="text-xs text-gray-600">
+                <div className="font-semibold text-[var(--text-primary)] text-sm">{tQuick('joinRequests')}</div>
+                <div className="text-xs text-[var(--text-secondary)]">
                   {pendingRequests} {pendingRequests === 1 ? tQuick('request') : tQuick('requests')}
                 </div>
               </div>

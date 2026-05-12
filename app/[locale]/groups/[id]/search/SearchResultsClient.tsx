@@ -79,7 +79,7 @@ export default function SearchResultsClient({
 
   return (
     <div className="mt-10">
-      <div className="bg-white/60 backdrop-blur-md rounded-xl p-6 border border-theme shadow-sm">
+      <div className="bg-white/60 dark:bg-[var(--surface-card)] backdrop-blur-md rounded-xl p-6 border border-theme shadow-sm">
         {/* Search Input */}
         <div className="mb-6">
           <div className="flex gap-3">
@@ -90,7 +90,7 @@ export default function SearchResultsClient({
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Search for artists, tracks, or albums..."
-                className="w-full px-4 py-3 pr-12 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 transition-all"
+                className="w-full px-4 py-3 pr-12 rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 transition-all"
                 style={{
                   background: 'rgba(255, 255, 255, 0.4)',
                   backdropFilter: 'blur(12px) saturate(180%)',
@@ -101,7 +101,7 @@ export default function SearchResultsClient({
               />
               <FontAwesomeIcon
                 icon={faSearch}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)]"
               />
             </div>
             <button
@@ -141,11 +141,11 @@ export default function SearchResultsClient({
             <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-[var(--theme-primary)]" />
           </div>
         ) : !hasSearched ? (
-          <div className="text-center py-12 text-gray-600">
+          <div className="text-center py-12 text-[var(--text-secondary)]">
             <p className="text-lg">Enter a search term to find chart entries.</p>
           </div>
         ) : !hasResults ? (
-          <div className="text-center py-12 text-gray-600">
+          <div className="text-center py-12 text-[var(--text-secondary)]">
             <p className="text-lg font-medium mb-2">No results found</p>
             <p className="text-sm">Try a different search term.</p>
           </div>
@@ -165,7 +165,7 @@ export default function SearchResultsClient({
                       href={`/groups/${groupId}/charts/artist/${getSlug(artist, 'artists')}`}
                       className="block p-4 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
                     >
-                      <div className="font-semibold text-gray-900 hover:text-[var(--theme-primary)] transition-colors">
+                      <div className="font-semibold text-[var(--text-primary)] hover:text-[var(--theme-primary)] transition-colors">
                         {artist.name}
                       </div>
                     </Link>
@@ -188,11 +188,11 @@ export default function SearchResultsClient({
                       href={`/groups/${groupId}/charts/track/${getSlug(track, 'tracks')}`}
                       className="block p-4 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
                     >
-                      <div className="font-semibold text-gray-900 hover:text-[var(--theme-primary)] transition-colors">
+                      <div className="font-semibold text-[var(--text-primary)] hover:text-[var(--theme-primary)] transition-colors">
                         {track.name}
                       </div>
                       {track.artist && (
-                        <div className="text-sm text-gray-600 mt-1">by {track.artist}</div>
+                        <div className="text-sm text-[var(--text-secondary)] mt-1">by {track.artist}</div>
                       )}
                     </Link>
                   ))}
@@ -214,11 +214,11 @@ export default function SearchResultsClient({
                       href={`/groups/${groupId}/charts/album/${getSlug(album, 'albums')}`}
                       className="block p-4 rounded-lg bg-[var(--theme-background-from)] hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
                     >
-                      <div className="font-semibold text-gray-900 hover:text-[var(--theme-primary)] transition-colors">
+                      <div className="font-semibold text-[var(--text-primary)] hover:text-[var(--theme-primary)] transition-colors">
                         {album.name}
                       </div>
                       {album.artist && (
-                        <div className="text-sm text-gray-600 mt-1">by {album.artist}</div>
+                        <div className="text-sm text-[var(--text-secondary)] mt-1">by {album.artist}</div>
                       )}
                     </Link>
                   ))}

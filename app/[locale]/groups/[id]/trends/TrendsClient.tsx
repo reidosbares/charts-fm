@@ -295,20 +295,20 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
       renderEntry: (entry: any, idx: number) => (
         <div
           key={idx}
-          className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
+          className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 dark:bg-[var(--surface-card)] hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.5)] transition-all border border-[var(--theme-border)]"
         >
           <FontAwesomeIcon icon={getChartTypeIcon(entry.chartType)} className="text-base md:text-lg text-[var(--theme-primary)] flex-shrink-0" />
           <div className="flex-1 min-w-0">
             <Link
               href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-              className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
+              className="font-semibold text-sm md:text-base text-[var(--text-primary)] truncate hover:text-[var(--theme-primary)] transition-colors block"
             >
               {entry.name}
               {entry.artist && (
-                <span className="text-xs md:text-sm font-normal text-gray-600"> {t('by', { artist: entry.artist })}</span>
+                <span className="text-xs md:text-sm font-normal text-[var(--text-secondary)]"> {t('by', { artist: entry.artist })}</span>
               )}
             </Link>
-            <div className="text-xs md:text-sm text-gray-500">
+            <div className="text-xs md:text-sm text-[var(--text-muted)]">
               #{entry.position} • {entry.currentStreak} {entry.currentStreak === 1 ? t('week') : t('weeks')} {t('streak')}
             </div>
           </div>
@@ -326,20 +326,20 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
       renderEntry: (entry: any, idx: number) => (
         <div
           key={idx}
-          className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
+          className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 dark:bg-[var(--surface-card)] hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.5)] transition-all border border-[var(--theme-border)]"
         >
           <FontAwesomeIcon icon={getChartTypeIcon(entry.chartType)} className="text-base md:text-lg text-[var(--theme-primary)] flex-shrink-0" />
           <div className="flex-1 min-w-0">
             <Link
               href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-              className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
+              className="font-semibold text-sm md:text-base text-[var(--text-primary)] truncate hover:text-[var(--theme-primary)] transition-colors block"
             >
               {entry.name}
               {entry.artist && (
-                <span className="text-xs md:text-sm font-normal text-gray-600"> {t('by', { artist: entry.artist })}</span>
+                <span className="text-xs md:text-sm font-normal text-[var(--text-secondary)]"> {t('by', { artist: entry.artist })}</span>
               )}
             </Link>
-            <div className="text-xs md:text-sm text-gray-500">
+            <div className="text-xs md:text-sm text-[var(--text-muted)]">
               #{entry.position} • {t('returnedAfter', { count: entry.weeksAway, unit: entry.weeksAway === 1 ? t('week') : t('weeks') })}
             </div>
           </div>
@@ -360,8 +360,8 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
             key={idx}
             className={`relative flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg transition-all border overflow-hidden ${
               isNumberOne
-                ? 'bg-gradient-to-r from-yellow-50 to-amber-50 hover:from-yellow-100 hover:to-amber-100 border-yellow-300'
-                : 'bg-white/80 hover:bg-[var(--theme-primary-lighter)]/50 border-[var(--theme-border)]'
+                ? 'bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-950/40 dark:to-amber-950/40 hover:from-yellow-100 hover:to-amber-100 dark:hover:from-yellow-900/40 dark:hover:to-amber-900/40 border-yellow-300 dark:border-yellow-700'
+                : 'bg-white/80 dark:bg-[var(--surface-card)] hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.5)] border-[var(--theme-border)]'
             }`}
           >
             {isNumberOne && (
@@ -376,14 +376,14 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
             <div className="flex-1 min-w-0">
               <Link
                 href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-                className={`font-semibold truncate block text-sm md:text-base ${isNumberOne ? 'text-yellow-900 hover:text-yellow-700' : 'text-gray-900 hover:text-[var(--theme-primary)]'} transition-colors`}
+                className={`font-semibold truncate block text-sm md:text-base ${isNumberOne ? 'text-yellow-900 dark:text-yellow-200 hover:text-yellow-700' : 'text-[var(--text-primary)] hover:text-[var(--theme-primary)]'} transition-colors`}
               >
                 {entry.name}
                 {entry.artist && (
-                  <span className={`text-xs md:text-sm font-normal ${isNumberOne ? 'text-yellow-700' : 'text-gray-600'}`}> {t('by', { artist: entry.artist })}</span>
+                  <span className={`text-xs md:text-sm font-normal ${isNumberOne ? 'text-yellow-700 dark:text-yellow-400' : 'text-[var(--text-secondary)]'}`}> {t('by', { artist: entry.artist })}</span>
                 )}
               </Link>
-              <div className={`text-xs md:text-sm ${isNumberOne ? 'text-yellow-700 font-semibold' : 'text-gray-500'}`}>{t('debutedAt', { position: entry.position })}</div>
+              <div className={`text-xs md:text-sm ${isNumberOne ? 'text-yellow-700 dark:text-yellow-400 font-semibold' : 'text-[var(--text-muted)]'}`}>{t('debutedAt', { position: entry.position })}</div>
             </div>
           </div>
         )
@@ -394,7 +394,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
     trendBlocks.push({
       title: t('biggestClimbers'),
       icon: faArrowUp,
-      iconColor: 'text-green-600',
+      iconColor: 'text-green-600 dark:text-green-400',
       entries: data.biggestClimbers,
       renderEntry: (entry: any, idx: number) => {
         const isPeakPosition = entry.highestPosition !== undefined && entry.position === entry.highestPosition
@@ -403,8 +403,8 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
             key={idx}
             className={`relative flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg transition-all border overflow-hidden ${
               isPeakPosition
-                ? 'bg-gradient-to-r from-blue-50 to-cyan-50 hover:from-blue-100 hover:to-cyan-100 border-blue-300'
-                : 'bg-white/80 hover:bg-[var(--theme-primary-lighter)]/50 border-[var(--theme-border)]'
+                ? 'bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/40 dark:to-cyan-950/40 hover:from-blue-100 hover:to-cyan-100 dark:hover:from-blue-900/40 dark:hover:to-cyan-900/40 border-blue-300 dark:border-blue-700'
+                : 'bg-white/80 dark:bg-[var(--surface-card)] hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.5)] border-[var(--theme-border)]'
             }`}
           >
             {isPeakPosition && (
@@ -419,17 +419,17 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
             <div className="flex-1 min-w-0">
               <Link
                 href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-                className={`font-semibold truncate block text-sm md:text-base ${isPeakPosition ? 'text-blue-900 hover:text-blue-700' : 'text-gray-900 hover:text-[var(--theme-primary)]'} transition-colors`}
+                className={`font-semibold truncate block text-sm md:text-base ${isPeakPosition ? 'text-blue-900 dark:text-blue-200 hover:text-blue-700' : 'text-[var(--text-primary)] hover:text-[var(--theme-primary)]'} transition-colors`}
               >
                 {entry.name}
                 {entry.artist && (
-                  <span className={`text-xs md:text-sm font-normal ${isPeakPosition ? 'text-blue-700' : 'text-gray-600'}`}> {t('by', { artist: entry.artist })}</span>
+                  <span className={`text-xs md:text-sm font-normal ${isPeakPosition ? 'text-blue-700 dark:text-blue-400' : 'text-[var(--text-secondary)]'}`}> {t('by', { artist: entry.artist })}</span>
                 )}
               </Link>
-              <div className={`text-xs md:text-sm font-semibold ${isPeakPosition ? 'text-blue-700' : 'text-green-600'}`}>
+              <div className={`text-xs md:text-sm font-semibold ${isPeakPosition ? 'text-blue-700 dark:text-blue-400' : 'text-green-600 dark:text-green-400'}`}>
                 ↑ {Math.abs(entry.positionChange || 0)} {t('positions')}
                 {entry.oldPosition && entry.newPosition && (
-                  <span className={`ml-1 ${isPeakPosition ? 'text-blue-600' : 'text-gray-500'}`}>({entry.oldPosition} → {entry.newPosition})</span>
+                  <span className={`ml-1 ${isPeakPosition ? 'text-blue-600 dark:text-blue-400' : 'text-[var(--text-muted)]'}`}>({entry.oldPosition} → {entry.newPosition})</span>
                 )}
               </div>
             </div>
@@ -442,28 +442,28 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
     trendBlocks.push({
       title: t('biggestFallers'),
       icon: faArrowDown,
-      iconColor: 'text-red-600',
+      iconColor: 'text-red-600 dark:text-red-400',
       entries: data.biggestFallers,
       renderEntry: (entry: any, idx: number) => (
         <div
           key={idx}
-          className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
+          className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 dark:bg-[var(--surface-card)] hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.5)] transition-all border border-[var(--theme-border)]"
         >
           <FontAwesomeIcon icon={getChartTypeIcon(entry.chartType)} className="text-base md:text-lg text-[var(--theme-primary)] flex-shrink-0" />
           <div className="flex-1 min-w-0">
             <Link
               href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-              className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
+              className="font-semibold text-sm md:text-base text-[var(--text-primary)] truncate hover:text-[var(--theme-primary)] transition-colors block"
             >
               {entry.name}
               {entry.artist && (
-                <span className="text-xs md:text-sm font-normal text-gray-600"> {t('by', { artist: entry.artist })}</span>
+                <span className="text-xs md:text-sm font-normal text-[var(--text-secondary)]"> {t('by', { artist: entry.artist })}</span>
               )}
             </Link>
-            <div className="text-xs md:text-sm text-red-600 font-semibold">
+            <div className="text-xs md:text-sm text-red-600 dark:text-red-400 font-semibold">
               ↓ {Math.abs(entry.positionChange || 0)} {t('positions')}
               {entry.oldPosition && entry.newPosition && (
-                <span className="text-gray-500 ml-1">({entry.oldPosition} → {entry.newPosition})</span>
+                <span className="text-[var(--text-muted)] ml-1">({entry.oldPosition} → {entry.newPosition})</span>
               )}
             </div>
           </div>
@@ -475,25 +475,25 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
     trendBlocks.push({
       title: t('exits'),
       icon: faSkull,
-      iconColor: 'text-gray-600',
+      iconColor: 'text-[var(--text-secondary)]',
       entries: data.exits,
       renderEntry: (entry: any, idx: number) => (
         <div
           key={idx}
-          className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
+          className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 dark:bg-[var(--surface-card)] hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.5)] transition-all border border-[var(--theme-border)]"
         >
           <FontAwesomeIcon icon={getChartTypeIcon(entry.chartType)} className="text-base md:text-lg text-[var(--theme-primary)] flex-shrink-0" />
           <div className="flex-1 min-w-0">
             <Link
               href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-              className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
+              className="font-semibold text-sm md:text-base text-[var(--text-primary)] truncate hover:text-[var(--theme-primary)] transition-colors block"
             >
               {entry.name}
               {entry.artist && (
-                <span className="text-xs md:text-sm font-normal text-gray-600"> {t('by', { artist: entry.artist })}</span>
+                <span className="text-xs md:text-sm font-normal text-[var(--text-secondary)]"> {t('by', { artist: entry.artist })}</span>
               )}
             </Link>
-            <div className="text-xs md:text-sm text-gray-500">{t('lastPosition')}: #{entry.lastPosition}</div>
+            <div className="text-xs md:text-sm text-[var(--text-muted)]">{t('lastPosition')}: #{entry.lastPosition}</div>
           </div>
         </div>
       ),
@@ -521,35 +521,35 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                     <FontAwesomeIcon icon={faSpinner} className="animate-spin text-xl md:text-2xl text-[var(--theme-primary)]" />
                   </div>
                 ) : isEmpty ? (
-                  <div className="text-gray-500 text-center py-4 md:py-6 text-xs md:text-sm italic">
+                  <div className="text-[var(--text-muted)] text-center py-4 md:py-6 text-xs md:text-sm italic">
                     {t('noEntriesToShow')}
                   </div>
                 ) : (
                   <>
                     {/* First 3 entries - normal size */}
                     {firstThree.map((entry: any, idx: number) => block.renderEntry(entry, idx))}
-                    
+
                     {/* Remaining entries - smaller size */}
                     {rest.length > 0 && (
-                      <div className="space-y-1 md:space-y-1.5 pt-2 border-t border-[var(--theme-border)]/50">
+                      <div className="space-y-1 md:space-y-1.5 pt-2 border-t border-[rgb(var(--theme-border-rgb)/0.5)]">
                         {rest.map((entry: any, idx: number) => (
                           <div
                             key={idx + 3}
-                            className="flex items-center gap-2 px-2 py-1.5 rounded bg-white/60 hover:bg-[var(--theme-primary-lighter)]/30 transition-all border border-[var(--theme-border)]/50"
+                            className="flex items-center gap-2 px-2 py-1.5 rounded bg-white/60 dark:bg-[var(--surface-card)] hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.3)] transition-all border border-[rgb(var(--theme-border-rgb)/0.5)]"
                           >
                             <FontAwesomeIcon icon={getChartTypeIcon(entry.chartType)} className="text-xs text-[var(--theme-primary)] flex-shrink-0" />
                             <div className="flex-1 min-w-0">
                               <Link
                                 href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-                                className="text-xs font-medium text-gray-800 truncate hover:text-[var(--theme-primary)] transition-colors block"
+                                className="text-xs font-medium text-[var(--text-primary)] truncate hover:text-[var(--theme-primary)] transition-colors block"
                               >
                                 {entry.name}
                                 {entry.artist && (
-                                  <span className="text-xs font-normal text-gray-500"> {t('by', { artist: entry.artist })}</span>
+                                  <span className="text-xs font-normal text-[var(--text-muted)]"> {t('by', { artist: entry.artist })}</span>
                                 )}
                               </Link>
                               {entry.position && (
-                                <div className="text-xs text-gray-500">
+                                <div className="text-xs text-[var(--text-muted)]">
                                   {block.title === t('newEntries') ? t('debutedAt', { position: entry.position }) : `#${entry.position}`}
                                   {entry.weeksAway !== undefined && entry.weeksAway !== null && (
                                     <span className="ml-1">• {t('returnedAfter', { count: entry.weeksAway, unit: entry.weeksAway === 1 ? t('week') : t('weeks') })}</span>
@@ -560,15 +560,15 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                                 </div>
                               )}
                               {entry.positionChange !== undefined && entry.positionChange !== null && (
-                                <div className={`text-xs font-medium ${entry.positionChange < 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                <div className={`text-xs font-medium ${entry.positionChange < 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                                   {entry.positionChange < 0 ? '↑' : '↓'} {Math.abs(entry.positionChange)} {t('positions')}
                                   {entry.oldPosition && entry.newPosition && (
-                                    <span className="text-gray-400 ml-1">({entry.oldPosition} → {entry.newPosition})</span>
+                                    <span className="text-[var(--text-muted)] ml-1">({entry.oldPosition} → {entry.newPosition})</span>
                                   )}
                                 </div>
                               )}
                               {entry.lastPosition && (
-                                <div className="text-xs text-gray-500">{t('lastPosition')}: #{entry.lastPosition}</div>
+                                <div className="text-xs text-[var(--text-muted)]">{t('lastPosition')}: #{entry.lastPosition}</div>
                               )}
                             </div>
                           </div>
@@ -578,8 +578,8 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                     
                     {/* Total count footer for New Entries and Exits */}
                     {showTotal && (
-                      <div className="pt-2 md:pt-3 mt-2 md:mt-3 border-t border-[var(--theme-border)]/50">
-                        <div className="text-xs md:text-sm text-gray-600 text-center">
+                      <div className="pt-2 md:pt-3 mt-2 md:mt-3 border-t border-[rgb(var(--theme-border-rgb)/0.5)]">
+                        <div className="text-xs md:text-sm text-[var(--text-secondary)] text-center">
                           {block.title === t('newEntries') ? t('totalNewEntries', { count: totalCount }) : t('totalExits', { count: totalCount })}
                         </div>
                       </div>
@@ -612,15 +612,15 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
             ) : personalizedStats ? (
               <div className="space-y-3 md:space-y-4">
                 {/* Total Contribution */}
-                <div className="bg-white/80 rounded-lg p-3 md:p-4 border border-theme">
-                  <div className="text-xs md:text-sm text-gray-600 mb-1">{t('yourTotalContribution')}</div>
+                <div className="bg-white/80 dark:bg-[var(--surface-card)] rounded-lg p-3 md:p-4 border border-theme">
+                  <div className="text-xs md:text-sm text-[var(--text-secondary)] mb-1">{t('yourTotalContribution')}</div>
                   <div className="text-xl md:text-2xl font-bold text-[var(--theme-text)]">
                     {personalizedStats.totalContribution?.plays?.toLocaleString() || 0} {t('plays')}
                   </div>
                   <div className="text-sm md:text-base text-[var(--theme-text)] mt-1">
                     {personalizedStats.totalContribution?.vs?.toFixed(2) || 0} {t('vs')}
                     {personalizedStats.totalContribution?.percentageOfGroup && (
-                      <span className="text-xs text-gray-600 ml-2">
+                      <span className="text-xs text-[var(--text-secondary)] ml-2">
                         ({personalizedStats.totalContribution.percentageOfGroup.toFixed(1)}% {t('ofGroup')})
                       </span>
                     )}
@@ -629,12 +629,12 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
 
                 {/* Taste Match */}
                 {personalizedStats.tasteMatch && (
-                  <div className="bg-white/80 rounded-lg p-2 md:p-3 border border-theme">
+                  <div className="bg-white/80 dark:bg-[var(--surface-card)] rounded-lg p-2 md:p-3 border border-theme">
                     <h4 className="text-xs md:text-sm font-bold text-[var(--theme-primary-dark)] mb-1">{t('yourTasteMatch')}</h4>
                     <div className="text-xl md:text-2xl font-bold text-[var(--theme-text)]">
                       {personalizedStats.tasteMatch.overlapPercentage.toFixed(1)}%
                     </div>
-                    <div className="text-xs text-gray-600 mt-1">
+                    <div className="text-xs text-[var(--text-secondary)] mt-1">
                       {personalizedStats.tasteMatch.sharedEntries} {t('sharedEntries')}
                     </div>
                   </div>
@@ -642,23 +642,23 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
 
                 {/* You vs MVP */}
                 {personalizedStats.vsMVP && (
-                  <div className="bg-white/80 rounded-lg p-2 md:p-3 border border-theme">
+                  <div className="bg-white/80 dark:bg-[var(--surface-card)] rounded-lg p-2 md:p-3 border border-theme">
                     <h4 className="text-xs md:text-sm font-bold text-[var(--theme-primary-dark)] mb-1">{t('youVsMVP')}</h4>
-                    <div className="text-sm md:text-base font-bold text-gray-900 mb-1">{personalizedStats.vsMVP.mvpName}</div>
+                    <div className="text-sm md:text-base font-bold text-[var(--text-primary)] mb-1">{personalizedStats.vsMVP.mvpName}</div>
                     <div className="text-xs md:text-sm text-[var(--theme-text)]">
                       {t('you')}: {personalizedStats.vsMVP.userTotal.toFixed(2)} {t('vs')}
                     </div>
                     <div className="text-xs md:text-sm text-[var(--theme-text)]">
                       {t('mvp')}: {personalizedStats.vsMVP.mvpTotal.toFixed(2)} {t('vs')}
                     </div>
-                    <div className="text-xs text-gray-600 mt-1">
+                    <div className="text-xs text-[var(--text-secondary)] mt-1">
                       {personalizedStats.vsMVP.percentage.toFixed(1)}% {t('ofMVP')}
                     </div>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="text-gray-500 text-center py-3 md:py-4 text-xs md:text-sm">
+              <div className="text-[var(--text-muted)] text-center py-3 md:py-4 text-xs md:text-sm">
                 {t('noPersonalizedStats')}
               </div>
             )}
@@ -675,13 +675,13 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                 {topContributors.map((contributor: any, idx: number) => (
                   <div
                     key={idx}
-                    className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 hover:bg-[var(--theme-primary-lighter)]/50 transition-all border border-[var(--theme-border)]"
+                    className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 dark:bg-[var(--surface-card)] hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.5)] transition-all border border-[var(--theme-border)]"
                   >
                     <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-[var(--theme-primary)] flex items-center justify-center text-white font-bold text-xs md:text-sm shadow-sm">
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-gray-900 text-xs md:text-sm truncate">{contributor.name}</div>
+                      <div className="font-semibold text-[var(--text-primary)] text-xs md:text-sm truncate">{contributor.name}</div>
                       <div className="text-xs text-[var(--theme-text)]">
                         {contributor.totalPlays?.toLocaleString() || 0} {t('plays')}
                         {contributor.totalVS && (
@@ -702,8 +702,8 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                 <FontAwesomeIcon icon={faTrophy} className="text-lg md:text-xl text-[var(--theme-primary)] flex-shrink-0" />
                 <h3 className="text-lg md:text-xl font-bold text-[var(--theme-text)]">{t('thisWeeksMVP')}</h3>
               </div>
-              <div className="text-lg md:text-xl font-bold text-gray-900 mb-1 md:mb-2">{memberSpotlight.name}</div>
-              <div className="text-sm md:text-base text-gray-700 mb-2 md:mb-3">
+              <div className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-1 md:mb-2">{memberSpotlight.name}</div>
+              <div className="text-sm md:text-base text-[var(--text-secondary)] mb-2 md:mb-3">
                 {memberSpotlight.highlight === 'Most Active Listener' 
                   ? t('highlightMostActiveListener')
                   : memberSpotlight.highlight === 'MVP & Most Diverse Listener'
@@ -711,7 +711,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                   : memberSpotlight.highlight}
               </div>
               {memberSpotlight.topContributions && memberSpotlight.topContributions.length > 0 && (
-                <div className="text-xs text-gray-600">
+                <div className="text-xs text-[var(--text-secondary)]">
                   {t('topContributions', { contributions: memberSpotlight.topContributions.map((c: any) => c.name).join(', ') })}
                 </div>
               )}
@@ -733,14 +733,14 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                 <FontAwesomeIcon icon={faUsers} className="text-lg md:text-xl text-[var(--theme-primary)] flex-shrink-0" />
                 <h3 className="text-lg md:text-xl font-bold text-[var(--theme-text)]">{t('highlightMostDiverseListener')}</h3>
               </div>
-              <div className="text-lg md:text-xl font-bold text-gray-900 mb-1 md:mb-2">{mostDiverseSpotlight.name}</div>
-              <div className="text-sm md:text-base text-gray-700 mb-2 md:mb-3">
+              <div className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-1 md:mb-2">{mostDiverseSpotlight.name}</div>
+              <div className="text-sm md:text-base text-[var(--text-secondary)] mb-2 md:mb-3">
                 {mostDiverseSpotlight.highlight === 'Most Diverse Listener' 
                   ? t('highlightMostDiverseListener')
                   : mostDiverseSpotlight.highlight}
               </div>
               {mostDiverseSpotlight.topContributions && mostDiverseSpotlight.topContributions.length > 0 && (
-                <div className="text-xs text-gray-600">
+                <div className="text-xs text-[var(--text-secondary)]">
                   {t('topContributions', { contributions: mostDiverseSpotlight.topContributions.map((c: any) => c.name).join(', ') })}
                 </div>
               )}
@@ -771,7 +771,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                     <Tooltip content={t('topContributionsTooltip')} position="right">
                       <button
                         type="button"
-                        className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-600 hover:text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 focus:ring-offset-1"
+                        className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full bg-[var(--surface-base)] hover:bg-[var(--border-subtle)] active:bg-[var(--border-strong)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 focus:ring-offset-1"
                         aria-label={t('topContributionsTooltip')}
                       >
                         <FontAwesomeIcon icon={faQuestionCircle} className="text-xs md:text-sm flex-shrink-0" />
@@ -782,17 +782,17 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                     {personalizedStats.topContributions.slice(0, 5).map((contribution: any, idx: number) => (
                       <div
                         key={idx}
-                        className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 border border-[var(--theme-border)]"
+                        className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 dark:bg-[var(--surface-card)] border border-[var(--theme-border)]"
                       >
                         <FontAwesomeIcon icon={getChartTypeIcon(contribution.chartType)} className="text-base md:text-lg text-[var(--theme-primary)] flex-shrink-0" />
                         <div className="flex-1 min-w-0">
                           <Link
                             href={`/groups/${groupId}/charts/${getChartTypePath(contribution.chartType)}/${generateSlug(contribution.entryKey, contribution.chartType as ChartType)}`}
-                            className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
+                            className="font-semibold text-sm md:text-base text-[var(--text-primary)] truncate hover:text-[var(--theme-primary)] transition-colors block"
                           >
                             {contribution.name}
                             {contribution.artist && (
-                              <span className="text-xs md:text-sm font-normal text-gray-600"> {t('by', { artist: contribution.artist })}</span>
+                              <span className="text-xs md:text-sm font-normal text-[var(--text-secondary)]"> {t('by', { artist: contribution.artist })}</span>
                             )}
                           </Link>
                           <div className="text-xs md:text-sm text-[var(--theme-text)]">
@@ -813,7 +813,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                     <Tooltip content={t('entriesYouDroveTooltip')} position="right">
                       <button
                         type="button"
-                        className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-600 hover:text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 focus:ring-offset-1"
+                        className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full bg-[var(--surface-base)] hover:bg-[var(--border-subtle)] active:bg-[var(--border-strong)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 focus:ring-offset-1"
                         aria-label={t('entriesYouDroveTooltip')}
                       >
                         <FontAwesomeIcon icon={faQuestionCircle} className="text-xs md:text-sm flex-shrink-0" />
@@ -824,17 +824,17 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                     {personalizedStats.entriesDriven.slice(0, 5).map((entry: any, idx: number) => (
                       <div
                         key={idx}
-                        className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 border border-[var(--theme-border)]"
+                        className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 dark:bg-[var(--surface-card)] border border-[var(--theme-border)]"
                       >
                         <FontAwesomeIcon icon={getChartTypeIcon(entry.chartType)} className="text-base md:text-lg text-[var(--theme-primary)] flex-shrink-0" />
                         <div className="flex-1 min-w-0">
                           <Link
                             href={`/groups/${groupId}/charts/${getChartTypePath(entry.chartType)}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-                            className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
+                            className="font-semibold text-sm md:text-base text-[var(--text-primary)] truncate hover:text-[var(--theme-primary)] transition-colors block"
                           >
                             {entry.name}
                             {entry.artist && (
-                              <span className="text-xs md:text-sm font-normal text-gray-600"> {t('by', { artist: entry.artist })}</span>
+                              <span className="text-xs md:text-sm font-normal text-[var(--text-secondary)]"> {t('by', { artist: entry.artist })}</span>
                             )}
                           </Link>
                           <div className="text-xs md:text-sm text-[var(--theme-text)]">
@@ -855,7 +855,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                         <Tooltip content={t('yourBiggestMoversTooltip')} position="right">
                           <button
                             type="button"
-                            className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-600 hover:text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 focus:ring-offset-1"
+                            className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full bg-[var(--surface-base)] hover:bg-[var(--border-subtle)] active:bg-[var(--border-strong)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 focus:ring-offset-1"
                             aria-label={t('yourBiggestMoversTooltip')}
                           >
                             <FontAwesomeIcon icon={faQuestionCircle} className="text-xs md:text-sm flex-shrink-0" />
@@ -866,20 +866,20 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                         {personalizedStats.biggestMovers.map((mover: any, idx: number) => (
                           <div
                             key={idx}
-                            className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 border border-[var(--theme-border)]"
+                            className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-white/80 dark:bg-[var(--surface-card)] border border-[var(--theme-border)]"
                           >
-                            <FontAwesomeIcon icon={faArrowUp} className="text-base md:text-lg text-green-600 flex-shrink-0" />
+                            <FontAwesomeIcon icon={faArrowUp} className="text-base md:text-lg text-green-600 dark:text-green-400 flex-shrink-0" />
                             <div className="flex-1 min-w-0">
                               <Link
                                 href={`/groups/${groupId}/charts/${getChartTypePath(mover.chartType)}/${generateSlug(mover.entryKey, mover.chartType as ChartType)}`}
-                                className="font-semibold text-sm md:text-base text-gray-900 truncate hover:text-[var(--theme-primary)] transition-colors block"
+                                className="font-semibold text-sm md:text-base text-[var(--text-primary)] truncate hover:text-[var(--theme-primary)] transition-colors block"
                               >
                                 {mover.name}
                                 {mover.artist && (
-                                  <span className="text-xs md:text-sm font-normal text-gray-600"> {t('by', { artist: mover.artist })}</span>
+                                  <span className="text-xs md:text-sm font-normal text-[var(--text-secondary)]"> {t('by', { artist: mover.artist })}</span>
                                 )}
                               </Link>
-                              <div className="text-xs md:text-sm text-green-600 font-semibold">
+                              <div className="text-xs md:text-sm text-green-600 dark:text-green-400 font-semibold">
                                 ↑ {Math.abs(mover.positionChange)} {t('positions')} ({mover.oldPosition} → {mover.newPosition})
                               </div>
                             </div>
@@ -890,7 +890,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
                   )}
                 </div>
               ) : (
-                <div className="text-gray-500 text-center py-4 md:py-6 text-xs md:text-sm italic">
+                <div className="text-[var(--text-muted)] text-center py-4 md:py-6 text-xs md:text-sm italic">
                   {t('noEntriesToShow')}
                 </div>
               )}
@@ -912,30 +912,30 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
     <div className="space-y-4 md:space-y-6">
       {/* Quick Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
-          <div className="text-xs md:text-sm text-gray-600 mb-1">{t('totalPlays')}</div>
+        <div className="bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
+          <div className="text-xs md:text-sm text-[var(--text-secondary)] mb-1">{t('totalPlays')}</div>
           <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">
             {trends.totalPlays?.toLocaleString() || 0} <span className="text-base md:text-lg font-normal">{t('plays')}</span>
           </div>
           {trends.totalPlaysChange !== null && trends.totalPlaysChange !== undefined && (
-            <div className={`text-xs md:text-sm mt-1 ${trends.totalPlaysChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <div className={`text-xs md:text-sm mt-1 ${trends.totalPlaysChange >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
               {trends.totalPlaysChange >= 0 ? '+' : ''}{trends.totalPlaysChange.toLocaleString()} {t('fromLastWeek')}
             </div>
           )}
         </div>
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
-          <div className="text-xs md:text-sm text-gray-600 mb-1">{t('newEntries')}</div>
+        <div className="bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
+          <div className="text-xs md:text-sm text-[var(--text-secondary)] mb-1">{t('newEntries')}</div>
           <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">
             {trends.chartTurnover || 0} <span className="text-base md:text-lg font-normal">{t('newEntriesLowercase')}</span>
           </div>
-          <div className="text-xs md:text-sm text-gray-500 mt-1">{t('thisWeek')}</div>
+          <div className="text-xs md:text-sm text-[var(--text-muted)] mt-1">{t('thisWeek')}</div>
         </div>
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
-          <div className="text-xs md:text-sm text-gray-600 mb-1">{t('exits')}</div>
+        <div className="bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
+          <div className="text-xs md:text-sm text-[var(--text-secondary)] mb-1">{t('exits')}</div>
           <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">
             {(trends.exits as any[])?.length || 0} <span className="text-base md:text-lg font-normal">{t('entries')}</span>
           </div>
-          <div className="text-xs md:text-sm text-gray-500 mt-1">{t('droppedOut')}</div>
+          <div className="text-xs md:text-sm text-[var(--text-muted)] mt-1">{t('droppedOut')}</div>
         </div>
       </div>
 
@@ -947,7 +947,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
               <h3 className="text-lg md:text-xl font-bold text-[var(--theme-primary-dark)] mb-1 md:mb-2">
                 {t('seeHowWeekPlayedOut')}
               </h3>
-              <p className="text-gray-600 text-xs md:text-sm">
+              <p className="text-[var(--text-secondary)] text-xs md:text-sm">
                 {t('exploreCompleteCharts')}
               </p>
             </div>
@@ -967,14 +967,14 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
 
       {/* Fun Facts */}
       {funFacts.length > 0 && (
-        <div className="bg-white/60 backdrop-blur-sm rounded-xl shadow-sm p-4 md:p-6 border border-theme">
+        <div className="bg-white/60 dark:bg-[var(--surface-card)] backdrop-blur-sm rounded-xl shadow-sm p-4 md:p-6 border border-theme">
           <h3 className="text-lg md:text-xl font-bold text-[var(--theme-primary-dark)] mb-3 md:mb-4 flex items-center gap-2">
             <FontAwesomeIcon icon={faLaughBeam} className="text-base md:text-lg text-[var(--theme-primary-dark)] flex-shrink-0" />
             {t('funFactsTitle')}
           </h3>
           <div className="space-y-2 md:space-y-3">
             {funFacts.slice(0, 3).map((fact: string, idx: number) => (
-              <div key={idx} className="text-base md:text-lg text-gray-700 p-2 md:p-3 rounded-lg bg-white/80 border border-[var(--theme-border)]">
+              <div key={idx} className="text-base md:text-lg text-[var(--text-secondary)] p-2 md:p-3 rounded-lg bg-white/80 dark:bg-[var(--surface-elevated)] border border-[var(--theme-border)]">
                 {translateFunFact(fact, t)}
               </div>
             ))}
@@ -994,7 +994,7 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
         </div>
 
         {/* Tab Content */}
-        <div className="bg-white/60 backdrop-blur-md rounded-xl p-4 md:p-6 border border-theme shadow-sm overflow-visible">
+        <div className="bg-white/60 dark:bg-[var(--surface-card)] backdrop-blur-md rounded-xl p-4 md:p-6 border border-theme shadow-sm overflow-visible">
           {activeTab === 'members' && renderMembersContent()}
           {activeTab === 'artists' && renderCategoryContent('artists')}
           {activeTab === 'tracks' && renderCategoryContent('tracks')}

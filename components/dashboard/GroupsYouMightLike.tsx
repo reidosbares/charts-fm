@@ -99,10 +99,10 @@ export default function GroupsYouMightLike() {
 
   if (!hasSearched) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
+      <div className="bg-[var(--surface-card)] rounded-xl shadow-sm p-6 border border-[var(--border-subtle)]">
+        <h2 className="text-2xl font-bold mb-4 text-[var(--text-primary)]">{t('title')}</h2>
         <div className="text-center py-8">
-          <p className="text-gray-600 mb-6">
+          <p className="text-[var(--text-secondary)] mb-6">
             {t('description')}
           </p>
           <button
@@ -126,12 +126,12 @@ export default function GroupsYouMightLike() {
 
   if (isLoading || isCalculating) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
+      <div className="bg-[var(--surface-card)] rounded-xl shadow-sm p-6 border border-[var(--border-subtle)]">
+        <h2 className="text-2xl font-bold mb-4 text-[var(--text-primary)]">{t('title')}</h2>
         <div className="flex flex-col items-center justify-center py-12">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-yellow-500 mb-4" />
-          <p className="text-gray-600">{t('calculating')}</p>
-          <p className="text-sm text-gray-500 mt-2">{t('calculatingSubtext')}</p>
+          <p className="text-[var(--text-secondary)]">{t('calculating')}</p>
+          <p className="text-sm text-[var(--text-muted)] mt-2">{t('calculatingSubtext')}</p>
         </div>
       </div>
     )
@@ -139,10 +139,10 @@ export default function GroupsYouMightLike() {
 
   if (error) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
+      <div className="bg-[var(--surface-card)] rounded-xl shadow-sm p-6 border border-[var(--border-subtle)]">
+        <h2 className="text-2xl font-bold mb-4 text-[var(--text-primary)]">{t('title')}</h2>
         <div className="text-center py-8">
-          <p className="text-gray-600 mb-4">{error}</p>
+          <p className="text-[var(--text-secondary)] mb-4">{error}</p>
           <button
             onClick={handleFindGroups}
             className="px-6 py-3 bg-yellow-500 text-black rounded-lg hover:bg-yellow-400 transition-colors font-semibold"
@@ -156,9 +156,9 @@ export default function GroupsYouMightLike() {
 
   if (recommendations.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">{t('title')}</h2>
-        <div className="text-center py-8 text-gray-500">
+      <div className="bg-[var(--surface-card)] rounded-xl shadow-sm p-6 border border-[var(--border-subtle)]">
+        <h2 className="text-2xl font-bold mb-4 text-[var(--text-primary)]">{t('title')}</h2>
+        <div className="text-center py-8 text-[var(--text-muted)]">
           <p className="mb-4">{t('noRecommendations')}</p>
           <button
             onClick={handleFindGroups}
@@ -173,7 +173,7 @@ export default function GroupsYouMightLike() {
 
   return (
     <div
-        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200 relative"
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)] relative"
       style={{
         background: 'rgba(255, 255, 255, 0.6)',
         backdropFilter: 'blur(12px) saturate(180%)',
@@ -181,7 +181,7 @@ export default function GroupsYouMightLike() {
       }}
     >
       <div className="flex items-center justify-between mb-4 md:mb-6">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-900">{t('title')}</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-[var(--text-primary)]">{t('title')}</h2>
         <button
           onClick={handleFindGroups}
           className="text-xs md:text-sm text-yellow-600 hover:text-yellow-700 font-medium"
@@ -198,21 +198,21 @@ export default function GroupsYouMightLike() {
           return (
             <div
               key={rec.group.id}
-              className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow relative"
+              className="border border-[var(--border-subtle)] rounded-lg overflow-hidden hover:shadow-md transition-shadow relative"
             >
               {/* Reject Button */}
               <button
                 onClick={() => handleReject(rec.group.id)}
-                className="absolute top-2 right-2 z-10 bg-white rounded-full p-2 shadow-sm hover:bg-gray-100 transition-colors"
+                className="absolute top-2 right-2 z-10 bg-[var(--surface-card)] rounded-full p-2 shadow-sm hover:bg-[var(--surface-base)] transition-colors"
                 title={t('notInterested')}
               >
-                <FontAwesomeIcon icon={faTimes} className="text-gray-500 text-sm" />
+                <FontAwesomeIcon icon={faTimes} className="text-[var(--text-muted)] text-sm" />
               </button>
 
               <Link href={`/groups/${rec.group.id}/public`}>
                 <div className="p-4">
                   {/* Group Image */}
-                  <div className="relative w-full h-32 mb-3 rounded-lg overflow-hidden bg-gray-100">
+                  <div className="relative w-full h-32 mb-3 rounded-lg overflow-hidden bg-[var(--surface-base)]">
                     <SafeImage
                       src={groupImage}
                       alt={rec.group.name}
@@ -221,20 +221,20 @@ export default function GroupsYouMightLike() {
                   </div>
 
                   {/* Group Name */}
-                  <h3 className="font-bold text-lg mb-2 text-gray-900 truncate">
+                  <h3 className="font-bold text-lg mb-2 text-[var(--text-primary)] truncate">
                     {rec.group.name}
                   </h3>
 
                   {/* Compatibility Score */}
                   <div className="flex items-center gap-2 mb-3">
                     <FontAwesomeIcon icon={faHeart} className="text-red-500" />
-                    <span className="font-semibold text-gray-900">
+                    <span className="font-semibold text-[var(--text-primary)]">
                       {t('match', { count: Math.round(rec.score) })}
                     </span>
                   </div>
 
                   {/* Group Info */}
-                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                  <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)] mb-3">
                     <div className="flex items-center gap-1">
                       <FontAwesomeIcon icon={faUsers} className="text-xs" />
                       <span>{t('members', { count: rec.group._count.members })}</span>
