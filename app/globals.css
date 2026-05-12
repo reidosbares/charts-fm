@@ -37,8 +37,8 @@
 
   /* Semantic surface/text/border — dark values */
   --surface-base: rgb(15 15 17);
-  --surface-card: rgb(28 28 32);
-  --surface-elevated: rgb(38 38 44);
+  --surface-card: rgb(20 20 24);
+  --surface-elevated: rgb(32 32 38);
   --text-primary: rgb(237 237 240);
   --text-secondary: rgb(170 170 180);
   --text-muted: rgb(125 125 135);

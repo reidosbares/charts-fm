@@ -226,8 +226,8 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
     }
   }
 
-  const cardBase = 'rounded-2xl p-3 md:p-5 backdrop-blur-md bg-white/70 dark:bg-[rgb(28_28_32)]/70 border border-white/50 dark:border-white/10 shadow-lg'
-  const cardFeatured = 'rounded-2xl p-4 md:p-6 backdrop-blur-md bg-white/70 dark:bg-[rgb(28_28_32)]/70 border border-white/50 dark:border-white/10 shadow-lg ring-1 ring-white/30 dark:ring-white/10'
+  const cardBase = 'rounded-2xl p-3 md:p-5 backdrop-blur-md bg-white/70 dark:bg-[var(--surface-card)] border border-white/50 dark:border-white/15 shadow-lg'
+  const cardFeatured = 'rounded-2xl p-4 md:p-6 backdrop-blur-md bg-white/70 dark:bg-[var(--surface-card)] border border-white/50 dark:border-white/15 shadow-lg ring-1 ring-white/30 dark:ring-white/10'
 
   return (
     <div>
@@ -331,7 +331,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
         )}
 
         {/* Explore full trends - prominent CTA card under MVP */}
-        <div className="md:col-span-2 rounded-2xl p-4 md:p-6 backdrop-blur-md border border-[var(--theme-primary)]/30 shadow-lg bg-gradient-to-br from-[var(--theme-primary-lighter)]/40 via-white/70 to-white/80 dark:via-[rgb(28_28_32)]/70 dark:to-[rgb(28_28_32)]/80">
+        <div className="md:col-span-2 rounded-2xl p-4 md:p-6 backdrop-blur-md border border-[var(--theme-primary)]/30 shadow-lg bg-gradient-to-br from-[var(--theme-primary-lighter)]/40 via-white/70 to-white/80 dark:via-[var(--surface-card)] dark:to-[var(--surface-card)]">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-start gap-3 md:gap-4">
               <div className="w-11 h-11 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[var(--theme-primary)]/20 text-[var(--theme-primary)] flex-shrink-0">
@@ -417,7 +417,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
                     className={`relative flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg transition-all border overflow-hidden ${
                       isNumberOne
                         ? 'bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-950/40 dark:to-amber-950/40 hover:from-yellow-100 hover:to-amber-100 dark:hover:from-yellow-900/40 dark:hover:to-amber-900/40 border-yellow-300 dark:border-yellow-700'
-                        : 'bg-white/80 dark:bg-[rgb(28_28_32)]/80 hover:bg-[var(--theme-primary-lighter)]/50 border-[var(--theme-border)]'
+                        : 'bg-white/80 dark:bg-[var(--surface-card)] hover:bg-[var(--theme-primary-lighter)]/50 border-[var(--theme-border)]'
                     }`}
                   >
                     {isNumberOne && (
@@ -468,7 +468,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
             </h3>
             <div className="space-y-2 md:space-y-3">
               {funFacts.slice(0, 3).map((fact: string, idx: number) => (
-                <div key={idx} className="text-base md:text-lg text-[var(--text-secondary)] p-2 md:p-3 rounded-lg bg-white/80 dark:bg-[rgb(28_28_32)]/80 border border-[var(--theme-border)]">
+                <div key={idx} className="text-base md:text-lg text-[var(--text-secondary)] p-2 md:p-3 rounded-lg bg-white/80 dark:bg-[var(--surface-card)] border border-[var(--theme-border)]">
                   {translateFunFact(fact, t)}
                 </div>
               ))}
