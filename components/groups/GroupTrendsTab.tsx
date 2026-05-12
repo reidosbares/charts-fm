@@ -200,8 +200,8 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
           <div className="mb-4 text-[var(--theme-primary)]">
             <FontAwesomeIcon icon={faFire} className="text-4xl md:text-5xl" />
           </div>
-          <p className="text-gray-700 text-base md:text-lg mb-2 font-medium">{t('noTrendsAvailable')}</p>
-          <p className="text-gray-500 text-sm mb-6">{t('generateChartsToSee')}</p>
+          <p className="text-[var(--text-secondary)] text-base md:text-lg mb-2 font-medium">{t('noTrendsAvailable')}</p>
+          <p className="text-[var(--text-muted)] text-sm mb-6">{t('generateChartsToSee')}</p>
         </div>
       </div>
     )
@@ -226,37 +226,37 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
     }
   }
 
-  const cardBase = 'rounded-2xl p-3 md:p-5 backdrop-blur-md bg-white/70 border border-white/50 shadow-lg'
-  const cardFeatured = 'rounded-2xl p-4 md:p-6 backdrop-blur-md bg-white/70 border border-white/50 shadow-lg ring-1 ring-white/30'
+  const cardBase = 'rounded-2xl p-3 md:p-5 backdrop-blur-md bg-white/70 dark:bg-[rgb(28_28_32)]/70 border border-white/50 dark:border-white/10 shadow-lg'
+  const cardFeatured = 'rounded-2xl p-4 md:p-6 backdrop-blur-md bg-white/70 dark:bg-[rgb(28_28_32)]/70 border border-white/50 dark:border-white/10 shadow-lg ring-1 ring-white/30 dark:ring-white/10'
 
   return (
     <div>
       {/* Bento grid: Row 1 - Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div className={`${cardBase}`}>
-          <div className="text-xs md:text-sm text-gray-600 mb-1">{t('totalPlays')}</div>
+          <div className="text-xs md:text-sm text-[var(--text-secondary)] mb-1">{t('totalPlays')}</div>
           <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">
             {trends.totalPlays?.toLocaleString() || 0} <span className="text-base md:text-lg font-normal">{t('plays')}</span>
           </div>
           {trends.totalPlaysChange !== null && trends.totalPlaysChange !== undefined && (
-            <div className={`text-xs md:text-sm mt-1 ${trends.totalPlaysChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <div className={`text-xs md:text-sm mt-1 ${trends.totalPlaysChange >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
               {trends.totalPlaysChange >= 0 ? '+' : ''}{trends.totalPlaysChange.toLocaleString()} {t('fromLastWeek')}
             </div>
           )}
         </div>
         <div className={`${cardBase}`}>
-          <div className="text-xs md:text-sm text-gray-600 mb-1">{t('newEntries')}</div>
+          <div className="text-xs md:text-sm text-[var(--text-secondary)] mb-1">{t('newEntries')}</div>
           <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">
             {trends.chartTurnover || 0} <span className="text-base md:text-lg font-normal">{t('newEntriesLowercase')}</span>
           </div>
-          <div className="text-xs md:text-sm text-gray-500 mt-1">{t('thisWeek')}</div>
+          <div className="text-xs md:text-sm text-[var(--text-muted)] mt-1">{t('thisWeek')}</div>
         </div>
         <div className={`${cardBase}`}>
-          <div className="text-xs md:text-sm text-gray-600 mb-1">{t('exits')}</div>
+          <div className="text-xs md:text-sm text-[var(--text-secondary)] mb-1">{t('exits')}</div>
           <div className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">
             {(trends.exits as any[])?.length || 0} <span className="text-base md:text-lg font-normal">{t('entries')}</span>
           </div>
-          <div className="text-xs md:text-sm text-gray-500 mt-1">{t('droppedOut')}</div>
+          <div className="text-xs md:text-sm text-[var(--text-muted)] mt-1">{t('droppedOut')}</div>
         </div>
       </div>
 
@@ -285,29 +285,29 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
                   href={`/u/${encodeURIComponent(memberSpotlight.lastfmUsername)}`}
                   className="flex items-center gap-3 md:gap-4 hover:opacity-90 transition-opacity min-w-0"
                 >
-                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/10 shadow-sm bg-[var(--theme-primary-lighter)]">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/10 dark:ring-white/10 shadow-sm bg-[var(--theme-primary-lighter)]">
                     <SafeImage
                       src={memberSpotlight.image}
                       alt={memberSpotlight.name}
                       className="object-cover w-full h-full"
                     />
                   </div>
-                  <span className="text-xl md:text-2xl font-bold text-gray-900 truncate">{memberSpotlight.name}</span>
+                  <span className="text-xl md:text-2xl font-bold text-[var(--text-primary)] truncate">{memberSpotlight.name}</span>
                 </Link>
               ) : (
                 <>
-                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/10 shadow-sm bg-[var(--theme-primary-lighter)]">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/10 dark:ring-white/10 shadow-sm bg-[var(--theme-primary-lighter)]">
                     <SafeImage
                       src={memberSpotlight.image}
                       alt={memberSpotlight.name}
                       className="object-cover w-full h-full"
                     />
                   </div>
-                  <div className="text-xl md:text-2xl font-bold text-gray-900">{memberSpotlight.name}</div>
+                  <div className="text-xl md:text-2xl font-bold text-[var(--text-primary)]">{memberSpotlight.name}</div>
                 </>
               )}
             </div>
-            <div className="text-base md:text-lg text-gray-700 mb-3 md:mb-4">
+            <div className="text-base md:text-lg text-[var(--text-secondary)] mb-3 md:mb-4">
               {memberSpotlight.highlight === 'Most Active Listener'
                 ? t('highlightMostActiveListener')
                 : memberSpotlight.highlight === 'MVP & Most Diverse Listener'
@@ -315,7 +315,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
                   : memberSpotlight.highlight}
             </div>
             {memberSpotlight.topContributions && memberSpotlight.topContributions.length > 0 && (
-              <div className="text-xs md:text-sm text-gray-600">
+              <div className="text-xs md:text-sm text-[var(--text-secondary)]">
                 {t('topContributions', { contributions: memberSpotlight.topContributions.map((c: any) => c.name).join(', ') })}
               </div>
             )}
@@ -331,7 +331,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
         )}
 
         {/* Explore full trends - prominent CTA card under MVP */}
-        <div className="md:col-span-2 rounded-2xl p-4 md:p-6 backdrop-blur-md border border-[var(--theme-primary)]/30 shadow-lg bg-gradient-to-br from-[var(--theme-primary-lighter)]/40 via-white/70 to-white/80">
+        <div className="md:col-span-2 rounded-2xl p-4 md:p-6 backdrop-blur-md border border-[var(--theme-primary)]/30 shadow-lg bg-gradient-to-br from-[var(--theme-primary-lighter)]/40 via-white/70 to-white/80 dark:via-[rgb(28_28_32)]/70 dark:to-[rgb(28_28_32)]/80">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-start gap-3 md:gap-4">
               <div className="w-11 h-11 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[var(--theme-primary)]/20 text-[var(--theme-primary)] flex-shrink-0">
@@ -339,7 +339,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
               </div>
               <div>
                 <h3 className="text-lg md:text-xl font-bold text-[var(--theme-primary-dark)] mb-0.5">{t('exploreFullTrends')}</h3>
-                <p className="text-sm md:text-base text-gray-600">{t('exploreFullTrendsTagline')}</p>
+                <p className="text-sm md:text-base text-[var(--text-secondary)]">{t('exploreFullTrendsTagline')}</p>
               </div>
             </div>
             <LiquidGlassLink
@@ -358,7 +358,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
           const isPeakPosition = biggestClimbers[0].highestPosition !== undefined && biggestClimbers[0].position === biggestClimbers[0].highestPosition
           return (
             <div className={`relative ${cardBase} overflow-hidden ${
-              isPeakPosition ? 'border-blue-300 bg-gradient-to-r from-blue-50/80 to-cyan-50/80' : ''
+              isPeakPosition ? 'border-blue-300 dark:border-blue-700 bg-gradient-to-r from-blue-50/80 to-cyan-50/80 dark:from-blue-950/40 dark:to-cyan-950/40' : ''
             }`}>
               {isPeakPosition && (
                 <div className="absolute top-2 right-0 bg-blue-500 text-white text-xs font-bold px-4 md:px-8 py-1 md:py-1.5 transform rotate-12 translate-x-1 shadow-md z-10 whitespace-nowrap">
@@ -366,33 +366,33 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
                 </div>
               )}
               <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
-                <FontAwesomeIcon icon={faArrowUp} className={`text-xl md:text-2xl ${isPeakPosition ? 'text-blue-600' : 'text-green-600'}`} />
-                <h3 className={`text-lg md:text-xl font-bold ${isPeakPosition ? 'text-blue-900' : 'text-[var(--theme-primary-dark)]'}`}>{t('biggestClimber')}</h3>
+                <FontAwesomeIcon icon={faArrowUp} className={`text-xl md:text-2xl ${isPeakPosition ? 'text-blue-600 dark:text-blue-300' : 'text-green-600 dark:text-green-400'}`} />
+                <h3 className={`text-lg md:text-xl font-bold ${isPeakPosition ? 'text-blue-900 dark:text-blue-200' : 'text-[var(--theme-primary-dark)]'}`}>{t('biggestClimber')}</h3>
               </div>
               <div className="flex items-center gap-2 md:gap-4">
                 {biggestClimberImage ? (
-                  <div className="w-14 h-14 md:w-20 md:h-20 rounded-lg overflow-hidden flex-shrink-0 bg-[var(--theme-primary-lighter)] ring-1 ring-black/10 shadow-sm">
+                  <div className="w-14 h-14 md:w-20 md:h-20 rounded-lg overflow-hidden flex-shrink-0 bg-[var(--theme-primary-lighter)] ring-1 ring-black/10 dark:ring-white/10 shadow-sm">
                     <SafeImage src={biggestClimberImage} alt={biggestClimbers[0].name} className="object-cover w-full h-full" />
                   </div>
                 ) : (
-                  <FontAwesomeIcon icon={getChartTypeIcon(biggestClimbers[0].chartType)} className={`text-2xl md:text-3xl flex-shrink-0 ${isPeakPosition ? 'text-blue-600' : 'text-[var(--theme-primary)]'}`} />
+                  <FontAwesomeIcon icon={getChartTypeIcon(biggestClimbers[0].chartType)} className={`text-2xl md:text-3xl flex-shrink-0 ${isPeakPosition ? 'text-blue-600 dark:text-blue-300' : 'text-[var(--theme-primary)]'}`} />
                 )}
                 <div className="flex-1 min-w-0">
                   <Link
                     href={`/groups/${groupId}/charts/${biggestClimbers[0].chartType === 'artists' ? 'artist' : biggestClimbers[0].chartType === 'tracks' ? 'track' : 'album'}/${generateSlug(biggestClimbers[0].entryKey, biggestClimbers[0].chartType as ChartType)}`}
-                    className={`text-lg md:text-2xl font-bold mb-1 block truncate ${isPeakPosition ? 'text-blue-900 hover:text-blue-700' : 'text-gray-900 hover:text-[var(--theme-primary)]'} transition-colors`}
+                    className={`text-lg md:text-2xl font-bold mb-1 block truncate ${isPeakPosition ? 'text-blue-900 dark:text-blue-200 hover:text-blue-700 dark:hover:text-blue-300' : 'text-[var(--text-primary)] hover:text-[var(--theme-primary)]'} transition-colors`}
                   >
                     {biggestClimbers[0].name}
                     {biggestClimbers[0].artist && (
-                      <span className={`text-sm md:text-lg font-normal ${isPeakPosition ? 'text-blue-700' : 'text-gray-600'}`}> {t('by', { artist: biggestClimbers[0].artist })}</span>
+                      <span className={`text-sm md:text-lg font-normal ${isPeakPosition ? 'text-blue-700 dark:text-blue-300' : 'text-[var(--text-secondary)]'}`}> {t('by', { artist: biggestClimbers[0].artist })}</span>
                     )}
                   </Link>
-                  <div className={`text-base md:text-lg font-semibold ${isPeakPosition ? 'text-blue-700' : 'text-[var(--theme-text)]'}`}>
+                  <div className={`text-base md:text-lg font-semibold ${isPeakPosition ? 'text-blue-700 dark:text-blue-300' : 'text-[var(--theme-text)]'}`}>
                     {Math.abs(biggestClimbers[0].positionChange || 0) === 1
                       ? t('jumpedPositions', { count: Math.abs(biggestClimbers[0].positionChange || 0) })
                       : t('jumpedPositionsPlural', { count: Math.abs(biggestClimbers[0].positionChange || 0) })}
                     {biggestClimbers[0].oldPosition && biggestClimbers[0].newPosition && (
-                      <span className={`text-xs md:text-sm ml-2 ${isPeakPosition ? 'text-blue-600' : 'text-gray-600'}`}>
+                      <span className={`text-xs md:text-sm ml-2 ${isPeakPosition ? 'text-blue-600 dark:text-blue-300' : 'text-[var(--text-secondary)]'}`}>
                         ({biggestClimbers[0].oldPosition} → {biggestClimbers[0].newPosition})
                       </span>
                     )}
@@ -416,8 +416,8 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
                     key={idx}
                     className={`relative flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg transition-all border overflow-hidden ${
                       isNumberOne
-                        ? 'bg-gradient-to-r from-yellow-50 to-amber-50 hover:from-yellow-100 hover:to-amber-100 border-yellow-300'
-                        : 'bg-white/80 hover:bg-[var(--theme-primary-lighter)]/50 border-[var(--theme-border)]'
+                        ? 'bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-950/40 dark:to-amber-950/40 hover:from-yellow-100 hover:to-amber-100 dark:hover:from-yellow-900/40 dark:hover:to-amber-900/40 border-yellow-300 dark:border-yellow-700'
+                        : 'bg-white/80 dark:bg-[rgb(28_28_32)]/80 hover:bg-[var(--theme-primary-lighter)]/50 border-[var(--theme-border)]'
                     }`}
                   >
                     {isNumberOne && (
@@ -432,26 +432,26 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
                     ) : (
                       <FontAwesomeIcon
                         icon={getChartTypeIcon(entry.chartType)}
-                        className={`text-base md:text-lg flex-shrink-0 ${isNumberOne ? 'text-yellow-600' : 'text-[var(--theme-primary)]'}`}
+                        className={`text-base md:text-lg flex-shrink-0 ${isNumberOne ? 'text-yellow-600 dark:text-yellow-300' : 'text-[var(--theme-primary)]'}`}
                       />
                     )}
                     <div className="flex-1 min-w-0">
                       <Link
                         href={`/groups/${groupId}/charts/${entry.chartType === 'artists' ? 'artist' : entry.chartType === 'tracks' ? 'track' : 'album'}/${generateSlug(entry.entryKey, entry.chartType as ChartType)}`}
-                        className={`font-semibold truncate block text-sm md:text-base ${isNumberOne ? 'text-yellow-900 hover:text-yellow-700' : 'text-gray-900 hover:text-[var(--theme-primary)]'} transition-colors`}
+                        className={`font-semibold truncate block text-sm md:text-base ${isNumberOne ? 'text-yellow-900 dark:text-yellow-200 hover:text-yellow-700 dark:hover:text-yellow-300' : 'text-[var(--text-primary)] hover:text-[var(--theme-primary)]'} transition-colors`}
                       >
                         {entry.name}
                         {entry.artist && (
-                          <span className={`text-xs md:text-sm font-normal ${isNumberOne ? 'text-yellow-700' : 'text-gray-600'}`}> {t('by', { artist: entry.artist })}</span>
+                          <span className={`text-xs md:text-sm font-normal ${isNumberOne ? 'text-yellow-700 dark:text-yellow-300' : 'text-[var(--text-secondary)]'}`}> {t('by', { artist: entry.artist })}</span>
                         )}
                       </Link>
-                      <div className={`text-xs md:text-sm ${isNumberOne ? 'text-yellow-700 font-semibold' : 'text-gray-500'}`}>{t('debutedAt', { position: entry.position })}</div>
+                      <div className={`text-xs md:text-sm ${isNumberOne ? 'text-yellow-700 dark:text-yellow-300 font-semibold' : 'text-[var(--text-muted)]'}`}>{t('debutedAt', { position: entry.position })}</div>
                     </div>
                   </div>
                 )
               })}
               {newEntries.length > 3 && (
-                <div className="text-xs md:text-sm text-gray-500 text-center pt-2">
+                <div className="text-xs md:text-sm text-[var(--text-muted)] text-center pt-2">
                   {t('andMore', { count: newEntries.length - 3 })}
                 </div>
               )}
@@ -468,7 +468,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
             </h3>
             <div className="space-y-2 md:space-y-3">
               {funFacts.slice(0, 3).map((fact: string, idx: number) => (
-                <div key={idx} className="text-base md:text-lg text-gray-700 p-2 md:p-3 rounded-lg bg-white/80 border border-[var(--theme-border)]">
+                <div key={idx} className="text-base md:text-lg text-[var(--text-secondary)] p-2 md:p-3 rounded-lg bg-white/80 dark:bg-[rgb(28_28_32)]/80 border border-[var(--theme-border)]">
                   {translateFunFact(fact, t)}
                 </div>
               ))}
