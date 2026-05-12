@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
 import { THEME_NAMES, type ThemeName } from '@/lib/group-themes'
@@ -39,6 +39,18 @@ export default function StylingTab({
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+
+  // Live-preview: swap the surrounding <main>'s theme class as the user picks tiles
+  // so the entire settings page reflects the choice immediately.
+  useEffect(() => {
+    const main = document.querySelector('main')
+    if (!main) return
+    const next = `theme-${colorTheme.replace('_', '-')}`
+    Array.from(main.classList).forEach((c) => {
+      if (c.startsWith('theme-')) main.classList.remove(c)
+    })
+    main.classList.add(next)
+  }, [colorTheme])
 
   const hasChanges = colorTheme !== (initialColorTheme || 'white')
 
