@@ -10,6 +10,9 @@ import { withDefaultOgImage } from '@/lib/metadata'
 import ThemeSwitch from '@/components/news/ThemeSwitch'
 import ThemePreview from '@/components/news/ThemePreview'
 import { NewsThemeProvider } from '@/components/news/NewsThemeProvider'
+import KudosButton from '@/components/news/KudosButton'
+import { getSession } from '@/lib/auth'
+import { getKudos } from '@/lib/news-kudos'
 
 const mdxComponents = {
   ThemeSwitch,
@@ -75,6 +78,9 @@ export default async function NewsPostPage({ params }: PageProps) {
   if (!post) notFound()
 
   const t = await getTranslations({ locale, namespace: 'news' })
+  const session = await getSession()
+  const userId = session?.user?.id ?? null
+  const kudos = await getKudos(slug, userId)
 
   return (
     <main className="news-post-main flex min-h-screen flex-col pt-4 sm:pt-6 md:pt-8 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 relative transition-colors">
@@ -126,6 +132,15 @@ export default async function NewsPostPage({ params }: PageProps) {
                 }}
               />
             </div>
+
+            <footer className="mt-8 sm:mt-10 pt-6 border-t border-[var(--border-subtle)]">
+              <KudosButton
+                slug={slug}
+                initialCount={kudos.count}
+                initialGiven={kudos.given}
+                canGive={userId !== null}
+              />
+            </footer>
           </article>
         </div>
       </NewsThemeProvider>

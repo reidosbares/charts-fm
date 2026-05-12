@@ -61,8 +61,21 @@ model User {
   artistImageVotes                ArtistImageVote[]
   artistImageReports              ArtistImageReport[]
   certificationsAwarded           Certification[]                @relation("CertificationsAwarded")
+  newsPostKudos                   NewsPostKudos[]
 
   @@map("users")
+}
+
+model NewsPostKudos {
+  id        String   @id @default(cuid())
+  slug      String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([slug, userId])
+  @@index([slug])
+  @@map("news_post_kudos")
 }
 
 model Friendship {

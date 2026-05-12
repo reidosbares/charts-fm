@@ -1,8 +1,11 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHandsClapping } from '@fortawesome/free-solid-svg-icons'
 import { Link } from '@/i18n/routing'
 import { getAllPosts } from '@/lib/news'
+import { getKudosForSlugs } from '@/lib/news-kudos'
 import { withDefaultOgImage } from '@/lib/metadata'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -47,6 +50,7 @@ export default async function NewsListPage({ params }: { params: Promise<{ local
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'news' })
   const posts = await getAllPosts(locale)
+  const kudos = await getKudosForSlugs(posts.map((p) => p.slug), null)
 
   return (
     <main className="flex min-h-screen flex-col pt-4 sm:pt-6 md:pt-8 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 relative">
@@ -96,6 +100,12 @@ export default async function NewsListPage({ params }: { params: Promise<{ local
                       <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
                         {post.excerpt}
                       </p>
+                    )}
+                    {kudos[post.slug] && kudos[post.slug].count > 0 && (
+                      <div className="mt-3 inline-flex items-center gap-1.5 text-xs sm:text-sm text-[var(--text-muted)]">
+                        <FontAwesomeIcon icon={faHandsClapping} className="w-3.5 h-3.5" />
+                        <span>{kudos[post.slug].count}</span>
+                      </div>
                     )}
                   </div>
                 </article>
