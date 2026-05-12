@@ -193,6 +193,9 @@
     "bulkGenerate": "Bulk Generate",
     "impersonatingTitle": "Impersonating {name}",
     "stopImpersonating": "Stop impersonating",
+    "appearanceLight": "Appearance: Light",
+    "appearanceDark": "Appearance: Dark",
+    "appearanceSystem": "Appearance: System",
     "quickAccess": {
       "title": "Quick Access",
       "close": "Close",

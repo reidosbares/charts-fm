@@ -193,6 +193,9 @@
     "bulkGenerate": "Geração em massa",
     "impersonatingTitle": "Personificando {name}",
     "stopImpersonating": "Parar personificação",
+    "appearanceLight": "Aparência: Claro",
+    "appearanceDark": "Aparência: Escuro",
+    "appearanceSystem": "Aparência: Sistema",
     "quickAccess": {
       "title": "Atalho",
       "close": "Fechar",

@@ -11,6 +11,7 @@ import SafeImage from '@/components/SafeImage'
 import { useNavigation } from '@/contexts/NavigationContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
+import AppearanceToggle from '@/components/AppearanceToggle'
 import { GROUP_THEMES } from '@/lib/group-themes'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
@@ -487,7 +488,10 @@ export default function Navbar() {
                   <FontAwesomeIcon icon={faPlus} className="w-4 h-4" />
                 </button>
               ))}
-              
+
+              {/* Appearance Toggle */}
+              <AppearanceToggle />
+
               {/* User Button */}
               <div className="relative">
                 <button
@@ -660,6 +664,7 @@ export default function Navbar() {
               
               {/* Desktop Auth Buttons - hidden on mobile */}
               <div className="hidden md:flex items-center space-x-3">
+              <AppearanceToggle />
               <button
                 onClick={() => setIsSignInModalOpen(true)}
                 className="px-4 py-2 rounded-full text-sm font-semibold text-gray-200 hover:text-white transition-all duration-200"
