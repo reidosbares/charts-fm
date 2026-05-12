@@ -832,6 +832,8 @@
         "background": "Fundo",
         "button": "Botões",
         "titleColor": "Título",
+        "plays": "plays",
+        "viewSample": "Ver",
         "saving": "Salvando...",
         "saveSettings": "Salvar configurações",
         "cancel": "Cancelar",

@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import { useRouter } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
-import { THEME_NAMES, GROUP_THEMES, type ThemeName } from '@/lib/group-themes'
+import { THEME_NAMES, type ThemeName } from '@/lib/group-themes'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 import Toast from '@/components/Toast'
 
@@ -111,21 +111,20 @@ export default function StylingTab({
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
             {THEME_NAMES.map((themeName) => {
-              const theme = GROUP_THEMES[themeName]
               const isSelected = colorTheme === themeName
-              
+              const themeClass = `theme-${themeName.replace('_', '-')}`
+
               return (
                 <label
                   key={themeName}
-                  className={`relative cursor-pointer border-2 rounded-xl p-4 transition-all ${
+                  className={`${themeClass} relative cursor-pointer rounded-xl p-4 transition-all overflow-hidden border-2 ${
                     isSelected
-                      ? 'border-[var(--theme-primary)] bg-[var(--theme-primary-lighter)]/20'
-                      : 'border-[var(--border-strong)] hover:border-[var(--border-strong)]'
+                      ? 'border-[var(--theme-primary)] shadow-lg'
+                      : 'border-[var(--border-subtle)] hover:border-[var(--border-strong)]'
                   }`}
-                  style={isSelected ? {
-                    '--theme-primary': theme.primary,
-                    '--theme-primary-lighter': theme.primaryLighter,
-                  } as React.CSSProperties : undefined}
+                  style={{
+                    backgroundImage: 'linear-gradient(135deg, var(--theme-background-from), var(--theme-background-to))',
+                  }}
                 >
                   <input
                     type="radio"
@@ -135,49 +134,51 @@ export default function StylingTab({
                     onChange={(e) => setColorTheme(e.target.value as ThemeName)}
                     className="sr-only"
                   />
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-[var(--text-primary)]">
+
+                  <div className="relative z-10 space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="font-bold text-base md:text-lg text-[var(--theme-primary-dark)]">
                         {THEME_DISPLAY_NAMES[themeName]}
-                        {themeName === 'white' && <span className="ml-2 text-xs text-[var(--text-muted)]">{t('default')}</span>}
+                        {themeName === 'white' && (
+                          <span className="ml-2 text-xs font-normal text-[var(--theme-text)] opacity-70">
+                            {t('default')}
+                          </span>
+                        )}
                       </h3>
                       {isSelected && (
-                        <div className="w-5 h-5 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: theme.primary }}></div>
+                        <div
+                          className="w-5 h-5 rounded-full shrink-0"
+                          style={{
+                            backgroundColor: 'var(--theme-primary)',
+                            boxShadow: '0 0 0 2px var(--theme-background-from)',
+                          }}
+                        />
                       )}
                     </div>
-                    
-                    {/* Color preview - three colors only */}
-                    <div className="flex gap-2 pt-2">
-                      <div className="flex-1 space-y-1">
-                        <div className="text-xs text-[var(--text-muted)]">{t('background')}</div>
+
+                    <div className="flex items-end justify-between gap-3">
+                      <div>
                         <div
-                          className="h-12 rounded border border-[var(--border-subtle)]"
-                          style={
-                            themeName === 'rainbow'
-                              ? {
-                                  backgroundImage: 'linear-gradient(135deg, rgb(239 68 68), rgb(249 115 22), rgb(234 179 8), rgb(34 197 94), rgb(59 130 246), rgb(147 51 234), rgb(219 39 119), rgb(239 68 68))',
-                                }
-                              : { backgroundColor: theme.backgroundFrom }
-                          }
-                          title={themeName === 'rainbow' ? 'Rainbow gradient background' : 'Background color'}
-                        ></div>
+                          className="text-3xl font-bold leading-none tabular-nums"
+                          style={{ color: 'var(--theme-text)' }}
+                        >
+                          42
+                        </div>
+                        <div
+                          className="text-xs mt-1.5 font-medium"
+                          style={{ color: 'var(--theme-text)', opacity: 0.75 }}
+                        >
+                          {t('plays')}
+                        </div>
                       </div>
-                      <div className="flex-1 space-y-1">
-                        <div className="text-xs text-[var(--text-muted)]">{t('button')}</div>
-                        <div
-                          className="h-12 rounded border border-[var(--border-subtle)]"
-                          style={{ backgroundColor: theme.primaryLight }}
-                          title={t('button')}
-                        ></div>
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <div className="text-xs text-[var(--text-muted)]">{t('titleColor')}</div>
-                        <div
-                          className="h-12 rounded border border-[var(--border-subtle)]"
-                          style={{ backgroundColor: theme.primaryDark }}
-                          title="Title color"
-                        ></div>
+                      <div
+                        className="px-4 py-2 rounded-full text-xs font-semibold shadow-sm"
+                        style={{
+                          backgroundColor: 'var(--theme-primary)',
+                          color: 'var(--theme-button-text)',
+                        }}
+                      >
+                        {t('viewSample')}
                       </div>
                     </div>
                   </div>
