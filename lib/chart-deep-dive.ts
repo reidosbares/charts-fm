@@ -36,7 +36,7 @@ export interface MajorDriver {
 
 export interface MajorDriverResult {
   majorDriver: MajorDriver | null
-  /** True if the major driver was just calculated (not retrieved from cache) */
+  /** True if the major driver changed on this calculation (different user than previously cached, or first-time claim) */
   newlyCalculated: boolean
 }
 
@@ -491,6 +491,11 @@ export async function getEntryMajorDriver(
     }
   }
 
+  // Capture previous driver before recalculation — cache invalidation nulls
+  // majorDriverLastUpdated but leaves majorDriverUserId intact, so this still
+  // reflects who held the title last time we calculated.
+  const previousDriverUserId = stats?.majorDriverUserId ?? null
+
   // Calculate major driver
   const majorDriver = await recalculateMajorDriverEfficient(groupId, chartType, entryKey, chartMode)
 
@@ -546,7 +551,9 @@ export async function getEntryMajorDriver(
     })
   }
 
-  return { majorDriver, newlyCalculated: true }
+  const newDriverUserId = majorDriver?.userId ?? null
+  const newlyClaimed = newDriverUserId !== null && newDriverUserId !== previousDriverUserId
+  return { majorDriver, newlyCalculated: newlyClaimed }
 }
 
 /**
