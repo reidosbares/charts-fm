@@ -1188,7 +1188,7 @@ async function calculatePhase6Records(
   `
   const userMostVSRankings: UserRanking[] = allMembers.map(m => {
     const row = allUserVS.find(r => r.userId === m.userId)
-    return { userId: m.userId, name: memberMap.get(m.userId) || 'Unknown', value: row ? Math.round(row.total_vs) : 0 }
+    return { userId: m.userId, name: memberMap.get(m.userId) || 'Unknown', value: row ? Math.round(row.total_vs * 10) / 10 : 0 }
   }).sort((a, b) => b.value - a.value)
 
   // Most plays
@@ -1422,7 +1422,7 @@ async function calculatePhase6Records(
       records.userOneTrackMind = {
         userId: user.id,
         name: user.name || user.lastfmUsername,
-        value: Math.round(oneTrackMindResult[0].total_vs),
+        value: Math.round(oneTrackMindResult[0].total_vs * 10) / 10,
         entryName: entry?.name || oneTrackMindResult[0].entryKey,
         entryArtist: entry?.artist || null,
       }
@@ -1461,7 +1461,7 @@ async function calculatePhase6Records(
     return {
       userId: m.userId,
       name: memberMap.get(m.userId) || 'Unknown',
-      value: row ? Math.round(row.total_vs) : 0,
+      value: row ? Math.round(row.total_vs * 10) / 10 : 0,
       entryName: entry?.name || '',
       entryArtist: entry?.artist || null,
     }
