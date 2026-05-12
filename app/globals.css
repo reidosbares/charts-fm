@@ -227,6 +227,18 @@ textarea:-ms-input-placeholder {
   border-radius: 50%;
 }
 
+.dark .rdp-day_available {
+  background-color: rgb(60 50 18);
+}
+
+.dark .rdp-day_available:hover {
+  background-color: rgb(90 70 22);
+}
+
+.dark .rdp-day_current-week {
+  background-color: rgb(234 179 8);
+}
+
 /* Dark yellow for navigation arrows and selected date */
 .rdp-root,
 .rdp,
