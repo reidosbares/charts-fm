@@ -802,6 +802,25 @@ main.theme-rainbow {
   background-color: transparent;
 }
 
+/* Multi-color themes in dark mode get atmospheric radial glows
+   layered over the base linear gradient — adds depth without raising
+   overall brightness. */
+.dark main.theme-synthwave.bg-gradient-to-b,
+.dark main.theme-synthwave {
+  background-image:
+    radial-gradient(ellipse 70% 60% at 10% 100%, rgb(180 50 200 / 0.45), transparent 65%),
+    radial-gradient(ellipse 70% 60% at 100% 0%, rgb(40 140 200 / 0.32), transparent 70%),
+    linear-gradient(135deg, rgb(24 14 40), rgb(14 18 38)) !important;
+}
+
+.dark main.theme-sunset.bg-gradient-to-b,
+.dark main.theme-sunset {
+  background-image:
+    radial-gradient(ellipse 75% 55% at 100% 100%, rgb(220 110 30 / 0.45), transparent 65%),
+    radial-gradient(ellipse 60% 50% at 0% 0%, rgb(120 40 100 / 0.32), transparent 75%),
+    linear-gradient(135deg, rgb(38 12 20), rgb(20 8 24)) !important;
+}
+
 /* Theme-aware ring color utility */
 .ring-theme {
   --tw-ring-color: var(--theme-ring);
