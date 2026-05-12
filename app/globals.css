@@ -47,11 +47,24 @@
   --text-primary: rgb(237 237 240);
   --text-secondary: rgb(170 170 180);
   --text-muted: rgb(125 125 135);
-  --border-subtle: rgb(50 50 56);
-  --border-strong: rgb(70 70 78);
+  --border-subtle: rgb(32 32 38);
+  --border-strong: rgb(55 55 62);
+
+  /* Default theme overrides (when no .theme-{name} class is applied — e.g., dashboard, auth) */
+  --theme-primary: rgb(234 179 8);
+  --theme-primary-light: rgb(250 204 21);
+  --theme-primary-dark: rgb(243 244 246);
+  --theme-primary-lighter: rgb(50 44 22);
+  --theme-primary-darker: rgb(161 98 7);
+  --theme-background-from: rgb(20 20 22);
+  --theme-background-to: rgb(16 16 18);
+  --theme-border: rgb(38 38 44);
+  --theme-text: rgb(253 224 71);
+  --theme-ring: rgb(234 179 8);
+  --theme-button-text: black;
   --theme-primary-rgb: 234 179 8;
   --theme-primary-lighter-rgb: 50 44 22;
-  --theme-border-rgb: 55 55 62;
+  --theme-border-rgb: 38 38 44;
 }
 
 body {
