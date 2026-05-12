@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm'
 import Image from 'next/image'
 import { Link } from '@/i18n/routing'
 import { getPost, getAllSlugs } from '@/lib/news'
-import { withDefaultOgImage } from '@/lib/metadata'
+import { getDefaultOgImage, defaultOgImage } from '@/lib/metadata'
 import ThemeSwitch from '@/components/news/ThemeSwitch'
 import ThemePreview from '@/components/news/ThemePreview'
 import { NewsThemeProvider } from '@/components/news/NewsThemeProvider'
@@ -39,7 +39,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const tSite = await getTranslations({ locale, namespace: 'site' })
   const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://chartsfm.com'
 
-  return withDefaultOgImage({
+  const coverUrl = post.cover
+    ? post.cover.startsWith('http')
+      ? post.cover
+      : `${siteUrl}${post.cover}`
+    : null
+
+  const ogImage = coverUrl
+    ? { url: coverUrl, width: 1200, height: 630, alt: post.title }
+    : getDefaultOgImage()
+
+  return {
     title: post.title,
     description: post.excerpt ?? tSite('description'),
     openGraph: {
@@ -50,13 +60,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: post.title,
       description: post.excerpt ?? tSite('description'),
       publishedTime: post.date,
+      images: [ogImage],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.excerpt ?? tSite('description'),
+      images: [coverUrl ?? defaultOgImage],
     },
-  })
+  }
 }
 
 function formatDate(date: string, locale: string): string {
