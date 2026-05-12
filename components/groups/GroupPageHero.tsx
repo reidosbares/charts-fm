@@ -28,20 +28,20 @@ export default function GroupPageHero({ group, breadcrumbs, subheader, actionBut
               {segment.href ? (
                 <Link
                   href={segment.href}
-                  className="text-gray-500 hover:text-[var(--theme-text)] transition-colors break-words"
+                  className="text-[var(--text-muted)] hover:text-[var(--theme-text)] transition-colors break-words"
                 >
                   {segment.label}
                 </Link>
               ) : (
-                <span className="text-gray-900 font-medium break-words">{segment.label}</span>
+                <span className="text-[var(--text-primary)] font-medium break-words">{segment.label}</span>
               )}
-              {index < breadcrumbs.length - 1 && <span className="text-gray-400 flex-shrink-0">/</span>}
+              {index < breadcrumbs.length - 1 && <span className="text-[var(--text-muted)] flex-shrink-0">/</span>}
             </span>
           ))}
         </nav>
         <div className="flex items-center gap-2 md:gap-3">
           <div className={`relative flex-shrink-0 ${narrow ? 'w-8 h-8 md:w-10 md:h-10' : 'w-10 h-10 md:w-12 md:h-12'}`}>
-            <div className={`${narrow ? 'w-8 h-8 md:w-10 md:h-10' : 'w-10 h-10 md:w-12 md:h-12'} rounded-lg overflow-hidden shadow-sm ring-1 ring-black/10 bg-[var(--theme-primary-lighter)]`}>
+            <div className={`${narrow ? 'w-8 h-8 md:w-10 md:h-10' : 'w-10 h-10 md:w-12 md:h-12'} rounded-lg overflow-hidden shadow-sm ring-1 ring-black/10 dark:ring-white/10 bg-[var(--theme-primary-lighter)]`}>
               <SafeImage
                 src={group.image}
                 alt={group.name}
@@ -54,9 +54,9 @@ export default function GroupPageHero({ group, breadcrumbs, subheader, actionBut
               {group.name}
             </h1>
             {typeof subheader === 'string' ? (
-              <p className={`text-gray-500 ${narrow ? 'text-xs mt-0.5' : 'text-xs md:text-sm mt-0.5 md:mt-1'}`}>{subheader}</p>
+              <p className={`text-[var(--text-muted)] ${narrow ? 'text-xs mt-0.5' : 'text-xs md:text-sm mt-0.5 md:mt-1'}`}>{subheader}</p>
             ) : (
-              <div className={`text-gray-500 ${narrow ? 'text-xs mt-0.5' : 'text-xs md:text-sm mt-0.5 md:mt-1'}`}>{subheader}</div>
+              <div className={`text-[var(--text-muted)] ${narrow ? 'text-xs mt-0.5' : 'text-xs md:text-sm mt-0.5 md:mt-1'}`}>{subheader}</div>
             )}
           </div>
           {actionButton && (
