@@ -132,13 +132,10 @@ function ChartHistoryTimeline({
     <div className="bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/30 dark:border-white/10" style={{ overflow: 'visible', contain: 'layout style paint' }}>
       <h2 className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-4 md:mb-6">{t('title')}</h2>
       <div className="relative" style={{ overflow: 'visible' }}>
-        {/* Timeline items container with repeating lines on all rows */}
-        {/* Mobile: line at 20-22px (center of 40-48px bubbles), repeat every 60px */}
-        {/* Desktop: line at 31-33px (center of 48-64px bubbles), repeat every 80px */}
-        <div 
-          className="relative flex flex-wrap items-center gap-2 md:gap-4 pb-8 md:pb-12 pl-4 md:pl-8 timeline-container"
-          style={{ 
-            zIndex: 1, 
+        <div
+          className="relative flex flex-wrap items-center gap-2 md:gap-4 pb-8 md:pb-12 pl-4 md:pl-8"
+          style={{
+            zIndex: 1,
             overflow: 'visible',
           }}
         >
