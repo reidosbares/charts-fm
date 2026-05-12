@@ -31,7 +31,7 @@ export default function Toggle({
           className={`
             relative inline-flex h-6 w-11 items-center rounded-full transition-colors
             focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2
-            ${checked ? 'bg-yellow-500' : 'bg-gray-300'}
+            ${checked ? 'bg-yellow-500' : 'bg-gray-300 dark:bg-gray-600'}
             ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
           `}
         >
@@ -46,7 +46,7 @@ export default function Toggle({
           <label
             id={`${id}-label`}
             htmlFor={id}
-            className={`text-sm font-medium text-gray-700 ${disabled ? 'opacity-50' : 'cursor-pointer'}`}
+            className={`text-sm font-medium text-[var(--text-secondary)] ${disabled ? 'opacity-50' : 'cursor-pointer'}`}
             onClick={() => !disabled && onChange(!checked)}
           >
             {label}
@@ -54,7 +54,7 @@ export default function Toggle({
         )}
       </div>
       {description && (
-        <p className="text-xs text-gray-500 mt-1 ml-[3.5rem]">
+        <p className="text-xs text-[var(--text-muted)] mt-1 ml-[3.5rem]">
           {description}
         </p>
       )}

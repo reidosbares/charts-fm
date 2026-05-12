@@ -46,7 +46,7 @@ export default function PositionMovementIcon({ positionChange, entryType, classN
   }
 
   return (
-    <span className={`inline-flex items-center justify-center text-gray-400 ${className}`} title="No change">
+    <span className={`inline-flex items-center justify-center text-[var(--text-muted)] ${className}`} title="No change">
       <FontAwesomeIcon icon={faMinus} />
     </span>
   )

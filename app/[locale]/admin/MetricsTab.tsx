@@ -58,18 +58,18 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, subtitle, icon }: MetricCardProps) {
   return (
-    <div className="rounded-lg border border-gray-300 bg-white p-4 transition-all hover:shadow-sm">
+    <div className="rounded-lg border border-[var(--border-strong)] bg-[var(--surface-card)] p-4 transition-all hover:shadow-sm">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
             <FontAwesomeIcon
               icon={icon}
-              className="text-lg text-gray-600"
+              className="text-lg text-[var(--text-secondary)]"
             />
-            <h3 className="text-sm font-medium text-gray-700">{title}</h3>
+            <h3 className="text-sm font-medium text-[var(--text-secondary)]">{title}</h3>
           </div>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
-          {subtitle && <p className="text-xs mt-1 text-gray-500">{subtitle}</p>}
+          <p className="text-2xl font-bold text-[var(--text-primary)]">{value}</p>
+          {subtitle && <p className="text-xs mt-1 text-[var(--text-muted)]">{subtitle}</p>}
         </div>
       </div>
     </div>
@@ -114,7 +114,7 @@ export default function MetricsTab() {
       {/* Header with refresh button */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Activity Metrics</h2>
+          <h2 className="text-2xl font-bold text-[var(--text-primary)]">Activity Metrics</h2>
         </div>
         <button
           onClick={() => mutate()}
@@ -131,7 +131,7 @@ export default function MetricsTab() {
 
       {/* Core Metrics Section */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Core Metrics</h3>
+        <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Core Metrics</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <MetricCard
             title="Total Groups"
@@ -182,7 +182,7 @@ export default function MetricsTab() {
 
       {/* Engagement & Activity Section */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Engagement & Activity</h3>
+        <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Engagement & Activity</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <MetricCard
             title="Active Groups"
@@ -220,7 +220,7 @@ export default function MetricsTab() {
 
       {/* Platform Health Section */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Platform Health</h3>
+        <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Platform Health</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <MetricCard
             title="Average Group Size"
@@ -259,7 +259,7 @@ export default function MetricsTab() {
 
       {/* Content & Features Section */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Content & Features</h3>
+        <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Content & Features</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <MetricCard
             title="Artist Images Uploaded"

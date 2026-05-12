@@ -86,10 +86,10 @@ export default function LandingPageClient() {
                 {t('titlePart2')}
               </span>
             </h1>
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 mb-3 md:mb-4 max-w-3xl mx-auto font-inter px-4">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-[var(--text-secondary)] mb-3 md:mb-4 max-w-3xl mx-auto font-inter px-4">
               {t('subtitle')}
             </p>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-6 md:mb-8 lg:mb-10 max-w-2xl mx-auto font-inter px-4">
+            <p className="text-sm sm:text-base md:text-lg text-[var(--text-secondary)] mb-6 md:mb-8 lg:mb-10 max-w-2xl mx-auto font-inter px-4">
               {t('description')}
             </p>
             <div className="flex flex-col justify-center items-center gap-3 md:gap-4">
@@ -101,11 +101,11 @@ export default function LandingPageClient() {
               >
                 {t('getStarted')}
               </LiquidGlassLink>
-              <div className="text-sm md:text-base text-gray-600">
+              <div className="text-sm md:text-base text-[var(--text-secondary)]">
                 {t('alreadyAMember')}{' '}
                 <button
                   onClick={() => setIsSignInModalOpen(true)}
-                  className="text-gray-600 hover:text-gray-900 underline transition-colors"
+                  className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline transition-colors"
                 >
                   {t('cta.logIn')} →
                 </button>
@@ -127,8 +127,8 @@ export default function LandingPageClient() {
               <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-yellow-400/30 to-orange-400/30 rounded-full blur-2xl"></div>
               <div className="relative z-10">
                 <div className="text-4xl md:text-5xl mb-3 md:mb-4">🎵</div>
-                <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{t('features.createGroups.title')}</h3>
-                <p className="text-sm md:text-base text-gray-600 leading-relaxed">
+                <h3 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] mb-2 md:mb-3">{t('features.createGroups.title')}</h3>
+                <p className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed">
                   {t('features.createGroups.description')}
                 </p>
               </div>
@@ -146,8 +146,8 @@ export default function LandingPageClient() {
               <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-pink-400/30 to-purple-400/30 rounded-full blur-2xl"></div>
               <div className="relative z-10">
                 <div className="text-4xl md:text-5xl mb-3 md:mb-4">📊</div>
-                <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{t('features.statsTrends.title')}</h3>
-                <p className="text-sm md:text-base text-gray-600 leading-relaxed">
+                <h3 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] mb-2 md:mb-3">{t('features.statsTrends.title')}</h3>
+                <p className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed">
                   {t('features.statsTrends.description')}
                 </p>
               </div>
@@ -165,8 +165,8 @@ export default function LandingPageClient() {
               <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-orange-400/30 to-red-400/30 rounded-full blur-2xl"></div>
               <div className="relative z-10">
                 <div className="text-4xl md:text-5xl mb-3 md:mb-4">🌟</div>
-                <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{t('features.shareTaste.title')}</h3>
-                <p className="text-sm md:text-base text-gray-600 leading-relaxed">
+                <h3 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] mb-2 md:mb-3">{t('features.shareTaste.title')}</h3>
+                <p className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed">
                   {t('features.shareTaste.description')}
                 </p>
               </div>
@@ -184,10 +184,10 @@ export default function LandingPageClient() {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 via-orange-400/20 to-pink-400/20"></div>
             <div className="relative z-10">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-3 md:mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-3 md:mb-4">
                 {t('cta.title')}
               </h2>
-              <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-6 md:mb-8 max-w-2xl mx-auto font-inter px-4">
+              <p className="text-sm sm:text-base md:text-lg text-[var(--text-secondary)] mb-6 md:mb-8 max-w-2xl mx-auto font-inter px-4">
                 {t('cta.description')}
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-3 md:gap-4">

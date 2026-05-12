@@ -19,7 +19,7 @@ export default async function AdminPage() {
   return (
     <main className="flex min-h-screen flex-col pt-8 pb-24 px-6 md:px-12 lg:px-24 relative">
       <div className="max-w-7xl w-full mx-auto relative z-10">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">
+        <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-8">
           Admin Panel
         </h1>
         <AdminTabs

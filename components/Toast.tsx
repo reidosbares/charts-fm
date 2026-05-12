@@ -37,8 +37,8 @@ export default function Toast({
     ? 'rgba(34, 197, 94, 0.3)'
     : 'rgba(239, 68, 68, 0.3)'
   const textColor = isSuccess
-    ? 'text-green-700'
-    : 'text-red-700'
+    ? 'text-green-700 dark:text-green-300'
+    : 'text-red-700 dark:text-red-300'
   const icon = isSuccess ? '✓' : '✕'
 
   return (

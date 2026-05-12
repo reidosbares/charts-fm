@@ -176,7 +176,7 @@ export default function UserListTab() {
 
   const SortIcon = ({ column }: { column: SortColumn }) => {
     if (sortColumn !== column) {
-      return <span className="text-gray-400 ml-1">↕</span>
+      return <span className="text-[var(--text-muted)] ml-1">↕</span>
     }
     return (
       <span className="ml-1">
@@ -193,96 +193,96 @@ export default function UserListTab() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by email, name, or Last.fm username..."
-          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
+          className="w-full px-3 py-2 bg-[var(--surface-card)] text-[var(--text-primary)] border border-[var(--border-strong)] rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
         />
       </div>
 
       {error && (
-        <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded text-red-700 text-xs">
+        <div className="mb-3 p-2 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded text-red-700 dark:text-red-300 text-xs">
           {error}
         </div>
       )}
 
       {isLoading ? (
-        <div className="text-gray-600 text-sm py-4">Loading...</div>
+        <div className="text-[var(--text-secondary)] text-sm py-4">Loading...</div>
       ) : users.length === 0 ? (
-        <div className="text-gray-600 text-sm py-4">
+        <div className="text-[var(--text-secondary)] text-sm py-4">
           {searchQuery ? 'No users found' : 'Enter a search query to find users'}
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse">
             <thead>
-              <tr className="border-b border-gray-300">
+              <tr className="border-b border-[var(--border-strong)]">
                 <th 
-                  className="text-left p-2 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
+                  className="text-left p-2 font-medium text-[var(--text-secondary)] cursor-pointer hover:bg-[var(--surface-base)] select-none"
                   onClick={() => handleSort('name')}
                 >
                   Name / Email
                   <SortIcon column="name" />
                 </th>
                 <th 
-                  className="text-left p-2 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
+                  className="text-left p-2 font-medium text-[var(--text-secondary)] cursor-pointer hover:bg-[var(--surface-base)] select-none"
                   onClick={() => handleSort('lastfmUsername')}
                 >
                   Last.fm
                   <SortIcon column="lastfmUsername" />
                 </th>
                 <th 
-                  className="text-center p-2 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
+                  className="text-center p-2 font-medium text-[var(--text-secondary)] cursor-pointer hover:bg-[var(--surface-base)] select-none"
                   onClick={() => handleSort('emailVerified')}
                 >
                   Verified
                   <SortIcon column="emailVerified" />
                 </th>
                 <th 
-                  className="text-center p-2 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
+                  className="text-center p-2 font-medium text-[var(--text-secondary)] cursor-pointer hover:bg-[var(--surface-base)] select-none"
                   onClick={() => handleSort('isSuperuser')}
                 >
                   Superuser
                   <SortIcon column="isSuperuser" />
                 </th>
                 <th 
-                  className="text-left p-2 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
+                  className="text-left p-2 font-medium text-[var(--text-secondary)] cursor-pointer hover:bg-[var(--surface-base)] select-none"
                   onClick={() => handleSort('ownedGroups')}
                 >
                   Owns
                   <SortIcon column="ownedGroups" />
                 </th>
                 <th 
-                  className="text-left p-2 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
+                  className="text-left p-2 font-medium text-[var(--text-secondary)] cursor-pointer hover:bg-[var(--surface-base)] select-none"
                   onClick={() => handleSort('memberGroups')}
                 >
                   Member
                   <SortIcon column="memberGroups" />
                 </th>
                 <th 
-                  className="text-left p-2 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
+                  className="text-left p-2 font-medium text-[var(--text-secondary)] cursor-pointer hover:bg-[var(--surface-base)] select-none"
                   onClick={() => handleSort('createdAt')}
                 >
                   Created
                   <SortIcon column="createdAt" />
                 </th>
                 <th 
-                  className="text-left p-2 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
+                  className="text-left p-2 font-medium text-[var(--text-secondary)] cursor-pointer hover:bg-[var(--surface-base)] select-none"
                   onClick={() => handleSort('lastAccessedAt')}
                 >
                   Last Access
                   <SortIcon column="lastAccessedAt" />
                 </th>
-                <th className="text-left p-2 font-medium text-gray-700">
+                <th className="text-left p-2 font-medium text-[var(--text-secondary)]">
                   Actions
                 </th>
               </tr>
             </thead>
             <tbody>
               {sortedUsers.map((user) => (
-                <tr key={user.id} className="border-b border-gray-200 hover:bg-gray-50">
+                <tr key={user.id} className="border-b border-[var(--border-subtle)] hover:bg-[var(--surface-base)]">
                   <td className="p-2">
-                    <div className="font-medium text-gray-900">{user.name || '—'}</div>
-                    <div className="text-xs text-gray-500">{user.email}</div>
+                    <div className="font-medium text-[var(--text-primary)]">{user.name || '—'}</div>
+                    <div className="text-xs text-[var(--text-muted)]">{user.email}</div>
                   </td>
-                  <td className="p-2 text-gray-700">{user.lastfmUsername}</td>
+                  <td className="p-2 text-[var(--text-secondary)]">{user.lastfmUsername}</td>
                   <td className="p-2 text-center">
                     <button
                       onClick={() => toggleVerification(user.id, user.emailVerified)}
@@ -293,7 +293,7 @@ export default function UserListTab() {
                       title={user.emailVerified ? 'Click to unverify' : 'Click to verify'}
                     >
                       {updatingUsers.has(user.id) ? (
-                        <span className="text-gray-400">...</span>
+                        <span className="text-[var(--text-muted)]">...</span>
                       ) : user.emailVerified ? (
                         <span>✓</span>
                       ) : (
@@ -305,7 +305,7 @@ export default function UserListTab() {
                     {user.isSuperuser ? (
                       <span className="text-purple-600">✓</span>
                     ) : (
-                      <span className="text-gray-400">—</span>
+                      <span className="text-[var(--text-muted)]">—</span>
                     )}
                   </td>
                   <td className="p-2">
@@ -322,7 +322,7 @@ export default function UserListTab() {
                         ))}
                       </div>
                     ) : (
-                      <span className="text-gray-400">—</span>
+                      <span className="text-[var(--text-muted)]">—</span>
                     )}
                   </td>
                   <td className="p-2">
@@ -331,7 +331,7 @@ export default function UserListTab() {
                         {user.memberGroups.map((group) => (
                           <span
                             key={group.id}
-                            className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-700 rounded"
+                            className="text-xs px-1.5 py-0.5 bg-[var(--surface-base)] text-[var(--text-secondary)] rounded"
                             title={group.name}
                           >
                             {group.name}
@@ -339,16 +339,16 @@ export default function UserListTab() {
                         ))}
                       </div>
                     ) : (
-                      <span className="text-gray-400">—</span>
+                      <span className="text-[var(--text-muted)]">—</span>
                     )}
                   </td>
-                  <td className="p-2 text-gray-600 text-xs">
+                  <td className="p-2 text-[var(--text-secondary)] text-xs">
                     {new Date(user.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="p-2 text-gray-600 text-xs">
-                    {user.lastAccessedAt 
+                  <td className="p-2 text-[var(--text-secondary)] text-xs">
+                    {user.lastAccessedAt
                       ? new Date(user.lastAccessedAt).toLocaleString()
-                      : <span className="text-gray-400">Never</span>
+                      : <span className="text-[var(--text-muted)]">Never</span>
                     }
                   </td>
                   <td className="p-2">

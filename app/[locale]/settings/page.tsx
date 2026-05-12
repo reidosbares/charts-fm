@@ -123,7 +123,7 @@ export default function SettingsPage() {
       <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden flex items-center justify-center px-4">
         <div className="relative z-10 text-center">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-3xl md:text-4xl text-yellow-500 mb-4" />
-          <p className="text-sm md:text-base text-gray-700">{tCommon('loading')}</p>
+          <p className="text-sm md:text-base text-[var(--text-secondary)]">{tCommon('loading')}</p>
         </div>
       </main>
     )
@@ -173,7 +173,7 @@ export default function SettingsPage() {
               <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label htmlFor="email" className="block text-xs md:text-sm font-semibold text-gray-800">
+                    <label htmlFor="email" className="block text-xs md:text-sm font-semibold text-[var(--text-primary)]">
                       {t('email')}
                     </label>
                     <div className="flex items-center gap-2">
@@ -205,7 +205,7 @@ export default function SettingsPage() {
                         setEmailVerified(false)
                       }
                     }}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-[var(--border-strong)] text-[var(--text-primary)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
                       backdropFilter: 'blur(8px)',
                     }}
@@ -220,7 +220,7 @@ export default function SettingsPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="locale" className="block text-xs md:text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="locale" className="block text-xs md:text-sm font-semibold text-[var(--text-primary)] mb-2">
                     {t('language')}
                   </label>
                   <CustomSelect
@@ -239,7 +239,7 @@ export default function SettingsPage() {
                     onChange={(value) => setFormData({ ...formData, locale: String(value) })}
                     disabled={isSaving}
                   />
-                  <p className="text-xs text-gray-600 mt-2">
+                  <p className="text-xs text-[var(--text-secondary)] mt-2">
                     {t('selectLanguage')}
                   </p>
                 </div>
@@ -281,16 +281,16 @@ export default function SettingsPage() {
           >
             <div className="relative z-10">
               <h2 className="text-xl md:text-2xl font-bold text-red-600 mb-2">{t('dangerZone.title')}</h2>
-              <p className="text-xs md:text-sm text-gray-600 mb-4">
+              <p className="text-xs md:text-sm text-[var(--text-secondary)] mb-4">
                 {t('dangerZone.description')}
               </p>
-              <div className="pt-4 border-t border-red-200">
+              <div className="pt-4 border-t border-red-200 dark:border-red-800">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div className="flex-1">
-                    <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-1">
+                    <h3 className="text-base md:text-lg font-semibold text-[var(--text-primary)] mb-1">
                       {t('dangerZone.deleteAccount.title')}
                     </h3>
-                    <p className="text-xs md:text-sm text-gray-600">
+                    <p className="text-xs md:text-sm text-[var(--text-secondary)]">
                       {t('dangerZone.deleteAccount.description')}
                     </p>
                   </div>
