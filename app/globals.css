@@ -810,16 +810,16 @@ main.theme-rainbow {
 .dark main.theme-synthwave.bg-gradient-to-b,
 .dark main.theme-synthwave {
   background-image:
-    radial-gradient(ellipse 90% 55% at 50% 100%, rgb(180 50 200 / 0.42), transparent 70%),
-    radial-gradient(ellipse 100% 50% at 50% 0%, rgb(40 140 200 / 0.28), transparent 75%),
+    radial-gradient(ellipse 90% 55% at 50% 100%, rgb(180 50 200 / 0.28), transparent 70%),
+    radial-gradient(ellipse 100% 50% at 50% 0%, rgb(40 140 200 / 0.18), transparent 75%),
     linear-gradient(180deg, rgb(20 14 36), rgb(18 14 38)) !important;
 }
 
 .dark main.theme-sunset.bg-gradient-to-b,
 .dark main.theme-sunset {
   background-image:
-    radial-gradient(ellipse 95% 55% at 50% 100%, rgb(220 110 30 / 0.42), transparent 70%),
-    radial-gradient(ellipse 100% 50% at 50% 0%, rgb(120 40 100 / 0.28), transparent 75%),
+    radial-gradient(ellipse 95% 55% at 50% 100%, rgb(220 110 30 / 0.28), transparent 70%),
+    radial-gradient(ellipse 100% 50% at 50% 0%, rgb(120 40 100 / 0.18), transparent 75%),
     linear-gradient(180deg, rgb(28 10 22), rgb(20 8 24)) !important;
 }
 
