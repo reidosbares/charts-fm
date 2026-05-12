@@ -622,3 +622,18 @@ model CachedExternalImage {
   @@index([kind, cacheKey])
   @@map("cached_external_images")
 }
+
+model ResolvedArtist {
+  id                String   @id @default(cuid())
+  inputName         String   @unique
+  resolvedName      String
+  listenersInput    Int?
+  listenersResolved Int?
+  splitApplied      Boolean
+  lastFetched       DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([inputName])
+  @@map("resolved_artists")
+}
