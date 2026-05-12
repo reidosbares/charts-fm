@@ -70,7 +70,17 @@ function PositionBubble({
   ].filter(Boolean).join(' ')
 
   if (isOut) {
-    return <div className={bubbleClasses}>OUT</div>
+    const outClasses = [
+      SIZE_CLASS,
+      'text-[var(--text-muted)] opacity-70',
+      'rounded-full font-semibold',
+      'flex items-center justify-center',
+      'bg-white/20 dark:bg-[rgb(var(--surface-card-rgb)/0.4)]',
+      'border border-dashed border-[var(--border-strong)]',
+      'backdrop-blur-sm',
+      'relative z-10 inline-block',
+    ].join(' ')
+    return <div className={outClasses}>OUT</div>
   }
 
   return (

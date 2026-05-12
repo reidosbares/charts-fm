@@ -133,7 +133,7 @@ function ChartHistoryTimeline({
       <h2 className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-4 md:mb-6">{t('title')}</h2>
       <div className="relative" style={{ overflow: 'visible' }}>
         <div
-          className="relative flex flex-wrap items-center gap-2 md:gap-4 pb-8 md:pb-12 pl-4 md:pl-8"
+          className="relative flex flex-wrap items-center gap-1.5 md:gap-2.5 pb-8 md:pb-12 pl-4 md:pl-8"
           style={{
             zIndex: 1,
             overflow: 'visible',
@@ -165,13 +165,13 @@ function ChartHistoryTimeline({
               )
             } else if (item.type === 'gap-text') {
               return (
-                <Tooltip 
+                <Tooltip
                   key={`gap-${index}`}
                   content={item.gapWeeks === 1 ? t('outFor', { count: item.gapWeeks }) : t('outForPlural', { count: item.gapWeeks })}
                   position="top"
                 >
                   <div
-                    className="px-1 md:px-2 text-[10px] md:text-xs text-[var(--text-muted)] cursor-help"
+                    className="w-11 h-11 md:w-14 md:h-14 text-xs md:text-sm text-[var(--text-muted)] opacity-70 rounded-full font-semibold flex items-center justify-center bg-white/20 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border border-dashed border-[var(--border-strong)] backdrop-blur-sm relative z-10 inline-flex cursor-help whitespace-nowrap"
                     style={{ contain: 'layout style' }}
                   >
                     ⏸ {item.gapWeeks}
