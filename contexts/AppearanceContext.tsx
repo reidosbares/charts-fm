@@ -52,8 +52,9 @@ interface AppearanceProviderProps {
 }
 
 export function AppearanceProvider({ children }: AppearanceProviderProps) {
-  // Initial state is 'system' on the server to match the boot script's pre-hydration default.
-  // The first effect below syncs to localStorage on mount.
+  // Initial state is 'system' on the server to match the pre-hydration default
+  // applied by components/AppearanceBootScript.tsx. The first effect below syncs
+  // to localStorage on mount.
   const [appearance, setAppearanceState] = useState<Appearance>('system')
   const [resolvedAppearance, setResolvedAppearance] = useState<ResolvedAppearance>('light')
 
@@ -76,13 +77,13 @@ export function AppearanceProvider({ children }: AppearanceProviderProps) {
     if (typeof window === 'undefined') return
 
     const media = window.matchMedia('(prefers-color-scheme: dark)')
-    const onChange = () => compute()
-    media.addEventListener('change', onChange)
-    return () => media.removeEventListener('change', onChange)
+    media.addEventListener('change', compute)
+    return () => media.removeEventListener('change', compute)
   }, [appearance])
 
   const setAppearance = useCallback((value: Appearance) => {
     setAppearanceState(value)
+    if (typeof window === 'undefined') return
     try {
       window.localStorage.setItem(STORAGE_KEY, value)
     } catch {
