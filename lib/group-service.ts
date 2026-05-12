@@ -11,6 +11,7 @@ import { ChartMode, calculateUserVS, getUserVSForWeek, aggregateGroupStatsVS } f
 import { getArtistImage, getAlbumImage } from './lastfm'
 import { calculateGroupTrends } from './group-trends'
 import { mergeRedundantTracks } from './track-normalization'
+import { mergeRedundantAlbums } from './album-normalization'
 
 const API_KEY = process.env.LASTFM_API_KEY!
 const API_SECRET = process.env.LASTFM_API_SECRET!
@@ -252,11 +253,15 @@ export async function fetchOrGetUserWeeklyStats(
         if (mergedTracks.length !== result.topTracks.length) {
           console.log(`[User Stats] 🔗 Merged ${result.topTracks.length - mergedTracks.length} redundant track variants for ${lastfmUsername}`)
         }
-        console.log(`[User Stats] ✅ Fetched data for ${lastfmUsername} in ${apiTime}s (tracks: ${mergedTracks.length}, artists: ${result.topArtists.length}, albums: ${result.topAlbums.length})`)
+        const mergedAlbums = mergeRedundantAlbums(result.topAlbums)
+        if (mergedAlbums.length !== result.topAlbums.length) {
+          console.log(`[User Stats] 🔗 Merged ${result.topAlbums.length - mergedAlbums.length} redundant album variants for ${lastfmUsername}`)
+        }
+        console.log(`[User Stats] ✅ Fetched data for ${lastfmUsername} in ${apiTime}s (tracks: ${mergedTracks.length}, artists: ${result.topArtists.length}, albums: ${mergedAlbums.length})`)
         return {
           topTracks: mergedTracks,
           topArtists: result.topArtists,
-          topAlbums: result.topAlbums,
+          topAlbums: mergedAlbums,
         }
       })()
   
