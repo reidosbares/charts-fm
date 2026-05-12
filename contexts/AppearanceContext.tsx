@@ -15,19 +15,6 @@ const AppearanceContext = createContext<AppearanceContextValue | null>(null)
 
 const STORAGE_KEY = 'appearance'
 
-function readStoredAppearance(): Appearance {
-  if (typeof window === 'undefined') return 'system'
-  try {
-    const stored = window.localStorage.getItem(STORAGE_KEY)
-    if (stored === 'light' || stored === 'dark' || stored === 'system') {
-      return stored
-    }
-  } catch {
-    // localStorage unavailable (Safari private mode, etc.)
-  }
-  return 'system'
-}
-
 function resolveSystemAppearance(): ResolvedAppearance {
   if (typeof window === 'undefined') return 'light'
   try {
@@ -49,20 +36,52 @@ function applyClass(resolved: ResolvedAppearance) {
 
 interface AppearanceProviderProps {
   children: ReactNode
+  /**
+   * Initial preference from the server (the authed user's stored appearance, if any).
+   * Used on mount when localStorage is empty so the user's DB-persisted preference
+   * carries across devices. localStorage takes precedence once set on a given device.
+   */
+  initialAppearance?: Appearance | null
+  /** Whether the visitor is authenticated. Controls whether setAppearance also calls the API. */
+  isAuthed?: boolean
 }
 
-export function AppearanceProvider({ children }: AppearanceProviderProps) {
+export function AppearanceProvider({ children, initialAppearance, isAuthed = false }: AppearanceProviderProps) {
   // Initial state is 'system' on the server to match the pre-hydration default
   // applied by components/AppearanceBootScript.tsx. The first effect below syncs
   // to localStorage on mount.
   const [appearance, setAppearanceState] = useState<Appearance>('system')
   const [resolvedAppearance, setResolvedAppearance] = useState<ResolvedAppearance>('light')
 
-  // Sync from localStorage on mount.
+  // Sync from localStorage on mount. If localStorage is empty, fall back to the
+  // server-provided preference (so a returning user on a new device sees their
+  // saved preference). Once a value is in localStorage, it wins.
   useEffect(() => {
-    const stored = readStoredAppearance()
-    setAppearanceState(stored)
-  }, [])
+    let next: Appearance | null = null
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = window.localStorage.getItem(STORAGE_KEY)
+        if (stored === 'light' || stored === 'dark' || stored === 'system') {
+          next = stored
+        }
+      } catch {
+        // localStorage unavailable
+      }
+    }
+    if (!next && initialAppearance) {
+      next = initialAppearance
+      // Mirror server preference into localStorage so the boot script can
+      // pick it up on subsequent visits and avoid the post-hydration shift.
+      try {
+        window.localStorage.setItem(STORAGE_KEY, initialAppearance)
+      } catch {
+        // ignore
+      }
+    }
+    if (next) {
+      setAppearanceState(next)
+    }
+  }, [initialAppearance])
 
   // Recompute resolved appearance whenever the preference changes or the system preference changes.
   useEffect(() => {
@@ -89,7 +108,17 @@ export function AppearanceProvider({ children }: AppearanceProviderProps) {
     } catch {
       // localStorage unavailable; in-memory state will still drive the class
     }
-  }, [])
+    if (isAuthed) {
+      // Fire-and-forget persistence. Failures fall back to localStorage.
+      fetch('/api/user/appearance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ appearance: value }),
+      }).catch(() => {
+        // ignore — localStorage is the next-best source of truth
+      })
+    }
+  }, [isAuthed])
 
   return (
     <AppearanceContext.Provider value={{ appearance, resolvedAppearance, setAppearance }}>

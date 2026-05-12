@@ -1,7 +1,7 @@
 import SessionProvider from "@/components/SessionProvider";
 import SWRProvider from "@/components/SWRProvider";
 import { NavigationProvider } from "@/contexts/NavigationContext";
-import { AppearanceProvider } from "@/contexts/AppearanceContext";
+import { AppearanceProvider, type Appearance } from "@/contexts/AppearanceContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import EmailVerificationBanner from "@/components/EmailVerificationBanner";
@@ -11,6 +11,8 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import type { Metadata } from 'next';
 import { getDefaultOgImage, defaultOgImage } from "@/lib/metadata";
+import { getSession } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -55,6 +57,22 @@ export default async function LocaleLayout({
   // side is the easiest way to get started
   const messages = await getMessages();
 
+  // Read the authed user's appearance preference so the client provider can
+  // seed itself before localStorage is checked.
+  const session = await getSession();
+  let initialAppearance: Appearance | null = null;
+  const isAuthed = !!session?.user?.email;
+  if (isAuthed && session?.user?.email) {
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { appearancePreference: true },
+    });
+    const pref = user?.appearancePreference;
+    if (pref === 'light' || pref === 'dark' || pref === 'system') {
+      initialAppearance = pref;
+    }
+  }
+
   return (
     <>
       {/* Set html lang attribute based on locale */}
@@ -73,7 +91,7 @@ export default async function LocaleLayout({
         <SessionProvider>
           <SWRProvider>
           <NavigationProvider>
-            <AppearanceProvider>
+            <AppearanceProvider initialAppearance={initialAppearance} isAuthed={isAuthed}>
               <div className="flex flex-col min-h-screen">
                 <Navbar />
                 <EmailVerificationBanner />
