@@ -31,6 +31,7 @@ export default function StylingTab({
     neon_green: tThemes('neonGreen'),
     white: tThemes('white'),
     rainbow: tThemes('rainbow'),
+    synthwave: tThemes('synthwave'),
   }), [tThemes])
   
   const [colorTheme, setColorTheme] = useState<ThemeName>((initialColorTheme as ThemeName) || 'white')

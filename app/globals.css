@@ -648,6 +648,40 @@ svg.rdp-chevron {
   --theme-border-rgb: 80 50 130;
 }
 
+.theme-synthwave {
+  --theme-primary: rgb(217 70 239);
+  --theme-primary-light: rgb(232 121 249);
+  --theme-primary-dark: rgb(112 26 117);
+  --theme-primary-lighter: rgb(250 232 255);
+  --theme-primary-darker: rgb(162 28 175);
+  --theme-background-from: rgb(250 232 255);
+  --theme-background-to: rgb(253 244 255);
+  --theme-border: rgb(240 171 252);
+  --theme-text: rgb(162 28 175);
+  --theme-ring: rgb(217 70 239);
+  --theme-button-text: white;
+  --theme-primary-rgb: 217 70 239;
+  --theme-primary-lighter-rgb: 250 232 255;
+  --theme-border-rgb: 240 171 252;
+}
+
+.dark .theme-synthwave {
+  --theme-primary: rgb(232 121 249);
+  --theme-primary-light: rgb(240 171 252);
+  --theme-primary-dark: rgb(250 232 255);
+  --theme-primary-lighter: rgb(48 18 56);
+  --theme-primary-darker: rgb(162 28 175);
+  --theme-background-from: rgb(24 14 40);
+  --theme-background-to: rgb(20 12 32);
+  --theme-border: rgb(110 40 150);
+  --theme-text: rgb(240 171 252);
+  --theme-ring: rgb(232 121 249);
+  --theme-button-text: white;
+  --theme-primary-rgb: 232 121 249;
+  --theme-primary-lighter-rgb: 48 18 56;
+  --theme-border-rgb: 110 40 150;
+}
+
 /* All themes: Make main page gradients diagonal and fixed to viewport */
 main.bg-gradient-to-b {
   background-attachment: fixed !important;

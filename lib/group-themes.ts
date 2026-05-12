@@ -1,7 +1,7 @@
 // Color theme configurations for group pages
 // Each theme defines a color palette used throughout the group page
 
-export type ThemeName = 'yellow' | 'royal_blue' | 'cyan' | 'bright_red' | 'maroon' | 'graphite' | 'hot_pink' | 'neon_green' | 'white' | 'rainbow'
+export type ThemeName = 'yellow' | 'royal_blue' | 'cyan' | 'bright_red' | 'maroon' | 'graphite' | 'hot_pink' | 'neon_green' | 'white' | 'rainbow' | 'synthwave'
 
 export interface ThemeColors {
   primary: string // Main theme color (for buttons, badges)
@@ -148,9 +148,22 @@ export const GROUP_THEMES: Record<ThemeName, ThemeColors> = {
     ring: 'rgb(147 51 234)', // purple-600
     buttonText: 'white',
   },
+  synthwave: {
+    primary: 'rgb(217 70 239)', // fuchsia-500 (neon magenta)
+    primaryLight: 'rgb(232 121 249)', // fuchsia-400
+    primaryDark: 'rgb(112 26 117)', // very dark magenta for titles
+    primaryLighter: 'rgb(250 232 255)', // fuchsia-100
+    primaryDarker: 'rgb(162 28 175)', // fuchsia-700
+    backgroundFrom: 'rgb(250 232 255)', // fuchsia-100
+    backgroundTo: 'rgb(253 244 255)', // fuchsia-50
+    border: 'rgb(240 171 252)', // fuchsia-300
+    text: 'rgb(162 28 175)', // fuchsia-700
+    ring: 'rgb(217 70 239)', // fuchsia-500
+    buttonText: 'white',
+  },
 }
 
-export const THEME_NAMES: ThemeName[] = ['white', 'yellow', 'royal_blue', 'cyan', 'bright_red', 'graphite', 'hot_pink', 'neon_green']
+export const THEME_NAMES: ThemeName[] = ['white', 'yellow', 'royal_blue', 'cyan', 'bright_red', 'graphite', 'hot_pink', 'neon_green', 'synthwave']
 
 export const THEME_DISPLAY_NAMES: Record<ThemeName, string> = {
   yellow: 'Banana',
@@ -163,5 +176,6 @@ export const THEME_DISPLAY_NAMES: Record<ThemeName, string> = {
   neon_green: 'Kiwi',
   white: 'Ink & Butter',
   rainbow: 'Pride',
+  synthwave: 'Synthwave',
 }
 
