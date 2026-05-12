@@ -1,0 +1,76 @@
+---
+title: "Apaga a luz: chegou o modo escuro (e mais)"
+date: 2026-05-12
+excerpt: "Modo escuro novinho em folha, dois temas de cor novos, ajustes nas páginas de detalhes e uma pilha de correções que entraram entre ontem e hoje."
+cover: /news/2026-05-12-dark-mode-cover.png
+tags: [feature, dark-mode, theme]
+---
+
+Tem bastante coisa nova. Puxa uma cadeira.
+
+## Modo escuro
+
+Esse é o principal. Agora o ChartsFM tem um **modo escuro** de verdade, de ponta a ponta. Toda página, todo modal, todo card e toda tabela passaram pelo pente fino pra receberem uma versão no modo escuro.
+
+![O painel do ChartsFM no modo escuro, com o carrossel de faixa em destaque, estatísticas semanais de audição, top artistas/faixas/álbuns e o painel de atividade recente.](/news/2026-05-12-dark-mode.png)
+
+Existem três modos:
+
+- **Claro**: o que já existia
+- **Escuro**: o novo
+- **Sistema**: segue a preferência do seu sistema operacional, então segue o mesmo modo que o seu celular ou notebook
+
+Você consegue mudar o tema em dois lugares:
+
+- O **ícone de sol/lua/sistema** na navbar (canto superior direito no desktop, dentro do menu no mobile)
+- Nas configurações de usuário
+
+A sua escolha fica salva. E se você estiver logado na sua conta, ela também fica salva na sua conta, então o site acompanha o tema escolhido quando você abrir o ChartsFM em outro dispositivo.
+
+Ficou curioso pra testar? Aperta aqui:
+
+<ThemeSwitch />
+
+### Dois temas novos
+
+Já que estávamos no embalo, **Synthwave** e **Sex on the Beach** entraram pra coleção de temas. São dois temas multicor em tons neon que ficam bem legais no modo escuro. Experimente na sua comunidade!
+
+Veja como o Synthwave fica numa página de comunidade de verdade:
+
+![Uma página de comunidade com o tema Synthwave aplicado, com um brilho magenta e ciano atrás do hero da comunidade e uma pílula roxa de "Próximos charts".](/news/2026-05-12-synthwave.png)
+
+O seletor de temas também ganhou um redesign: cada opção virou um preview ao vivo de como o tema fica, em vez de só um quadradinho de cor. Tipo esses aqui (clique em um pra testar nessa página mesmo):
+
+<div className="not-prose grid grid-cols-1 sm:grid-cols-2 gap-3 my-6">
+  <ThemePreview theme="synthwave" />
+  <ThemePreview theme="sunset" />
+</div>
+
+## Ajustes nas páginas de detalhes
+
+As páginas de detalhes de artistas, faixas e álbuns ganharam um trato visual:
+
+- As bolhas da timeline foram retrabalhadas pra ficar com um visual mais uniforme.
+- Todas as datas da timeline agora respeitam o seu idioma, então quem usa em português não vai mais ver as datas em formato gringo
+
+## Página de charts
+
+- Mudanças de posição, plays e VS desde a semana passada agora aparecem como badges verdes ou vermelhos ao lado de cada entrada
+- Os indicadores de posição deixaram de ser emojis, fica mais limpo e renderiza igual em qualquer plataforma
+- Consertei o calendário do seletor de semana, finalmente. Agora ele renderiza certinho em vez de ficar cortado pela sidebar do lado
+
+## Recordes e prêmios
+
+- Corrigido um bug onde o ranking de Destaques dos membros podia incluir entradas de outras comunidades
+- Recordes semanais "mais VS/plays em uma semana" agora mostram a posição que aquele item alcançou na semana do recorde
+- Os valores de VS dos prêmios dos membros voltaram a ter casa decimal, ao invés de arredondar para números inteiros
+
+## Outras coisas
+
+- **Streaks de trends** agora contam qualquer aparição no chart. Antes, só contavam aparições no top 10. A obsessão da comunidade continua olhando só pro top 10 atual.
+- Performance: as **imagens de artistas** agora ficam em cache no nosso CDN, então carregam mais rápido e param de sumir quando a Wikimedia limita nossa taxa de requisições.
+- A página de **Descobrir** ganhou um trato de performance: as queries de metadata viraram batch, e filtragem e ordenação agora rolam direto no banco em vez de depois.
+
+É isso por hoje. Aproveite o modo escuro!
+
+— GWS

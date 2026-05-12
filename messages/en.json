@@ -1615,7 +1615,9 @@
     "empty": "No posts yet — check back soon.",
     "backToList": "Back to all posts",
     "latestTitle": "Latest from ChartsFM",
-    "seeAll": "See all updates"
+    "seeAll": "See all updates",
+    "switchToDark": "Switch to dark mode",
+    "switchToLight": "Switch to light mode"
   },
   "site": {
     "description": "Create and share music charts with friends. Generate weekly charts from Last.fm listening data, join groups with friends and discover music trends together.",

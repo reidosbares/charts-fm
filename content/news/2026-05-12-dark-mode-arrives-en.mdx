@@ -1,0 +1,76 @@
+---
+title: "ChartsFM after dark: dark mode is here (and more)"
+date: 2026-05-12
+excerpt: "A brand new dark mode, two new color themes, deep-dive timeline polish, and a pile of fixes that landed yesterday and today."
+cover: /news/2026-05-12-dark-mode-cover.png
+tags: [feature, dark-mode, theme]
+---
+
+Big drop. Pull up a chair.
+
+## Dark mode
+
+This is the big one. ChartsFM now has a proper, end-to-end **dark mode**. Every page, every modal, every card, every chart bubble has been swept for dark variants.
+
+![The ChartsFM dashboard in dark mode, with a featured track carousel, weekly listening stats, top artists/tracks/albums and a recent activity panel.](/news/2026-05-12-dark-mode.png)
+
+There are three options:
+
+- **Light**: what you've been looking at this whole time
+- **Dark**: the new one
+- **System**: follows your OS preference, so it auto-flips when your phone or laptop does
+
+You can change it in two places:
+
+- The **sun/moon/system icon** in the navbar (top right on desktop, inside the menu on mobile)
+- The new **Appearance** section in your user settings
+
+Your choice persists across sessions, and logged-in users get it mirrored to their account so it carries to new devices.
+
+Don't feel like leaving the page to try it? Go on, hit this:
+
+<ThemeSwitch />
+
+### Two new color themes
+
+While we were in there, **Synthwave** and **Sex on the Beach** joined the group theme picker. These are multi-color themes with neon hues that look especially great in dark mode. Give them a try!
+
+Here's what Synthwave looks like applied to an actual group page:
+
+![A group page using the Synthwave theme, with a magenta-and-cyan glow behind the group hero and a purple "Next charts" pill.](/news/2026-05-12-synthwave.png)
+
+The group theme picker itself got a small redesign too: each tile is now a live preview of what the theme actually looks like, instead of just a swatch. Like these (click one to apply it to this page):
+
+<div className="not-prose grid grid-cols-1 sm:grid-cols-2 gap-3 my-6">
+  <ThemePreview theme="synthwave" />
+  <ThemePreview theme="sunset" />
+</div>
+
+## Deep-dive page polish
+
+The artist/track/album drill-down pages got a visual pass:
+
+- The timeline bubbles were slightly reworked for a more uniform look.
+- All dates on the timeline now respect your locale, so Portuguese readers stop seeing English-formatted dates
+
+## Charts page
+
+- Position, plays, and VS changes since last week now show up as red/green change badges next to each entry
+- Position indicators swapped from emoji to FontAwesome icons, looks cleaner and renders the same on every platform
+- Fixed the week-selector calendar, finally. It now renders correctly instead of being clipped by the surrounding sidebar
+
+## Records and awards
+
+- Fixed a bug where member award rankings could include entries from other groups
+- Peak weekly records now display the chart position where the record was set
+- VS values on award entries now keep their decimals (rounding to integers was hiding close calls)
+
+## Other things
+
+- **Trends streaks** now count any chart appearance. Previously, they only counted top-10 appearances. The group's obsession still only tracks current top 10 entries.
+- Performance: **Artist images** are cached in our CDN, so they load faster and stop disappearing when Wikimedia rate-limits us.
+- The **Discover page** got a perf pass: metadata queries are batched and filtering and sorting now happen in the database instead of after the fact.
+
+That's it for today. Enjoy the dark mode.
+
+— GWS

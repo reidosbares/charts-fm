@@ -30,22 +30,32 @@ function parseFilename(file: string): { slug: string; locale: string } | null {
   return { slug: match[1], locale: match[2] }
 }
 
+function normalizeDate(value: unknown): string | null {
+  if (typeof value === 'string') return value
+  if (value instanceof Date && !isNaN(value.getTime())) {
+    return value.toISOString().slice(0, 10)
+  }
+  return null
+}
+
 async function readPostFile(file: string): Promise<NewsPost | null> {
   const parsed = parseFilename(file)
   if (!parsed) return null
   const raw = await readFile(join(NEWS_DIR, file), 'utf-8')
   const { data, content } = matter(raw)
-  const fm = data as Partial<NewsFrontmatter>
-  if (!fm.title || !fm.date) return null
+  const fm = data as Record<string, unknown>
+  const title = typeof fm.title === 'string' ? fm.title : null
+  const date = normalizeDate(fm.date)
+  if (!title || !date) return null
   return {
     slug: parsed.slug,
     locale: parsed.locale,
-    title: fm.title,
-    date: fm.date,
-    excerpt: fm.excerpt,
-    cover: fm.cover,
-    tags: fm.tags,
-    draft: fm.draft ?? false,
+    title,
+    date,
+    excerpt: typeof fm.excerpt === 'string' ? fm.excerpt : undefined,
+    cover: typeof fm.cover === 'string' ? fm.cover : undefined,
+    tags: Array.isArray(fm.tags) ? (fm.tags as string[]) : undefined,
+    draft: fm.draft === true,
     body: content,
   }
 }

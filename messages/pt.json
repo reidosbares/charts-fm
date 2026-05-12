@@ -1615,7 +1615,9 @@
     "empty": "Nenhum post ainda — volte em breve.",
     "backToList": "Voltar para todos os posts",
     "latestTitle": "Últimas do ChartsFM",
-    "seeAll": "Ver todas as novidades"
+    "seeAll": "Ver todas as novidades",
+    "switchToDark": "Mudar para modo escuro",
+    "switchToLight": "Mudar para modo claro"
   },
   "site": {
     "description": "Crie e compartilhe charts musicais. Gere charts semanais a partir do Last.fm, crie comunidades e acompanhe as tendências musicais entre você e seus amigos.",
