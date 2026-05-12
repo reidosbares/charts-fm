@@ -56,6 +56,10 @@ body {
   min-height: 100vh;
 }
 
+.dark body {
+  background: linear-gradient(135deg, rgb(15, 15, 17), rgb(13, 13, 15), rgb(11, 11, 13));
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -126,6 +130,17 @@ input[type="url"]:not([disabled]),
 input[type="search"]:not([disabled]),
 textarea:not([disabled]) {
   -webkit-text-fill-color: rgb(17 24 39);
+}
+
+.dark input[type="text"]:not([disabled]),
+.dark input[type="email"]:not([disabled]),
+.dark input[type="password"]:not([disabled]),
+.dark input[type="number"]:not([disabled]),
+.dark input[type="tel"]:not([disabled]),
+.dark input[type="url"]:not([disabled]),
+.dark input[type="search"]:not([disabled]),
+.dark textarea:not([disabled]) {
+  -webkit-text-fill-color: rgb(237 237 240);
 }
 
 /* Ensure inputs with text-gray-900 class maintain dark text on iOS */
@@ -274,6 +289,20 @@ svg.rdp-chevron {
   --theme-button-text: black;
 }
 
+.dark .theme-yellow {
+  --theme-primary: rgb(234 179 8);
+  --theme-primary-light: rgb(250 204 21);
+  --theme-primary-dark: rgb(254 240 138);
+  --theme-primary-lighter: rgb(50 44 22);
+  --theme-primary-darker: rgb(161 98 7);
+  --theme-background-from: rgb(28 26 18);
+  --theme-background-to: rgb(22 21 16);
+  --theme-border: rgb(80 65 20);
+  --theme-text: rgb(253 224 71);
+  --theme-ring: rgb(234 179 8);
+  --theme-button-text: black;
+}
+
 .theme-royal-blue {
   --theme-primary: rgb(29 78 216);
   --theme-primary-light: rgb(37 99 235);
@@ -285,6 +314,20 @@ svg.rdp-chevron {
   --theme-border: rgb(147 197 253);
   --theme-text: rgb(29 78 216);
   --theme-ring: rgb(29 78 216);
+  --theme-button-text: white;
+}
+
+.dark .theme-royal-blue {
+  --theme-primary: rgb(59 130 246);
+  --theme-primary-light: rgb(96 165 250);
+  --theme-primary-dark: rgb(191 219 254);
+  --theme-primary-lighter: rgb(20 30 60);
+  --theme-primary-darker: rgb(30 64 175);
+  --theme-background-from: rgb(15 22 38);
+  --theme-background-to: rgb(12 18 32);
+  --theme-border: rgb(40 60 110);
+  --theme-text: rgb(147 197 253);
+  --theme-ring: rgb(59 130 246);
   --theme-button-text: white;
 }
 
@@ -302,6 +345,20 @@ svg.rdp-chevron {
   --theme-button-text: white;
 }
 
+.dark .theme-cyan {
+  --theme-primary: rgb(34 211 238);
+  --theme-primary-light: rgb(103 232 249);
+  --theme-primary-dark: rgb(207 250 254);
+  --theme-primary-lighter: rgb(14 36 44);
+  --theme-primary-darker: rgb(14 116 144);
+  --theme-background-from: rgb(15 24 32);
+  --theme-background-to: rgb(12 20 28);
+  --theme-border: rgb(30 70 90);
+  --theme-text: rgb(103 232 249);
+  --theme-ring: rgb(34 211 238);
+  --theme-button-text: black;
+}
+
 .theme-bright-red {
   --theme-primary: rgb(185 28 28);
   --theme-primary-light: rgb(220 38 38);
@@ -313,6 +370,20 @@ svg.rdp-chevron {
   --theme-border: rgb(252 165 165);
   --theme-text: rgb(185 28 28);
   --theme-ring: rgb(185 28 28);
+  --theme-button-text: white;
+}
+
+.dark .theme-bright-red {
+  --theme-primary: rgb(239 68 68);
+  --theme-primary-light: rgb(248 113 113);
+  --theme-primary-dark: rgb(254 202 202);
+  --theme-primary-lighter: rgb(50 16 18);
+  --theme-primary-darker: rgb(153 27 27);
+  --theme-background-from: rgb(34 14 16);
+  --theme-background-to: rgb(26 12 14);
+  --theme-border: rgb(95 30 35);
+  --theme-text: rgb(252 165 165);
+  --theme-ring: rgb(239 68 68);
   --theme-button-text: white;
 }
 
@@ -330,6 +401,20 @@ svg.rdp-chevron {
   --theme-button-text: white;
 }
 
+.dark .theme-maroon {
+  --theme-primary: rgb(180 50 50);
+  --theme-primary-light: rgb(200 70 70);
+  --theme-primary-dark: rgb(255 200 180);
+  --theme-primary-lighter: rgb(46 18 14);
+  --theme-primary-darker: rgb(80 0 0);
+  --theme-background-from: rgb(28 16 14);
+  --theme-background-to: rgb(22 14 12);
+  --theme-border: rgb(90 40 30);
+  --theme-text: rgb(229 165 130);
+  --theme-ring: rgb(180 50 50);
+  --theme-button-text: white;
+}
+
 .theme-graphite {
   --theme-primary: rgb(75 85 99);
   --theme-primary-light: rgb(107 114 128);
@@ -344,6 +429,20 @@ svg.rdp-chevron {
   --theme-button-text: white;
 }
 
+.dark .theme-graphite {
+  --theme-primary: rgb(156 163 175);
+  --theme-primary-light: rgb(209 213 219);
+  --theme-primary-dark: rgb(243 244 246);
+  --theme-primary-lighter: rgb(38 42 50);
+  --theme-primary-darker: rgb(75 85 99);
+  --theme-background-from: rgb(20 22 26);
+  --theme-background-to: rgb(16 18 22);
+  --theme-border: rgb(60 65 75);
+  --theme-text: rgb(209 213 219);
+  --theme-ring: rgb(156 163 175);
+  --theme-button-text: black;
+}
+
 .theme-hot-pink {
   --theme-primary: rgb(255 105 180);
   --theme-primary-light: rgb(255 20 147);
@@ -355,6 +454,20 @@ svg.rdp-chevron {
   --theme-border: rgb(251 182 206);
   --theme-text: rgb(219 39 119);
   --theme-ring: rgb(255 105 180);
+  --theme-button-text: white;
+}
+
+.dark .theme-hot-pink {
+  --theme-primary: rgb(244 114 182);
+  --theme-primary-light: rgb(249 168 212);
+  --theme-primary-dark: rgb(253 232 244);
+  --theme-primary-lighter: rgb(48 18 38);
+  --theme-primary-darker: rgb(199 21 133);
+  --theme-background-from: rgb(30 16 26);
+  --theme-background-to: rgb(24 12 22);
+  --theme-border: rgb(96 40 78);
+  --theme-text: rgb(251 182 206);
+  --theme-ring: rgb(244 114 182);
   --theme-button-text: white;
 }
 
@@ -372,6 +485,20 @@ svg.rdp-chevron {
   --theme-button-text: white;
 }
 
+.dark .theme-neon-green {
+  --theme-primary: rgb(74 222 128);
+  --theme-primary-light: rgb(134 239 172);
+  --theme-primary-dark: rgb(220 252 231);
+  --theme-primary-lighter: rgb(18 38 26);
+  --theme-primary-darker: rgb(20 83 45);
+  --theme-background-from: rgb(14 26 18);
+  --theme-background-to: rgb(12 22 16);
+  --theme-border: rgb(30 78 50);
+  --theme-text: rgb(134 239 172);
+  --theme-ring: rgb(74 222 128);
+  --theme-button-text: black;
+}
+
 .theme-white {
   --theme-primary: rgb(234 179 8);
   --theme-primary-light: rgb(250 204 21);
@@ -382,6 +509,20 @@ svg.rdp-chevron {
   --theme-background-to: rgb(249 250 251);
   --theme-border: rgb(229 231 235);
   --theme-text: rgb(202 138 4);
+  --theme-ring: rgb(234 179 8);
+  --theme-button-text: black;
+}
+
+.dark .theme-white {
+  --theme-primary: rgb(234 179 8);
+  --theme-primary-light: rgb(250 204 21);
+  --theme-primary-dark: rgb(243 244 246);
+  --theme-primary-lighter: rgb(50 44 22);
+  --theme-primary-darker: rgb(161 98 7);
+  --theme-background-from: rgb(20 20 22);
+  --theme-background-to: rgb(16 16 18);
+  --theme-border: rgb(55 55 62);
+  --theme-text: rgb(253 224 71);
   --theme-ring: rgb(234 179 8);
   --theme-button-text: black;
 }
@@ -397,6 +538,20 @@ svg.rdp-chevron {
   --theme-border: rgb(196 181 253);
   --theme-text: rgb(17 24 39);
   --theme-ring: rgb(147 51 234);
+  --theme-button-text: white;
+}
+
+.dark .theme-rainbow {
+  --theme-primary: rgb(168 85 247);
+  --theme-primary-light: rgb(192 132 252);
+  --theme-primary-dark: rgb(237 233 254);
+  --theme-primary-lighter: rgb(40 20 60);
+  --theme-primary-darker: rgb(126 34 206);
+  --theme-background-from: rgb(28 20 38 / 0.9);
+  --theme-background-to: rgb(24 16 34 / 0.95);
+  --theme-border: rgb(80 50 130);
+  --theme-text: rgb(216 180 254);
+  --theme-ring: rgb(168 85 247);
   --theme-button-text: white;
 }
 
@@ -418,7 +573,7 @@ main.bg-gradient-to-b {
 main.theme-rainbow.bg-gradient-to-b,
 main.theme-rainbow {
   /* Diagonal gradient from top-left to bottom-right with rainbow colors and subtle white overlay */
-  background-image: 
+  background-image:
     linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15)),
     linear-gradient(
       135deg,
@@ -434,10 +589,28 @@ main.theme-rainbow {
   background-color: transparent;
 }
 
+.dark main.theme-rainbow.bg-gradient-to-b,
+.dark main.theme-rainbow {
+  background-image:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
+    linear-gradient(
+      135deg,
+      rgb(120 30 30) 0%,
+      rgb(130 60 20) 14.28%,
+      rgb(140 100 20) 28.57%,
+      rgb(30 100 60) 42.85%,
+      rgb(30 70 130) 57.14%,
+      rgb(80 30 130) 71.42%,
+      rgb(130 30 90) 85.71%,
+      rgb(120 30 30) 100%
+    ) !important;
+  background-color: transparent;
+}
+
 /* Rainbow gradient for group cards */
 .theme-rainbow.bg-gradient-to-br {
   /* Diagonal rainbow gradient for cards with white overlay for better text readability */
-  background-image: 
+  background-image:
     linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)),
     linear-gradient(
       135deg,
@@ -448,6 +621,22 @@ main.theme-rainbow {
       rgb(59 130 246) 66.66%, /* blue */
       rgb(147 51 234) 83.33%, /* indigo */
       rgb(219 39 119) 100%    /* violet */
+    ) !important;
+  background-color: transparent;
+}
+
+.dark .theme-rainbow.bg-gradient-to-br {
+  background-image:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)),
+    linear-gradient(
+      135deg,
+      rgb(120 30 30) 0%,
+      rgb(130 60 20) 16.66%,
+      rgb(140 100 20) 33.33%,
+      rgb(30 100 60) 50%,
+      rgb(30 70 130) 66.66%,
+      rgb(80 30 130) 83.33%,
+      rgb(130 30 90) 100%
     ) !important;
   background-color: transparent;
 }
