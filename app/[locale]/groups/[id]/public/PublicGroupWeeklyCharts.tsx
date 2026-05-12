@@ -71,8 +71,8 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
             <FontAwesomeIcon icon={faMusic} size="2x" className="md:hidden" />
             <FontAwesomeIcon icon={faMusic} size="3x" className="hidden md:inline" />
           </div>
-          <p className="text-gray-700 text-base md:text-lg mb-2 font-medium">{t('noChartsAvailable')}</p>
-          <p className="text-gray-500 text-xs md:text-sm">{t('public.noChartsDescription')}</p>
+          <p className="text-[var(--text-secondary)] text-base md:text-lg mb-2 font-medium">{t('noChartsAvailable')}</p>
+          <p className="text-[var(--text-muted)] text-xs md:text-sm">{t('public.noChartsDescription')}</p>
         </div>
       </div>
     )
@@ -98,16 +98,16 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
             
             return (
               <div key={week.id} className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-4 md:p-6 border border-theme">
-                <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">
+                <h3 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] mb-4 md:mb-6">
                   {t('weekOf', { date: week.chartWeekFormatted ?? week.weekStartFormatted })}
-                  <span className="text-xs md:text-sm font-normal italic text-gray-500 ml-1 md:ml-2 block sm:inline">
+                  <span className="text-xs md:text-sm font-normal italic text-[var(--text-muted)] ml-1 md:ml-2 block sm:inline">
                     ({t('fromTo', { start: week.weekStartFormatted, end: week.weekEndFormatted })})
                   </span>
                 </h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                   {/* Top Artists */}
-                  <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
+                  <div className="bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
                     <h4 className="font-bold text-base md:text-lg mb-3 md:mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
                       <FontAwesomeIcon icon={faMicrophone} style={{ width: '1em', height: '1em' }} />
                       {t('topArtists')}
@@ -127,7 +127,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                               {idx + 1}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="font-semibold text-xs md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 min-w-0">
+                              <div className="font-semibold text-xs md:text-sm text-[var(--text-primary)] flex items-center gap-1.5 md:gap-2 min-w-0">
                                 <span className="truncate">{artist.name}</span>
                                 <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs md:text-sm flex-shrink-0" />
                               </div>
@@ -138,7 +138,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                       })}
                       {topArtists.length > 3 && (
                         <div className="pt-2 border-t border-[var(--theme-border)]">
-                          <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
+                          <ol className="list-decimal list-inside space-y-1 text-sm text-[var(--text-secondary)]">
                             {topArtists.slice(3, 10).map((artist: any, idx: number) => {
                               const entryKey = getEntryKey(artist, 'artists')
                               const positionChange = positionChangeMap[`artists|${entryKey}`]
@@ -151,7 +151,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                             })}
                           </ol>
                           {topArtists.length > 10 && (
-                            <p className="text-xs text-gray-500 mt-2">
+                            <p className="text-xs text-[var(--text-muted)] mt-2">
                               {t('andMore', { count: topArtists.length - 10 })}
                             </p>
                           )}
@@ -161,7 +161,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                   </div>
                   
                   {/* Top Tracks */}
-                  <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
+                  <div className="bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
                     <h4 className="font-bold text-base md:text-lg mb-3 md:mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
                       <FontAwesomeIcon icon={faMusic} style={{ width: '1em', height: '1em' }} />
                       {t('topTracks')}
@@ -181,11 +181,11 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                               {idx + 1}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="font-semibold text-xs md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 min-w-0">
+                              <div className="font-semibold text-xs md:text-sm text-[var(--text-primary)] flex items-center gap-1.5 md:gap-2 min-w-0">
                                 <span className="truncate">{track.name}</span>
                                 <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs md:text-sm flex-shrink-0" />
                               </div>
-                              <div className="text-xs text-gray-600 truncate">{t('by', { artist: track.artist })}</div>
+                              <div className="text-xs text-[var(--text-secondary)] truncate">{t('by', { artist: track.artist })}</div>
                               <div className="text-xs md:text-sm text-[var(--theme-text)] font-medium mt-1 truncate">{displayValue}</div>
                             </div>
                           </div>
@@ -193,7 +193,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                       })}
                       {topTracks.length > 3 && (
                         <div className="pt-2 border-t border-[var(--theme-border)]">
-                          <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
+                          <ol className="list-decimal list-inside space-y-1 text-sm text-[var(--text-secondary)]">
                             {topTracks.slice(3, 10).map((track: any, idx: number) => {
                               const entryKey = getEntryKey(track, 'tracks')
                               const positionChange = positionChangeMap[`tracks|${entryKey}`]
@@ -206,7 +206,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                             })}
                           </ol>
                           {topTracks.length > 10 && (
-                            <p className="text-xs text-gray-500 mt-2">
+                            <p className="text-xs text-[var(--text-muted)] mt-2">
                               {t('andMore', { count: topTracks.length - 10 })}
                             </p>
                           )}
@@ -216,7 +216,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                   </div>
                   
                   {/* Top Albums */}
-                  <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
+                  <div className="bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-sm rounded-xl p-4 md:p-5 border border-theme shadow-sm">
                     <h4 className="font-bold text-base md:text-lg mb-3 md:mb-4 text-[var(--theme-primary-dark)] flex items-center gap-2">
                       <FontAwesomeIcon icon={faCompactDisc} style={{ width: '1em', height: '1em' }} />
                       {t('topAlbums')}
@@ -236,7 +236,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                               {idx + 1}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="font-semibold text-xs md:text-sm text-gray-900 flex items-center gap-1.5 md:gap-2 min-w-0">
+                              <div className="font-semibold text-xs md:text-sm text-[var(--text-primary)] flex items-center gap-1.5 md:gap-2 min-w-0">
                                 <span className="truncate">{album.name}</span>
                                 <PositionMovementIcon positionChange={positionChange} entryType={entryType} className="text-xs md:text-sm flex-shrink-0" />
                               </div>
@@ -248,7 +248,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                       })}
                       {topAlbums.length > 3 && (
                         <div className="pt-2 border-t border-[var(--theme-border)]">
-                          <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
+                          <ol className="list-decimal list-inside space-y-1 text-sm text-[var(--text-secondary)]">
                             {topAlbums.slice(3, 10).map((album: any, idx: number) => {
                               const entryKey = getEntryKey(album, 'albums')
                               const positionChange = positionChangeMap[`albums|${entryKey}`]
@@ -261,7 +261,7 @@ export default function PublicGroupWeeklyCharts({ groupId, chartMode }: PublicGr
                             })}
                           </ol>
                           {topAlbums.length > 10 && (
-                            <p className="text-xs text-gray-500 mt-2">
+                            <p className="text-xs text-[var(--text-muted)] mt-2">
                               {t('andMore', { count: topAlbums.length - 10 })}
                             </p>
                           )}

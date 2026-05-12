@@ -64,8 +64,8 @@ export default function FAQTOC({ content }: FAQTOCProps) {
   }
 
   return (
-    <div className="mb-4 sm:mb-6 lg:mb-0 p-3 sm:p-4 lg:p-6 bg-gray-50 rounded-lg border border-gray-200">
-      <h2 className="text-sm sm:text-base lg:text-lg font-bold text-gray-900 mb-3 sm:mb-4">{t('tableOfContents')}</h2>
+    <div className="mb-4 sm:mb-6 lg:mb-0 p-3 sm:p-4 lg:p-6 bg-[var(--surface-base)] rounded-lg border border-[var(--border-subtle)]">
+      <h2 className="text-sm sm:text-base lg:text-lg font-bold text-[var(--text-primary)] mb-3 sm:mb-4">{t('tableOfContents')}</h2>
       <nav>
         <ul className="space-y-1.5 sm:space-y-2">
           {tocItems.map((item) => (
@@ -74,7 +74,7 @@ export default function FAQTOC({ content }: FAQTOCProps) {
                 href={`#${item.id}`}
                 onClick={(e) => handleClick(e, item.id)}
                 data-hash-only="true"
-                className="text-xs sm:text-sm lg:text-sm text-gray-700 hover:text-[var(--theme-primary)] transition-colors duration-200 block break-words"
+                className="text-xs sm:text-sm lg:text-sm text-[var(--text-secondary)] hover:text-[var(--theme-primary)] transition-colors duration-200 block break-words"
               >
                 {item.title}
               </a>

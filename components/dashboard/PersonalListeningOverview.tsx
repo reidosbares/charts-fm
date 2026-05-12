@@ -108,8 +108,7 @@ export default function PersonalListeningOverview({
     return currentWeek.topAlbums.slice(0, 5)
   }, [currentWeek?.topAlbums])
 
-  const glassStyle = {
-    background: 'rgba(255, 255, 255, 0.6)',
+  const glassFilter = {
     backdropFilter: 'blur(12px) saturate(180%)',
     WebkitBackdropFilter: 'blur(12px) saturate(180%)',
   }
@@ -118,23 +117,22 @@ export default function PersonalListeningOverview({
   if (isLoading) {
     return (
       <div
-        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
-        style={glassStyle}
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)] bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+        style={glassFilter}
       >
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-3">
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+          <h2 className="text-xl md:text-2xl font-bold text-[var(--text-primary)]">
             {username ? t('titleForUser', { username }) : t('title')}
           </h2>
           <div
-            className="flex items-center rounded-lg border border-gray-200 p-0.5 opacity-60"
-            style={{ background: 'rgba(255,255,255,0.5)' }}
+            className="flex items-center rounded-lg border border-[var(--border-subtle)] p-0.5 opacity-60 bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)]"
           >
             {RANGES.map((r) => (
               <button
                 key={r}
                 disabled
                 className={`px-2.5 py-1 rounded-md text-xs font-medium ${
-                  range === r ? 'bg-yellow-400 text-white shadow-sm' : 'text-gray-400'
+                  range === r ? 'bg-yellow-400 text-white shadow-sm' : 'text-[var(--text-muted)]'
                 }`}
               >
                 {t(`range.${r}`)}
@@ -151,14 +149,14 @@ export default function PersonalListeningOverview({
 
   if (error || !stats || !currentWeek) {
     return (
-      <div 
-        className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
-        style={glassStyle}
+      <div
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)] bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+        style={glassFilter}
       >
         <h2 className="text-xl md:text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">
           {username ? t('titleForUser', { username }) : t('title')}
         </h2>
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-[var(--text-muted)]">
           <p className="mb-2">{t('noData')}</p>
           <p className="text-sm">{t('noDataDescription')}</p>
         </div>
@@ -167,23 +165,18 @@ export default function PersonalListeningOverview({
   }
 
   return (
-    <div 
-      className="rounded-xl shadow-lg p-4 md:p-6 border border-theme"
-      style={{
-        background: 'rgba(255, 255, 255, 0.6)',
-        backdropFilter: 'blur(12px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-      }}
+    <div
+      className="rounded-xl shadow-lg p-4 md:p-6 border border-theme bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+      style={glassFilter}
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 md:mb-6 gap-3">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+        <h2 className="text-xl md:text-2xl font-bold text-[var(--text-primary)]">
           {username ? t('titleForUser', { username }) : t('title')}
         </h2>
         <div className="flex flex-col items-start sm:items-end gap-1.5">
           {/* Range selector */}
           <div
-            className="flex items-center rounded-lg border border-gray-200 p-0.5"
-            style={{ background: 'rgba(255,255,255,0.5)' }}
+            className="flex items-center rounded-lg border border-[var(--border-subtle)] p-0.5 bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)]"
           >
             {RANGES.map((r) => (
               <button
@@ -193,7 +186,7 @@ export default function PersonalListeningOverview({
                 className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
                   range === r
                     ? 'bg-yellow-400 text-white shadow-sm'
-                    : 'text-gray-500 hover:text-gray-700 disabled:opacity-50'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] disabled:opacity-50'
                 }`}
               >
                 {t(`range.${r}`)}
@@ -202,7 +195,7 @@ export default function PersonalListeningOverview({
           </div>
           {/* Period label */}
           {currentWeek && (
-            <span className="text-xs text-gray-400">{periodLabel}</span>
+            <span className="text-xs text-[var(--text-muted)]">{periodLabel}</span>
           )}
         </div>
       </div>
@@ -210,34 +203,32 @@ export default function PersonalListeningOverview({
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-6">
         <div 
-          className="rounded-lg p-3 md:p-4 border"
+          className="rounded-lg p-3 md:p-4 border bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border-white/30 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
             WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
-          <div className="text-xs md:text-sm text-gray-600 font-medium mb-1">{t('totalPlays')}</div>
-          <div className="text-xl md:text-2xl font-bold text-gray-900">{currentWeek.totalPlays.toLocaleString()}</div>
+          <div className="text-xs md:text-sm text-[var(--text-secondary)] font-medium mb-1">{t('totalPlays')}</div>
+          <div className="text-xl md:text-2xl font-bold text-[var(--text-primary)]">{currentWeek.totalPlays.toLocaleString()}</div>
           {playsChange !== null && (
             <div className="flex items-center gap-1 mt-1 text-xs">
               {playsChange > 0 ? (
                 <>
-                  <FontAwesomeIcon icon={faArrowUp} className="text-green-600" />
-                  <span className="text-green-600">+{playsChange.toLocaleString()}</span>
-                  {playsChangePercent && <span className="text-gray-500">({playsChangePercent}%)</span>}
+                  <FontAwesomeIcon icon={faArrowUp} className="text-green-600 dark:text-green-400" />
+                  <span className="text-green-600 dark:text-green-400">+{playsChange.toLocaleString()}</span>
+                  {playsChangePercent && <span className="text-[var(--text-muted)]">({playsChangePercent}%)</span>}
                 </>
               ) : playsChange < 0 ? (
                 <>
-                  <FontAwesomeIcon icon={faArrowDown} className="text-red-600" />
-                  <span className="text-red-600">{playsChange.toLocaleString()}</span>
-                  {playsChangePercent && <span className="text-gray-500">({playsChangePercent}%)</span>}
+                  <FontAwesomeIcon icon={faArrowDown} className="text-red-600 dark:text-red-400" />
+                  <span className="text-red-600 dark:text-red-400">{playsChange.toLocaleString()}</span>
+                  {playsChangePercent && <span className="text-[var(--text-muted)]">({playsChangePercent}%)</span>}
                 </>
               ) : (
                 <>
-                  <FontAwesomeIcon icon={faMinus} className="text-gray-500" />
-                  <span className="text-gray-500">{t('noChange')}</span>
+                  <FontAwesomeIcon icon={faMinus} className="text-[var(--text-muted)]" />
+                  <span className="text-[var(--text-muted)]">{t('noChange')}</span>
                 </>
               )}
             </div>
@@ -245,42 +236,36 @@ export default function PersonalListeningOverview({
         </div>
 
         <div 
-          className="rounded-lg p-3 md:p-4 border"
+          className="rounded-lg p-3 md:p-4 border bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border-white/30 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
             WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
-          <div className="text-xs md:text-sm text-gray-600 font-medium mb-1">{t('uniqueArtists')}</div>
-          <div className="text-xl md:text-2xl font-bold text-gray-900">{currentWeek.uniqueArtists}</div>
+          <div className="text-xs md:text-sm text-[var(--text-secondary)] font-medium mb-1">{t('uniqueArtists')}</div>
+          <div className="text-xl md:text-2xl font-bold text-[var(--text-primary)]">{currentWeek.uniqueArtists}</div>
         </div>
 
         <div 
-          className="rounded-lg p-3 md:p-4 border"
+          className="rounded-lg p-3 md:p-4 border bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border-white/30 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
             WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
-          <div className="text-xs md:text-sm text-gray-600 font-medium mb-1">{t('uniqueTracks')}</div>
-          <div className="text-xl md:text-2xl font-bold text-gray-900">{currentWeek.uniqueTracks}</div>
+          <div className="text-xs md:text-sm text-[var(--text-secondary)] font-medium mb-1">{t('uniqueTracks')}</div>
+          <div className="text-xl md:text-2xl font-bold text-[var(--text-primary)]">{currentWeek.uniqueTracks}</div>
         </div>
 
         <div 
-          className="rounded-lg p-3 md:p-4 border"
+          className="rounded-lg p-3 md:p-4 border bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border-white/30 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
             WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
-          <div className="text-xs md:text-sm text-gray-600 font-medium mb-1">{t('topItems')}</div>
-          <div className="text-xl md:text-2xl font-bold text-gray-900">
+          <div className="text-xs md:text-sm text-[var(--text-secondary)] font-medium mb-1">{t('topItems')}</div>
+          <div className="text-xl md:text-2xl font-bold text-[var(--text-primary)]">
             {currentWeek.topArtists.length + currentWeek.topTracks.length + currentWeek.topAlbums.length}
           </div>
         </div>
@@ -290,26 +275,24 @@ export default function PersonalListeningOverview({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
         {/* Top Artists */}
         <div 
-          className="rounded-lg p-3 md:p-4 border"
+          className="rounded-lg p-3 md:p-4 border bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border-white/30 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
             WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
           <div className="flex items-center gap-2 mb-3">
-            <FontAwesomeIcon icon={faMicrophone} className="text-gray-600" />
-            <h3 className="font-semibold text-gray-900">{t('topArtists')}</h3>
+            <FontAwesomeIcon icon={faMicrophone} className="text-[var(--text-secondary)]" />
+            <h3 className="font-semibold text-[var(--text-primary)]">{t('topArtists')}</h3>
           </div>
           <ol className="space-y-2">
             {topArtists.map((artist, idx) => (
               <li key={idx} className="flex items-center gap-2 text-sm">
-                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-700">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[var(--border-strong)] flex items-center justify-center text-xs font-bold text-[var(--text-secondary)]">
                   {idx + 1}
                 </span>
-                <span className="font-medium text-gray-900 truncate">{artist.name}</span>
-                <span className="ml-auto text-gray-500 text-xs">{t('plays', { count: artist.playcount })}</span>
+                <span className="font-medium text-[var(--text-primary)] truncate">{artist.name}</span>
+                <span className="ml-auto text-[var(--text-muted)] text-xs">{t('plays', { count: artist.playcount })}</span>
               </li>
             ))}
           </ol>
@@ -317,29 +300,27 @@ export default function PersonalListeningOverview({
 
         {/* Top Tracks */}
         <div 
-          className="rounded-lg p-3 md:p-4 border"
+          className="rounded-lg p-3 md:p-4 border bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border-white/30 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
             WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
           <div className="flex items-center gap-2 mb-3">
-            <FontAwesomeIcon icon={faMusic} className="text-gray-600" />
-            <h3 className="font-semibold text-gray-900">{t('topTracks')}</h3>
+            <FontAwesomeIcon icon={faMusic} className="text-[var(--text-secondary)]" />
+            <h3 className="font-semibold text-[var(--text-primary)]">{t('topTracks')}</h3>
           </div>
           <ol className="space-y-2">
             {topTracks.map((track, idx) => (
               <li key={idx} className="flex items-start gap-2 text-sm">
-                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-700 mt-0.5">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[var(--border-strong)] flex items-center justify-center text-xs font-bold text-[var(--text-secondary)] mt-0.5">
                   {idx + 1}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-gray-900 truncate">{track.name}</div>
-                  <div className="text-xs text-gray-500 truncate">{t('by', { artist: track.artist })}</div>
+                  <div className="font-medium text-[var(--text-primary)] truncate">{track.name}</div>
+                  <div className="text-xs text-[var(--text-muted)] truncate">{t('by', { artist: track.artist })}</div>
                 </div>
-                <span className="ml-auto text-gray-500 text-xs flex-shrink-0">{track.playcount}</span>
+                <span className="ml-auto text-[var(--text-muted)] text-xs flex-shrink-0">{track.playcount}</span>
               </li>
             ))}
           </ol>
@@ -347,29 +328,27 @@ export default function PersonalListeningOverview({
 
         {/* Top Albums */}
         <div 
-          className="rounded-lg p-3 md:p-4 border"
+          className="rounded-lg p-3 md:p-4 border bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border-white/30 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
             WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
           <div className="flex items-center gap-2 mb-3">
-            <FontAwesomeIcon icon={faCompactDisc} className="text-gray-600" />
-            <h3 className="font-semibold text-gray-900">{t('topAlbums')}</h3>
+            <FontAwesomeIcon icon={faCompactDisc} className="text-[var(--text-secondary)]" />
+            <h3 className="font-semibold text-[var(--text-primary)]">{t('topAlbums')}</h3>
           </div>
           <ol className="space-y-2">
             {topAlbums.map((album, idx) => (
               <li key={idx} className="flex items-start gap-2 text-sm">
-                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-700 mt-0.5">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[var(--border-strong)] flex items-center justify-center text-xs font-bold text-[var(--text-secondary)] mt-0.5">
                   {idx + 1}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-gray-900 truncate">{album.name}</div>
-                  <div className="text-xs text-gray-500 truncate">{t('by', { artist: album.artist })}</div>
+                  <div className="font-medium text-[var(--text-primary)] truncate">{album.name}</div>
+                  <div className="text-xs text-[var(--text-muted)] truncate">{t('by', { artist: album.artist })}</div>
                 </div>
-                <span className="ml-auto text-gray-500 text-xs flex-shrink-0">{album.playcount}</span>
+                <span className="ml-auto text-[var(--text-muted)] text-xs flex-shrink-0">{album.playcount}</span>
               </li>
             ))}
           </ol>

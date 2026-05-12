@@ -67,7 +67,7 @@ export default function AdminTabs({
       </div>
 
       {/* Tab Content */}
-      <div className="bg-white/60 backdrop-blur-md rounded-xl p-4 md:p-6 border border-theme shadow-sm">
+      <div className="bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] backdrop-blur-md rounded-xl p-4 md:p-6 border border-theme shadow-sm">
         <div style={{ display: activeTab === 'metrics' ? 'block' : 'none' }}>
           {metricsContent}
         </div>

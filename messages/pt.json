@@ -149,6 +149,11 @@
     "emailChangeWarning": "Alterar seu email redefinirá o status de verificação. Um email de verificação será enviado para seu novo endereço.",
     "language": "Idioma",
     "selectLanguage": "Selecione seu idioma preferido",
+    "appearance": "Tema",
+    "appearanceDescription": "Escolha o tema do ChartsFM. A opção 'Sistema' segue a preferência do seu sistema operacional.",
+    "appearanceLight": "Claro",
+    "appearanceDark": "Escuro",
+    "appearanceSystem": "Sistema",
     "saveChanges": "Salvar Alterações",
     "saving": "Salvando...",
     "settingsUpdated": "Configurações atualizadas com sucesso!",
@@ -188,6 +193,9 @@
     "bulkGenerate": "Geração em massa",
     "impersonatingTitle": "Personificando {name}",
     "stopImpersonating": "Parar personificação",
+    "appearanceLight": "Tema: Claro",
+    "appearanceDark": "Tema: Escuro",
+    "appearanceSystem": "Tema: Sistema",
     "quickAccess": {
       "title": "Atalho",
       "close": "Fechar",
@@ -824,6 +832,8 @@
         "background": "Fundo",
         "button": "Botões",
         "titleColor": "Título",
+        "plays": "plays",
+        "viewSample": "Ver",
         "saving": "Salvando...",
         "saveSettings": "Salvar configurações",
         "cancel": "Cancelar",
@@ -837,7 +847,9 @@
           "graphite": "Fumê",
           "hotPink": "Flamingo",
           "neonGreen": "Kiwi",
-          "rainbow": "Orgulho"
+          "rainbow": "Orgulho",
+          "synthwave": "Synthwave",
+          "sunset": "Sex on the Beach"
         }
       },
       "regenerateCharts": {
@@ -1145,7 +1157,11 @@
       "title": "Desempenho histórico",
       "noHistory": "Nenhum histórico disponível",
       "outFor": "Fora por {count} semana",
-      "outForPlural": "Fora por {count} semanas"
+      "outForPlural": "Fora por {count} semanas",
+      "position": "Posição",
+      "plays": "Plays",
+      "vs": "VS",
+      "viewWeekCharts": "Ver charts da semana"
     },
     "quickStats": {
       "title": "Estatísticas principais",

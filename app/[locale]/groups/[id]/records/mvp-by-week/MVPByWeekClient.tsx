@@ -42,7 +42,7 @@ export default function MVPByWeekClient({ groupId }: MVPByWeekClientProps) {
         {titleBlock}
         <div className="flex items-center justify-center py-10 md:py-16 px-2">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-2xl md:text-3xl text-[var(--theme-primary)]" />
-          <span className="ml-3 text-sm md:text-base text-gray-600">{t('loading')}</span>
+          <span className="ml-3 text-sm md:text-base text-[var(--text-secondary)]">{t('loading')}</span>
         </div>
       </>
     )
@@ -52,7 +52,7 @@ export default function MVPByWeekClient({ groupId }: MVPByWeekClientProps) {
     return (
       <>
         {titleBlock}
-        <div className="rounded-lg border border-gray-200 bg-white shadow-lg p-4 md:p-6 text-center text-sm md:text-base text-gray-600" style={{ backgroundColor: '#ffffff' }}>
+        <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-card)] shadow-lg p-4 md:p-6 text-center text-sm md:text-base text-[var(--text-secondary)]">
           {error || t('empty')}
         </div>
       </>
@@ -63,7 +63,7 @@ export default function MVPByWeekClient({ groupId }: MVPByWeekClientProps) {
     return (
       <>
         {titleBlock}
-        <div className="rounded-lg border border-gray-200 bg-white shadow-lg p-4 md:p-6 text-center text-sm md:text-base text-gray-600" style={{ backgroundColor: '#ffffff' }}>
+        <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-card)] shadow-lg p-4 md:p-6 text-center text-sm md:text-base text-[var(--text-secondary)]">
           {t('empty')}
         </div>
       </>
@@ -79,14 +79,14 @@ export default function MVPByWeekClient({ groupId }: MVPByWeekClientProps) {
         {rows.map((row) => (
           <div
             key={row.weekStart}
-            className="rounded-lg border border-gray-200 shadow-sm p-3 overflow-hidden"
-            style={{ backgroundColor: '#ffffff', isolation: 'isolate' }}
+            className="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-card)] shadow-sm p-3 overflow-hidden"
+            style={{ isolation: 'isolate' }}
           >
             <div className="flex items-center justify-between gap-2 mb-1.5">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('weekNumber')} {row.weekNumber}</span>
+              <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">{t('weekNumber')} {row.weekNumber}</span>
               <Link
                 href={`/groups/${groupId}/charts?week=${formatChartWeekDate(new Date(row.weekStart))}`}
-                className="text-sm text-gray-600 hover:text-[var(--theme-primary)] underline-offset-2 hover:underline min-h-[44px] inline-flex items-center"
+                className="text-sm text-[var(--text-secondary)] hover:text-[var(--theme-primary)] underline-offset-2 hover:underline min-h-[44px] inline-flex items-center"
               >
                 {formatChartWeekLabel(new Date(row.weekStart))}
               </Link>
@@ -95,26 +95,26 @@ export default function MVPByWeekClient({ groupId }: MVPByWeekClientProps) {
               {row.mvpUserId && row.mvpLastfmUsername ? (
                 <Link
                   href={`/u/${encodeURIComponent(row.mvpLastfmUsername)}`}
-                  className="flex items-center gap-3 py-1.5 -mx-1 px-1 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors min-h-[44px]"
+                  className="flex items-center gap-3 py-1.5 -mx-1 px-1 rounded-lg hover:bg-[var(--surface-base)] active:bg-[var(--surface-base)] transition-colors min-h-[44px]"
                 >
-                  <div className="h-9 w-9 flex-shrink-0 overflow-hidden rounded-full bg-gray-100 ring-1 ring-gray-200">
+                  <div className="h-9 w-9 flex-shrink-0 overflow-hidden rounded-full bg-[var(--surface-base)] ring-1 ring-[var(--border-subtle)]">
                     <SafeImage
                       src={row.mvpImage || ''}
                       alt={row.mvpName || row.mvpLastfmUsername}
                       className="h-full w-full object-cover"
                     />
                   </div>
-                  <span className="font-medium text-gray-900 truncate">
+                  <span className="font-medium text-[var(--text-primary)] truncate">
                     {row.mvpName || row.mvpLastfmUsername}
                   </span>
                 </Link>
               ) : (
-                <span className="text-gray-500 text-sm py-1.5 block">—</span>
+                <span className="text-[var(--text-muted)] text-sm py-1.5 block">—</span>
               )}
             </div>
-            <div className="flex items-center gap-6 text-sm tabular-nums border-t border-gray-100 pt-2">
-              <span className="text-gray-600"><span className="text-gray-400 font-medium">{t('plays')}</span> {row.totalPlays.toLocaleString()}</span>
-              <span className="text-gray-600"><span className="text-gray-400 font-medium">{t('vs')}</span> {row.totalVS.toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
+            <div className="flex items-center gap-6 text-sm tabular-nums border-t border-[var(--border-subtle)] pt-2">
+              <span className="text-[var(--text-secondary)]"><span className="text-[var(--text-muted)] font-medium">{t('plays')}</span> {row.totalPlays.toLocaleString()}</span>
+              <span className="text-[var(--text-secondary)]"><span className="text-[var(--text-muted)] font-medium">{t('vs')}</span> {row.totalVS.toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
             </div>
           </div>
         ))}
@@ -122,30 +122,29 @@ export default function MVPByWeekClient({ groupId }: MVPByWeekClientProps) {
 
       {/* Desktop: table */}
       <div
-        className="hidden md:block overflow-x-auto rounded-lg shadow-lg overflow-hidden"
+        className="hidden md:block overflow-x-auto rounded-lg shadow-lg overflow-hidden bg-[var(--surface-card)]"
         style={{
-          backgroundColor: '#ffffff',
           isolation: 'isolate',
         }}
       >
         <table className="w-full min-w-[500px] text-left text-sm">
-          <thead className="bg-gray-50 sticky top-0 z-10">
+          <thead className="bg-[var(--surface-base)] sticky top-0 z-10">
             <tr>
-              <th className="px-4 py-3 font-semibold text-gray-700">{t('weekNumber')}</th>
-              <th className="px-4 py-3 font-semibold text-gray-700">{t('weekDate')}</th>
-              <th className="px-4 py-3 font-semibold text-gray-700">{t('mvp')}</th>
-              <th className="px-4 py-3 font-semibold text-gray-700 text-right tabular-nums">{t('plays')}</th>
-              <th className="px-4 py-3 font-semibold text-gray-700 text-right tabular-nums">{t('vs')}</th>
+              <th className="px-4 py-3 font-semibold text-[var(--text-secondary)]">{t('weekNumber')}</th>
+              <th className="px-4 py-3 font-semibold text-[var(--text-secondary)]">{t('weekDate')}</th>
+              <th className="px-4 py-3 font-semibold text-[var(--text-secondary)]">{t('mvp')}</th>
+              <th className="px-4 py-3 font-semibold text-[var(--text-secondary)] text-right tabular-nums">{t('plays')}</th>
+              <th className="px-4 py-3 font-semibold text-[var(--text-secondary)] text-right tabular-nums">{t('vs')}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-[var(--border-subtle)]">
             {rows.map((row) => (
-              <tr key={row.weekStart} className="hover:bg-gray-50 transition-colors">
-                <td className="px-4 py-3 font-medium text-gray-900 tabular-nums">{row.weekNumber}</td>
-                <td className="px-4 py-3 text-gray-700">
+              <tr key={row.weekStart} className="hover:bg-[var(--surface-base)] transition-colors">
+                <td className="px-4 py-3 font-medium text-[var(--text-primary)] tabular-nums">{row.weekNumber}</td>
+                <td className="px-4 py-3 text-[var(--text-secondary)]">
                   <Link
                     href={`/groups/${groupId}/charts?week=${formatChartWeekDate(new Date(row.weekStart))}`}
-                    className="text-gray-700 hover:text-[var(--theme-primary)] underline-offset-2 hover:underline"
+                    className="text-[var(--text-secondary)] hover:text-[var(--theme-primary)] underline-offset-2 hover:underline"
                   >
                     {formatChartWeekLabel(new Date(row.weekStart))}
                   </Link>
@@ -154,9 +153,9 @@ export default function MVPByWeekClient({ groupId }: MVPByWeekClientProps) {
                   {row.mvpUserId && row.mvpLastfmUsername ? (
                     <Link
                       href={`/u/${encodeURIComponent(row.mvpLastfmUsername)}`}
-                      className="flex items-center gap-2 text-gray-900 hover:text-[var(--theme-primary)]"
+                      className="flex items-center gap-2 text-[var(--text-primary)] hover:text-[var(--theme-primary)]"
                     >
-                      <div className="h-8 w-8 flex-shrink-0 overflow-hidden rounded-full bg-[var(--theme-primary)]/10 ring-1 ring-[var(--theme-border)]">
+                      <div className="h-8 w-8 flex-shrink-0 overflow-hidden rounded-full bg-[rgb(var(--theme-primary-rgb)/0.1)] ring-1 ring-[var(--theme-border)]">
                         <SafeImage
                           src={row.mvpImage || ''}
                           alt={row.mvpName || row.mvpLastfmUsername}
@@ -168,11 +167,11 @@ export default function MVPByWeekClient({ groupId }: MVPByWeekClientProps) {
                       </span>
                     </Link>
                   ) : (
-                    <span className="text-gray-500">—</span>
+                    <span className="text-[var(--text-muted)]">—</span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-right tabular-nums text-gray-700">{row.totalPlays.toLocaleString()}</td>
-                <td className="px-4 py-3 text-right tabular-nums text-gray-700">{row.totalVS.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
+                <td className="px-4 py-3 text-right tabular-nums text-[var(--text-secondary)]">{row.totalPlays.toLocaleString()}</td>
+                <td className="px-4 py-3 text-right tabular-nums text-[var(--text-secondary)]">{row.totalVS.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
               </tr>
             ))}
           </tbody>

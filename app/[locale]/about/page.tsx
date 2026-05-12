@@ -64,12 +64,12 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   return (
     <main className="flex min-h-screen flex-col pt-4 sm:pt-6 md:pt-8 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 relative">
       <div className="max-w-4xl w-full mx-auto relative z-10">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 sm:mb-6 md:mb-8">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-4 sm:mb-6 md:mb-8">
           {t('title')}
         </h1>
-        <div className="bg-white rounded-lg p-4 sm:p-6 md:p-8 shadow-sm">
+        <div className="bg-[var(--surface-card)] rounded-lg p-4 sm:p-6 md:p-8 shadow-sm">
           <AboutContent content={markdownContent} />
-          <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
+          <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-[var(--border-subtle)]">
             <a
               href="https://github.com/reidosbares/charts-fm"
               target="_blank"

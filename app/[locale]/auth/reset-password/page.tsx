@@ -111,10 +111,10 @@ function ResetPasswordPageContent() {
 
   if (isValidating) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden flex items-center justify-center">
+      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden flex items-center justify-center">
         <div className="relative z-10 text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-          <p className="text-gray-700">Validating reset token...</p>
+          <p className="text-[var(--text-secondary)]">Validating reset token...</p>
         </div>
       </main>
     )
@@ -122,16 +122,14 @@ function ResetPasswordPageContent() {
 
   if (!isValid) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden">
+      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden">
         <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="max-w-2xl w-full">
             <div
-              className="rounded-3xl p-8 sm:p-10 relative overflow-hidden"
+              className="rounded-3xl p-8 sm:p-10 relative overflow-hidden bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10"
               style={{
-                background: 'rgba(255, 255, 255, 0.6)',
                 backdropFilter: 'blur(16px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-                border: '1px solid rgba(255, 255, 255, 0.4)',
                 boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
               }}
             >
@@ -146,12 +144,12 @@ function ResetPasswordPageContent() {
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                   }}
                 >
-                  <p className="text-red-700 font-medium">{error}</p>
+                  <p className="text-red-700 dark:text-red-300 font-medium">{error}</p>
                 </div>
               )}
-              
+
               <div className="text-center">
-                <p className="text-gray-700 mb-4">
+                <p className="text-[var(--text-secondary)] mb-4">
                   The password reset link is invalid or has expired.
                 </p>
                 <Link 
@@ -169,12 +167,12 @@ function ResetPasswordPageContent() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 dark:bg-yellow-400/[0.04] rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-96 h-96 bg-pink-400/20 dark:bg-pink-400/[0.04] rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 dark:bg-orange-400/[0.04] rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
@@ -183,7 +181,7 @@ function ResetPasswordPageContent() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-yellow-600 via-orange-500 to-pink-500 bg-clip-text text-transparent">
               Reset Your Password
             </h1>
-            <p className="text-lg sm:text-xl text-gray-700">
+            <p className="text-lg sm:text-xl text-[var(--text-secondary)]">
               Enter your new password below
             </p>
           </div>
@@ -199,12 +197,12 @@ function ResetPasswordPageContent() {
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               }}
             >
-              <p className="text-red-700 font-medium">{error}</p>
+              <p className="text-red-700 dark:text-red-300 font-medium">{error}</p>
             </div>
           )}
 
           {success && (
-            <div 
+            <div
               className="mb-6 p-4 rounded-2xl"
               style={{
                 background: 'rgba(34, 197, 94, 0.2)',
@@ -214,20 +212,18 @@ function ResetPasswordPageContent() {
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               }}
             >
-              <p className="text-green-700 font-semibold">✓ Password reset successfully!</p>
-              <p className="text-sm text-green-600 mt-2">
+              <p className="text-green-700 dark:text-green-300 font-semibold">✓ Password reset successfully!</p>
+              <p className="text-sm text-green-600 dark:text-green-400 mt-2">
                 Redirecting to login page...
               </p>
             </div>
           )}
 
           <div
-            className="rounded-3xl p-8 sm:p-10 relative overflow-hidden"
+            className="rounded-3xl p-8 sm:p-10 relative overflow-hidden bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10"
             style={{
-              background: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(16px) saturate(180%)',
               WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.4)',
               boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
             }}
           >
@@ -235,7 +231,7 @@ function ResetPasswordPageContent() {
             <div className="relative z-10">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="password" className="block text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="password" className="block text-sm font-semibold text-[var(--text-primary)] mb-2">
                     New Password *
                   </label>
                   <input
@@ -244,22 +240,21 @@ function ResetPasswordPageContent() {
                     required
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all text-gray-900"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all text-[var(--text-primary)] bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                     placeholder="At least 8 characters with 1 special character"
                     minLength={8}
                     disabled={isSubmitting || success}
                   />
-                  <p className="text-xs text-gray-600 mt-2">
+                  <p className="text-xs text-[var(--text-secondary)] mt-2">
                     Password must be at least 8 characters and include at least one special character (!@#$%^&* etc.)
                   </p>
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="confirmPassword" className="block text-sm font-semibold text-[var(--text-primary)] mb-2">
                     Confirm New Password *
                   </label>
                   <input
@@ -268,9 +263,8 @@ function ResetPasswordPageContent() {
                     required
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all text-gray-900"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all text-[var(--text-primary)] bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                     placeholder="Re-enter your new password"
@@ -293,7 +287,7 @@ function ResetPasswordPageContent() {
           </div>
 
           <div className="text-center mt-8">
-            <p className="text-gray-700">
+            <p className="text-[var(--text-secondary)]">
               Remember your password?{' '}
               <Link href="/" className="text-yellow-600 hover:text-yellow-700 font-semibold underline underline-offset-2">
                 Log in
@@ -309,10 +303,10 @@ function ResetPasswordPageContent() {
 export default function ResetPasswordPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden flex items-center justify-center">
+      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-          <p className="text-gray-700">Loading...</p>
+          <p className="text-[var(--text-secondary)]">Loading...</p>
         </div>
       </main>
     }>

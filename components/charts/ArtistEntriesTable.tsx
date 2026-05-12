@@ -120,7 +120,7 @@ const ArtistEntriesTable = memo(function ArtistEntriesTable({ tracks, albums, gr
   // Get row styling classes based on peak position
   const getRowStyles = (peakPosition: number) => {
     if (peakPosition === 1) {
-      return 'bg-gradient-to-r from-yellow-50 to-yellow-100/50'
+      return 'bg-gradient-to-r from-yellow-50 to-yellow-100/50 dark:from-yellow-950/40 dark:to-amber-950/40'
     }
     return ''
   }
@@ -152,15 +152,15 @@ const ArtistEntriesTable = memo(function ArtistEntriesTable({ tracks, albums, gr
         </span>
       )
     } else if (peakPosition <= 10) {
-      return <span className="text-blue-600 font-bold">#{peakPosition}</span>
+      return <span className="text-blue-600 dark:text-blue-300 font-bold">#{peakPosition}</span>
     }
-    return <span className="text-gray-900 font-bold">#{peakPosition}</span>
+    return <span className="text-[var(--text-primary)] font-bold">#{peakPosition}</span>
   }
 
   return (
-    <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
-      <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-4">{t('title')}</h2>
-      
+    <div className="bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/30 dark:border-white/10" style={{ contain: 'layout style paint' }}>
+      <h2 className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-4">{t('title')}</h2>
+
       <div className="mb-6 flex justify-center">
         <LiquidGlassTabs
           tabs={tabs}
@@ -170,54 +170,54 @@ const ArtistEntriesTable = memo(function ArtistEntriesTable({ tracks, albums, gr
       </div>
 
       {currentEntries.length === 0 ? (
-        <div className="text-center py-8 text-gray-600">
+        <div className="text-center py-8 text-[var(--text-secondary)]">
           {activeTab === 'tracks' ? t('noTracks') : t('noAlbums')}
         </div>
       ) : (
         <div className="overflow-x-auto -mx-4 md:mx-0">
           <div className="inline-block min-w-full align-middle px-4 md:px-0">
-            <div className="text-sm text-gray-600 mb-3 text-center">
+            <div className="text-sm text-[var(--text-secondary)] mb-3 text-center">
               {t('total')} {currentEntries.length} {currentEntries.length === 1 ? t('entry') : t('entries')}
               <span className="mx-2">•</span>
               {t('numberOneWeeks')} {totalNumberOneWeeks}
             </div>
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-200/50 sticky top-0 bg-white/40 backdrop-blur-sm z-10">
-                  <th className="text-left py-2 md:py-3 px-2 md:px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                <tr className="border-b border-[var(--border-subtle)] sticky top-0 bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.7)] backdrop-blur-sm z-10">
+                  <th className="text-left py-2 md:py-3 px-2 md:px-4 text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
                     {t('peak')}
                   </th>
-                  <th className="text-left py-2 md:py-3 px-2 md:px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="text-left py-2 md:py-3 px-2 md:px-4 text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
                     {t('weeksAtPeak')}
                   </th>
-                  <th className="text-left py-2 md:py-3 px-2 md:px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="text-left py-2 md:py-3 px-2 md:px-4 text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
                     {t('name')}
                   </th>
-                  <th className="text-left py-2 md:py-3 px-2 md:px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="text-left py-2 md:py-3 px-2 md:px-4 text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
                     {t('weeksOnChart')}
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200/50">
+              <tbody className="divide-y divide-[var(--border-subtle)]">
                 {currentEntries.map((entry) => {
                   const href = `/groups/${groupId}/charts/${entry.chartType.slice(0, -1)}/${entry.slug}`
                   const rowStyles = getRowStyles(entry.peakPosition)
                   return (
-                    <tr 
-                      key={entry.entryKey} 
-                      className={`${rowStyles} hover:bg-white/20 transition-colors`}
+                    <tr
+                      key={entry.entryKey}
+                      className={`${rowStyles} hover:bg-white/20 dark:hover:bg-white/5 transition-colors`}
                     >
                       <td className="py-2 md:py-3 px-2 md:px-4 text-sm">
                         {renderPeakPosition(entry.peakPosition)}
                       </td>
-                      <td className="py-2 md:py-3 px-2 md:px-4 text-sm text-gray-700">
+                      <td className="py-2 md:py-3 px-2 md:px-4 text-sm text-[var(--text-secondary)]">
                         {entry.weeksAtPeak}
                       </td>
                       <td className="py-2 md:py-3 px-2 md:px-4 text-sm">
                         <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
                           <Link
                             href={href}
-                            className="font-medium text-gray-900 hover:text-[var(--theme-primary-dark)] transition-colors"
+                            className="font-medium text-[var(--text-primary)] hover:text-[var(--theme-primary-dark)] transition-colors"
                           >
                             {entry.name}
                           </Link>
@@ -229,7 +229,7 @@ const ArtistEntriesTable = memo(function ArtistEntriesTable({ tracks, albums, gr
                           })()}
                         </span>
                       </td>
-                      <td className="py-2 md:py-3 px-2 md:px-4 text-sm text-gray-700">
+                      <td className="py-2 md:py-3 px-2 md:px-4 text-sm text-[var(--text-secondary)]">
                         {entry.totalWeeksCharting}
                       </td>
                     </tr>

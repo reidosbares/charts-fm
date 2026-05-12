@@ -104,8 +104,10 @@ export default async function GroupSettingsPage({ params }: { params: { id: stri
     dynamicIconSource: group.dynamicIconSource,
   })
 
+  const initialThemeClass = `theme-${((group as any).colorTheme || 'white').replace('_', '-')}`
+
   return (
-    <main className="flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 relative">
+    <main className={`flex min-h-screen flex-col pt-8 pb-24 px-4 md:px-6 lg:px-12 xl:px-24 relative bg-gradient-to-b ${initialThemeClass}`}>
       <div className="max-w-6xl w-full mx-auto relative z-10">
         <GroupPageHero
           group={{

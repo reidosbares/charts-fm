@@ -163,7 +163,7 @@ export default function CustomSelect({
     return createPortal(
       <div
         ref={dropdownRef}
-        className="fixed z-[9999] bg-white border-2 border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto"
+        className="fixed z-[9999] bg-[var(--surface-elevated)] border-2 border-[var(--border-strong)] rounded-lg shadow-lg max-h-60 overflow-auto"
         style={{
           top: dropdownPosition.top,
           left: dropdownPosition.left,
@@ -181,10 +181,10 @@ export default function CustomSelect({
             className={`
               w-full px-4 py-2 text-left transition-colors
               ${option.value === value
-                ? 'bg-yellow-50 text-yellow-900 font-medium'
-                : 'text-gray-900 hover:bg-yellow-100'
+                ? 'bg-yellow-50 dark:bg-yellow-950/40 text-yellow-900 dark:text-yellow-200 font-medium'
+                : 'text-[var(--text-primary)] hover:bg-yellow-100 dark:hover:bg-yellow-950/30'
               }
-              ${highlightedIndex === index ? 'bg-yellow-100' : ''}
+              ${highlightedIndex === index ? 'bg-yellow-100 dark:bg-yellow-950/30' : ''}
               ${index === 0 ? 'rounded-t-lg' : ''}
               ${index === options.length - 1 ? 'rounded-b-lg' : ''}
             `}
@@ -216,12 +216,12 @@ export default function CustomSelect({
         onKeyDown={handleKeyDown}
         disabled={disabled}
         className={`
-          w-full px-4 py-2 text-left bg-white border-2 rounded-lg
+          w-full px-4 py-2 text-left bg-[var(--surface-card)] border-2 rounded-lg
           transition-all duration-200
           flex items-center justify-between
-          ${disabled 
-            ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' 
-            : 'border-gray-300 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500'
+          ${disabled
+            ? 'bg-[var(--surface-base)] text-[var(--text-muted)] cursor-not-allowed border-[var(--border-subtle)]'
+            : 'border-[var(--border-strong)] hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500'
           }
           ${isOpen ? 'border-yellow-500 ring-2 ring-yellow-500' : ''}
         `}
@@ -229,13 +229,13 @@ export default function CustomSelect({
         aria-expanded={isOpen}
         aria-labelledby={id ? `${id}-label` : undefined}
       >
-        <span className={selectedOption ? 'text-gray-900' : 'text-gray-500'}>
+        <span className={selectedOption ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <svg
-          className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
+          className={`w-5 h-5 text-[var(--text-muted)] transition-transform duration-200 ${
             isOpen ? 'transform rotate-180' : ''
-          } ${disabled ? 'text-gray-400' : ''}`}
+          } ${disabled ? 'opacity-50' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

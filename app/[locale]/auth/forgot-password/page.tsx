@@ -55,12 +55,12 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 dark:bg-yellow-400/[0.04] rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-96 h-96 bg-pink-400/20 dark:bg-pink-400/[0.04] rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 dark:bg-orange-400/[0.04] rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
@@ -69,7 +69,7 @@ export default function ForgotPasswordPage() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-yellow-600 via-orange-500 to-pink-500 bg-clip-text text-transparent">
               Forgot Password?
             </h1>
-            <p className="text-lg sm:text-xl text-gray-700">
+            <p className="text-lg sm:text-xl text-[var(--text-secondary)]">
               Enter your email address and we'll send you a link to reset your password
             </p>
           </div>
@@ -85,12 +85,12 @@ export default function ForgotPasswordPage() {
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               }}
             >
-              <p className="text-red-700 font-medium">{error}</p>
+              <p className="text-red-700 dark:text-red-300 font-medium">{error}</p>
             </div>
           )}
 
           {success && (
-            <div 
+            <div
               className="mb-6 p-4 rounded-2xl"
               style={{
                 background: 'rgba(34, 197, 94, 0.2)',
@@ -100,20 +100,18 @@ export default function ForgotPasswordPage() {
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               }}
             >
-              <p className="text-green-700 font-semibold">✓ Password reset email sent!</p>
-              <p className="text-sm text-green-600 mt-2">
+              <p className="text-green-700 dark:text-green-300 font-semibold">✓ Password reset email sent!</p>
+              <p className="text-sm text-green-600 dark:text-green-400 mt-2">
                 If an account exists with this email, you'll receive a password reset link. Please check your inbox and follow the instructions.
               </p>
             </div>
           )}
 
           <div
-            className="rounded-3xl p-8 sm:p-10 relative overflow-hidden"
+            className="rounded-3xl p-8 sm:p-10 relative overflow-hidden bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10"
             style={{
-              background: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(16px) saturate(180%)',
               WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.4)',
               boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
             }}
           >
@@ -121,7 +119,7 @@ export default function ForgotPasswordPage() {
             <div className="relative z-10">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="email" className="block text-sm font-semibold text-[var(--text-primary)] mb-2">
                     Email Address *
                   </label>
                   <input
@@ -130,9 +128,8 @@ export default function ForgotPasswordPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all text-gray-900"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all text-[var(--text-primary)] bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                     placeholder="your.email@example.com"
@@ -155,7 +152,7 @@ export default function ForgotPasswordPage() {
           </div>
 
           <div className="text-center mt-8">
-            <p className="text-gray-700">
+            <p className="text-[var(--text-secondary)]">
               Remember your password?{' '}
               <Link href="/" className="text-yellow-600 hover:text-yellow-700 font-semibold underline underline-offset-2">
                 Log in

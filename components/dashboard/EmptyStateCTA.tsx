@@ -47,27 +47,26 @@ export default function EmptyStateCTA() {
     return null
   }
 
-  const glassStyle = {
-    background: 'rgba(255, 255, 255, 0.6)',
+  const glassFilter = {
     backdropFilter: 'blur(12px) saturate(180%)',
     WebkitBackdropFilter: 'blur(12px) saturate(180%)',
   }
 
   return (
-    <div 
-      className="rounded-xl shadow-lg p-4 sm:p-6 md:p-8 border border-gray-200 mb-6 sm:mb-8"
-      style={glassStyle}
+    <div
+      className="rounded-xl shadow-lg p-4 sm:p-6 md:p-8 border border-[var(--border-subtle)] mb-6 sm:mb-8 bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+      style={glassFilter}
     >
       <div className="text-center">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
+        <h2 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] mb-2 sm:mb-3">
           {t('title')}
         </h2>
-        <p className="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6 px-2 sm:px-0">
+        <p className="text-base sm:text-lg text-[var(--text-secondary)] mb-4 sm:mb-6 px-2 sm:px-0">
           {t('description')}
         </p>
 
         {createSoloError && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
+          <div className="mb-4 p-3 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 rounded text-sm">
             {createSoloError}
           </div>
         )}

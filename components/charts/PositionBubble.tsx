@@ -1,98 +1,126 @@
 'use client'
 
 import { memo, useMemo } from 'react'
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
+import { useLocale } from 'next-intl'
 import { Link } from '@/i18n/routing'
-import { formatWeekDate, formatWeekLabel, getChartWeekReferenceDate } from '@/lib/weekly-utils'
-import Tooltip from '@/components/Tooltip'
+import { formatWeekDate, getChartWeekReferenceDate } from '@/lib/weekly-utils'
+import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 interface PositionBubbleProps {
   position: number
   weekStart: Date
   groupId: string
   chartType: 'artists' | 'tracks' | 'albums'
+  playcount?: number
+  vibeScore?: number | null
   isOut?: boolean
 }
+
+const SIZE_CLASS = 'w-11 h-11 md:w-14 md:h-14 text-sm md:text-base'
 
 function PositionBubble({
   position,
   weekStart,
   groupId,
   chartType,
+  playcount,
+  vibeScore,
   isOut = false,
 }: PositionBubbleProps) {
-  // Memoize expensive calculations
-  const { weekDateStr, href, sizeClass, colorClass, formattedDate, baseStyles } = useMemo(() => {
+  const t = useSafeTranslations('deepDive.timeline')
+  const locale = useLocale()
+
+  const { href, formattedDate } = useMemo(() => {
     const ref = getChartWeekReferenceDate(weekStart)
-    const weekDateStr = formatWeekDate(ref)
-    const href = `/groups/${groupId}/charts?week=${weekDateStr}&type=${chartType}`
-    
-    // Size based on position (higher position = smaller, but we want top positions to be larger)
-    // Position 1-3 get larger sizes, 4-10 get progressively smaller
-    // Responsive sizes for mobile
-    let sizeClass: string
-    if (isOut) {
-      sizeClass = 'w-10 h-10 md:w-12 md:h-12 text-xs md:text-sm'
-    } else if (position <= 3) {
-      sizeClass = 'w-12 h-12 md:w-16 md:h-16 text-sm md:text-lg'
-    } else if (position <= 6) {
-      sizeClass = 'w-11 h-11 md:w-14 md:h-14 text-xs md:text-base'
-    } else {
-      sizeClass = 'w-10 h-10 md:w-12 md:h-12 text-xs md:text-sm'
+    return {
+      href: `/groups/${groupId}/charts?week=${formatWeekDate(ref)}&type=${chartType}`,
+      formattedDate: new Intl.DateTimeFormat(locale, {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        timeZone: 'UTC',
+      }).format(ref),
     }
+  }, [weekStart, groupId, chartType, locale])
 
-    // Color based on position
-    let colorClass: string
-    if (isOut) {
-      colorClass = 'text-gray-600'
-    } else if (position === 1) {
-      colorClass = 'text-yellow-600'
-    } else if (position === 2) {
-      colorClass = 'text-gray-500'
-    } else if (position === 3) {
-      colorClass = 'text-amber-600'
-    } else {
-      colorClass = 'text-gray-700'
-    }
+  let colorClass: string
+  if (isOut) {
+    colorClass = 'text-[var(--text-muted)]'
+  } else if (position === 1) {
+    colorClass = 'text-yellow-600 dark:text-yellow-300'
+  } else if (position === 2) {
+    colorClass = 'text-gray-500 dark:text-gray-300'
+  } else if (position === 3) {
+    colorClass = 'text-amber-700 dark:text-amber-300'
+  } else {
+    colorClass = 'text-[var(--text-secondary)]'
+  }
 
-    const formattedDate = formatWeekLabel(ref)
+  const bubbleClasses = [
+    SIZE_CLASS,
+    colorClass,
+    'rounded-full font-bold',
+    'flex items-center justify-center',
+    'bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.75)]',
+    'border border-white/30 dark:border-white/10',
+    'backdrop-blur-sm shadow-md',
+    'relative z-10 inline-block',
+    isOut ? '' : 'transition-transform duration-150 hover:scale-110 active:scale-95 cursor-pointer',
+  ].filter(Boolean).join(' ')
 
-    const baseStyles = {
-      background: 'rgba(255, 255, 255, 0.4)',
-      backdropFilter: 'blur(8px) saturate(180%)',
-      WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-      border: '1px solid rgba(255, 255, 255, 0.3)',
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-      willChange: 'transform',
-    }
-
-    return { weekDateStr, href, sizeClass, colorClass, formattedDate, baseStyles }
-  }, [weekStart, groupId, chartType, position, isOut])
-
-  const bubbleClassName = `
-    ${sizeClass}
-    ${colorClass}
-    rounded-full font-bold
-    flex items-center justify-center
-    ${isOut ? '' : 'transition-transform duration-150 hover:shadow-lg hover:scale-110 active:scale-95 cursor-pointer'}
-    relative z-10
-    inline-block
-  `
+  if (isOut) {
+    const outClasses = [
+      SIZE_CLASS,
+      'text-[var(--text-muted)] opacity-70',
+      'rounded-full font-semibold',
+      'flex items-center justify-center',
+      'bg-white/20 dark:bg-[rgb(var(--surface-card-rgb)/0.4)]',
+      'border border-dashed border-[var(--border-strong)]',
+      'backdrop-blur-sm',
+      'relative z-10 inline-block',
+    ].join(' ')
+    return <div className={outClasses}>OUT</div>
+  }
 
   return (
-    <Tooltip content={formattedDate} position="top">
-      {isOut ? (
-        <div className={bubbleClassName} style={baseStyles}>
-          OUT
+    <Popover className="relative inline-block">
+      <PopoverButton className={`${bubbleClasses} focus:outline-none data-[open]:ring-2 data-[open]:ring-[var(--theme-primary)]`}>
+        #{position}
+      </PopoverButton>
+      <PopoverPanel
+        anchor={{ to: 'top', gap: 10 }}
+        transition
+        className="z-50 w-60 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border-strong)] shadow-2xl p-4 focus:outline-none origin-bottom transition data-[closed]:scale-95 data-[closed]:opacity-0 duration-150 ease-out"
+      >
+        <div className="text-xs text-[var(--text-muted)] mb-2">{formattedDate}</div>
+        <div className="mb-3">
+          <div className="text-xs text-[var(--text-muted)] mb-0.5">{t('position')}</div>
+          <div className="text-3xl font-bold text-[var(--theme-text)] tabular-nums leading-none">#{position}</div>
         </div>
-      ) : (
-        <Link href={href} className={bubbleClassName} style={baseStyles}>
-          #{position}
+        <div className="space-y-1 mb-3">
+          {typeof playcount === 'number' && (
+            <div className="flex justify-between text-sm">
+              <span className="text-[var(--text-secondary)]">{t('plays')}</span>
+              <span className="text-[var(--text-primary)] font-semibold tabular-nums">{playcount.toLocaleString()}</span>
+            </div>
+          )}
+          {typeof vibeScore === 'number' && vibeScore !== null && (
+            <div className="flex justify-between text-sm">
+              <span className="text-[var(--text-secondary)]">{t('vs')}</span>
+              <span className="text-[var(--text-primary)] font-semibold tabular-nums">{vibeScore.toFixed(1)}</span>
+            </div>
+          )}
+        </div>
+        <Link
+          href={href}
+          className="block w-full text-center px-3 py-2 rounded-lg bg-[var(--theme-primary)] text-[var(--theme-button-text)] font-semibold text-sm hover:brightness-110 transition"
+        >
+          {t('viewWeekCharts')}
         </Link>
-      )}
-    </Tooltip>
+      </PopoverPanel>
+    </Popover>
   )
 }
 
-// Memoize component to prevent unnecessary re-renders
 export default memo(PositionBubble)
-

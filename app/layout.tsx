@@ -4,6 +4,7 @@ import "./globals.css";
 import { Oswald, Inter } from "next/font/google";
 import { getDefaultOgImage, defaultOgImage } from "@/lib/metadata";
 import enMessages from "@/messages/en.json";
+import AppearanceBootScript from "@/components/AppearanceBootScript";
 
 const oswald = Oswald({
   weight: ['400', '500', '600', '700'],
@@ -65,6 +66,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <AppearanceBootScript />
+      </head>
       <body className={`antialiased ${oswald.variable} ${inter.variable}`}>
         {children}
       </body>

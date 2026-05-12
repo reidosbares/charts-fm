@@ -54,8 +54,8 @@ export default function LeaveGroupButton({ groupId, isOwner = false, subtle = fa
           transition-colors
           ${
             isOwner
-              ? 'text-gray-400 cursor-not-allowed text-sm'
-              : 'text-gray-500 hover:text-red-600 text-sm underline-offset-2 hover:underline disabled:opacity-50'
+              ? 'text-[var(--text-muted)] cursor-not-allowed text-sm'
+              : 'text-[var(--text-muted)] hover:text-red-600 text-sm underline-offset-2 hover:underline disabled:opacity-50'
           }
         `}
       >

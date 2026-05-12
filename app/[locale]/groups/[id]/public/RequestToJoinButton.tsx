@@ -73,12 +73,12 @@ export default function RequestToJoinButton({
   return (
     <div>
       {isAtLimit && (
-        <div className="mb-2 p-2 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded text-sm">
+        <div className="mb-2 p-2 bg-yellow-100 dark:bg-yellow-950/40 border border-yellow-400 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300 rounded text-sm">
           {t('groupFullMessage', { count: MAX_GROUP_MEMBERS })}
         </div>
       )}
       {error && (
-        <div className="mb-2 p-2 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
+        <div className="mb-2 p-2 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 rounded text-sm">
           {error}
         </div>
       )}

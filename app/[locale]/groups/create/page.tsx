@@ -255,13 +255,13 @@ export default function CreateGroupPage() {
     <div className="space-y-4 md:space-y-6">
       <div>
         <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">{t('step1.title')}</h2>
-        <p className="text-xs md:text-sm text-gray-600 mb-4 md:mb-6">
+        <p className="text-xs md:text-sm text-[var(--text-secondary)] mb-4 md:mb-6">
           {t('step1.description')}
         </p>
       </div>
 
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
           {tGroupDetails('groupName')} *
         </label>
         <input
@@ -270,14 +270,14 @@ export default function CreateGroupPage() {
           required
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-base"
+          className="w-full px-4 py-3 md:py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-base bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] text-[var(--text-primary)]"
           placeholder={t('step1.namePlaceholder')}
           disabled={isLoading}
         />
       </div>
 
       <div>
-        <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="image" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
           {tGroupDetails('groupIcon')}
         </label>
         <input
@@ -285,20 +285,20 @@ export default function CreateGroupPage() {
           id="image"
           value={formData.image}
           onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-          className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-base"
+          className="w-full px-4 py-3 md:py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-base bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] text-[var(--text-primary)]"
           placeholder={tGroupDetails('iconUrlPlaceholder')}
           disabled={isLoading}
         />
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-[var(--text-muted)] mt-1">
           {t('step1.iconOptional')}
         </p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
           {tGroupDetails('dynamicIcon')}
         </label>
-        <p className="text-xs text-gray-500 mb-3">
+        <p className="text-xs text-[var(--text-muted)] mb-3">
           {tGroupDetails('dynamicIconDescription')}
         </p>
         
@@ -314,7 +314,7 @@ export default function CreateGroupPage() {
 
         {formData.dynamicIconEnabled && (
           <div>
-            <label htmlFor="dynamicIconSource" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="dynamicIconSource" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               {tGroupDetails('iconSource')}
             </label>
             <CustomSelect
@@ -324,7 +324,7 @@ export default function CreateGroupPage() {
               onChange={(value) => setFormData({ ...formData, dynamicIconSource: String(value) })}
               disabled={isLoading}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-[var(--text-muted)] mt-1">
               {tGroupDetails('iconSourceDescription')}
             </p>
           </div>
@@ -332,7 +332,7 @@ export default function CreateGroupPage() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
           {tGroupDetails('privacySettings')}
         </label>
         <Toggle
@@ -348,14 +348,14 @@ export default function CreateGroupPage() {
           disabled={isLoading}
           label={tGroupDetails('privateGroup')}
         />
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-[var(--text-muted)] mt-1">
           {tGroupDetails('privateGroupDescription')}
         </p>
       </div>
 
       {!formData.isPrivate && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
             {tGroupDetails('joinSettings')}
           </label>
           <Toggle
@@ -365,7 +365,7 @@ export default function CreateGroupPage() {
             disabled={isLoading}
             label={tGroupDetails('usersCanJoinFreely')}
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-[var(--text-muted)] mt-1">
             {tGroupDetails('usersCanJoinFreelyDescription')}
           </p>
         </div>
@@ -377,16 +377,16 @@ export default function CreateGroupPage() {
     <div className="space-y-4 md:space-y-6">
       <div>
         <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">{t('step2.title')}</h2>
-        <p className="text-xs md:text-sm text-gray-600 mb-4 md:mb-6">
+        <p className="text-xs md:text-sm text-[var(--text-secondary)] mb-4 md:mb-6">
           {t('step2.description')}
         </p>
       </div>
 
       <div>
-        <label htmlFor="chartSize" className="block text-base md:text-lg font-bold text-gray-900 mb-2">
+        <label htmlFor="chartSize" className="block text-base md:text-lg font-bold text-[var(--text-primary)] mb-2">
           {tChart('chartSize')}
         </label>
-        <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
+        <p className="text-xs md:text-sm text-[var(--text-muted)] mb-3 md:mb-4">
           {tChart('chartSizeDescription')}
         </p>
         <div className="flex flex-wrap gap-2 md:gap-4">
@@ -395,8 +395,8 @@ export default function CreateGroupPage() {
               key={size}
               className={`flex items-center px-3 md:px-4 py-2.5 md:py-2 border-2 rounded-lg cursor-pointer transition-colors min-h-[44px] ${
                 formData.chartSize === size
-                  ? 'border-yellow-500 bg-yellow-50'
-                  : 'border-gray-300 hover:border-gray-400'
+                  ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/40'
+                  : 'border-[var(--border-strong)] hover:border-gray-400'
               }`}
             >
               <input
@@ -415,10 +415,10 @@ export default function CreateGroupPage() {
       </div>
 
       <div>
-        <label htmlFor="trackingDayOfWeek" className="block text-base md:text-lg font-bold text-gray-900 mb-2">
+        <label htmlFor="trackingDayOfWeek" className="block text-base md:text-lg font-bold text-[var(--text-primary)] mb-2">
           {tChart('trackingDayOfWeek')}
         </label>
-        <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
+        <p className="text-xs md:text-sm text-[var(--text-muted)] mb-3 md:mb-4">
           {tChart('trackingDayOfWeekDescription')}
         </p>
         <CustomSelect
@@ -431,10 +431,10 @@ export default function CreateGroupPage() {
       </div>
 
       <div>
-        <label htmlFor="chartMode" className="block text-base md:text-lg font-bold text-gray-900 mb-2">
+        <label htmlFor="chartMode" className="block text-base md:text-lg font-bold text-[var(--text-primary)] mb-2">
           {tChart('chartMode')}
         </label>
-        <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
+        <p className="text-xs md:text-sm text-[var(--text-muted)] mb-3 md:mb-4">
           {tChart('chartModeDescription')}
         </p>
         
@@ -460,10 +460,10 @@ export default function CreateGroupPage() {
 
             {/* Carousel Card */}
             <div className="flex-1 max-w-md w-full">
-              <div className="relative bg-white border-2 border-yellow-500 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-lg min-h-[380px] md:min-h-[400px] lg:min-h-[420px] flex flex-col">
+              <div className="relative bg-[var(--surface-card)] border-2 border-yellow-500 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-lg min-h-[380px] md:min-h-[400px] lg:min-h-[420px] flex flex-col">
                 <div className="flex flex-col items-center flex-1">
                   {/* Icon */}
-                  <div className="mb-3 md:mb-4 w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 flex items-center justify-center bg-white rounded-xl p-2 flex-shrink-0">
+                  <div className="mb-3 md:mb-4 w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 flex items-center justify-center bg-[var(--surface-base)] rounded-xl p-2 flex-shrink-0">
                     <img
                       src={CHART_MODES[carouselIndex].icon}
                       alt={CHART_MODES[carouselIndex].label}
@@ -472,12 +472,12 @@ export default function CreateGroupPage() {
                   </div>
                   
                   {/* Title (outside bubble) */}
-                  <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2 flex-shrink-0 text-center w-full px-2">
+                  <h3 className="text-lg md:text-xl font-semibold text-[var(--text-primary)] mb-2 flex-shrink-0 text-center w-full px-2">
                     {CHART_MODES[carouselIndex].label}
                   </h3>
                   
                   {/* Description */}
-                  <p className="text-xs md:text-sm text-gray-600 text-left break-words w-full px-2 md:px-3">
+                  <p className="text-xs md:text-sm text-[var(--text-secondary)] text-left break-words w-full px-2 md:px-3">
                     {CHART_MODES[carouselIndex].description}
                   </p>
                 </div>
@@ -516,7 +516,7 @@ export default function CreateGroupPage() {
                 className={`h-2 rounded-full transition-all min-w-[8px] min-h-[8px] ${
                   carouselIndex === index
                     ? 'bg-yellow-500 w-8'
-                    : 'bg-gray-300 hover:bg-gray-400 w-2'
+                    : 'bg-[var(--border-strong)] hover:brightness-90 w-2'
                 }`}
                 aria-label={tChart('selectMode', { mode: mode.label })}
               />
@@ -535,7 +535,7 @@ export default function CreateGroupPage() {
         </div>
         
         {/* FAQ Link */}
-        <p className="text-xs md:text-sm text-gray-500 mt-3 md:mt-4">
+        <p className="text-xs md:text-sm text-[var(--text-muted)] mt-3 md:mt-4">
           {tChartRich.rich('chartModeFAQLink', {
             link: (chunks) => (
               <Link
@@ -555,13 +555,13 @@ export default function CreateGroupPage() {
     <div className="space-y-4 md:space-y-6">
       <div>
         <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">{t('step3.title')}</h2>
-        <p className="text-xs md:text-sm text-gray-600 mb-4 md:mb-6">
+        <p className="text-xs md:text-sm text-[var(--text-secondary)] mb-4 md:mb-6">
           {t('step3.description')}
         </p>
       </div>
 
       <div>
-        <label htmlFor="inviteInput" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="inviteInput" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
           {t('step3.lastfmUsername')}
         </label>
         <div className="flex flex-col sm:flex-row gap-2">
@@ -584,7 +584,7 @@ export default function CreateGroupPage() {
                 await handleAddInvite()
               }
             }}
-            className="flex-1 px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-base"
+            className="flex-1 px-4 py-3 md:py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-base bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] text-[var(--text-primary)]"
             placeholder={t('step3.usernamePlaceholder')}
             disabled={isLoading || isValidatingUsername}
           />
@@ -604,16 +604,16 @@ export default function CreateGroupPage() {
 
       {formData.invites.length > 0 && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
             {t('step3.invites', { count: formData.invites.length })}
           </label>
           <div className="space-y-2">
             {formData.invites.map((username, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-3 md:p-3 bg-gray-50 border border-gray-200 rounded-lg"
+                className="flex items-center justify-between p-3 md:p-3 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-lg"
               >
-                <span className="text-sm font-medium text-gray-900 truncate pr-2">{username}</span>
+                <span className="text-sm font-medium text-[var(--text-primary)] truncate pr-2">{username}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveInvite(index)}
@@ -629,13 +629,13 @@ export default function CreateGroupPage() {
       )}
 
       {formData.invites.length === 0 && (
-        <div className="text-sm text-gray-500 text-center py-4">
+        <div className="text-sm text-[var(--text-muted)] text-center py-4">
           {t('step3.noInvitesYet')}
         </div>
       )}
 
       <div>
-        <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="tags" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
           {t('step3.tags')}
         </label>
         <input
@@ -643,11 +643,11 @@ export default function CreateGroupPage() {
           id="tags"
           value={formData.tags}
           onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-          className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-base"
+          className="w-full px-4 py-3 md:py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-base bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] text-[var(--text-primary)]"
           placeholder={t('step3.tagsPlaceholder')}
           disabled={isLoading}
         />
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-[var(--text-muted)] mt-1">
           {t('step3.tagsDescription')}
         </p>
         {formData.tags && (
@@ -661,8 +661,8 @@ export default function CreateGroupPage() {
                   key={index}
                   className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
                     /\s/.test(tag)
-                      ? 'bg-red-100 text-red-800'
-                      : 'bg-yellow-100 text-yellow-800'
+                      ? 'bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-400'
+                      : 'bg-yellow-100 dark:bg-yellow-950/40 text-yellow-800 dark:text-yellow-400'
                   }`}
                 >
                   {tag.trim()}
@@ -687,11 +687,11 @@ export default function CreateGroupPage() {
         {/* Progress Indicator */}
         <div className="mb-6 md:mb-8">
           <div className="flex items-center justify-between mb-2">
-            <div className={`flex-1 h-2 rounded-full ${currentStep >= 1 ? 'bg-yellow-500' : 'bg-gray-200'}`} />
-            <div className={`flex-1 h-2 rounded-full mx-1 md:mx-2 ${currentStep >= 2 ? 'bg-yellow-500' : 'bg-gray-200'}`} />
-            <div className={`flex-1 h-2 rounded-full ${currentStep >= 3 ? 'bg-yellow-500' : 'bg-gray-200'}`} />
+            <div className={`flex-1 h-2 rounded-full ${currentStep >= 1 ? 'bg-yellow-500' : 'bg-[var(--border-strong)]'}`} />
+            <div className={`flex-1 h-2 rounded-full mx-1 md:mx-2 ${currentStep >= 2 ? 'bg-yellow-500' : 'bg-[var(--border-strong)]'}`} />
+            <div className={`flex-1 h-2 rounded-full ${currentStep >= 3 ? 'bg-yellow-500' : 'bg-[var(--border-strong)]'}`} />
           </div>
-          <div className="flex items-center justify-between text-xs md:text-sm text-gray-600">
+          <div className="flex items-center justify-between text-xs md:text-sm text-[var(--text-secondary)]">
             <span className={`truncate px-1 ${currentStep === 1 ? 'font-semibold text-yellow-600' : ''}`}>{t('step1.title')}</span>
             <span className={`truncate px-1 ${currentStep === 2 ? 'font-semibold text-yellow-600' : ''}`}>{t('step2.title')}</span>
             <span className={`truncate px-1 ${currentStep === 3 ? 'font-semibold text-yellow-600' : ''}`}>{t('step3.title')}</span>
@@ -699,19 +699,19 @@ export default function CreateGroupPage() {
         </div>
 
         {error && (
-          <div className="mb-4 p-3 md:p-4 bg-red-100 border border-red-400 text-red-700 rounded text-sm md:text-base">
+          <div className="mb-4 p-3 md:p-4 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 rounded text-sm md:text-base">
             {error}
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
+        <div className="bg-[var(--surface-card)] rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
           {/* Step Content */}
           {currentStep === 1 && renderStep1()}
           {currentStep === 2 && renderStep2()}
           {currentStep === 3 && renderStep3()}
 
           {/* Navigation Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 mt-6 md:mt-8 pt-4 md:pt-6 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 mt-6 md:mt-8 pt-4 md:pt-6 border-t border-[var(--border-subtle)]">
             {currentStep < 3 ? (
               <>
                 {currentStep > 1 && (
@@ -719,7 +719,7 @@ export default function CreateGroupPage() {
                     type="button"
                     onClick={handleBack}
                     disabled={isLoading}
-                    className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 min-h-[44px] order-2 sm:order-1"
+                    className="px-6 py-3 bg-[var(--surface-base)] text-[var(--text-primary)] rounded-lg hover:brightness-95 transition-colors disabled:opacity-50 min-h-[44px] order-2 sm:order-1"
                   >
                     {t('back')}
                   </button>
@@ -741,7 +741,7 @@ export default function CreateGroupPage() {
                     type="button"
                     onClick={handleBack}
                     disabled={isLoading}
-                    className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 min-h-[44px] order-2 sm:order-1"
+                    className="px-6 py-3 bg-[var(--surface-base)] text-[var(--text-primary)] rounded-lg hover:brightness-95 transition-colors disabled:opacity-50 min-h-[44px] order-2 sm:order-1"
                   >
                     {t('back')}
                   </button>

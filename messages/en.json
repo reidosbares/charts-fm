@@ -149,6 +149,11 @@
     "emailChangeWarning": "Changing your email will reset your verification status. A verification email will be sent to your new address.",
     "language": "Language",
     "selectLanguage": "Select your preferred language",
+    "appearance": "Appearance",
+    "appearanceDescription": "Choose how chartsfm looks. System follows your OS preference.",
+    "appearanceLight": "Light",
+    "appearanceDark": "Dark",
+    "appearanceSystem": "System",
     "saveChanges": "Save Changes",
     "saving": "Saving...",
     "settingsUpdated": "Settings updated successfully!",
@@ -188,6 +193,9 @@
     "bulkGenerate": "Bulk Generate",
     "impersonatingTitle": "Impersonating {name}",
     "stopImpersonating": "Stop impersonating",
+    "appearanceLight": "Appearance: Light",
+    "appearanceDark": "Appearance: Dark",
+    "appearanceSystem": "Appearance: System",
     "quickAccess": {
       "title": "Quick Access",
       "close": "Close",
@@ -824,6 +832,8 @@
         "background": "Background",
         "button": "Button",
         "titleColor": "Title",
+        "plays": "plays",
+        "viewSample": "View",
         "saving": "Saving...",
         "saveSettings": "Save Settings",
         "cancel": "Cancel",
@@ -837,7 +847,9 @@
           "graphite": "Smoky",
           "hotPink": "Flamingo",
           "neonGreen": "Kiwi",
-          "rainbow": "Pride"
+          "rainbow": "Pride",
+          "synthwave": "Synthwave",
+          "sunset": "Sex on the Beach"
         }
       },
       "regenerateCharts": {
@@ -1145,7 +1157,11 @@
       "title": "Chart History",
       "noHistory": "No chart history available",
       "outFor": "Out for {count} week",
-      "outForPlural": "Out for {count} weeks"
+      "outForPlural": "Out for {count} weeks",
+      "position": "Position",
+      "plays": "Plays",
+      "vs": "VS",
+      "viewWeekCharts": "View week's charts"
     },
     "quickStats": {
       "title": "Quick Stats",

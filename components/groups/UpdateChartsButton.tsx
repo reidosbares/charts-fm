@@ -102,7 +102,7 @@ export default function UpdateChartsButton({ groupId, initialInProgress = false,
 
   if (error) {
     return (
-      <div className="flex items-center justify-center gap-2 px-4 py-2 bg-red-100 text-red-800 rounded-full font-semibold shadow-sm w-full md:w-auto md:inline-flex">
+      <div className="flex items-center justify-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-400 rounded-full font-semibold shadow-sm w-full md:w-auto md:inline-flex">
         <span className="text-sm">Error: {error}</span>
       </div>
     )

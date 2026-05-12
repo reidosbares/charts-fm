@@ -181,7 +181,7 @@ function SignUpPageContent() {
       >
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-gray-400 mx-auto mb-3 md:mb-4"></div>
-          <p className="text-sm md:text-base text-gray-600">{tCommon('loading')}</p>
+          <p className="text-sm md:text-base text-[var(--text-secondary)]">{tCommon('loading')}</p>
         </div>
       </main>
     )
@@ -206,13 +206,13 @@ function SignUpPageContent() {
     >
       <div className="max-w-2xl w-full">
         <div className="text-center mb-6 md:mb-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 md:mb-4 text-gray-900">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 md:mb-4 text-[var(--text-primary)]">
             {t('title')}
           </h1>
-          <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-2">
+          <p className="text-base sm:text-lg md:text-xl text-[var(--text-secondary)] mb-2">
             {t('subtitle')}
           </p>
-          <p className="text-sm sm:text-base text-gray-600">
+          <p className="text-sm sm:text-base text-[var(--text-secondary)]">
             {t('subtitle2')}
           </p>
         </div>
@@ -228,17 +228,15 @@ function SignUpPageContent() {
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
             }}
           >
-            <p className="text-red-700 font-medium">{error}</p>
+            <p className="text-red-700 dark:text-red-300 font-medium">{error}</p>
           </div>
         )}
 
         <div
-          className="rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-10 relative overflow-hidden"
+          className="rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-10 relative overflow-hidden bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.6)',
             backdropFilter: 'blur(16px) saturate(180%)',
             WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-            border: '1px solid rgba(255, 255, 255, 0.4)',
             boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
           }}
         >
@@ -246,10 +244,10 @@ function SignUpPageContent() {
           <div className="relative z-10">
             <div className="text-center mb-6 md:mb-8">
               <div className="text-4xl md:text-5xl mb-3 md:mb-4">🎵</div>
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 md:mb-3">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-2 md:mb-3">
                 {t('step1Title')}
               </h2>
-              <p className="text-sm md:text-base text-gray-600">
+              <p className="text-sm md:text-base text-[var(--text-secondary)]">
                 {t('step1Description')}
               </p>
             </div>
@@ -259,12 +257,11 @@ function SignUpPageContent() {
               disabled={isLoading}
               size="lg"
               fullWidth
-              className="text-base md:text-lg"
+              className="text-base md:text-lg border border-white/20 dark:border-white/10"
               useTheme={false}
               style={{
                 background: '#d51007',
                 color: 'white',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
               }}
               icon={
                 isLoading ? (
@@ -282,14 +279,14 @@ function SignUpPageContent() {
               {isLoading ? t('redirecting') : t('connectWithLastfm')}
             </LiquidGlassButton>
 
-            <p className="text-xs md:text-sm text-gray-600 text-center mt-4 md:mt-6">
+            <p className="text-xs md:text-sm text-[var(--text-secondary)] text-center mt-4 md:mt-6">
               {t('redirectMessage')}
             </p>
           </div>
         </div>
 
         <div className="text-center mt-6 md:mt-8">
-          <p className="text-sm md:text-base text-gray-700">
+          <p className="text-sm md:text-base text-[var(--text-secondary)]">
             {t('alreadyHaveAccount')}{' '}
             <a href="/" className="text-yellow-600 hover:text-yellow-700 font-semibold underline underline-offset-2">
               {t('logIn')}
@@ -307,7 +304,7 @@ export default function SignUpPage() {
       <main className="flex min-h-screen flex-col items-center justify-center p-4 md:p-6 lg:p-24">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-gray-400 mx-auto mb-3 md:mb-4"></div>
-          <p className="text-sm md:text-base text-gray-600">Loading...</p>
+          <p className="text-sm md:text-base text-[var(--text-secondary)]">Loading...</p>
         </div>
       </main>
     }>

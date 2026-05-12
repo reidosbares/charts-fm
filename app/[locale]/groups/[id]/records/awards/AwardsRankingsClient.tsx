@@ -144,7 +144,7 @@ export default function AwardsRankingsClient({ groupId, records }: AwardsRanking
   if (!records || records.status !== 'completed' || !records.records) {
     return (
       <div className="text-center py-8 md:py-12">
-        <p className="text-sm md:text-base text-gray-600">{tStatus('noRecordsForCategory')}</p>
+        <p className="text-sm md:text-base text-[var(--text-secondary)]">{tStatus('noRecordsForCategory')}</p>
       </div>
     )
   }
@@ -165,7 +165,7 @@ export default function AwardsRankingsClient({ groupId, records }: AwardsRanking
   return (
     <div className="mt-6">
       {/* Date range subtitle */}
-      <p className="text-xs sm:text-sm text-gray-500 mb-4">
+      <p className="text-xs sm:text-sm text-[var(--text-muted)] mb-4">
         {tUserRecords('sectionSubtitle')} ({formatDate(cutoff)} — {formatDate(now)})
       </p>
 
@@ -182,7 +182,7 @@ export default function AwardsRankingsClient({ groupId, records }: AwardsRanking
                   className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg text-[11px] sm:text-xs md:text-sm font-medium transition-all whitespace-nowrap border ${
                     isActive
                       ? `${award.activeTabBg} ${award.activeTabText} ${award.activeTabBorder}`
-                      : 'bg-white/80 text-gray-600 border-gray-200 hover:bg-gray-50'
+                      : 'bg-white/80 dark:bg-[var(--surface-card)] text-[var(--text-secondary)] border-[var(--border-subtle)] hover:bg-[var(--surface-base)]'
                   }`}
                 >
                   {tUserRecords(award.translationKey)}
@@ -194,7 +194,7 @@ export default function AwardsRankingsClient({ groupId, records }: AwardsRanking
       </div>
 
       {/* Award description */}
-      <p className="text-xs sm:text-sm text-gray-500 mb-4">
+      <p className="text-xs sm:text-sm text-[var(--text-muted)] mb-4">
         {tAwardDescriptions(currentAwardDef.translationKey)}
       </p>
 
@@ -212,13 +212,13 @@ export default function AwardsRankingsClient({ groupId, records }: AwardsRanking
               className={`flex items-center gap-3 p-3 rounded-lg border ${
                 isWinner
                   ? `${currentAwardDef.highlightBg} ${currentAwardDef.borderColor}`
-                  : 'bg-white border-gray-200'
+                  : 'bg-[var(--surface-card)] border-[var(--border-subtle)]'
               }`}
             >
-              <span className={`text-sm font-bold w-7 text-center flex-shrink-0 ${isWinner ? 'text-gray-900' : 'text-gray-400'}`}>
+              <span className={`text-sm font-bold w-7 text-center flex-shrink-0 ${isWinner ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}`}>
                 #{member.rank}
               </span>
-              <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
+              <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 bg-[var(--surface-base)]">
                 <SafeImage
                   src={(member as any).image || ''}
                   alt={member.name}
@@ -229,24 +229,24 @@ export default function AwardsRankingsClient({ groupId, records }: AwardsRanking
                 {(member as any).lastfmUsername ? (
                   <Link
                     href={`/u/${encodeURIComponent((member as any).lastfmUsername)}`}
-                    className={`text-sm font-medium block truncate ${isWinner ? 'text-gray-900' : 'text-gray-700'}`}
+                    className={`text-sm font-medium block truncate ${isWinner ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)]'}`}
                   >
                     {member.name}
                   </Link>
                 ) : (
-                  <span className={`text-sm font-medium block truncate ${isWinner ? 'text-gray-900' : 'text-gray-700'}`}>
+                  <span className={`text-sm font-medium block truncate ${isWinner ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)]'}`}>
                     {member.name}
                   </span>
                 )}
                 {isOneTrackMind && oneTrackData && oneTrackData.value > 0 && (
-                  <div className="text-[11px] text-gray-400 truncate">
+                  <div className="text-[11px] text-[var(--text-muted)] truncate">
                     {oneTrackData.entryArtist
                       ? `${oneTrackData.entryName} — ${oneTrackData.entryArtist}`
                       : oneTrackData.entryName || tAwards('noEntry')}
                   </div>
                 )}
               </div>
-              <span className={`text-sm font-medium flex-shrink-0 ${isWinner ? 'text-gray-900' : 'text-gray-500'}`}>
+              <span className={`text-sm font-medium flex-shrink-0 ${isWinner ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}`}>
                 {currentAwardDef.formatValue(member.value, tAwards)}
               </span>
             </div>
@@ -256,9 +256,8 @@ export default function AwardsRankingsClient({ groupId, records }: AwardsRanking
 
       {/* Desktop table */}
       <div
-        className="hidden sm:block bg-white rounded-lg shadow-lg overflow-hidden"
+        className="hidden sm:block bg-[var(--surface-card)] rounded-lg shadow-lg overflow-hidden"
         style={{
-          backgroundColor: '#ffffff',
           isolation: 'isolate',
           position: 'relative',
           zIndex: 1,
@@ -266,20 +265,20 @@ export default function AwardsRankingsClient({ groupId, records }: AwardsRanking
       >
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 sticky top-0 z-10">
+            <thead className="bg-[var(--surface-base)] sticky top-0 z-10">
               <tr>
-                <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-24 md:w-32">
+                <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider w-24 md:w-32">
                   {tAwards('rank')}
                 </th>
-                <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
                   {tAwards('member')}
                 </th>
-                <th className="px-4 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider w-32 md:w-48">
+                <th className="px-4 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider w-32 md:w-48">
                   {tAwards('value')}
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-[var(--border-subtle)]">
               {rankedList.map((member) => {
                 const isWinner = member.rank === 1
                 const isOneTrackMind = currentAwardDef.slug === 'one-track-mind'
@@ -287,16 +286,16 @@ export default function AwardsRankingsClient({ groupId, records }: AwardsRanking
                 return (
                   <tr
                     key={member.userId}
-                    className={`transition-colors ${isWinner ? currentAwardDef.highlightBg : 'hover:bg-gray-50'}`}
+                    className={`transition-colors ${isWinner ? currentAwardDef.highlightBg : 'hover:bg-[var(--surface-base)]'}`}
                   >
                     <td className="px-4 md:px-6 py-3 md:py-5 text-sm">
-                      <span className={`font-bold ${isWinner ? 'text-gray-900' : 'text-gray-500'}`}>
+                      <span className={`font-bold ${isWinner ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}`}>
                         #{member.rank}
                       </span>
                     </td>
                     <td className="px-4 md:px-6 py-3 md:py-5 text-sm">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
+                        <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-[var(--surface-base)]">
                           <SafeImage
                             src={(member as any).image || ''}
                             alt={member.name}
@@ -307,12 +306,12 @@ export default function AwardsRankingsClient({ groupId, records }: AwardsRanking
                           {(member as any).lastfmUsername ? (
                             <Link
                               href={`/u/${encodeURIComponent((member as any).lastfmUsername)}`}
-                              className={`font-medium hover:text-[var(--theme-primary-dark)] transition-colors block truncate ${isWinner ? 'text-gray-900' : 'text-gray-700'}`}
+                              className={`font-medium hover:text-[var(--theme-primary-dark)] transition-colors block truncate ${isWinner ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)]'}`}
                             >
                               {member.name}
                             </Link>
                           ) : (
-                            <span className={`font-medium block truncate ${isWinner ? 'text-gray-900' : 'text-gray-700'}`}>
+                            <span className={`font-medium block truncate ${isWinner ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)]'}`}>
                               {member.name}
                             </span>
                           )}
@@ -320,11 +319,11 @@ export default function AwardsRankingsClient({ groupId, records }: AwardsRanking
                       </div>
                     </td>
                     <td className="px-4 md:px-6 py-3 md:py-5 text-sm text-right">
-                      <span className={`font-medium ${isWinner ? 'text-gray-900' : 'text-gray-600'}`}>
+                      <span className={`font-medium ${isWinner ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)]'}`}>
                         {currentAwardDef.formatValue(member.value, tAwards)}
                       </span>
                       {isOneTrackMind && oneTrackData && oneTrackData.value > 0 && (
-                        <div className="text-xs text-gray-400 mt-0.5 truncate max-w-[200px] md:max-w-none ml-auto">
+                        <div className="text-xs text-[var(--text-muted)] mt-0.5 truncate max-w-[200px] md:max-w-none ml-auto">
                           {oneTrackData.entryArtist
                             ? `${oneTrackData.entryName} — ${oneTrackData.entryArtist}`
                             : oneTrackData.entryName || tAwards('noEntry')}

@@ -103,7 +103,7 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
         ref={buttonRef}
         onClick={handleCalculate}
         disabled={isLoading}
-        className="shrink-0 px-2.5 py-1.5 text-xs sm:px-3 sm:py-1.5 sm:text-sm whitespace-nowrap bg-white text-gray-900 font-semibold rounded-full border border-gray-200 shadow-sm flex items-center gap-2 transition-all duration-200 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="shrink-0 px-2.5 py-1.5 text-xs sm:px-3 sm:py-1.5 sm:text-sm whitespace-nowrap bg-[var(--surface-card)] text-[var(--text-primary)] font-semibold rounded-full border border-[var(--border-subtle)] shadow-sm flex items-center gap-2 transition-all duration-200 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isLoading
           ? <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
@@ -114,7 +114,7 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
     )
   }
 
-  const scoreColor = score.score >= 70 ? 'text-green-600' : score.score >= 50 ? 'text-yellow-600' : 'text-gray-600'
+  const scoreColor = score.score >= 70 ? 'text-green-600 dark:text-green-400' : score.score >= 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-[var(--text-secondary)]'
 
   const handleToggleDetails = () => {
     setShowDetails(!showDetails)
@@ -125,7 +125,7 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
       <button
         ref={buttonRef}
         onClick={handleToggleDetails}
-        className="shrink-0 px-2.5 py-1.5 text-xs sm:px-3 sm:py-1.5 sm:text-sm whitespace-nowrap bg-white text-gray-900 font-semibold rounded-full border border-gray-200 shadow-sm flex items-center gap-2 transition-all duration-200 hover:shadow-lg active:scale-95"
+        className="shrink-0 px-2.5 py-1.5 text-xs sm:px-3 sm:py-1.5 sm:text-sm whitespace-nowrap bg-[var(--surface-card)] text-[var(--text-primary)] font-semibold rounded-full border border-[var(--border-subtle)] shadow-sm flex items-center gap-2 transition-all duration-200 hover:shadow-lg active:scale-95"
       >
         <FontAwesomeIcon icon={faHeart} className="text-red-500" />
         <span className={scoreColor}>{t('matchPercentage', { score: Math.round(score.score) })}</span>
@@ -141,7 +141,7 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
           
           {/* Details Popup */}
           <div 
-            className="fixed z-[9999] bg-white rounded-lg shadow-lg border border-gray-200 p-3 md:p-4 min-w-[280px] max-w-[calc(100vw-2rem)] mx-4 md:mx-0"
+            className="fixed z-[9999] bg-[var(--surface-card)] rounded-lg shadow-lg border border-[var(--border-subtle)] p-3 md:p-4 min-w-[280px] max-w-[calc(100vw-2rem)] mx-4 md:mx-0"
             style={{
               top: `${popupPosition.top}px`,
               left: typeof window !== 'undefined' && window.innerWidth < 768 
@@ -152,38 +152,38 @@ export default function CompatibilityScore({ groupId }: CompatibilityScoreProps)
                 : 'auto',
             }}
           >
-            <h4 className="font-semibold text-sm md:text-base text-gray-900 mb-3">{t('compatibilityBreakdown')}</h4>
-            
+            <h4 className="font-semibold text-sm md:text-base text-[var(--text-primary)] mb-3">{t('compatibilityBreakdown')}</h4>
+
             <div className="space-y-2 text-xs md:text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">{t('artistOverlap')}</span>
-                <span className="font-semibold text-gray-900">
+                <span className="text-[var(--text-secondary)]">{t('artistOverlap')}</span>
+                <span className="font-semibold text-[var(--text-primary)]">
                   {score.components.artistOverlap.toFixed(1)}%
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">{t('trackOverlap')}</span>
-                <span className="font-semibold text-gray-900">
+                <span className="text-[var(--text-secondary)]">{t('trackOverlap')}</span>
+                <span className="font-semibold text-[var(--text-primary)]">
                   {score.components.trackOverlap.toFixed(1)}%
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">{t('genreOverlap')}</span>
-                <span className="font-semibold text-gray-900">
+                <span className="text-[var(--text-secondary)]">{t('genreOverlap')}</span>
+                <span className="font-semibold text-[var(--text-primary)]">
                   {score.components.genreOverlap.toFixed(1)}%
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">{t('listeningPatterns')}</span>
-                <span className="font-semibold text-gray-900">
+                <span className="text-[var(--text-secondary)]">{t('listeningPatterns')}</span>
+                <span className="font-semibold text-[var(--text-primary)]">
                   {score.components.patternScore.toFixed(1)}%
                 </span>
               </div>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-gray-200">
+            <div className="mt-4 pt-3 border-t border-[var(--border-subtle)]">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-sm md:text-base text-gray-900">{t('overallMatch')}</span>
+                <span className="font-semibold text-sm md:text-base text-[var(--text-primary)]">{t('overallMatch')}</span>
                 <span className={`font-bold text-base md:text-lg ${scoreColor}`}>
                   {Math.round(score.score)}%
                 </span>

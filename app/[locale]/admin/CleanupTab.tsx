@@ -189,7 +189,7 @@ export default function CleanupTab() {
     <div className="max-w-2xl mx-auto w-full">
       <div className="mb-8">
         <h2 className="text-3xl font-bold mb-2">Database Cleanup</h2>
-        <p className="text-gray-600">
+        <p className="text-[var(--text-secondary)]">
           Remove database entries older than 10 weeks. These entries are no longer needed 
           since charts can only be regenerated for up to 10 weeks in the past, and the 
           aggregated data is already stored in GroupChartEntry and GroupWeeklyStats.
@@ -197,13 +197,13 @@ export default function CleanupTab() {
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+        <div className="mb-6 p-4 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+        <div className="mb-6 p-4 bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 rounded-lg text-green-700 dark:text-green-300">
           <p className="font-semibold mb-2">Cleanup completed successfully!</p>
           <p>
             Deleted {success.result.deletedCount.toLocaleString()} {success.type === 'userChartEntryVS' ? 'UserChartEntryVS' : 'UserWeeklyStats'} 
@@ -213,7 +213,7 @@ export default function CleanupTab() {
       )}
 
       {recalculateSuccess && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+        <div className="mb-6 p-4 bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 rounded-lg text-green-700 dark:text-green-300">
           <p className="font-semibold mb-2">Recalculation completed successfully!</p>
           <p className="mb-2">
             Processed {recalculateSuccess.groupsProcessed} groups, {recalculateSuccess.totalWeeksProcessed} total weeks.
@@ -234,7 +234,7 @@ export default function CleanupTab() {
       )}
 
       {majorDriverCacheSuccess && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+        <div className="mb-6 p-4 bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 rounded-lg text-green-700 dark:text-green-300">
           <p className="font-semibold mb-2">Major driver cache cleared successfully!</p>
           <p>
             Cleared cached data for {majorDriverCacheSuccess.clearedCount.toLocaleString()} chart entries.
@@ -244,7 +244,7 @@ export default function CleanupTab() {
       )}
 
       {majorDriversRecalculateSuccess && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+        <div className="mb-6 p-4 bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 rounded-lg text-green-700 dark:text-green-300">
           <p className="font-semibold mb-2">Major drivers recalculated successfully!</p>
           <p className="mb-2">
             Processed {majorDriversRecalculateSuccess.totalGroupsProcessed} groups, 
@@ -258,7 +258,7 @@ export default function CleanupTab() {
               <summary className="cursor-pointer text-sm font-medium">View details</summary>
               <ul className="mt-2 text-sm space-y-1 max-h-48 overflow-y-auto">
                 {majorDriversRecalculateSuccess.details.map((d) => (
-                  <li key={d.groupId} className={d.skipped ? 'text-gray-500' : ''}>
+                  <li key={d.groupId} className={d.skipped ? 'text-[var(--text-muted)]' : ''}>
                     {d.groupName}: {d.skipped ? `Skipped (${d.reason})` : `${d.entriesProcessed} entries`}
                   </li>
                 ))}
@@ -269,15 +269,15 @@ export default function CleanupTab() {
       )}
 
       {/* UserChartEntryVS Cleanup */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div className="bg-[var(--surface-card)] rounded-lg shadow-md p-6 mb-6">
         <div className="space-y-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">UserChartEntryVS Cleanup</h3>
-            <p className="text-sm text-gray-600 mb-3">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">UserChartEntryVS Cleanup</h3>
+            <p className="text-sm text-[var(--text-secondary)] mb-3">
               Remove UserChartEntryVS entries older than 10 weeks. These entries store per-user 
               Vibe Score contributions and are used for chart generation and member records calculation.
             </p>
-            <ul className="list-disc list-inside space-y-1 text-gray-600 text-sm">
+            <ul className="list-disc list-inside space-y-1 text-[var(--text-secondary)] text-sm">
               <li>Entries older than 10 weeks will be deleted</li>
               <li>Cutoff date: <strong>{cutoffDateString}</strong></li>
               <li>Safe to delete because charts can only be regenerated for up to 10 weeks in the past</li>
@@ -285,7 +285,7 @@ export default function CleanupTab() {
             </ul>
           </div>
 
-          <div className="pt-4 border-t border-gray-200">
+          <div className="pt-4 border-t border-[var(--border-subtle)]">
             <button
               type="button"
               onClick={() => handleCleanup('userChartEntryVS')}
@@ -299,15 +299,15 @@ export default function CleanupTab() {
       </div>
 
       {/* UserWeeklyStats Cleanup */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div className="bg-[var(--surface-card)] rounded-lg shadow-md p-6 mb-6">
         <div className="space-y-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">UserWeeklyStats Cleanup</h3>
-            <p className="text-sm text-gray-600 mb-3">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">UserWeeklyStats Cleanup</h3>
+            <p className="text-sm text-[var(--text-secondary)] mb-3">
               Remove UserWeeklyStats entries older than 10 weeks. These entries cache user's 
               weekly listening data from Last.fm to avoid re-fetching during chart generation.
             </p>
-            <ul className="list-disc list-inside space-y-1 text-gray-600 text-sm">
+            <ul className="list-disc list-inside space-y-1 text-[var(--text-secondary)] text-sm">
               <li>Entries older than 10 weeks will be deleted</li>
               <li>Cutoff date: <strong>{cutoffDateString}</strong></li>
               <li>Safe to delete because charts can only be regenerated for up to 10 weeks in the past</li>
@@ -315,7 +315,7 @@ export default function CleanupTab() {
             </ul>
           </div>
 
-          <div className="pt-4 border-t border-gray-200">
+          <div className="pt-4 border-t border-[var(--border-subtle)]">
             <button
               type="button"
               onClick={() => handleCleanup('userWeeklyStats')}
@@ -329,16 +329,16 @@ export default function CleanupTab() {
       </div>
 
       {/* Recalculate Member Impact Stats */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div className="bg-[var(--surface-card)] rounded-lg shadow-md p-6 mb-6">
         <div className="space-y-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Recalculate Member Impact Stats</h3>
-            <p className="text-sm text-gray-600 mb-3">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Recalculate Member Impact Stats</h3>
+            <p className="text-sm text-[var(--text-secondary)] mb-3">
               Rebuild the all-time member contribution statistics (MemberGroupStats) for all groups 
               from scratch. This recalculates total VS, entries helped debut, weeks at #1 contributed, 
               and weeks as MVP for every member.
             </p>
-            <ul className="list-disc list-inside space-y-1 text-gray-600 text-sm">
+            <ul className="list-disc list-inside space-y-1 text-[var(--text-secondary)] text-sm">
               <li>Deletes existing stats and recomputes from historical chart data</li>
               <li>Use after fixing bugs in accumulation logic or after data migrations</li>
               <li>May take a while for groups with many weeks of chart history</li>
@@ -346,7 +346,7 @@ export default function CleanupTab() {
             </ul>
           </div>
 
-          <div className="pt-4 border-t border-gray-200">
+          <div className="pt-4 border-t border-[var(--border-subtle)]">
             <button
               type="button"
               onClick={handleRecalculateMemberStats}
@@ -360,15 +360,15 @@ export default function CleanupTab() {
       </div>
 
       {/* Clear Major Driver Cache */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div className="bg-[var(--surface-card)] rounded-lg shadow-md p-6 mb-6">
         <div className="space-y-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Clear Major Driver Cache</h3>
-            <p className="text-sm text-gray-600 mb-3">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Clear Major Driver Cache</h3>
+            <p className="text-sm text-[var(--text-secondary)] mb-3">
               Clear the cached &quot;Major Chart Driver&quot; data for all chart entries. This forces 
               recalculation of the major driver (top contributor) when drill-down pages are accessed.
             </p>
-            <ul className="list-disc list-inside space-y-1 text-gray-600 text-sm">
+            <ul className="list-disc list-inside space-y-1 text-[var(--text-secondary)] text-sm">
               <li>Clears cached major driver user, name, VS, and plays values</li>
               <li>Use after fixing bugs in major driver calculation logic</li>
               <li>Values will be lazily recalculated on next page access</li>
@@ -376,7 +376,7 @@ export default function CleanupTab() {
             </ul>
           </div>
 
-          <div className="pt-4 border-t border-gray-200">
+          <div className="pt-4 border-t border-[var(--border-subtle)]">
             <button
               type="button"
               onClick={handleClearMajorDriverCache}
@@ -390,15 +390,15 @@ export default function CleanupTab() {
       </div>
 
       {/* Recalculate Current Major Drivers */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div className="bg-[var(--surface-card)] rounded-lg shadow-md p-6 mb-6">
         <div className="space-y-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Recalculate Current Major Drivers</h3>
-            <p className="text-sm text-gray-600 mb-3">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Recalculate Current Major Drivers</h3>
+            <p className="text-sm text-[var(--text-secondary)] mb-3">
               Calculate major drivers for all entries currently charting across all groups. 
               This is useful after deploying the feature or to populate data for the impact section on records pages.
             </p>
-            <ul className="list-disc list-inside space-y-1 text-gray-600 text-sm">
+            <ul className="list-disc list-inside space-y-1 text-[var(--text-secondary)] text-sm">
               <li>Processes entries from the most recent chart week of each group</li>
               <li>Skips solo groups (no major driver needed)</li>
               <li>May take a while depending on total number of entries</li>
@@ -406,7 +406,7 @@ export default function CleanupTab() {
             </ul>
           </div>
 
-          <div className="pt-4 border-t border-gray-200">
+          <div className="pt-4 border-t border-[var(--border-subtle)]">
             <button
               type="button"
               onClick={handleRecalculateCurrentMajorDrivers}

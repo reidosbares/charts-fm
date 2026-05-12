@@ -158,10 +158,10 @@ export default function ChartDisplay({
       </div>
       
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-lg z-10">
+        <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-sm rounded-lg z-10">
           <div className="flex flex-col items-center gap-3">
             <div className="w-12 h-12 border-4 border-[var(--theme-primary-lighter)] border-t-[var(--theme-primary)] rounded-full animate-spin"></div>
-            <p className="text-sm text-gray-600 font-medium">{t('loadingChartData')}</p>
+            <p className="text-sm text-[var(--text-secondary)] font-medium">{t('loadingChartData')}</p>
           </div>
         </div>
       )}

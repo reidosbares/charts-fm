@@ -61,15 +61,15 @@ export default function RemovePictureModal({
         onClick={onClose}
       />
       <div className="fixed inset-0 flex items-center justify-center z-50 p-4 md:p-6">
-        <div className="bg-white rounded-lg md:rounded-xl shadow-xl p-4 md:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="bg-[var(--surface-elevated)] rounded-lg md:rounded-xl shadow-xl p-4 md:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
           <div className="flex justify-between items-center mb-4 md:mb-6">
-            <h2 className="text-lg md:text-xl font-bold text-gray-900 flex items-center gap-2">
+            <h2 className="text-lg md:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
               <FontAwesomeIcon icon={faTrash} className="text-red-600" />
               {t('title')}
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-2xl md:text-3xl leading-none w-8 h-8 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0 min-h-[44px] min-w-[44px]"
+              className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-2xl md:text-3xl leading-none w-8 h-8 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0 min-h-[44px] min-w-[44px]"
               aria-label={tCommon('close')}
               disabled={isRemoving}
             >
@@ -78,7 +78,7 @@ export default function RemovePictureModal({
           </div>
 
           <div className="mb-6 md:mb-8">
-            <p className="text-sm md:text-base text-gray-700">
+            <p className="text-sm md:text-base text-[var(--text-secondary)]">
               {t('confirm')}
             </p>
           </div>

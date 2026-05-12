@@ -33,6 +33,7 @@ model User {
   passwordResetToken              String?
   passwordResetTokenExpires       DateTime?
   locale                          String?
+  appearancePreference            String?                        @default("system")
   lastAccessedAt                  DateTime?
   chartEntryStatsAsMajorDriver    ChartEntryStats[]
   friendshipsAsFriend             Friendship[]                   @relation("FriendFriendships")

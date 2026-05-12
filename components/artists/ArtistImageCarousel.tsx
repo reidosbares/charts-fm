@@ -195,8 +195,8 @@ export default function ArtistImageCarousel({
 
   if (images.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-lg p-4 sm:p-8 text-center">
-        <p className="text-sm sm:text-base text-gray-600 mb-4">{t('noImages')}</p>
+      <div className="bg-[var(--surface-card)] rounded-xl shadow-lg p-4 sm:p-8 text-center">
+        <p className="text-sm sm:text-base text-[var(--text-secondary)] mb-4">{t('noImages')}</p>
         {userId && (
           <button
             onClick={() => setShowUploadModal(true)}
@@ -220,11 +220,11 @@ export default function ArtistImageCarousel({
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div className="bg-[var(--surface-card)] rounded-xl shadow-lg overflow-hidden">
         {/* Header with photo counter and add button */}
-        <div className="p-3 md:p-4 border-b border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
+        <div className="p-3 md:p-4 border-b border-[var(--border-subtle)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
           <div>
-            <p className="text-xs sm:text-sm text-gray-600">
+            <p className="text-xs sm:text-sm text-[var(--text-secondary)]">
               {t('photoCounter', { current: currentIndex + 1, total: images.length })}
             </p>
           </div>
@@ -240,7 +240,7 @@ export default function ArtistImageCarousel({
         </div>
 
         {/* Main image display */}
-        <div className="relative bg-gray-100" style={{ aspectRatio: '1/1', maxHeight: '600px' }}>
+        <div className="relative bg-[var(--surface-base)]" style={{ aspectRatio: '1/1', maxHeight: '600px' }}>
           {currentImage && (
             <>
               <Image
@@ -281,7 +281,7 @@ export default function ArtistImageCarousel({
             <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">{artistName}</h2>
             
             {currentImage && (
-              <div className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
+              <div className="text-xs sm:text-sm text-[var(--text-secondary)] mb-3 sm:mb-4">
                 <p>
                   {t('uploadedBy')}{' '}
                   <span className="font-semibold">{currentImage.uploadedByUser.name || currentImage.uploadedByUser.lastfmUsername}</span>
@@ -299,7 +299,7 @@ export default function ArtistImageCarousel({
                   className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base transition-colors touch-manipulation ${
                     currentImage.userVote === 'up'
                       ? 'bg-green-500 text-white'
-                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                      : 'bg-[var(--surface-base)] hover:bg-[var(--surface-elevated)] text-[var(--text-secondary)]'
                   }`}
                 >
                   <FontAwesomeIcon icon={faThumbsUp} className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -311,14 +311,14 @@ export default function ArtistImageCarousel({
                   className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base transition-colors touch-manipulation ${
                     currentImage.userVote === 'down'
                       ? 'bg-red-500 text-white'
-                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                      : 'bg-[var(--surface-base)] hover:bg-[var(--surface-elevated)] text-[var(--text-secondary)]'
                   }`}
                 >
                   <FontAwesomeIcon icon={faThumbsDown} className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span>{currentImage.downvotes}</span>
                 </button>
                 <button
-                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors touch-manipulation"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-[var(--surface-base)] hover:bg-[var(--surface-elevated)] text-[var(--text-secondary)] transition-colors touch-manipulation"
                 >
                   <FontAwesomeIcon icon={faStar} className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
@@ -332,7 +332,7 @@ export default function ArtistImageCarousel({
                   setReportingImageId(currentImage.id)
                   setShowReportModal(true)
                 }}
-                className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600 hover:text-gray-800 transition-colors touch-manipulation"
+                className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors touch-manipulation"
               >
                 <FontAwesomeIcon icon={faInfoCircle} className="w-3 h-3 sm:w-4 sm:h-4" />
                 {t('reportImage')}
@@ -355,7 +355,7 @@ export default function ArtistImageCarousel({
 
         {/* Thumbnail strip */}
         {images.length > 1 && (
-          <div className="border-t border-gray-200 p-3 sm:p-4 bg-gray-50">
+          <div className="border-t border-[var(--border-subtle)] p-3 sm:p-4 bg-[var(--surface-base)]">
             <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-hide">
               {images.map((image, index) => (
                 <button
@@ -364,7 +364,7 @@ export default function ArtistImageCarousel({
                   className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all touch-manipulation ${
                     index === currentIndex
                       ? 'border-red-600 ring-2 ring-red-200'
-                      : 'border-gray-300 hover:border-gray-400'
+                      : 'border-[var(--border-strong)] hover:border-[var(--text-muted)]'
                   }`}
                 >
                   <Image
@@ -394,14 +394,14 @@ export default function ArtistImageCarousel({
       {/* Report Modal */}
       {showReportModal && currentImage && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--surface-card)] rounded-xl p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">{t('reportTitle')}</h3>
-            <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">{t('reportDescription')}</p>
+            <p className="text-xs sm:text-sm text-[var(--text-secondary)] mb-3 sm:mb-4">{t('reportDescription')}</p>
             <textarea
               value={reportReason}
               onChange={(e) => setReportReason(e.target.value)}
               placeholder={t('reportPlaceholder')}
-              className="w-full p-3 border border-gray-300 rounded-lg mb-3 sm:mb-4 resize-none text-sm sm:text-base"
+              className="w-full p-3 border border-[var(--border-strong)] rounded-lg mb-3 sm:mb-4 resize-none text-sm sm:text-base bg-[var(--surface-card)] text-[var(--text-primary)]"
               rows={4}
             />
             <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 sm:justify-end">
@@ -410,7 +410,7 @@ export default function ArtistImageCarousel({
                   setShowReportModal(false)
                   setReportReason('')
                 }}
-                className="px-4 py-2 text-sm sm:text-base text-gray-700 hover:bg-gray-100 rounded-lg transition-colors touch-manipulation"
+                className="px-4 py-2 text-sm sm:text-base text-[var(--text-secondary)] hover:bg-[var(--surface-base)] rounded-lg transition-colors touch-manipulation"
               >
                 {t('cancel')}
               </button>

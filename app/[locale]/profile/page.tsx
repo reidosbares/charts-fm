@@ -118,10 +118,10 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden flex items-center justify-center px-4">
+      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden flex items-center justify-center px-4">
         <div className="relative z-10 text-center">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-3xl md:text-4xl text-yellow-500 mb-4" />
-          <p className="text-sm md:text-base text-gray-700">{tCommon('loading')}</p>
+          <p className="text-sm md:text-base text-[var(--text-secondary)]">{tCommon('loading')}</p>
         </div>
       </main>
     )
@@ -255,7 +255,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden">
       {/* Toast notifications */}
       <Toast
         message={t('profileUpdated')}
@@ -272,9 +272,9 @@ export default function ProfilePage() {
 
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 dark:bg-yellow-400/[0.04] rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-96 h-96 bg-pink-400/20 dark:bg-pink-400/[0.04] rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 dark:bg-orange-400/[0.04] rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 md:px-6 lg:px-12 xl:px-24 py-8 md:py-16 lg:py-24">
@@ -283,23 +283,21 @@ export default function ProfilePage() {
             <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-yellow-600 via-orange-500 to-pink-500 bg-clip-text text-transparent">
               {t('title')}
             </h1>
-            <p className="text-base md:text-lg lg:text-xl text-gray-700">
+            <p className="text-base md:text-lg lg:text-xl text-[var(--text-secondary)]">
               {t('subtitle')}
             </p>
           </div>
 
 
           <div
-            className="rounded-3xl p-4 md:p-6 lg:p-8 xl:p-10 relative"
+            className="rounded-3xl p-4 md:p-6 lg:p-8 xl:p-10 relative bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10"
             style={{
-              background: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(16px) saturate(180%)',
               WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.4)',
               boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
             }}
           >
-            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-pink-400/30 to-purple-400/30 rounded-full blur-2xl"></div>
+            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-pink-400/30 to-purple-400/30 dark:from-pink-400/[0.06] dark:to-purple-400/[0.06] rounded-full blur-2xl"></div>
             <div className="relative z-10">
               <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
                 <div className="flex flex-col items-center mb-4 md:mb-6">
@@ -307,14 +305,14 @@ export default function ProfilePage() {
                     <img
                       src={displayImage}
                       alt="Profile picture"
-                      className="rounded-full object-cover w-24 h-24 md:w-32 md:h-32 border-4 border-white/50 shadow-lg"
+                      className="rounded-full object-cover w-24 h-24 md:w-32 md:h-32 border-4 border-white/50 dark:border-white/10 shadow-lg"
                       onError={(e) => {
                         e.currentTarget.src = getDefaultGroupImage()
                       }}
                     />
                   </div>
                   <div className="flex flex-col items-center gap-2">
-                    <p className="text-xs md:text-sm text-gray-600 font-medium">{t('profilePicturePreview')}</p>
+                    <p className="text-xs md:text-sm text-[var(--text-secondary)] font-medium">{t('profilePicturePreview')}</p>
                     {formData.image && (
                       <button
                         type="button"
@@ -330,7 +328,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label htmlFor="name" className="block text-xs md:text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="name" className="block text-xs md:text-sm font-semibold text-[var(--text-primary)] mb-2">
                     {t('name')}
                   </label>
                   <input
@@ -338,9 +336,8 @@ export default function ProfilePage() {
                     id="name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base text-[var(--text-primary)] rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                     placeholder="Your name"
@@ -349,7 +346,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label htmlFor="image" className="block text-xs md:text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="image" className="block text-xs md:text-sm font-semibold text-[var(--text-primary)] mb-2">
                     {t('profilePicture')}
                   </label>
                   
@@ -357,14 +354,13 @@ export default function ProfilePage() {
                   <div className="mb-4">
                     <label
                       htmlFor="file-upload"
-                      className="flex items-center justify-center w-full px-4 py-3 text-sm md:text-base rounded-xl border-2 border-dashed border-gray-300 cursor-pointer hover:border-yellow-500 transition-colors"
+                      className="flex items-center justify-center w-full px-4 py-3 text-sm md:text-base rounded-xl border-2 border-dashed border-[var(--border-strong)] cursor-pointer hover:border-yellow-500 transition-colors bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                       style={{
-                        background: 'rgba(255, 255, 255, 0.8)',
                         backdropFilter: 'blur(8px)',
                       }}
                     >
-                      <FontAwesomeIcon icon={faUpload} className="mr-2 text-gray-500" />
-                      <span className="text-gray-700">{t('upload.selectFile')}</span>
+                      <FontAwesomeIcon icon={faUpload} className="mr-2 text-[var(--text-muted)]" />
+                      <span className="text-[var(--text-secondary)]">{t('upload.selectFile')}</span>
                       <input
                         id="file-upload"
                         type="file"
@@ -376,13 +372,12 @@ export default function ProfilePage() {
                     </label>
                     
                     {selectedFile && (
-                      <div className="mt-3 p-3 rounded-xl border border-gray-200" style={{
-                        background: 'rgba(255, 255, 255, 0.8)',
+                      <div className="mt-3 p-3 rounded-xl border border-[var(--border-subtle)] bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]" style={{
                         backdropFilter: 'blur(8px)',
                       }}>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <div className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden bg-gray-100">
+                            <div className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden bg-[var(--surface-base)]">
                               {previewUrl && (
                                 <img
                                   src={previewUrl}
@@ -392,10 +387,10 @@ export default function ProfilePage() {
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-gray-900 truncate">
+                              <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                                 {selectedFile.name}
                               </p>
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-[var(--text-muted)]">
                                 {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                               </p>
                             </div>
@@ -415,7 +410,7 @@ export default function ProfilePage() {
                                 <button
                                   type="button"
                                   onClick={handleRemoveFile}
-                                  className="p-2 text-gray-500 hover:text-red-600 transition-colors"
+                                  className="p-2 text-[var(--text-muted)] hover:text-red-600 transition-colors"
                                   disabled={isSaving || isUploading}
                                 >
                                   <FontAwesomeIcon icon={faTimes} />
@@ -425,7 +420,7 @@ export default function ProfilePage() {
                             {isUploading && (
                               <div className="flex items-center gap-2">
                                 <FontAwesomeIcon icon={faSpinner} className="animate-spin text-yellow-500" />
-                                <span className="text-sm text-gray-600">{t('upload.uploading')}</span>
+                                <span className="text-sm text-[var(--text-secondary)]">{t('upload.uploading')}</span>
                               </div>
                             )}
                           </div>
@@ -437,18 +432,17 @@ export default function ProfilePage() {
                   {/* URL Input (Alternative) */}
                   <div className="relative">
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="flex-1 h-px bg-gray-300"></div>
-                      <span className="text-xs text-gray-500 px-2">{t('upload.or')}</span>
-                      <div className="flex-1 h-px bg-gray-300"></div>
+                      <div className="flex-1 h-px bg-[var(--border-strong)]"></div>
+                      <span className="text-xs text-[var(--text-muted)] px-2">{t('upload.or')}</span>
+                      <div className="flex-1 h-px bg-[var(--border-strong)]"></div>
                     </div>
                     <input
                       type="text"
                       id="image"
                       value={isUploadedImage ? '' : formData.image}
                       onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                      className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base text-[var(--text-primary)] rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                       style={{
-                        background: 'rgba(255, 255, 255, 0.8)',
                         backdropFilter: 'blur(8px)',
                       }}
                       placeholder={isUploadedImage ? t('upload.urlDisabledPlaceholder') : "https://example.com/profile.jpg"}
@@ -459,10 +453,10 @@ export default function ProfilePage() {
 
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs md:text-sm font-semibold text-gray-800">{t('lastfmUsername')}</span>
+                    <span className="text-xs md:text-sm font-semibold text-[var(--text-primary)]">{t('lastfmUsername')}</span>
                     <div className="relative group">
                       <svg
-                        className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400 cursor-help"
+                        className="w-3.5 h-3.5 md:w-4 md:h-4 text-[var(--text-muted)] cursor-help"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -486,29 +480,27 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <div
-                    className="px-3 md:px-4 py-2.5 md:py-3 rounded-xl"
+                    className="px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                       border: '1px solid rgba(0, 0, 0, 0.1)',
                     }}
                   >
-                    <p className="text-base md:text-lg text-gray-900 font-medium break-words">{lastfmUsername || 'Not set'}</p>
+                    <p className="text-base md:text-lg text-[var(--text-primary)] font-medium break-words">{lastfmUsername || 'Not set'}</p>
                   </div>
                 </div>
 
                 {/* Public profile settings */}
                 <div>
-                  <label htmlFor="bio" className="block text-xs md:text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="bio" className="block text-xs md:text-sm font-semibold text-[var(--text-primary)] mb-2">
                     {t('bio')}
                   </label>
                   <textarea
                     id="bio"
                     value={formData.bio}
                     onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base text-[var(--text-primary)] rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                     placeholder={t('bioPlaceholder')}
@@ -517,22 +509,21 @@ export default function ProfilePage() {
                     disabled={isSaving || isUploading}
                   />
                   <div className="mt-2 flex items-center justify-between">
-                    <p className="text-xs text-gray-600">{t('bioHelp')}</p>
-                    <p className="text-xs text-gray-500">{(formData.bio || '').length}/500</p>
+                    <p className="text-xs text-[var(--text-secondary)]">{t('bioHelp')}</p>
+                    <p className="text-xs text-[var(--text-muted)]">{(formData.bio || '').length}/500</p>
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="text-xs md:text-sm font-semibold text-gray-800 mb-2">{t('publicProfile.title')}</h3>
+                  <h3 className="text-xs md:text-sm font-semibold text-[var(--text-primary)] mb-2">{t('publicProfile.title')}</h3>
                   <div
-                    className="rounded-xl border border-gray-200 p-3 md:p-4 space-y-3"
+                    className="rounded-xl border border-[var(--border-subtle)] p-3 md:p-4 space-y-3 bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                   >
                     <label className="flex items-center justify-between gap-3">
-                      <span className="text-sm text-gray-800 font-medium">{t('publicProfile.profilePublic')}</span>
+                      <span className="text-sm text-[var(--text-primary)] font-medium">{t('publicProfile.profilePublic')}</span>
                       <input
                         type="checkbox"
                         checked={formData.profilePublic}
@@ -543,7 +534,7 @@ export default function ProfilePage() {
                     </label>
 
                     <label className="flex items-center justify-between gap-3">
-                      <span className="text-sm text-gray-800 font-medium">{t('publicProfile.showStats')}</span>
+                      <span className="text-sm text-[var(--text-primary)] font-medium">{t('publicProfile.showStats')}</span>
                       <input
                         type="checkbox"
                         checked={formData.showProfileStats}
@@ -554,7 +545,7 @@ export default function ProfilePage() {
                     </label>
 
                     <label className="flex items-center justify-between gap-3">
-                      <span className="text-sm text-gray-800 font-medium">{t('publicProfile.showGroups')}</span>
+                      <span className="text-sm text-[var(--text-primary)] font-medium">{t('publicProfile.showGroups')}</span>
                       <input
                         type="checkbox"
                         checked={formData.showProfileGroups}
@@ -565,11 +556,11 @@ export default function ProfilePage() {
                     </label>
 
                     {formData.profilePublic && formData.showProfileGroups && profileGroups.length > 0 && (
-                      <div className="pt-2 border-t border-gray-200">
-                        <label htmlFor="highlightedGroupId" className="block text-sm text-gray-800 font-medium mb-1.5">
+                      <div className="pt-2 border-t border-[var(--border-subtle)]">
+                        <label htmlFor="highlightedGroupId" className="block text-sm text-[var(--text-primary)] font-medium mb-1.5">
                           {t('publicProfile.highlightedGroup')}
                         </label>
-                        <p className="text-xs text-gray-600 mb-2">{t('publicProfile.highlightedGroupHelp')}</p>
+                        <p className="text-xs text-[var(--text-secondary)] mb-2">{t('publicProfile.highlightedGroupHelp')}</p>
                         <CustomSelect
                           id="highlightedGroupId"
                           options={[
@@ -584,7 +575,7 @@ export default function ProfilePage() {
                     )}
 
                     {lastfmUsername && formData.profilePublic && (
-                      <div className="pt-2 border-t border-gray-200">
+                      <div className="pt-2 border-t border-[var(--border-subtle)]">
                         <Link
                           href={`/u/${encodeURIComponent(lastfmUsername)}`}
                           className="text-sm font-semibold text-[var(--theme-primary-dark)] hover:underline"

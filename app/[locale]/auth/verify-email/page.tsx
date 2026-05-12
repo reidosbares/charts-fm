@@ -129,7 +129,7 @@ function VerifyEmailPageContent() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-48 h-48 md:w-72 md:h-72 bg-yellow-400/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute top-40 right-20 w-64 h-64 md:w-96 md:h-96 bg-pink-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
@@ -139,12 +139,10 @@ function VerifyEmailPageContent() {
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-24">
         <div className="max-w-2xl w-full">
           <div
-            className="rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-10 relative overflow-hidden"
+            className="rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-10 relative overflow-hidden bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10"
             style={{
-              background: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(16px) saturate(180%)',
               WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.4)',
               boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
             }}
           >
@@ -153,21 +151,21 @@ function VerifyEmailPageContent() {
               {status === 'loading' && (
                 <>
                   <div className="text-4xl md:text-5xl mb-3 md:mb-4">📧</div>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-gray-800">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-[var(--text-primary)]">
                     {t('verifying')}
                   </h1>
                   <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-yellow-500 mx-auto mb-3 md:mb-4"></div>
-                  <p className="text-sm md:text-base text-gray-600">{t('verifyingDescription')}</p>
+                  <p className="text-sm md:text-base text-[var(--text-secondary)]">{t('verifyingDescription')}</p>
                 </>
               )}
 
               {status === 'success' && (
                 <>
                   <div className="text-4xl md:text-5xl mb-3 md:mb-4">✅</div>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-gray-800">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-[var(--text-primary)]">
                     {t('successTitle')}
                   </h1>
-                  <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
+                  <p className="text-sm md:text-base text-[var(--text-secondary)] mb-4 md:mb-6">
                     {t('successDescription')}
                   </p>
                   <LiquidGlassButton
@@ -185,11 +183,11 @@ function VerifyEmailPageContent() {
               {status === 'error' && (
                 <>
                   <div className="text-4xl md:text-5xl mb-3 md:mb-4">❌</div>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-gray-800">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-[var(--text-primary)]">
                     {t('errorTitle')}
                   </h1>
                   {error && (
-                    <div 
+                    <div
                       className="mb-4 md:mb-6 p-3 md:p-4 rounded-xl md:rounded-2xl text-sm md:text-base"
                       style={{
                         background: 'rgba(239, 68, 68, 0.2)',
@@ -199,21 +197,20 @@ function VerifyEmailPageContent() {
                         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                       }}
                     >
-                      <p className="text-red-700 font-medium">{error}</p>
+                      <p className="text-red-700 dark:text-red-300 font-medium">{error}</p>
                     </div>
                   )}
                   {email && (
                     <div className="space-y-3 md:space-y-4">
-                      <p className="text-sm md:text-base text-gray-600">
+                      <p className="text-sm md:text-base text-[var(--text-secondary)]">
                         {t('needNewEmail')}
                       </p>
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                        className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                         style={{
-                          background: 'rgba(255, 255, 255, 0.8)',
                           backdropFilter: 'blur(8px)',
                         }}
                         placeholder="your.email@example.com"
@@ -229,7 +226,7 @@ function VerifyEmailPageContent() {
                         {isResending ? t('sending') : t('resendEmail')}
                       </LiquidGlassButton>
                       {resendSuccess && (
-                        <p className="text-sm md:text-base text-green-600 font-medium">
+                        <p className="text-sm md:text-base text-green-600 dark:text-green-400 font-medium">
                           {t('emailSent')}
                         </p>
                       )}
@@ -241,17 +238,17 @@ function VerifyEmailPageContent() {
               {status === 'pending' && (
                 <>
                   <div className="text-4xl md:text-5xl mb-3 md:mb-4">📬</div>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-gray-800">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-[var(--text-primary)]">
                     {t('checkEmailTitle')}
                   </h1>
-                  <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
+                  <p className="text-sm md:text-base text-[var(--text-secondary)] mb-4 md:mb-6">
                     {t('checkEmailDescription')}
                   </p>
-                  <p className="text-xs md:text-sm text-gray-500 mb-4 md:mb-6">
+                  <p className="text-xs md:text-sm text-[var(--text-muted)] mb-4 md:mb-6">
                     {t('linkExpires')}
                   </p>
                   {error && (
-                    <div 
+                    <div
                       className="mb-4 md:mb-6 p-3 md:p-4 rounded-xl md:rounded-2xl text-sm md:text-base"
                       style={{
                         background: 'rgba(239, 68, 68, 0.2)',
@@ -261,11 +258,11 @@ function VerifyEmailPageContent() {
                         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                       }}
                     >
-                      <p className="text-red-700 font-medium">{error}</p>
+                      <p className="text-red-700 dark:text-red-300 font-medium">{error}</p>
                     </div>
                   )}
                   {resendSuccess && (
-                    <div 
+                    <div
                       className="mb-4 md:mb-6 p-3 md:p-4 rounded-xl md:rounded-2xl text-sm md:text-base"
                       style={{
                         background: 'rgba(34, 197, 94, 0.2)',
@@ -275,23 +272,22 @@ function VerifyEmailPageContent() {
                         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                       }}
                     >
-                      <p className="text-green-700 font-medium">
+                      <p className="text-green-700 dark:text-green-300 font-medium">
                         {t('emailSent')}
                       </p>
                     </div>
                   )}
                   {email && (
                     <div className="space-y-3 md:space-y-4">
-                      <p className="text-xs md:text-sm text-gray-600">
+                      <p className="text-xs md:text-sm text-[var(--text-secondary)]">
                         {t('didntReceive')}
                       </p>
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                        className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                         style={{
-                          background: 'rgba(255, 255, 255, 0.8)',
                           backdropFilter: 'blur(8px)',
                         }}
                         placeholder="your.email@example.com"
@@ -329,10 +325,10 @@ function VerifyEmailPageContent() {
 export default function VerifyEmailPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden flex items-center justify-center">
+      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-yellow-500 mx-auto mb-3 md:mb-4"></div>
-          <p className="text-sm md:text-base text-gray-700">Loading...</p>
+          <p className="text-sm md:text-base text-[var(--text-secondary)]">Loading...</p>
         </div>
       </main>
     }>

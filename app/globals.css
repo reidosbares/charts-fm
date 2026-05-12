@@ -5,7 +5,19 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  
+
+  /* Semantic surface/text/border tokens — appearance-dependent, theme-independent.
+     Light values here; .dark block overrides below. */
+  --surface-base: rgb(255 254 250);
+  --surface-card: rgb(255 255 255);
+  --surface-elevated: rgb(255 255 255);
+  --surface-card-rgb: 255 255 255;
+  --text-primary: rgb(17 24 39);
+  --text-secondary: rgb(75 85 99);
+  --text-muted: rgb(107 114 128);
+  --border-subtle: rgb(229 231 235);
+  --border-strong: rgb(209 213 219);
+
   /* Default theme (white) - CSS variables */
   --theme-primary: rgb(234 179 8);
   --theme-primary-light: rgb(250 204 21);
@@ -18,13 +30,41 @@
   --theme-text: rgb(202 138 4);
   --theme-ring: rgb(234 179 8);
   --theme-button-text: black;
+  --theme-primary-rgb: 234 179 8;
+  --theme-primary-lighter-rgb: 254 240 138;
+  --theme-border-rgb: 229 231 235;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  /* Semantic surface/text/border — dark values */
+  --surface-base: rgb(15 15 17);
+  --surface-card: rgb(20 20 24);
+  --surface-elevated: rgb(32 32 38);
+  --surface-card-rgb: 20 20 24;
+  --text-primary: rgb(237 237 240);
+  --text-secondary: rgb(200 200 210);
+  --text-muted: rgb(160 160 170);
+  --border-subtle: rgb(32 32 38);
+  --border-strong: rgb(55 55 62);
+
+  /* Default theme overrides (when no .theme-{name} class is applied — e.g., dashboard, auth) */
+  --theme-primary: rgb(234 179 8);
+  --theme-primary-light: rgb(250 204 21);
+  --theme-primary-dark: rgb(243 244 246);
+  --theme-primary-lighter: rgb(50 44 22);
+  --theme-primary-darker: rgb(161 98 7);
+  --theme-background-from: rgb(20 20 22);
+  --theme-background-to: rgb(16 16 18);
+  --theme-border: rgb(38 38 44);
+  --theme-text: rgb(253 224 71);
+  --theme-ring: rgb(234 179 8);
+  --theme-button-text: black;
+  --theme-primary-rgb: 234 179 8;
+  --theme-primary-lighter-rgb: 50 44 22;
+  --theme-border-rgb: 38 38 44;
 }
 
 body {
@@ -35,6 +75,10 @@ body {
   background: linear-gradient(135deg, rgb(255, 254, 250), rgb(255, 253, 248), rgb(255, 251, 245));
   background-attachment: fixed;
   min-height: 100vh;
+}
+
+.dark body {
+  background: linear-gradient(135deg, rgb(15, 15, 17), rgb(13, 13, 15), rgb(11, 11, 13));
 }
 
 @layer utilities {
@@ -109,6 +153,17 @@ textarea:not([disabled]) {
   -webkit-text-fill-color: rgb(17 24 39);
 }
 
+.dark input[type="text"]:not([disabled]),
+.dark input[type="email"]:not([disabled]),
+.dark input[type="password"]:not([disabled]),
+.dark input[type="number"]:not([disabled]),
+.dark input[type="tel"]:not([disabled]),
+.dark input[type="url"]:not([disabled]),
+.dark input[type="search"]:not([disabled]),
+.dark textarea:not([disabled]) {
+  -webkit-text-fill-color: rgb(237 237 240);
+}
+
 /* Ensure inputs with text-gray-900 class maintain dark text on iOS */
 input.text-gray-900,
 textarea.text-gray-900 {
@@ -170,6 +225,18 @@ textarea:-ms-input-placeholder {
 .rdp-day_current-week {
   background-color: rgb(234 179 8);
   border-radius: 50%;
+}
+
+.dark .rdp-day_available {
+  background-color: rgb(60 50 18);
+}
+
+.dark .rdp-day_available:hover {
+  background-color: rgb(90 70 22);
+}
+
+.dark .rdp-day_current-week {
+  background-color: rgb(234 179 8);
 }
 
 /* Dark yellow for navigation arrows and selected date */
@@ -253,6 +320,26 @@ svg.rdp-chevron {
   --theme-text: rgb(202 138 4);
   --theme-ring: rgb(234 179 8);
   --theme-button-text: black;
+  --theme-primary-rgb: 234 179 8;
+  --theme-primary-lighter-rgb: 254 240 138;
+  --theme-border-rgb: 254 240 138;
+}
+
+.dark .theme-yellow {
+  --theme-primary: rgb(234 179 8);
+  --theme-primary-light: rgb(250 204 21);
+  --theme-primary-dark: rgb(254 240 138);
+  --theme-primary-lighter: rgb(50 44 22);
+  --theme-primary-darker: rgb(161 98 7);
+  --theme-background-from: rgb(28 26 18);
+  --theme-background-to: rgb(22 21 16);
+  --theme-border: rgb(80 65 20);
+  --theme-text: rgb(253 224 71);
+  --theme-ring: rgb(234 179 8);
+  --theme-button-text: black;
+  --theme-primary-rgb: 234 179 8;
+  --theme-primary-lighter-rgb: 50 44 22;
+  --theme-border-rgb: 80 65 20;
 }
 
 .theme-royal-blue {
@@ -267,6 +354,26 @@ svg.rdp-chevron {
   --theme-text: rgb(29 78 216);
   --theme-ring: rgb(29 78 216);
   --theme-button-text: white;
+  --theme-primary-rgb: 29 78 216;
+  --theme-primary-lighter-rgb: 147 197 253;
+  --theme-border-rgb: 147 197 253;
+}
+
+.dark .theme-royal-blue {
+  --theme-primary: rgb(59 130 246);
+  --theme-primary-light: rgb(96 165 250);
+  --theme-primary-dark: rgb(191 219 254);
+  --theme-primary-lighter: rgb(20 30 60);
+  --theme-primary-darker: rgb(30 64 175);
+  --theme-background-from: rgb(15 22 38);
+  --theme-background-to: rgb(12 18 32);
+  --theme-border: rgb(40 60 110);
+  --theme-text: rgb(147 197 253);
+  --theme-ring: rgb(59 130 246);
+  --theme-button-text: white;
+  --theme-primary-rgb: 59 130 246;
+  --theme-primary-lighter-rgb: 20 30 60;
+  --theme-border-rgb: 40 60 110;
 }
 
 .theme-cyan {
@@ -281,6 +388,26 @@ svg.rdp-chevron {
   --theme-text: rgb(8 145 178);
   --theme-ring: rgb(6 182 212);
   --theme-button-text: white;
+  --theme-primary-rgb: 6 182 212;
+  --theme-primary-lighter-rgb: 103 232 249;
+  --theme-border-rgb: 103 232 249;
+}
+
+.dark .theme-cyan {
+  --theme-primary: rgb(34 211 238);
+  --theme-primary-light: rgb(103 232 249);
+  --theme-primary-dark: rgb(207 250 254);
+  --theme-primary-lighter: rgb(14 36 44);
+  --theme-primary-darker: rgb(14 116 144);
+  --theme-background-from: rgb(15 24 32);
+  --theme-background-to: rgb(12 20 28);
+  --theme-border: rgb(30 70 90);
+  --theme-text: rgb(103 232 249);
+  --theme-ring: rgb(34 211 238);
+  --theme-button-text: black;
+  --theme-primary-rgb: 34 211 238;
+  --theme-primary-lighter-rgb: 14 36 44;
+  --theme-border-rgb: 30 70 90;
 }
 
 .theme-bright-red {
@@ -295,6 +422,26 @@ svg.rdp-chevron {
   --theme-text: rgb(185 28 28);
   --theme-ring: rgb(185 28 28);
   --theme-button-text: white;
+  --theme-primary-rgb: 185 28 28;
+  --theme-primary-lighter-rgb: 252 165 165;
+  --theme-border-rgb: 252 165 165;
+}
+
+.dark .theme-bright-red {
+  --theme-primary: rgb(239 68 68);
+  --theme-primary-light: rgb(248 113 113);
+  --theme-primary-dark: rgb(254 202 202);
+  --theme-primary-lighter: rgb(50 16 18);
+  --theme-primary-darker: rgb(153 27 27);
+  --theme-background-from: rgb(34 14 16);
+  --theme-background-to: rgb(26 12 14);
+  --theme-border: rgb(95 30 35);
+  --theme-text: rgb(252 165 165);
+  --theme-ring: rgb(239 68 68);
+  --theme-button-text: white;
+  --theme-primary-rgb: 239 68 68;
+  --theme-primary-lighter-rgb: 50 16 18;
+  --theme-border-rgb: 95 30 35;
 }
 
 .theme-maroon {
@@ -309,6 +456,26 @@ svg.rdp-chevron {
   --theme-text: rgb(100 0 0);
   --theme-ring: rgb(128 0 0);
   --theme-button-text: white;
+  --theme-primary-rgb: 128 0 0;
+  --theme-primary-lighter-rgb: 160 82 45;
+  --theme-border-rgb: 205 133 63;
+}
+
+.dark .theme-maroon {
+  --theme-primary: rgb(180 50 50);
+  --theme-primary-light: rgb(200 70 70);
+  --theme-primary-dark: rgb(255 200 180);
+  --theme-primary-lighter: rgb(46 18 14);
+  --theme-primary-darker: rgb(80 0 0);
+  --theme-background-from: rgb(28 16 14);
+  --theme-background-to: rgb(22 14 12);
+  --theme-border: rgb(90 40 30);
+  --theme-text: rgb(229 165 130);
+  --theme-ring: rgb(180 50 50);
+  --theme-button-text: white;
+  --theme-primary-rgb: 180 50 50;
+  --theme-primary-lighter-rgb: 46 18 14;
+  --theme-border-rgb: 90 40 30;
 }
 
 .theme-graphite {
@@ -323,6 +490,26 @@ svg.rdp-chevron {
   --theme-text: rgb(55 65 81);
   --theme-ring: rgb(75 85 99);
   --theme-button-text: white;
+  --theme-primary-rgb: 75 85 99;
+  --theme-primary-lighter-rgb: 156 163 175;
+  --theme-border-rgb: 209 213 219;
+}
+
+.dark .theme-graphite {
+  --theme-primary: rgb(156 163 175);
+  --theme-primary-light: rgb(209 213 219);
+  --theme-primary-dark: rgb(243 244 246);
+  --theme-primary-lighter: rgb(38 42 50);
+  --theme-primary-darker: rgb(75 85 99);
+  --theme-background-from: rgb(20 22 26);
+  --theme-background-to: rgb(16 18 22);
+  --theme-border: rgb(60 65 75);
+  --theme-text: rgb(209 213 219);
+  --theme-ring: rgb(156 163 175);
+  --theme-button-text: black;
+  --theme-primary-rgb: 156 163 175;
+  --theme-primary-lighter-rgb: 38 42 50;
+  --theme-border-rgb: 60 65 75;
 }
 
 .theme-hot-pink {
@@ -337,6 +524,26 @@ svg.rdp-chevron {
   --theme-text: rgb(219 39 119);
   --theme-ring: rgb(255 105 180);
   --theme-button-text: white;
+  --theme-primary-rgb: 255 105 180;
+  --theme-primary-lighter-rgb: 251 182 206;
+  --theme-border-rgb: 251 182 206;
+}
+
+.dark .theme-hot-pink {
+  --theme-primary: rgb(244 114 182);
+  --theme-primary-light: rgb(249 168 212);
+  --theme-primary-dark: rgb(253 232 244);
+  --theme-primary-lighter: rgb(48 18 38);
+  --theme-primary-darker: rgb(199 21 133);
+  --theme-background-from: rgb(30 16 26);
+  --theme-background-to: rgb(24 12 22);
+  --theme-border: rgb(96 40 78);
+  --theme-text: rgb(251 182 206);
+  --theme-ring: rgb(244 114 182);
+  --theme-button-text: white;
+  --theme-primary-rgb: 244 114 182;
+  --theme-primary-lighter-rgb: 48 18 38;
+  --theme-border-rgb: 96 40 78;
 }
 
 .theme-neon-green {
@@ -351,6 +558,26 @@ svg.rdp-chevron {
   --theme-text: rgb(21 128 61);
   --theme-ring: rgb(22 163 74);
   --theme-button-text: white;
+  --theme-primary-rgb: 21 128 61;
+  --theme-primary-lighter-rgb: 134 239 172;
+  --theme-border-rgb: 134 239 172;
+}
+
+.dark .theme-neon-green {
+  --theme-primary: rgb(74 222 128);
+  --theme-primary-light: rgb(134 239 172);
+  --theme-primary-dark: rgb(220 252 231);
+  --theme-primary-lighter: rgb(18 38 26);
+  --theme-primary-darker: rgb(20 83 45);
+  --theme-background-from: rgb(14 26 18);
+  --theme-background-to: rgb(12 22 16);
+  --theme-border: rgb(30 78 50);
+  --theme-text: rgb(134 239 172);
+  --theme-ring: rgb(74 222 128);
+  --theme-button-text: black;
+  --theme-primary-rgb: 74 222 128;
+  --theme-primary-lighter-rgb: 18 38 26;
+  --theme-border-rgb: 30 78 50;
 }
 
 .theme-white {
@@ -365,6 +592,26 @@ svg.rdp-chevron {
   --theme-text: rgb(202 138 4);
   --theme-ring: rgb(234 179 8);
   --theme-button-text: black;
+  --theme-primary-rgb: 234 179 8;
+  --theme-primary-lighter-rgb: 254 240 138;
+  --theme-border-rgb: 229 231 235;
+}
+
+.dark .theme-white {
+  --theme-primary: rgb(234 179 8);
+  --theme-primary-light: rgb(250 204 21);
+  --theme-primary-dark: rgb(243 244 246);
+  --theme-primary-lighter: rgb(50 44 22);
+  --theme-primary-darker: rgb(161 98 7);
+  --theme-background-from: rgb(20 20 22);
+  --theme-background-to: rgb(16 16 18);
+  --theme-border: rgb(55 55 62);
+  --theme-text: rgb(253 224 71);
+  --theme-ring: rgb(234 179 8);
+  --theme-button-text: black;
+  --theme-primary-rgb: 234 179 8;
+  --theme-primary-lighter-rgb: 50 44 22;
+  --theme-border-rgb: 55 55 62;
 }
 
 .theme-rainbow {
@@ -379,6 +626,94 @@ svg.rdp-chevron {
   --theme-text: rgb(17 24 39);
   --theme-ring: rgb(147 51 234);
   --theme-button-text: white;
+  --theme-primary-rgb: 147 51 234;
+  --theme-primary-lighter-rgb: 196 181 253;
+  --theme-border-rgb: 196 181 253;
+}
+
+.dark .theme-rainbow {
+  --theme-primary: rgb(168 85 247);
+  --theme-primary-light: rgb(192 132 252);
+  --theme-primary-dark: rgb(237 233 254);
+  --theme-primary-lighter: rgb(40 20 60);
+  --theme-primary-darker: rgb(126 34 206);
+  --theme-background-from: rgb(28 20 38 / 0.9);
+  --theme-background-to: rgb(24 16 34 / 0.95);
+  --theme-border: rgb(80 50 130);
+  --theme-text: rgb(216 180 254);
+  --theme-ring: rgb(168 85 247);
+  --theme-button-text: white;
+  --theme-primary-rgb: 168 85 247;
+  --theme-primary-lighter-rgb: 40 20 60;
+  --theme-border-rgb: 80 50 130;
+}
+
+.theme-synthwave {
+  --theme-primary: rgb(217 70 239);
+  --theme-primary-light: rgb(34 211 238);
+  --theme-primary-dark: rgb(86 12 142);
+  --theme-primary-lighter: rgb(250 232 255);
+  --theme-primary-darker: rgb(162 28 175);
+  --theme-background-from: rgb(250 232 255);
+  --theme-background-to: rgb(236 254 255);
+  --theme-border: rgb(240 171 252);
+  --theme-text: rgb(14 116 144);
+  --theme-ring: rgb(217 70 239);
+  --theme-button-text: white;
+  --theme-primary-rgb: 217 70 239;
+  --theme-primary-lighter-rgb: 250 232 255;
+  --theme-border-rgb: 240 171 252;
+}
+
+.dark .theme-synthwave {
+  --theme-primary: rgb(232 121 249);
+  --theme-primary-light: rgb(103 232 249);
+  --theme-primary-dark: rgb(207 250 254);
+  --theme-primary-lighter: rgb(48 18 56);
+  --theme-primary-darker: rgb(162 28 175);
+  --theme-background-from: rgb(24 14 40);
+  --theme-background-to: rgb(14 18 38);
+  --theme-border: rgb(110 40 150);
+  --theme-text: rgb(103 232 249);
+  --theme-ring: rgb(232 121 249);
+  --theme-button-text: white;
+  --theme-primary-rgb: 232 121 249;
+  --theme-primary-lighter-rgb: 48 18 56;
+  --theme-border-rgb: 110 40 150;
+}
+
+.theme-sunset {
+  --theme-primary: rgb(249 115 22);
+  --theme-primary-light: rgb(250 204 21);
+  --theme-primary-dark: rgb(120 30 30);
+  --theme-primary-lighter: rgb(254 215 170);
+  --theme-primary-darker: rgb(194 65 12);
+  --theme-background-from: rgb(255 237 213);
+  --theme-background-to: rgb(255 251 235);
+  --theme-border: rgb(253 186 116);
+  --theme-text: rgb(180 83 9);
+  --theme-ring: rgb(249 115 22);
+  --theme-button-text: white;
+  --theme-primary-rgb: 249 115 22;
+  --theme-primary-lighter-rgb: 254 215 170;
+  --theme-border-rgb: 253 186 116;
+}
+
+.dark .theme-sunset {
+  --theme-primary: rgb(251 146 60);
+  --theme-primary-light: rgb(250 204 21);
+  --theme-primary-dark: rgb(254 240 138);
+  --theme-primary-lighter: rgb(50 18 14);
+  --theme-primary-darker: rgb(194 65 12);
+  --theme-background-from: rgb(38 12 20);
+  --theme-background-to: rgb(20 8 24);
+  --theme-border: rgb(140 60 30);
+  --theme-text: rgb(252 211 77);
+  --theme-ring: rgb(251 146 60);
+  --theme-button-text: white;
+  --theme-primary-rgb: 251 146 60;
+  --theme-primary-lighter-rgb: 50 18 14;
+  --theme-border-rgb: 140 60 30;
 }
 
 /* All themes: Make main page gradients diagonal and fixed to viewport */
@@ -399,7 +734,7 @@ main.bg-gradient-to-b {
 main.theme-rainbow.bg-gradient-to-b,
 main.theme-rainbow {
   /* Diagonal gradient from top-left to bottom-right with rainbow colors and subtle white overlay */
-  background-image: 
+  background-image:
     linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15)),
     linear-gradient(
       135deg,
@@ -415,10 +750,28 @@ main.theme-rainbow {
   background-color: transparent;
 }
 
+.dark main.theme-rainbow.bg-gradient-to-b,
+.dark main.theme-rainbow {
+  background-image:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
+    linear-gradient(
+      135deg,
+      rgb(120 30 30) 0%,
+      rgb(130 60 20) 14.28%,
+      rgb(140 100 20) 28.57%,
+      rgb(30 100 60) 42.85%,
+      rgb(30 70 130) 57.14%,
+      rgb(80 30 130) 71.42%,
+      rgb(130 30 90) 85.71%,
+      rgb(120 30 30) 100%
+    ) !important;
+  background-color: transparent;
+}
+
 /* Rainbow gradient for group cards */
 .theme-rainbow.bg-gradient-to-br {
   /* Diagonal rainbow gradient for cards with white overlay for better text readability */
-  background-image: 
+  background-image:
     linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)),
     linear-gradient(
       135deg,
@@ -431,6 +784,43 @@ main.theme-rainbow {
       rgb(219 39 119) 100%    /* violet */
     ) !important;
   background-color: transparent;
+}
+
+.dark .theme-rainbow.bg-gradient-to-br {
+  background-image:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)),
+    linear-gradient(
+      135deg,
+      rgb(120 30 30) 0%,
+      rgb(130 60 20) 16.66%,
+      rgb(140 100 20) 33.33%,
+      rgb(30 100 60) 50%,
+      rgb(30 70 130) 66.66%,
+      rgb(80 30 130) 83.33%,
+      rgb(130 30 90) 100%
+    ) !important;
+  background-color: transparent;
+}
+
+/* Multi-color themes in dark mode get atmospheric radial glows
+   layered over the base linear gradient — adds depth without raising
+   overall brightness. Glows are placed on the vertical axis (centered
+   horizontally) so the composition feels balanced: a "sun" near the
+   bottom and a "sky" haze at the top. */
+.dark main.theme-synthwave.bg-gradient-to-b,
+.dark main.theme-synthwave {
+  background-image:
+    radial-gradient(ellipse 90% 55% at 50% 100%, rgb(180 50 200 / 0.28), transparent 70%),
+    radial-gradient(ellipse 100% 50% at 50% 0%, rgb(40 140 200 / 0.18), transparent 75%),
+    linear-gradient(180deg, rgb(20 14 36), rgb(18 14 38)) !important;
+}
+
+.dark main.theme-sunset.bg-gradient-to-b,
+.dark main.theme-sunset {
+  background-image:
+    radial-gradient(ellipse 95% 55% at 50% 100%, rgb(220 110 30 / 0.28), transparent 70%),
+    radial-gradient(ellipse 100% 50% at 50% 0%, rgb(120 40 100 / 0.18), transparent 75%),
+    linear-gradient(180deg, rgb(28 10 22), rgb(20 8 24)) !important;
 }
 
 /* Theme-aware ring color utility */
@@ -660,36 +1050,4 @@ svg.svg-inline--fa[style*="width"] {
   background-position: center;
 }
 
-/* Timeline container - responsive background gradient for chart history bubbles */
-.timeline-container {
-  /* Mobile: line at 20-22px (center of 40-48px bubbles), repeat every 60px */
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent 19px,
-    rgba(209, 213, 219, 0.4) 19px,
-    rgba(209, 213, 219, 0.4) 23px,
-    transparent 23px,
-    transparent 60px
-  );
-  background-size: 100% 60px;
-  background-position: 0 0;
-  background-repeat: repeat-y;
-}
-
-@media (min-width: 768px) {
-  .timeline-container {
-    /* Desktop: line at 31-33px (center of 48-64px bubbles), repeat every 80px */
-    background-image: repeating-linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent 31px,
-      rgba(209, 213, 219, 0.4) 31px,
-      rgba(209, 213, 219, 0.4) 33px,
-      transparent 33px,
-      transparent 80px
-    );
-    background-size: 100% 80px;
-  }
-}
 

@@ -102,16 +102,13 @@ export default function GroupSettingsTabs({
       <button
         key={tab.id}
         onClick={() => setActiveTab(tab.id)}
-        className={`
-          w-full text-left px-3 md:px-4 py-2 md:py-3 rounded-lg transition-all duration-200 text-sm md:text-base
-          ${isSelected ? 'font-semibold shadow-lg' : 'hover:shadow-md'}
-        `}
+        className={`w-full text-left px-3 md:px-4 py-2 md:py-3 rounded-lg transition-all duration-200 text-sm md:text-base border border-white/30 dark:border-white/10 ${isSelected ? 'font-semibold shadow-lg' : 'hover:shadow-md bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)]'}`}
         style={{
           background: isSelected
             ? isDelete
               ? 'rgba(239, 68, 68, 0.8)'
               : 'var(--theme-primary)'
-            : 'rgba(255, 255, 255, 0.4)',
+            : undefined,
           color: isSelected
             ? isDelete
               ? 'white'
@@ -119,7 +116,6 @@ export default function GroupSettingsTabs({
             : isDelete
             ? 'rgb(220 38 38)'
             : 'var(--theme-text)',
-          border: '1px solid rgba(255, 255, 255, 0.3)',
           backdropFilter: 'blur(8px) saturate(180%)',
           WebkitBackdropFilter: 'blur(8px) saturate(180%)',
           boxShadow: isSelected
@@ -148,13 +144,11 @@ export default function GroupSettingsTabs({
     <div className="flex flex-col md:flex-row gap-4 md:gap-8">
       {/* Left sidebar with tabs */}
       <div className="w-full md:w-64 flex-shrink-0">
-        <nav 
-          className="space-y-2 p-2 rounded-lg"
+        <nav
+          className="space-y-2 p-2 rounded-lg bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border border-white/30 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(12px) saturate(180%)',
             WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
           }}
         >
@@ -181,15 +175,9 @@ export default function GroupSettingsTabs({
           {collapsedTabs.length > 0 && (
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="
-                w-full flex items-center justify-center px-3 py-2 rounded-lg transition-all duration-200 text-sm
-                md:hidden
-                hover:shadow-md
-              "
+              className="w-full flex items-center justify-center px-3 py-2 rounded-lg transition-all duration-200 text-sm md:hidden hover:shadow-md bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border border-white/30 dark:border-white/10"
               style={{
-                background: 'rgba(255, 255, 255, 0.4)',
                 color: 'var(--theme-text)',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
                 backdropFilter: 'blur(8px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(8px) saturate(180%)',
                 boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.05)',

@@ -43,7 +43,7 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
         <div className="flex justify-between items-center mb-4 md:mb-6">
           <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
         </div>
-        <div className="text-center py-6 md:py-8 text-gray-500 text-sm md:text-base">
+        <div className="text-center py-6 md:py-8 text-[var(--text-muted)] text-sm md:text-base">
           <p>{error || t('failedToLoad')}</p>
         </div>
       </div>
@@ -61,7 +61,7 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
-          <p className="text-xs md:text-sm text-gray-600 mt-1">
+          <p className="text-xs md:text-sm text-[var(--text-secondary)] mt-1">
             {t('membersCount', { count: memberCount, max: MAX_GROUP_MEMBERS })}
             {isAtLimit && (
               <span className="ml-2 text-yellow-600 font-semibold">{t('limitReached')}</span>
@@ -81,12 +81,12 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
           {members.map((member: any) => (
             <div
               key={member.id}
-              className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-theme shadow-sm hover:shadow transition-all hover:bg-[var(--theme-primary-lighter)]/30"
+              className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-sm rounded-xl border border-theme shadow-sm hover:shadow transition-all hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.3)]"
             >
               {member.user.lastfmUsername ? (
                 <Link
                   href={`/u/${encodeURIComponent(member.user.lastfmUsername)}`}
-                  className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-1 ring-black/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden block hover:opacity-90 transition-opacity"
+                  className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-1 ring-black/10 dark:ring-white/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden block hover:opacity-90 transition-opacity"
                 >
                   <SafeImage
                     src={member.user.image}
@@ -95,7 +95,7 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
                   />
                 </Link>
               ) : (
-                <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-1 ring-black/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden">
+                <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-1 ring-black/10 dark:ring-white/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden">
                   <SafeImage
                     src={member.user.image}
                     alt={member.user.name || member.user.lastfmUsername}
@@ -105,7 +105,7 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
               )}
               <div className="flex-1 min-w-0 overflow-hidden pr-1 md:pr-2">
                 <div className="flex items-center gap-1.5 md:gap-2 min-w-0">
-                  <p className="font-semibold text-gray-900 truncate flex-1 min-w-0 text-sm md:text-base">
+                  <p className="font-semibold text-[var(--text-primary)] truncate flex-1 min-w-0 text-sm md:text-base">
                     {member.user.lastfmUsername ? (
                       <Link href={`/u/${encodeURIComponent(member.user.lastfmUsername)}`} className="hover:underline">
                         {member.user.name || member.user.lastfmUsername}
@@ -120,7 +120,7 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
                     </span>
                   )}
                 </div>
-                <p className="text-xs md:text-sm text-gray-600 truncate">@{member.user.lastfmUsername}</p>
+                <p className="text-xs md:text-sm text-[var(--text-secondary)] truncate">@{member.user.lastfmUsername}</p>
               </div>
               {isOwner && member.user.id !== creatorId && (
                 <div className="flex items-center flex-shrink-0">
@@ -147,12 +147,12 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
           {isOwner && pendingInvites.map((invite: any) => (
             <div
               key={invite.id}
-              className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-theme shadow-sm hover:shadow transition-all hover:bg-[var(--theme-primary-lighter)]/30"
+              className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-sm rounded-xl border border-theme shadow-sm hover:shadow transition-all hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.3)]"
             >
               {invite.user.lastfmUsername ? (
                 <Link
                   href={`/u/${encodeURIComponent(invite.user.lastfmUsername)}`}
-                  className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-1 ring-black/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden block hover:opacity-90 transition-opacity"
+                  className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-1 ring-black/10 dark:ring-white/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden block hover:opacity-90 transition-opacity"
                 >
                   <SafeImage
                     src={invite.user.image}
@@ -161,7 +161,7 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
                   />
                 </Link>
               ) : (
-                <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-1 ring-black/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden">
+                <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-1 ring-black/10 dark:ring-white/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden">
                   <SafeImage
                     src={invite.user.image}
                     alt={invite.user.name || invite.user.lastfmUsername}
@@ -171,7 +171,7 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
               )}
               <div className="flex-1 min-w-0 overflow-hidden">
                 <div className="flex items-center gap-1.5 md:gap-2 min-w-0">
-                  <p className="font-semibold text-gray-900 truncate flex-1 min-w-0 text-sm md:text-base">
+                  <p className="font-semibold text-[var(--text-primary)] truncate flex-1 min-w-0 text-sm md:text-base">
                     {invite.user.lastfmUsername ? (
                       <Link href={`/u/${encodeURIComponent(invite.user.lastfmUsername)}`} className="hover:underline">
                         {invite.user.name || invite.user.lastfmUsername}
@@ -184,7 +184,7 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
                     {t('invited')}
                   </span>
                 </div>
-                <p className="text-xs md:text-sm text-gray-600 truncate">@{invite.user.lastfmUsername}</p>
+                <p className="text-xs md:text-sm text-[var(--text-secondary)] truncate">@{invite.user.lastfmUsername}</p>
               </div>
               <div className="flex items-center flex-shrink-0">
                 <div className="hidden md:block">

@@ -90,15 +90,15 @@ export default function QuickAccessInfoModal({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="bg-white rounded-lg shadow-2xl p-4 md:p-6 relative">
+        <div className="bg-[var(--surface-elevated)] rounded-lg shadow-2xl p-4 md:p-6 relative">
           {/* Speech bubble tail pointing up to + button */}
-          <div className="absolute -top-3 right-4 w-6 h-6 bg-white transform rotate-45 shadow-lg"></div>
+          <div className="absolute -top-3 right-4 w-6 h-6 bg-[var(--surface-elevated)] transform rotate-45 shadow-lg"></div>
           
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg md:text-xl font-bold">{t('title')}</h2>
             <button
               onClick={handleClose}
-              className="text-gray-500 hover:text-gray-700 text-xl leading-none w-8 h-8 flex items-center justify-center flex-shrink-0"
+              className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-xl leading-none w-8 h-8 flex items-center justify-center flex-shrink-0"
               aria-label={t('close')}
             >
               ×
@@ -106,10 +106,10 @@ export default function QuickAccessInfoModal({
           </div>
 
           <div className="space-y-4">
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-[var(--text-secondary)]">
               {t('description')} <strong>{t('descriptionButton')}</strong> {t('descriptionEnd')}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[var(--text-secondary)]">
               {t('description2')}
             </p>
           </div>

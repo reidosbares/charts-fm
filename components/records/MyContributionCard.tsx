@@ -110,15 +110,15 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
 
   return (
     <div className="mt-6 pt-6 border-t border-[var(--theme-border)]/50">
-      <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4">{tMyContribution('sectionTitle')}</h3>
-      <div className="rounded-2xl bg-gradient-to-br from-white/90 to-[var(--theme-primary-lighter)]/20 border border-theme/60 shadow-sm">
+      <h3 className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-4">{tMyContribution('sectionTitle')}</h3>
+      <div className="rounded-2xl bg-gradient-to-br from-white/90 dark:from-[var(--surface-card)] to-[rgb(var(--theme-primary-lighter-rgb)/0.2)] border border-theme/60 shadow-sm">
         <div className="p-4 md:p-6">
           <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 mb-5">
             <div className="flex items-center gap-3 min-w-0 flex-1">
               {selectedMember && (
                 <Link
                   href={`/u/${encodeURIComponent(selectedMember.user.lastfmUsername)}`}
-                  className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-1 ring-black/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden hover:opacity-90 transition-opacity"
+                  className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-1 ring-black/10 dark:ring-white/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden hover:opacity-90 transition-opacity"
                 >
                   <SafeImage
                     src={selectedMember.user.image}
@@ -130,12 +130,12 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
               {selectedMember ? (
                 <Link
                   href={`/u/${encodeURIComponent(selectedMember.user.lastfmUsername)}`}
-                  className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 hover:text-[var(--theme-primary)] transition-colors truncate"
+                  className="text-lg sm:text-xl md:text-2xl font-bold text-[var(--text-primary)] hover:text-[var(--theme-primary)] transition-colors truncate"
                 >
                   {tMyContribution('memberContribution', { name: getMemberDisplayName(selectedMemberId!) })}
                 </Link>
               ) : (
-                <h4 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
+                <h4 className="text-lg sm:text-xl md:text-2xl font-bold text-[var(--text-primary)]">
                   {tMyContribution('title')}
                 </h4>
               )}
@@ -144,20 +144,20 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
               <button
                 type="button"
                 onClick={() => setMemberDropdownOpen((o) => !o)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-theme bg-white/80 text-sm font-medium text-gray-600 hover:bg-white hover:text-gray-900 transition-colors w-full sm:w-auto justify-center sm:justify-start"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-theme bg-white/80 dark:bg-[var(--surface-card)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--surface-card)] hover:text-[var(--text-primary)] transition-colors w-full sm:w-auto justify-center sm:justify-start"
               >
                 <span>{tMyContribution('selectMember')}</span>
                 <FontAwesomeIcon icon={faChevronDown} className={`text-xs flex-shrink-0 transition-transform ${memberDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               {memberDropdownOpen && (
-                <div className="absolute top-full left-0 right-0 sm:right-auto sm:left-0 mt-1 w-full sm:w-64 rounded-lg border border-theme bg-white shadow-lg z-50 overflow-hidden">
+                <div className="absolute top-full left-0 right-0 sm:right-auto sm:left-0 mt-1 w-full sm:w-64 rounded-lg border border-theme bg-[var(--surface-card)] shadow-lg z-50 overflow-hidden">
                   <div className="p-2 border-b border-theme/40">
                     <input
                       type="text"
                       value={memberFilterQuery}
                       onChange={(e) => setMemberFilterQuery(e.target.value)}
                       placeholder={tMyContribution('filterMembers')}
-                      className="w-full px-3 py-2 text-sm rounded-md border border-theme/50 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)]/50"
+                      className="w-full px-3 py-2 text-sm rounded-md border border-theme/50 bg-[var(--surface-base)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--theme-primary-rgb)/0.5)]"
                     />
                   </div>
                   <ul className="max-h-48 overflow-y-auto py-1">
@@ -166,7 +166,7 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
                         <button
                           type="button"
                           onClick={() => { setSelectedMemberId(userId); setMemberDropdownOpen(false); setMemberFilterQuery(''); }}
-                          className={`w-full px-3 py-2 text-left text-sm ${selectedMemberId === userId ? 'bg-[var(--theme-primary)]/15 font-semibold text-[var(--theme-primary)]' : 'text-gray-800 hover:bg-gray-100'}`}
+                          className={`w-full px-3 py-2 text-left text-sm ${selectedMemberId === userId ? 'bg-[rgb(var(--theme-primary-rgb)/0.15)] font-semibold text-[var(--theme-primary)]' : 'text-[var(--text-primary)] hover:bg-[var(--surface-base)]'}`}
                         >
                           {tMyContribution('you')}
                         </button>
@@ -177,7 +177,7 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
                         <button
                           type="button"
                           onClick={() => { setSelectedMemberId(m.userId); setMemberDropdownOpen(false); setMemberFilterQuery(''); }}
-                          className={`w-full px-3 py-2 text-left text-sm ${selectedMemberId === m.userId ? 'bg-[var(--theme-primary)]/15 font-semibold text-[var(--theme-primary)]' : 'text-gray-800 hover:bg-gray-100'}`}
+                          className={`w-full px-3 py-2 text-left text-sm ${selectedMemberId === m.userId ? 'bg-[rgb(var(--theme-primary-rgb)/0.15)] font-semibold text-[var(--theme-primary)]' : 'text-[var(--text-primary)] hover:bg-[var(--surface-base)]'}`}
                         >
                           {m.user.name || m.user.lastfmUsername}
                         </button>
@@ -195,35 +195,35 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
           ) : personalizedStats ? (
             <>
               <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-6 mb-6">
-                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-3 min-w-0 p-2 sm:p-0 rounded-xl bg-gray-50/50 sm:bg-transparent text-center sm:text-left">
-                  <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[var(--theme-primary)]/15 flex items-center justify-center">
+                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-3 min-w-0 p-2 sm:p-0 rounded-xl bg-[var(--surface-base)]/50 sm:bg-transparent text-center sm:text-left">
+                  <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[rgb(var(--theme-primary-rgb)/0.15)] flex items-center justify-center">
                     <FontAwesomeIcon icon={faChartLine} className="text-base md:text-lg text-[var(--theme-primary)]" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-lg sm:text-xl md:text-3xl font-bold text-gray-900 tabular-nums">
+                    <p className="text-lg sm:text-xl md:text-3xl font-bold text-[var(--text-primary)] tabular-nums">
                       {personalizedStats.totalVS.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                     </p>
-                    <p className="text-[10px] sm:text-xs text-gray-600 leading-tight">{tMyContribution('totalVS')}</p>
+                    <p className="text-[10px] sm:text-xs text-[var(--text-secondary)] leading-tight">{tMyContribution('totalVS')}</p>
                   </div>
                 </div>
-                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-3 min-w-0 p-2 sm:p-0 rounded-xl bg-gray-50/50 sm:bg-transparent text-center sm:text-left">
+                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-3 min-w-0 p-2 sm:p-0 rounded-xl bg-[var(--surface-base)]/50 sm:bg-transparent text-center sm:text-left">
                   <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-xl bg-amber-500/15 flex items-center justify-center">
                     <FontAwesomeIcon icon={faTrophy} className="text-base md:text-lg text-amber-600" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-lg sm:text-xl md:text-3xl font-bold text-gray-900 tabular-nums">{personalizedStats.weeksAsMVP}</p>
-                    <p className="text-[10px] sm:text-xs text-gray-600 leading-tight">{tMyContribution('weeksAsMVP')}</p>
+                    <p className="text-lg sm:text-xl md:text-3xl font-bold text-[var(--text-primary)] tabular-nums">{personalizedStats.weeksAsMVP}</p>
+                    <p className="text-[10px] sm:text-xs text-[var(--text-secondary)] leading-tight">{tMyContribution('weeksAsMVP')}</p>
                   </div>
                 </div>
-                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-3 min-w-0 p-2 sm:p-0 rounded-xl bg-gray-50/50 sm:bg-transparent text-center sm:text-left">
+                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-3 min-w-0 p-2 sm:p-0 rounded-xl bg-[var(--surface-base)]/50 sm:bg-transparent text-center sm:text-left">
                   <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-xl bg-emerald-500/15 flex items-center justify-center">
                     <FontAwesomeIcon icon={faStar} className="text-base md:text-lg text-emerald-600" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-lg sm:text-xl md:text-3xl font-bold text-gray-900 tabular-nums">
+                    <p className="text-lg sm:text-xl md:text-3xl font-bold text-[var(--text-primary)] tabular-nums">
                       {personalizedStats.byChartType.artists.entriesAsMainDriver + personalizedStats.byChartType.tracks.entriesAsMainDriver + personalizedStats.byChartType.albums.entriesAsMainDriver}
                     </p>
-                    <p className="text-[10px] sm:text-xs text-gray-600 leading-tight">{tMyContribution('entriesAsMainDriver')}</p>
+                    <p className="text-[10px] sm:text-xs text-[var(--text-secondary)] leading-tight">{tMyContribution('entriesAsMainDriver')}</p>
                   </div>
                 </div>
               </div>
@@ -235,29 +235,29 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
                   return (
                     <div
                       key={type}
-                      className="rounded-xl bg-white/70 border border-theme/40 p-4"
+                      className="rounded-xl bg-white/70 dark:bg-[var(--surface-card)] border border-theme/40 p-4"
                     >
                       <div className="flex items-center gap-2 mb-3">
-                        <div className="w-8 h-8 rounded-lg bg-[var(--theme-primary)]/15 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-lg bg-[rgb(var(--theme-primary-rgb)/0.15)] flex items-center justify-center">
                           <FontAwesomeIcon
                             icon={type === 'artists' ? faMicrophone : type === 'tracks' ? faMusic : faCompactDisc}
                             className="text-[var(--theme-primary)] text-sm"
                           />
                         </div>
-                        <span className="text-base font-semibold text-gray-800">{tTabs(type)}</span>
+                        <span className="text-base font-semibold text-[var(--text-primary)]">{tTabs(type)}</span>
                       </div>
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">{tMyContribution('debuts')}</span>
-                          <span className="text-sm font-bold text-gray-900 tabular-nums">{b.entriesHelpedDebut}</span>
+                          <span className="text-sm text-[var(--text-secondary)]">{tMyContribution('debuts')}</span>
+                          <span className="text-sm font-bold text-[var(--text-primary)] tabular-nums">{b.entriesHelpedDebut}</span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">{tMyContribution('atNumberOne')}</span>
-                          <span className="text-sm font-bold text-gray-900 tabular-nums">{b.weeksAtOneContributed}</span>
+                          <span className="text-sm text-[var(--text-secondary)]">{tMyContribution('atNumberOne')}</span>
+                          <span className="text-sm font-bold text-[var(--text-primary)] tabular-nums">{b.weeksAtOneContributed}</span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">{tMyContribution('asDriver')}</span>
-                          <span className="text-sm font-bold text-gray-900 tabular-nums">{b.entriesAsMainDriver}</span>
+                          <span className="text-sm text-[var(--text-secondary)]">{tMyContribution('asDriver')}</span>
+                          <span className="text-sm font-bold text-[var(--text-primary)] tabular-nums">{b.entriesAsMainDriver}</span>
                         </div>
                       </div>
                     </div>
@@ -282,18 +282,18 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
                 ]
                 return (
                   <div className="mt-5 pt-4 border-t border-theme/40">
-                    <p className="text-sm font-medium text-gray-700 mb-3">{tMyContribution('driverEntriesList')}</p>
+                    <p className="text-sm font-medium text-[var(--text-secondary)] mb-3">{tMyContribution('driverEntriesList')}</p>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
                       {sections.map(({ key, icon, label }) => (
-                        <div key={key} className="rounded-xl bg-white/60 border border-theme/40 overflow-hidden">
-                          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--theme-primary)]/10 border-b border-theme/40">
+                        <div key={key} className="rounded-xl bg-white/60 dark:bg-[var(--surface-card)] border border-theme/40 overflow-hidden">
+                          <div className="flex items-center gap-2 px-3 py-2 bg-[rgb(var(--theme-primary-rgb)/0.1)] border-b border-theme/40">
                             <FontAwesomeIcon icon={icon} className="text-[var(--theme-primary)] text-sm" />
-                            <span className="text-sm font-semibold text-gray-800">{label}</span>
-                            <span className="text-xs text-gray-500">({byType[key].length})</span>
+                            <span className="text-sm font-semibold text-[var(--text-primary)]">{label}</span>
+                            <span className="text-xs text-[var(--text-muted)]">({byType[key].length})</span>
                           </div>
                           <ul className="divide-y divide-theme/30 max-h-[200px] md:max-h-[280px] overflow-y-auto">
                             {byType[key].length === 0 ? (
-                              <li className="px-3 py-4 text-xs text-gray-500 text-center">—</li>
+                              <li className="px-3 py-4 text-xs text-[var(--text-muted)] text-center">—</li>
                             ) : (
                               byType[key].map((entry) => {
                                 const typePath = key === 'artists' ? 'artist' : key === 'tracks' ? 'track' : 'album'
@@ -305,14 +305,14 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
                                       href={href}
                                       className={`flex items-center gap-2 px-3 py-2 transition-colors ${
                                         isGold
-                                          ? 'bg-amber-50/80 hover:bg-amber-100/80 border-l-2 border-amber-500'
-                                          : 'hover:bg-[var(--theme-primary-lighter)]/20'
+                                          ? 'bg-amber-50/80 dark:bg-amber-950/40 hover:bg-amber-100/80 dark:hover:bg-amber-900/40 border-l-2 border-amber-500'
+                                          : 'hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.2)]'
                                       }`}
                                     >
                                       {isGold && (
                                         <span className="flex-shrink-0 text-amber-500" title="#1">★</span>
                                       )}
-                                      <span className={`text-sm truncate min-w-0 flex-1 ${isGold ? 'font-semibold text-amber-900' : 'font-medium text-gray-900'}`}>
+                                      <span className={`text-sm truncate min-w-0 flex-1 ${isGold ? 'font-semibold text-amber-900 dark:text-amber-200' : 'font-medium text-[var(--text-primary)]'}`}>
                                         {entry.name}
                                       </span>
                                       <span className="text-[var(--theme-primary)] text-xs flex-shrink-0">→</span>
@@ -330,7 +330,7 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
               })()}
             </>
           ) : (
-            <div className="py-10 text-center text-sm text-gray-500">
+            <div className="py-10 text-center text-sm text-[var(--text-muted)]">
               {tMyContribution('noStats')}
             </div>
           )}

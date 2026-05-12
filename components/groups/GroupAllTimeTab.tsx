@@ -163,12 +163,12 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
   ) {
     return (
       <div>
-        <div className="rounded-2xl p-4 md:p-6 backdrop-blur-md bg-white/70 border border-white/50 shadow-lg text-center">
+        <div className="rounded-2xl p-4 md:p-6 backdrop-blur-md bg-white/70 dark:bg-[rgb(var(--surface-card-rgb)/0.7)] border border-white/50 dark:border-white/10 shadow-lg text-center">
           <div className="mb-4 text-[var(--theme-primary)]">
             <FontAwesomeIcon icon={faTrophy} className="text-4xl md:text-5xl" />
           </div>
-          <p className="text-gray-700 text-base md:text-lg mb-2 font-medium">{t('noStatsAvailable')}</p>
-          <p className="text-gray-500 text-sm mb-4 md:mb-6">{t('generateChartsToStart')}</p>
+          <p className="text-[var(--text-secondary)] text-base md:text-lg mb-2 font-medium">{t('noStatsAvailable')}</p>
+          <p className="text-[var(--text-muted)] text-sm mb-4 md:mb-6">{t('generateChartsToStart')}</p>
           {!data?.hasWeeklyStats && isOwner && (
             <LiquidGlassLink
               href={`/groups/${groupId}/settings?tab=regenerate`}
@@ -186,9 +186,9 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
   const rec = recordsData?.status === 'completed' ? (recordsData.records as any) : null
 
   const cardBase =
-    'rounded-2xl p-3 md:p-5 backdrop-blur-md bg-white/70 border border-white/50 shadow-lg'
+    'rounded-2xl p-3 md:p-5 backdrop-blur-md bg-white/70 dark:bg-[rgb(var(--surface-card-rgb)/0.7)] border border-white/50 dark:border-white/10 shadow-lg'
   const cardFeatured =
-    'rounded-2xl p-4 md:p-6 backdrop-blur-md bg-white/70 border border-white/50 shadow-lg ring-1 ring-white/30'
+    'rounded-2xl p-4 md:p-6 backdrop-blur-md bg-white/70 dark:bg-[rgb(var(--surface-card-rgb)/0.7)] border border-white/50 dark:border-white/10 shadow-lg ring-1 ring-white/30 dark:ring-white/10'
 
   // Collect award-holding members with all awards each holds (for contextual display + ribbons)
   const userRecordFields = [
@@ -240,7 +240,7 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
     if (items.length === 0) return null
     return (
       <div className={cardBase}>
-        <div className="text-xs md:text-sm text-gray-600 mb-2 md:mb-3 font-semibold">{t(titleKey)}</div>
+        <div className="text-xs md:text-sm text-[var(--text-secondary)] mb-2 md:mb-3 font-semibold">{t(titleKey)}</div>
         <div className="space-y-2 md:space-y-3">
           {items.map(({ type, data: d, imgKey }) => {
             const img = recordImages[imgKey] ?? null
@@ -275,11 +275,11 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <span className="font-semibold text-gray-900 block truncate">{d!.name}</span>
+                  <span className="font-semibold text-[var(--text-primary)] block truncate">{d!.name}</span>
                   {d!.artist && (
-                    <span className="text-xs text-gray-600 truncate block">{t('by', { artist: d!.artist })}</span>
+                    <span className="text-xs text-[var(--text-secondary)] truncate block">{t('by', { artist: d!.artist })}</span>
                   )}
-                  <span className="text-xs text-gray-500">{valueLabel}</span>
+                  <span className="text-xs text-[var(--text-muted)]">{valueLabel}</span>
                 </div>
               </Link>
             )
@@ -310,7 +310,7 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
                 <FontAwesomeIcon icon={faCrown} className="text-xl text-[var(--theme-primary)] flex-shrink-0" />
                 <h3 className="text-lg font-bold text-[var(--theme-primary-dark)]">{t('awardHolders')}</h3>
               </div>
-              <p className="text-xs md:text-sm text-gray-600 mb-3 md:mb-4">{t('awardHoldersTagline')}</p>
+              <p className="text-xs md:text-sm text-[var(--text-secondary)] mb-3 md:mb-4">{t('awardHoldersTagline')}</p>
               <div className="flex flex-wrap gap-3 md:gap-4">
                 {awardHolders.slice(0, 8).map((holder) => (
                   <Link
@@ -319,14 +319,14 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
                     className="flex flex-col items-center gap-1.5 group min-w-0"
                     title={holder.name}
                   >
-                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/10 shadow-sm group-hover:shadow-md transition-shadow bg-[var(--theme-primary-lighter)]">
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/10 dark:ring-white/10 shadow-sm group-hover:shadow-md transition-shadow bg-[var(--theme-primary-lighter)]">
                       <SafeImage
                         src={holder.image || ''}
                         alt={holder.name}
                         className="object-cover w-full h-full"
                       />
                     </div>
-                    <span className="text-xs font-medium text-gray-700 truncate max-w-[72px] md:max-w-[80px] text-center group-hover:text-[var(--theme-primary)]">
+                    <span className="text-xs font-medium text-[var(--text-secondary)] truncate max-w-[72px] md:max-w-[80px] text-center group-hover:text-[var(--theme-primary)]">
                       {holder.name}
                     </span>
                     <div className="flex flex-wrap justify-center gap-1">
@@ -406,22 +406,22 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
               ) : impactStats ? (
                 <div className="flex-1 flex flex-col gap-4 md:gap-5">
                   <div className="space-y-3">
-                    <div className="p-3 rounded-xl bg-white/80 border border-[var(--theme-border)]">
-                      <div className="text-xs text-gray-600 mb-0.5">{tImpact('totalVS')}</div>
+                    <div className="p-3 rounded-xl bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.5)] border border-[var(--theme-border)]">
+                      <div className="text-xs text-[var(--text-secondary)] mb-0.5">{tImpact('totalVS')}</div>
                       <div className="text-xl md:text-2xl font-bold text-[var(--theme-text)]">
                         {typeof impactStats.totalVS === 'number'
                           ? impactStats.totalVS.toLocaleString(undefined, { maximumFractionDigits: 0 })
                           : impactStats.totalVS}
                       </div>
                     </div>
-                    <div className="p-3 rounded-xl bg-white/80 border border-[var(--theme-border)]">
-                      <div className="text-xs text-gray-600 mb-0.5">{tImpact('totalPlays')}</div>
+                    <div className="p-3 rounded-xl bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.5)] border border-[var(--theme-border)]">
+                      <div className="text-xs text-[var(--text-secondary)] mb-0.5">{tImpact('totalPlays')}</div>
                       <div className="text-xl md:text-2xl font-bold text-[var(--theme-text)]">
                         {(impactStats.totalPlays ?? 0).toLocaleString()}
                       </div>
                     </div>
-                    <div className="p-3 rounded-xl bg-white/80 border border-[var(--theme-border)]">
-                      <div className="text-xs text-gray-600 mb-0.5">{tImpact('weeksAsMVP')}</div>
+                    <div className="p-3 rounded-xl bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.5)] border border-[var(--theme-border)]">
+                      <div className="text-xs text-[var(--text-secondary)] mb-0.5">{tImpact('weeksAsMVP')}</div>
                       <div className="text-xl md:text-2xl font-bold text-[var(--theme-primary)]">
                         {(impactStats.weeksAsMVP ?? 0).toLocaleString()}
                       </div>
@@ -434,8 +434,8 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
                         (bt.albums?.entriesHelpedDebut ?? 0)
                       if (totalDebuts === 0) return null
                       return (
-                        <div className="p-3 rounded-xl bg-white/80 border border-[var(--theme-border)]">
-                          <div className="text-xs text-gray-600 mb-0.5">{tImpact('entriesHelpedDebut')}</div>
+                        <div className="p-3 rounded-xl bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.5)] border border-[var(--theme-border)]">
+                          <div className="text-xs text-[var(--text-secondary)] mb-0.5">{tImpact('entriesHelpedDebut')}</div>
                           <div className="text-lg font-bold text-[var(--theme-text)]">{totalDebuts.toLocaleString()}</div>
                         </div>
                       )
@@ -443,7 +443,7 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 flex-1">{tImpact('noStats')}</p>
+                <p className="text-sm text-[var(--text-muted)] flex-1">{tImpact('noStats')}</p>
               )}
             </div>
           )}
@@ -455,12 +455,12 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
                 <FontAwesomeIcon icon={faTrophy} className="text-2xl md:text-3xl text-[var(--theme-primary)] flex-shrink-0" />
                 <h3 className="text-lg md:text-xl font-bold text-[var(--theme-primary-dark)]">{t('mostWeeksAsMVP')}</h3>
               </div>
-              <p className="text-xs md:text-sm text-gray-600 mb-4">{t('mostWeeksAsMVPTagline')}</p>
+              <p className="text-xs md:text-sm text-[var(--text-secondary)] mb-4">{t('mostWeeksAsMVPTagline')}</p>
               <Link
                 href={`/u/${encodeURIComponent(recordsData.mostWeeksAsMVP.lastfmUsername || recordsData.mostWeeksAsMVP.name)}`}
-                className="flex items-center gap-4 md:gap-5 p-4 rounded-xl bg-white/80 border border-[var(--theme-border)] hover:border-[var(--theme-primary)]/50 transition-all"
+                className="flex items-center gap-4 md:gap-5 p-4 rounded-xl bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.5)] border border-[var(--theme-border)] hover:border-[rgb(var(--theme-primary-rgb)/0.5)] transition-all"
               >
-                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/10 shadow-sm bg-[var(--theme-primary-lighter)]">
+                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/10 dark:ring-white/10 shadow-sm bg-[var(--theme-primary-lighter)]">
                   <SafeImage
                     src={recordsData.mostWeeksAsMVP.image || ''}
                     alt={recordsData.mostWeeksAsMVP.name}
@@ -468,7 +468,7 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
                   />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <span className="text-xl md:text-2xl font-bold text-gray-900 block truncate">{recordsData.mostWeeksAsMVP.name}</span>
+                  <span className="text-xl md:text-2xl font-bold text-[var(--text-primary)] block truncate">{recordsData.mostWeeksAsMVP.name}</span>
                   <span className="text-base md:text-lg text-[var(--theme-primary)] font-semibold">
                     {recordsData.mostWeeksAsMVP.value === 1
                       ? t('weeksAsMVPCount', { count: recordsData.mostWeeksAsMVP.value })
@@ -483,17 +483,17 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
 
       {/* Top 100 All-Time – callout only */}
       <div className="mb-4">
-        <div className={`${cardFeatured} rounded-2xl p-4 md:p-6 backdrop-blur-md border border-[var(--theme-primary)]/30 shadow-lg bg-gradient-to-br from-[var(--theme-primary-lighter)]/40 via-white/70 to-white/80`}>
+        <div className={`${cardFeatured} rounded-2xl p-4 md:p-6 backdrop-blur-md border border-[rgb(var(--theme-primary-rgb)/0.3)] shadow-lg bg-gradient-to-br from-[rgb(var(--theme-primary-lighter-rgb)/0.4)] via-white/70 dark:via-[rgb(var(--surface-card-rgb)/0.7)] to-white/80 dark:to-[rgb(var(--surface-card-rgb)/0.8)]`}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-start gap-3 md:gap-4">
-              <div className="w-11 h-11 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[var(--theme-primary)]/20 text-[var(--theme-primary)] flex-shrink-0">
+              <div className="w-11 h-11 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[rgb(var(--theme-primary-rgb)/0.2)] text-[var(--theme-primary)] flex-shrink-0">
                 <FontAwesomeIcon icon={faChartLine} className="text-xl md:text-2xl" />
               </div>
               <div>
                 <h3 className="text-lg md:text-xl font-bold text-[var(--theme-primary-dark)] mb-0.5">
                   {t('top100AllTime')}
                 </h3>
-                <p className="text-sm md:text-base text-gray-600">{t('viewCompleteTable')}</p>
+                <p className="text-sm md:text-base text-[var(--text-secondary)]">{t('viewCompleteTable')}</p>
               </div>
             </div>
             <LiquidGlassLink

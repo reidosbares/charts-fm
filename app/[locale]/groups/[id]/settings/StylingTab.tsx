@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
-import { THEME_NAMES, GROUP_THEMES, type ThemeName } from '@/lib/group-themes'
+import { THEME_NAMES, type ThemeName } from '@/lib/group-themes'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 import Toast from '@/components/Toast'
 
@@ -31,12 +31,26 @@ export default function StylingTab({
     neon_green: tThemes('neonGreen'),
     white: tThemes('white'),
     rainbow: tThemes('rainbow'),
+    synthwave: tThemes('synthwave'),
+    sunset: tThemes('sunset'),
   }), [tThemes])
   
   const [colorTheme, setColorTheme] = useState<ThemeName>((initialColorTheme as ThemeName) || 'white')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+
+  // Live-preview: swap the surrounding <main>'s theme class as the user picks tiles
+  // so the entire settings page reflects the choice immediately.
+  useEffect(() => {
+    const main = document.querySelector('main')
+    if (!main) return
+    const next = `theme-${colorTheme.replace('_', '-')}`
+    Array.from(main.classList).forEach((c) => {
+      if (c.startsWith('theme-')) main.classList.remove(c)
+    })
+    main.classList.add(next)
+  }, [colorTheme])
 
   const hasChanges = colorTheme !== (initialColorTheme || 'white')
 
@@ -96,34 +110,33 @@ export default function StylingTab({
         onClose={() => setError(null)}
       />
 
-      <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
+      <div className="bg-[var(--surface-card)] rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
 
       <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
         <div>
-          <label htmlFor="colorTheme" className="block text-base md:text-lg font-bold text-gray-900 mb-2">
+          <label htmlFor="colorTheme" className="block text-base md:text-lg font-bold text-[var(--text-primary)] mb-2">
             {t('colorTheme')}
           </label>
-          <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
+          <p className="text-xs md:text-sm text-[var(--text-muted)] mb-3 md:mb-4">
             {t('colorThemeDescription')}
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
             {THEME_NAMES.map((themeName) => {
-              const theme = GROUP_THEMES[themeName]
               const isSelected = colorTheme === themeName
-              
+              const themeClass = `theme-${themeName.replace('_', '-')}`
+
               return (
                 <label
                   key={themeName}
-                  className={`relative cursor-pointer border-2 rounded-xl p-4 transition-all ${
+                  className={`${themeClass} relative cursor-pointer rounded-xl p-4 transition-all overflow-hidden border-2 ${
                     isSelected
-                      ? 'border-[var(--theme-primary)] bg-[var(--theme-primary-lighter)]/20'
-                      : 'border-gray-300 hover:border-gray-400'
+                      ? 'border-[var(--theme-primary)] shadow-lg'
+                      : 'border-[var(--border-subtle)] hover:border-[var(--border-strong)]'
                   }`}
-                  style={isSelected ? {
-                    '--theme-primary': theme.primary,
-                    '--theme-primary-lighter': theme.primaryLighter,
-                  } as React.CSSProperties : undefined}
+                  style={{
+                    backgroundImage: 'linear-gradient(135deg, var(--theme-background-from), var(--theme-background-to))',
+                  }}
                 >
                   <input
                     type="radio"
@@ -133,49 +146,46 @@ export default function StylingTab({
                     onChange={(e) => setColorTheme(e.target.value as ThemeName)}
                     className="sr-only"
                   />
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-gray-900">
+
+                  <div className="relative z-10 space-y-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <h3
+                        className="text-2xl md:text-3xl font-bold leading-tight text-[var(--theme-primary-dark)]"
+                      >
                         {THEME_DISPLAY_NAMES[themeName]}
-                        {themeName === 'white' && <span className="ml-2 text-xs text-gray-500">{t('default')}</span>}
                       </h3>
                       {isSelected && (
-                        <div className="w-5 h-5 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: theme.primary }}></div>
+                        <div
+                          className="w-5 h-5 rounded-full shrink-0 mt-1"
+                          style={{
+                            backgroundColor: 'var(--theme-primary)',
+                            boxShadow: '0 0 0 2px var(--theme-background-from)',
+                          }}
+                        />
                       )}
                     </div>
-                    
-                    {/* Color preview - three colors only */}
-                    <div className="flex gap-2 pt-2">
-                      <div className="flex-1 space-y-1">
-                        <div className="text-xs text-gray-500">{t('background')}</div>
-                        <div 
-                          className="h-12 rounded border border-gray-200"
-                          style={
-                            themeName === 'rainbow'
-                              ? {
-                                  backgroundImage: 'linear-gradient(135deg, rgb(239 68 68), rgb(249 115 22), rgb(234 179 8), rgb(34 197 94), rgb(59 130 246), rgb(147 51 234), rgb(219 39 119), rgb(239 68 68))',
-                                }
-                              : { backgroundColor: theme.backgroundFrom }
-                          }
-                          title={themeName === 'rainbow' ? 'Rainbow gradient background' : 'Background color'}
-                        ></div>
+
+                    <div className="flex items-center justify-between gap-3">
+                      <div
+                        className="px-4 py-1.5 rounded-full text-xs font-semibold shadow-sm"
+                        style={{
+                          backgroundColor: 'var(--theme-primary)',
+                          color: 'var(--theme-button-text)',
+                        }}
+                      >
+                        {t('viewSample')}
                       </div>
-                      <div className="flex-1 space-y-1">
-                        <div className="text-xs text-gray-500">{t('button')}</div>
-                        <div 
-                          className="h-12 rounded border border-gray-200"
-                          style={{ backgroundColor: theme.primaryLight }}
-                          title={t('button')}
-                        ></div>
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <div className="text-xs text-gray-500">{t('titleColor')}</div>
-                        <div 
-                          className="h-12 rounded border border-gray-200"
-                          style={{ backgroundColor: theme.primaryDark }}
-                          title="Title color"
-                        ></div>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="w-7 h-7 rounded-md ring-1 ring-black/10 dark:ring-white/10"
+                          style={{ backgroundColor: 'var(--theme-primary-light)' }}
+                          title="Secondary accent"
+                        />
+                        <span
+                          className="w-7 h-7 rounded-md ring-1 ring-black/10 dark:ring-white/10"
+                          style={{ backgroundColor: 'var(--theme-text)' }}
+                          title="Data accent"
+                        />
                       </div>
                     </div>
                   </div>
@@ -196,7 +206,7 @@ export default function StylingTab({
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+            className="px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-[var(--surface-base)] text-[var(--text-primary)] rounded-lg hover:brightness-95 transition-colors"
           >
             {t('cancel')}
           </button>

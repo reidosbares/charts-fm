@@ -147,12 +147,12 @@ export default function ArtistImageUpload({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-6 max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+      <div className="bg-[var(--surface-card)] rounded-xl p-4 sm:p-6 max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <h2 className="text-lg sm:text-2xl font-bold">{t('uploadTitle')}</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors touch-manipulation p-1"
+            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors touch-manipulation p-1"
           >
             <FontAwesomeIcon icon={faTimes} className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
@@ -162,12 +162,12 @@ export default function ArtistImageUpload({
           <div
             onDrop={handleDrop}
             onDragOver={handleDragOver}
-            className="border-2 border-dashed border-gray-300 rounded-lg p-6 sm:p-12 text-center hover:border-gray-400 transition-colors cursor-pointer touch-manipulation"
+            className="border-2 border-dashed border-[var(--border-strong)] rounded-lg p-6 sm:p-12 text-center hover:border-[var(--text-muted)] transition-colors cursor-pointer touch-manipulation"
             onClick={() => fileInputRef.current?.click()}
           >
-            <FontAwesomeIcon icon={faUpload} className="w-8 h-8 sm:w-12 sm:h-12 text-gray-400 mb-3 sm:mb-4" />
+            <FontAwesomeIcon icon={faUpload} className="w-8 h-8 sm:w-12 sm:h-12 text-[var(--text-muted)] mb-3 sm:mb-4" />
             <p className="text-base sm:text-lg font-semibold mb-2">{t('dragDrop')}</p>
-            <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">{t('orClickToSelect')}</p>
+            <p className="text-xs sm:text-sm text-[var(--text-secondary)] mb-3 sm:mb-4">{t('orClickToSelect')}</p>
             <input
               ref={fileInputRef}
               type="file"
@@ -178,7 +178,7 @@ export default function ArtistImageUpload({
             <button className="bg-red-600 hover:bg-red-700 text-white px-4 sm:px-6 py-2 rounded-lg text-sm sm:text-base font-semibold transition-colors touch-manipulation">
               {t('selectFile')}
             </button>
-            <p className="text-xs text-gray-500 mt-3 sm:mt-4">
+            <p className="text-xs text-[var(--text-muted)] mt-3 sm:mt-4">
               {t('fileRequirements')}
             </p>
           </div>
@@ -204,7 +204,7 @@ export default function ArtistImageUpload({
                     fileInputRef.current.value = ''
                   }
                 }}
-                className="px-4 py-2 text-sm sm:text-base text-gray-700 hover:bg-gray-100 rounded-lg transition-colors touch-manipulation"
+                className="px-4 py-2 text-sm sm:text-base text-[var(--text-secondary)] hover:bg-[var(--surface-base)] rounded-lg transition-colors touch-manipulation"
               >
                 {t('changeFile')}
               </button>
@@ -224,7 +224,7 @@ export default function ArtistImageUpload({
               </button>
               <button
                 onClick={onClose}
-                className="px-4 py-2 text-sm sm:text-base text-gray-700 hover:bg-gray-100 rounded-lg transition-colors touch-manipulation"
+                className="px-4 py-2 text-sm sm:text-base text-[var(--text-secondary)] hover:bg-[var(--surface-base)] rounded-lg transition-colors touch-manipulation"
               >
                 {t('cancel')}
               </button>
@@ -233,7 +233,7 @@ export default function ArtistImageUpload({
         )}
 
         {error && (
-          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          <div className="mt-4 p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300 text-sm">
             {error}
           </div>
         )}

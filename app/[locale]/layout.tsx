@@ -1,6 +1,7 @@
 import SessionProvider from "@/components/SessionProvider";
 import SWRProvider from "@/components/SWRProvider";
 import { NavigationProvider } from "@/contexts/NavigationContext";
+import { AppearanceProvider, type Appearance } from "@/contexts/AppearanceContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import EmailVerificationBanner from "@/components/EmailVerificationBanner";
@@ -10,6 +11,8 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import type { Metadata } from 'next';
 import { getDefaultOgImage, defaultOgImage } from "@/lib/metadata";
+import { getSession } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -54,6 +57,22 @@ export default async function LocaleLayout({
   // side is the easiest way to get started
   const messages = await getMessages();
 
+  // Read the authed user's appearance preference so the client provider can
+  // seed itself before localStorage is checked.
+  const session = await getSession();
+  let initialAppearance: Appearance | null = null;
+  const isAuthed = !!session?.user?.email;
+  if (isAuthed && session?.user?.email) {
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { appearancePreference: true },
+    });
+    const pref = user?.appearancePreference;
+    if (pref === 'light' || pref === 'dark' || pref === 'system') {
+      initialAppearance = pref;
+    }
+  }
+
   return (
     <>
       {/* Set html lang attribute based on locale */}
@@ -64,22 +83,24 @@ export default async function LocaleLayout({
       />
       {/* Background elements - fixed to viewport for all pages */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 dark:bg-yellow-400/[0.04] rounded-full blur-3xl"></div>
+        <div className="absolute top-40 right-20 w-96 h-96 bg-pink-400/20 dark:bg-pink-400/[0.04] rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 dark:bg-orange-400/[0.04] rounded-full blur-3xl"></div>
       </div>
       <NextIntlClientProvider messages={messages} locale={locale}>
         <SessionProvider>
           <SWRProvider>
           <NavigationProvider>
-            <div className="flex flex-col min-h-screen">
-              <Navbar />
-              <EmailVerificationBanner />
-              <div className="flex-grow">
-                {children}
+            <AppearanceProvider initialAppearance={initialAppearance} isAuthed={isAuthed}>
+              <div className="flex flex-col min-h-screen">
+                <Navbar />
+                <EmailVerificationBanner />
+                <div className="flex-grow">
+                  {children}
+                </div>
+                <Footer />
               </div>
-              <Footer />
-            </div>
+            </AppearanceProvider>
           </NavigationProvider>
           </SWRProvider>
         </SessionProvider>

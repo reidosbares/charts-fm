@@ -57,9 +57,9 @@ export default function QuickAccessConfirmModal({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="bg-white rounded-lg shadow-2xl p-4 md:p-6 relative">
+        <div className="bg-[var(--surface-elevated)] rounded-lg shadow-2xl p-4 md:p-6 relative">
           <div className="space-y-4 mb-6">
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-[var(--text-secondary)]">
               {t('replaceConfirm')}
             </p>
           </div>

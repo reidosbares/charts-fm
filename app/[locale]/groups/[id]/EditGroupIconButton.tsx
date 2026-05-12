@@ -58,8 +58,8 @@ export default function EditGroupIconButton({
             onClick={() => setIsOpen(false)}
           />
           <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
-              <h2 className="text-2xl font-bold mb-4">Edit Group Icon</h2>
+            <div className="bg-[var(--surface-card)] rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+              <h2 className="text-2xl font-bold mb-4 text-[var(--text-primary)]">Edit Group Icon</h2>
 
               {error && (
                 <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
@@ -69,7 +69,7 @@ export default function EditGroupIconButton({
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label htmlFor="iconUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="iconUrl" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Image URL
                   </label>
                   <input
@@ -77,11 +77,11 @@ export default function EditGroupIconButton({
                     id="iconUrl"
                     value={imageUrl}
                     onChange={(e) => setImageUrl(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-lg bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] text-[var(--text-primary)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                     placeholder="https://example.com/icon.png"
                     disabled={isSaving}
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-[var(--text-muted)] mt-1">
                     Enter a URL to an image for your group icon
                   </p>
                 </div>
@@ -112,7 +112,7 @@ export default function EditGroupIconButton({
                   <button
                     type="button"
                     onClick={() => setIsOpen(false)}
-                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                    className="px-4 py-2 bg-[var(--surface-base)] text-[var(--text-primary)] rounded-lg hover:brightness-95 transition-colors"
                   >
                     Cancel
                   </button>

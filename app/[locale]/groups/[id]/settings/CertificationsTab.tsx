@@ -122,10 +122,10 @@ export default function CertificationsTab({
   }
 
   const inputStyle = {
-    background: 'rgba(255,255,255,0.6)',
     borderColor: 'rgba(0,0,0,0.1)',
     color: 'var(--theme-text)',
   }
+  const inputClassName = 'bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]'
 
   return (
     <>
@@ -135,7 +135,7 @@ export default function CertificationsTab({
         isVisible={success}
         onClose={() => setSuccess(false)}
       />
-    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+    <div className="bg-[var(--surface-card)] rounded-lg shadow-lg p-4 sm:p-6">
       <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--theme-text)' }}>
         {t('title')}
       </h2>
@@ -167,7 +167,7 @@ export default function CertificationsTab({
                   step={0.1}
                   value={trackGold}
                   onChange={(e) => setTrackGold(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border text-sm"
+                  className={`w-full px-3 py-2 rounded-lg border text-sm ${inputClassName}`}
                   style={inputStyle}
                 />
               </div>
@@ -182,7 +182,7 @@ export default function CertificationsTab({
                   step={0.1}
                   value={trackPlatinum}
                   onChange={(e) => setTrackPlatinum(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border text-sm"
+                  className={`w-full px-3 py-2 rounded-lg border text-sm ${inputClassName}`}
                   style={inputStyle}
                 />
               </div>
@@ -197,7 +197,7 @@ export default function CertificationsTab({
                   step={0.1}
                   value={trackDiamond}
                   onChange={(e) => setTrackDiamond(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border text-sm"
+                  className={`w-full px-3 py-2 rounded-lg border text-sm ${inputClassName}`}
                   style={inputStyle}
                 />
               </div>
@@ -223,7 +223,7 @@ export default function CertificationsTab({
                   step={0.1}
                   value={albumGold}
                   onChange={(e) => setAlbumGold(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border text-sm"
+                  className={`w-full px-3 py-2 rounded-lg border text-sm ${inputClassName}`}
                   style={inputStyle}
                 />
               </div>
@@ -238,7 +238,7 @@ export default function CertificationsTab({
                   step={0.1}
                   value={albumPlatinum}
                   onChange={(e) => setAlbumPlatinum(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border text-sm"
+                  className={`w-full px-3 py-2 rounded-lg border text-sm ${inputClassName}`}
                   style={inputStyle}
                 />
               </div>
@@ -253,7 +253,7 @@ export default function CertificationsTab({
                   step={0.1}
                   value={albumDiamond}
                   onChange={(e) => setAlbumDiamond(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border text-sm"
+                  className={`w-full px-3 py-2 rounded-lg border text-sm ${inputClassName}`}
                   style={inputStyle}
                 />
               </div>
@@ -265,9 +265,8 @@ export default function CertificationsTab({
 
             <button
               onClick={handleReset}
-              className="px-4 py-2 rounded-lg text-sm font-semibold transition-all"
+              className="px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)]"
               style={{
-                background: 'rgba(255, 255, 255, 0.5)',
                 color: 'var(--theme-text)',
                 border: '1px solid rgba(0, 0, 0, 0.1)',
               }}

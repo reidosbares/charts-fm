@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useAppearance } from '@/contexts/AppearanceContext'
 
 export interface TabItem {
   id: string
@@ -33,7 +34,11 @@ export default function LiquidGlassTabs({
   const [bubbleStyle, setBubbleStyle] = useState({ left: 0, width: 0 })
   const tabsRef = useRef<HTMLDivElement>(null)
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map())
-  const isDark = variant === 'dark'
+  const { resolvedAppearance } = useAppearance()
+  // Use the dark glass style whenever the surface is dark — either because the
+  // callsite explicitly requests it (the group hero is always dark) or because
+  // the app is in dark mode.
+  const isDark = variant === 'dark' || resolvedAppearance === 'dark'
 
   useEffect(() => {
     const updateBubblePosition = () => {

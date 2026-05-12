@@ -89,16 +89,15 @@ export default function SoloChartsEmptyOverlay({ groupId, enabled }: SoloChartsE
 
       {/* Bubble */}
       <div
-        className="relative w-full max-w-md rounded-2xl border border-white/20 shadow-xl p-5 sm:p-6"
+        className="relative w-full max-w-md rounded-2xl border border-white/20 shadow-xl p-5 sm:p-6 bg-white/[0.85] dark:bg-[rgb(var(--surface-card-rgb)/0.85)]"
         style={{
-          background: 'rgba(255, 255, 255, 0.85)',
           backdropFilter: 'blur(16px) saturate(180%)',
           WebkitBackdropFilter: 'blur(16px) saturate(180%)',
         }}
       >
         <div className="text-center">
-          <div className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{t('title')}</div>
-          <div className="text-sm sm:text-base text-gray-600 mb-4">{t('description')}</div>
+          <div className="text-lg sm:text-xl font-bold text-[var(--text-primary)] mb-2">{t('title')}</div>
+          <div className="text-sm sm:text-base text-[var(--text-secondary)] mb-4">{t('description')}</div>
 
           {error && (
             <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
