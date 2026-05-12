@@ -114,7 +114,7 @@ function ResetPasswordPageContent() {
       <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden flex items-center justify-center">
         <div className="relative z-10 text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-          <p className="text-gray-700">Validating reset token...</p>
+          <p className="text-[var(--text-secondary)]">Validating reset token...</p>
         </div>
       </main>
     )
@@ -146,12 +146,12 @@ function ResetPasswordPageContent() {
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                   }}
                 >
-                  <p className="text-red-700 font-medium">{error}</p>
+                  <p className="text-red-700 dark:text-red-300 font-medium">{error}</p>
                 </div>
               )}
-              
+
               <div className="text-center">
-                <p className="text-gray-700 mb-4">
+                <p className="text-[var(--text-secondary)] mb-4">
                   The password reset link is invalid or has expired.
                 </p>
                 <Link 
@@ -183,7 +183,7 @@ function ResetPasswordPageContent() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-yellow-600 via-orange-500 to-pink-500 bg-clip-text text-transparent">
               Reset Your Password
             </h1>
-            <p className="text-lg sm:text-xl text-gray-700">
+            <p className="text-lg sm:text-xl text-[var(--text-secondary)]">
               Enter your new password below
             </p>
           </div>
@@ -199,12 +199,12 @@ function ResetPasswordPageContent() {
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               }}
             >
-              <p className="text-red-700 font-medium">{error}</p>
+              <p className="text-red-700 dark:text-red-300 font-medium">{error}</p>
             </div>
           )}
 
           {success && (
-            <div 
+            <div
               className="mb-6 p-4 rounded-2xl"
               style={{
                 background: 'rgba(34, 197, 94, 0.2)',
@@ -214,8 +214,8 @@ function ResetPasswordPageContent() {
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               }}
             >
-              <p className="text-green-700 font-semibold">✓ Password reset successfully!</p>
-              <p className="text-sm text-green-600 mt-2">
+              <p className="text-green-700 dark:text-green-300 font-semibold">✓ Password reset successfully!</p>
+              <p className="text-sm text-green-600 dark:text-green-400 mt-2">
                 Redirecting to login page...
               </p>
             </div>
@@ -235,7 +235,7 @@ function ResetPasswordPageContent() {
             <div className="relative z-10">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="password" className="block text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="password" className="block text-sm font-semibold text-[var(--text-primary)] mb-2">
                     New Password *
                   </label>
                   <input
@@ -244,7 +244,7 @@ function ResetPasswordPageContent() {
                     required
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all text-gray-900"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all text-[var(--text-primary)]"
                     style={{
                       background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
@@ -253,13 +253,13 @@ function ResetPasswordPageContent() {
                     minLength={8}
                     disabled={isSubmitting || success}
                   />
-                  <p className="text-xs text-gray-600 mt-2">
+                  <p className="text-xs text-[var(--text-secondary)] mt-2">
                     Password must be at least 8 characters and include at least one special character (!@#$%^&* etc.)
                   </p>
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="confirmPassword" className="block text-sm font-semibold text-[var(--text-primary)] mb-2">
                     Confirm New Password *
                   </label>
                   <input
@@ -268,7 +268,7 @@ function ResetPasswordPageContent() {
                     required
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all text-gray-900"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all text-[var(--text-primary)]"
                     style={{
                       background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
@@ -293,7 +293,7 @@ function ResetPasswordPageContent() {
           </div>
 
           <div className="text-center mt-8">
-            <p className="text-gray-700">
+            <p className="text-[var(--text-secondary)]">
               Remember your password?{' '}
               <Link href="/" className="text-yellow-600 hover:text-yellow-700 font-semibold underline underline-offset-2">
                 Log in
@@ -312,7 +312,7 @@ export default function ResetPasswordPage() {
       <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-          <p className="text-gray-700">Loading...</p>
+          <p className="text-[var(--text-secondary)]">Loading...</p>
         </div>
       </main>
     }>

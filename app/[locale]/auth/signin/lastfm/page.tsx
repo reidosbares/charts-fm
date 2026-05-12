@@ -60,7 +60,7 @@ export default function LastFMSignInPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Signing you in...</p>
+          <p className="text-[var(--text-secondary)]">Signing you in...</p>
         </div>
       </div>
     )
@@ -70,7 +70,7 @@ export default function LastFMSignInPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center max-w-md p-8">
-          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          <div className="mb-4 p-4 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded">
             {error}
           </div>
           <button

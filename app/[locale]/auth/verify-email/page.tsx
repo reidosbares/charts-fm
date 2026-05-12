@@ -153,21 +153,21 @@ function VerifyEmailPageContent() {
               {status === 'loading' && (
                 <>
                   <div className="text-4xl md:text-5xl mb-3 md:mb-4">📧</div>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-gray-800">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-[var(--text-primary)]">
                     {t('verifying')}
                   </h1>
                   <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-yellow-500 mx-auto mb-3 md:mb-4"></div>
-                  <p className="text-sm md:text-base text-gray-600">{t('verifyingDescription')}</p>
+                  <p className="text-sm md:text-base text-[var(--text-secondary)]">{t('verifyingDescription')}</p>
                 </>
               )}
 
               {status === 'success' && (
                 <>
                   <div className="text-4xl md:text-5xl mb-3 md:mb-4">✅</div>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-gray-800">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-[var(--text-primary)]">
                     {t('successTitle')}
                   </h1>
-                  <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
+                  <p className="text-sm md:text-base text-[var(--text-secondary)] mb-4 md:mb-6">
                     {t('successDescription')}
                   </p>
                   <LiquidGlassButton
@@ -185,11 +185,11 @@ function VerifyEmailPageContent() {
               {status === 'error' && (
                 <>
                   <div className="text-4xl md:text-5xl mb-3 md:mb-4">❌</div>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-gray-800">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-[var(--text-primary)]">
                     {t('errorTitle')}
                   </h1>
                   {error && (
-                    <div 
+                    <div
                       className="mb-4 md:mb-6 p-3 md:p-4 rounded-xl md:rounded-2xl text-sm md:text-base"
                       style={{
                         background: 'rgba(239, 68, 68, 0.2)',
@@ -199,19 +199,19 @@ function VerifyEmailPageContent() {
                         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                       }}
                     >
-                      <p className="text-red-700 font-medium">{error}</p>
+                      <p className="text-red-700 dark:text-red-300 font-medium">{error}</p>
                     </div>
                   )}
                   {email && (
                     <div className="space-y-3 md:space-y-4">
-                      <p className="text-sm md:text-base text-gray-600">
+                      <p className="text-sm md:text-base text-[var(--text-secondary)]">
                         {t('needNewEmail')}
                       </p>
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                        className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                         style={{
                           background: 'rgba(255, 255, 255, 0.8)',
                           backdropFilter: 'blur(8px)',
@@ -229,7 +229,7 @@ function VerifyEmailPageContent() {
                         {isResending ? t('sending') : t('resendEmail')}
                       </LiquidGlassButton>
                       {resendSuccess && (
-                        <p className="text-sm md:text-base text-green-600 font-medium">
+                        <p className="text-sm md:text-base text-green-600 dark:text-green-400 font-medium">
                           {t('emailSent')}
                         </p>
                       )}
@@ -241,17 +241,17 @@ function VerifyEmailPageContent() {
               {status === 'pending' && (
                 <>
                   <div className="text-4xl md:text-5xl mb-3 md:mb-4">📬</div>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-gray-800">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-[var(--text-primary)]">
                     {t('checkEmailTitle')}
                   </h1>
-                  <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
+                  <p className="text-sm md:text-base text-[var(--text-secondary)] mb-4 md:mb-6">
                     {t('checkEmailDescription')}
                   </p>
-                  <p className="text-xs md:text-sm text-gray-500 mb-4 md:mb-6">
+                  <p className="text-xs md:text-sm text-[var(--text-muted)] mb-4 md:mb-6">
                     {t('linkExpires')}
                   </p>
                   {error && (
-                    <div 
+                    <div
                       className="mb-4 md:mb-6 p-3 md:p-4 rounded-xl md:rounded-2xl text-sm md:text-base"
                       style={{
                         background: 'rgba(239, 68, 68, 0.2)',
@@ -261,11 +261,11 @@ function VerifyEmailPageContent() {
                         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                       }}
                     >
-                      <p className="text-red-700 font-medium">{error}</p>
+                      <p className="text-red-700 dark:text-red-300 font-medium">{error}</p>
                     </div>
                   )}
                   {resendSuccess && (
-                    <div 
+                    <div
                       className="mb-4 md:mb-6 p-3 md:p-4 rounded-xl md:rounded-2xl text-sm md:text-base"
                       style={{
                         background: 'rgba(34, 197, 94, 0.2)',
@@ -275,21 +275,21 @@ function VerifyEmailPageContent() {
                         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                       }}
                     >
-                      <p className="text-green-700 font-medium">
+                      <p className="text-green-700 dark:text-green-300 font-medium">
                         {t('emailSent')}
                       </p>
                     </div>
                   )}
                   {email && (
                     <div className="space-y-3 md:space-y-4">
-                      <p className="text-xs md:text-sm text-gray-600">
+                      <p className="text-xs md:text-sm text-[var(--text-secondary)]">
                         {t('didntReceive')}
                       </p>
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                        className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                         style={{
                           background: 'rgba(255, 255, 255, 0.8)',
                           backdropFilter: 'blur(8px)',
@@ -332,7 +332,7 @@ export default function VerifyEmailPage() {
       <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-yellow-500 mx-auto mb-3 md:mb-4"></div>
-          <p className="text-sm md:text-base text-gray-700">Loading...</p>
+          <p className="text-sm md:text-base text-[var(--text-secondary)]">Loading...</p>
         </div>
       </main>
     }>

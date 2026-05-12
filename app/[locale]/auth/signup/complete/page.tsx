@@ -114,7 +114,7 @@ function CompleteSignUpPageContent() {
         </div>
         <div className="relative z-10 text-center">
           <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-yellow-500 mx-auto mb-3 md:mb-4"></div>
-          <p className="text-sm md:text-base text-gray-700">{t('verifying')}</p>
+          <p className="text-sm md:text-base text-[var(--text-secondary)]">{t('verifying')}</p>
         </div>
       </main>
     )
@@ -135,7 +135,7 @@ function CompleteSignUpPageContent() {
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-yellow-600 via-orange-500 to-pink-500 bg-clip-text text-transparent">
               {t('title')}
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-gray-700">
+            <p className="text-base sm:text-lg md:text-xl text-[var(--text-secondary)]">
               {t('subtitle')}
             </p>
           </div>
@@ -151,8 +151,8 @@ function CompleteSignUpPageContent() {
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               }}
             >
-              <p className="text-green-700 font-semibold">✓ {t('connected')}</p>
-              <p className="text-xs md:text-sm text-green-600 mt-1">{t('username', { username: lastfmUsername })}</p>
+              <p className="text-green-700 dark:text-green-300 font-semibold">✓ {t('connected')}</p>
+              <p className="text-xs md:text-sm text-green-600 dark:text-green-400 mt-1">{t('username', { username: lastfmUsername })}</p>
             </div>
           )}
 
@@ -167,7 +167,7 @@ function CompleteSignUpPageContent() {
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               }}
             >
-              <p className="text-red-700 font-medium">{error}</p>
+              <p className="text-red-700 dark:text-red-300 font-medium">{error}</p>
             </div>
           )}
 
@@ -185,7 +185,7 @@ function CompleteSignUpPageContent() {
             <div className="relative z-10">
               <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
                 <div>
-                  <label htmlFor="email" className="block text-xs md:text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="email" className="block text-xs md:text-sm font-semibold text-[var(--text-primary)] mb-2">
                     {t('emailLabel')}
                   </label>
                   <input
@@ -194,7 +194,7 @@ function CompleteSignUpPageContent() {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                     style={{
                       background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
@@ -204,7 +204,7 @@ function CompleteSignUpPageContent() {
                 </div>
 
                 <div>
-                  <label htmlFor="name" className="block text-xs md:text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="name" className="block text-xs md:text-sm font-semibold text-[var(--text-primary)] mb-2">
                     {t('nameLabel')}
                   </label>
                   <input
@@ -213,7 +213,7 @@ function CompleteSignUpPageContent() {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                     style={{
                       background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
@@ -223,7 +223,7 @@ function CompleteSignUpPageContent() {
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="block text-xs md:text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="password" className="block text-xs md:text-sm font-semibold text-[var(--text-primary)] mb-2">
                     {t('passwordLabel')}
                   </label>
                   <input
@@ -232,7 +232,7 @@ function CompleteSignUpPageContent() {
                     required
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                     style={{
                       background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
@@ -240,13 +240,13 @@ function CompleteSignUpPageContent() {
                     placeholder={t('passwordPlaceholder')}
                     minLength={8}
                   />
-                  <p className="text-xs text-gray-600 mt-1 md:mt-2">
+                  <p className="text-xs text-[var(--text-secondary)] mt-1 md:mt-2">
                     {t('passwordHint')}
                   </p>
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-xs md:text-sm font-semibold text-gray-800 mb-2">
+                  <label htmlFor="confirmPassword" className="block text-xs md:text-sm font-semibold text-[var(--text-primary)] mb-2">
                     {t('confirmPasswordLabel')}
                   </label>
                   <input
@@ -255,7 +255,7 @@ function CompleteSignUpPageContent() {
                     required
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                     style={{
                       background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
@@ -279,7 +279,7 @@ function CompleteSignUpPageContent() {
           </div>
 
           <div className="text-center mt-6 md:mt-8">
-            <p className="text-sm md:text-base text-gray-700">
+            <p className="text-sm md:text-base text-[var(--text-secondary)]">
               {t('alreadyHaveAccount')}{' '}
               <a href="/" className="text-yellow-600 hover:text-yellow-700 font-semibold underline underline-offset-2">
                 {t('logIn')}
@@ -298,7 +298,7 @@ export default function CompleteSignUpPage() {
       <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-yellow-500 mx-auto mb-3 md:mb-4"></div>
-          <p className="text-sm md:text-base text-gray-700">Loading...</p>
+          <p className="text-sm md:text-base text-[var(--text-secondary)]">Loading...</p>
         </div>
       </main>
     }>
