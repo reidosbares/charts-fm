@@ -75,7 +75,7 @@ export default function GroupHero({ groupId }: GroupHeroProps) {
                 />
               </div>
               {imageCaption && (
-                <p className="text-xs italic text-gray-600 mt-1 md:mt-2 text-left max-w-[8rem] md:max-w-[10rem]">
+                <p className="text-xs italic text-[var(--text-secondary)] mt-1 md:mt-2 text-left max-w-[8rem] md:max-w-[10rem]">
                   {imageCaption}
                 </p>
               )}
