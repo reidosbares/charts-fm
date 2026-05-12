@@ -33,3 +33,56 @@ export function normalizeAlbumName(name: string): string {
   }
   return next.replace(/\s+/g, ' ').trim()
 }
+
+/**
+ * Group albums whose titles normalize to the same string (per artist), sum
+ * their playcounts into a single entry, and return the merged list sorted
+ * by descending playcount.
+ *
+ * Canonical display name = normalizeAlbumName applied to the highest-
+ * playcount variant's name. This preserves whichever casing/punctuation
+ * the user listens to most, while always stripping recognised suffixes.
+ *
+ * Key = (normalizedName.toLowerCase(), artist.toLowerCase()). Albums with
+ * the same normalized title but different artists stay separate.
+ */
+export function mergeRedundantAlbums(albums: TopItem[]): TopItem[] {
+  type Bucket = {
+    name: string
+    artist: string
+    playcount: number
+    topVariantPlays: number
+  }
+  const buckets = new Map<string, Bucket>()
+
+  for (const album of albums) {
+    const rawName = album.name || ''
+    const artist = album.artist || ''
+    const normalized = normalizeAlbumName(rawName)
+    const key = `${normalized.toLowerCase()}|${artist.toLowerCase()}`
+    const existing = buckets.get(key)
+
+    if (!existing) {
+      buckets.set(key, {
+        name: normalized,
+        artist,
+        playcount: album.playcount,
+        topVariantPlays: album.playcount,
+      })
+      continue
+    }
+
+    existing.playcount += album.playcount
+    if (album.playcount > existing.topVariantPlays) {
+      existing.topVariantPlays = album.playcount
+      existing.name = normalizeAlbumName(rawName)
+    }
+  }
+
+  return Array.from(buckets.values())
+    .sort((a, b) => {
+      if (b.playcount !== a.playcount) return b.playcount - a.playcount
+      return a.name.localeCompare(b.name)
+    })
+    .map(({ name, artist, playcount }) => ({ name, artist, playcount }))
+}
