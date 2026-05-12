@@ -11,6 +11,8 @@ interface ChartHistoryTimelineProps {
   history: ChartHistoryEntry[]
   groupId: string
   chartType: 'artists' | 'tracks' | 'albums'
+  /** If false, append an OUT bubble + ellipsis to indicate the entry has dropped off. */
+  isCurrentlyCharting?: boolean
 }
 
 interface TimelineSegment {
@@ -24,6 +26,7 @@ function ChartHistoryTimeline({
   history,
   groupId,
   chartType,
+  isCurrentlyCharting = true,
 }: ChartHistoryTimelineProps) {
   const t = useSafeTranslations('deepDive.timeline')
   // Memoize expensive timeline processing
@@ -181,6 +184,16 @@ function ChartHistoryTimeline({
             }
             return null
           })}
+          {!isCurrentlyCharting && (
+            <>
+              <div className="w-11 h-11 md:w-14 md:h-14 text-xs md:text-sm text-[var(--text-muted)] opacity-70 rounded-full font-semibold flex items-center justify-center bg-white/20 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border border-dashed border-[var(--border-strong)] backdrop-blur-sm relative z-10 inline-flex">
+                OUT
+              </div>
+              <span className="text-lg md:text-xl text-[var(--text-muted)] opacity-70 leading-none select-none" aria-hidden="true">
+                …
+              </span>
+            </>
+          )}
         </div>
       </div>
     </div>

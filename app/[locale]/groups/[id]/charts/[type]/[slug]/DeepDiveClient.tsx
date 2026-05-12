@@ -384,6 +384,7 @@ export default function DeepDiveClient({
         history={initialHistory}
         groupId={groupId}
         chartType={chartType}
+        isCurrentlyCharting={stats?.currentlyCharting ?? true}
       />
 
       {/* Quick Stats - loaded asynchronously */}
