@@ -1,6 +1,6 @@
 import { TopItem } from './lastfm-weekly'
 
-const FEAT_SUFFIX_RE = /\s*[\(\[]\s*(?:feat\.?|ft\.?|featuring)\b[^\)\]]*[\)\]]/gi
+const FEAT_SUFFIX_RE = /\s*(?:\(\s*(?:feat\.?|ft\.?|featuring)\b(?:[^()]|\([^()]*\))*\)|\[\s*(?:feat\.?|ft\.?|featuring)\b(?:[^\[\]]|\[[^\[\]]*\])*\])/gi
 
 /**
  * Strip feat-style suffix patterns from a track title.
