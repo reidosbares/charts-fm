@@ -650,14 +650,14 @@ svg.rdp-chevron {
 
 .theme-synthwave {
   --theme-primary: rgb(217 70 239);
-  --theme-primary-light: rgb(232 121 249);
-  --theme-primary-dark: rgb(112 26 117);
+  --theme-primary-light: rgb(34 211 238);
+  --theme-primary-dark: rgb(86 12 142);
   --theme-primary-lighter: rgb(250 232 255);
   --theme-primary-darker: rgb(162 28 175);
   --theme-background-from: rgb(250 232 255);
-  --theme-background-to: rgb(253 244 255);
+  --theme-background-to: rgb(236 254 255);
   --theme-border: rgb(240 171 252);
-  --theme-text: rgb(162 28 175);
+  --theme-text: rgb(14 116 144);
   --theme-ring: rgb(217 70 239);
   --theme-button-text: white;
   --theme-primary-rgb: 217 70 239;
@@ -667,14 +667,14 @@ svg.rdp-chevron {
 
 .dark .theme-synthwave {
   --theme-primary: rgb(232 121 249);
-  --theme-primary-light: rgb(240 171 252);
-  --theme-primary-dark: rgb(250 232 255);
+  --theme-primary-light: rgb(103 232 249);
+  --theme-primary-dark: rgb(207 250 254);
   --theme-primary-lighter: rgb(48 18 56);
   --theme-primary-darker: rgb(162 28 175);
   --theme-background-from: rgb(24 14 40);
-  --theme-background-to: rgb(20 12 32);
+  --theme-background-to: rgb(14 18 38);
   --theme-border: rgb(110 40 150);
-  --theme-text: rgb(240 171 252);
+  --theme-text: rgb(103 232 249);
   --theme-ring: rgb(232 121 249);
   --theme-button-text: white;
   --theme-primary-rgb: 232 121 249;
