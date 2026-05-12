@@ -16,12 +16,12 @@ import ClearHighlightedGroupButton from '@/components/profile/ClearHighlightedGr
 
 // Same award colors as RecordBlock on the records page
 const AWARD_BADGE_CLASSES: Record<string, string> = {
-  vsVirtuoso: 'bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-300 text-amber-700',
-  playPowerhouse: 'bg-gradient-to-br from-red-50 to-rose-50 border-red-300 text-red-700',
-  chartConnoisseur: 'bg-gradient-to-br from-sky-50 to-blue-50 border-sky-300 text-sky-700',
-  hiddenGemHunter: 'bg-gradient-to-br from-teal-50 to-cyan-50 border-teal-300 text-teal-700',
-  oneTrackMind: 'bg-gradient-to-br from-violet-50 to-purple-50 border-violet-300 text-violet-700',
-  tasteMaker: 'bg-gradient-to-br from-pink-50 to-fuchsia-50 border-pink-300 text-pink-700',
+  vsVirtuoso: 'bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-950/40 dark:to-yellow-950/40 border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300',
+  playPowerhouse: 'bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-950/40 dark:to-rose-950/40 border-red-300 dark:border-red-700 text-red-700 dark:text-red-400',
+  chartConnoisseur: 'bg-gradient-to-br from-sky-50 to-blue-50 dark:from-sky-950/40 dark:to-blue-950/40 border-sky-300 dark:border-sky-700 text-sky-700 dark:text-sky-300',
+  hiddenGemHunter: 'bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-teal-950/40 dark:to-cyan-950/40 border-teal-300 dark:border-teal-700 text-teal-700 dark:text-teal-300',
+  oneTrackMind: 'bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-950/40 dark:to-purple-950/40 border-violet-300 dark:border-violet-700 text-violet-700 dark:text-violet-300',
+  tasteMaker: 'bg-gradient-to-br from-pink-50 to-fuchsia-50 dark:from-pink-950/40 dark:to-fuchsia-950/40 border-pink-300 dark:border-pink-700 text-pink-700 dark:text-pink-300',
 }
 
 export async function generateMetadata({
@@ -211,11 +211,11 @@ export default async function PublicUserProfilePage({
         {/* Sidebar: profile identity */}
         <aside className="lg:w-72 xl:w-80 flex-shrink-0">
           <div
-            className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-gray-200 shadow-lg lg:sticky lg:top-8"
+            className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-[var(--border-subtle)] shadow-lg lg:sticky lg:top-8"
             style={glassStyle}
           >
             <div className="flex flex-row sm:flex-col items-center sm:items-center lg:items-start gap-4 sm:gap-0 text-left sm:text-center lg:text-left">
-              <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white/60 shadow-lg flex-shrink-0">
+              <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white/60 dark:border-white/10 shadow-lg flex-shrink-0">
                 <SafeImage
                   src={user.image}
                   alt={user.name || user.lastfmUsername}
@@ -223,10 +223,10 @@ export default async function PublicUserProfilePage({
                 />
               </div>
               <div className="flex-1 min-w-0 sm:w-full">
-                <h1 className="sm:mt-4 text-xl sm:text-2xl font-bold text-gray-900 truncate">
+                <h1 className="sm:mt-4 text-xl sm:text-2xl font-bold text-[var(--text-primary)] truncate">
                   {user.name || user.lastfmUsername}
                 </h1>
-                <p className="text-sm text-gray-600 font-semibold truncate mt-0.5">@{user.lastfmUsername}</p>
+                <p className="text-sm text-[var(--text-secondary)] font-semibold truncate mt-0.5">@{user.lastfmUsername}</p>
                 <a
                   href={lastfmUrl}
                   target="_blank"
@@ -238,9 +238,9 @@ export default async function PublicUserProfilePage({
               </div>
             </div>
             {user.bio ? (
-              <p className="mt-3 sm:mt-4 text-sm text-gray-700 whitespace-pre-wrap text-left w-full">{user.bio}</p>
+              <p className="mt-3 sm:mt-4 text-sm text-[var(--text-secondary)] whitespace-pre-wrap text-left w-full">{user.bio}</p>
             ) : (
-              <p className="mt-3 sm:mt-4 text-sm text-gray-500 w-full sm:text-center lg:text-left">{t('noBio')}</p>
+              <p className="mt-3 sm:mt-4 text-sm text-[var(--text-muted)] w-full sm:text-center lg:text-left">{t('noBio')}</p>
             )}
           </div>
         </aside>
@@ -249,7 +249,7 @@ export default async function PublicUserProfilePage({
         <div className="flex-1 min-w-0 space-y-5 sm:space-y-8">
           {user.showProfileGroups && (
             <section>
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">{t('groupsTitle')}</h2>
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-[var(--text-primary)] mb-3 sm:mb-4">{t('groupsTitle')}</h2>
               {/* Callout to encourage choosing a highlighted group - only shown to the user on their own profile */}
               {isSelf && !highlightedGroup && visibleGroups.length > 0 && (
                 <HighlightedGroupCallout
@@ -451,7 +451,7 @@ export default async function PublicUserProfilePage({
                       {userAwardKeys.length > 0 && (
                         <div className={`flex flex-wrap gap-1 sm:gap-1.5 ${contributionStats ? '' : 'pt-2.5 sm:pt-3'}`}>
                           {userAwardKeys.map((key) => {
-                            const cls = AWARD_BADGE_CLASSES[key] ?? 'bg-white/80 border-[var(--theme-border)] text-[var(--theme-text)]'
+                            const cls = AWARD_BADGE_CLASSES[key] ?? 'bg-white/80 dark:bg-[var(--surface-card)] border-[var(--theme-border)] text-[var(--theme-text)]'
                             return (
                               <span
                                 key={key}
@@ -468,24 +468,24 @@ export default async function PublicUserProfilePage({
                 </section>
               )}
               {otherGroups.length === 0 ? (
-                <p className="text-sm text-gray-600">{t('noGroups')}</p>
+                <p className="text-sm text-[var(--text-secondary)]">{t('noGroups')}</p>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4">
                   {otherGroups.map((g) => (
                     <Link
                       key={g.id}
                       href={`/groups/${g.id}`}
-                      className="rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+                      className="rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-[var(--border-subtle)] shadow-sm hover:shadow-md transition-shadow"
                       style={glassStyle}
                     >
                       <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden flex-shrink-0 border border-white/60">
+                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden flex-shrink-0 border border-white/60 dark:border-white/10">
                           <SafeImage src={g.image} alt={g.name} className="w-full h-full object-cover" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="font-semibold text-gray-900 truncate text-sm sm:text-base">{g.name}</div>
+                          <div className="font-semibold text-[var(--text-primary)] truncate text-sm sm:text-base">{g.name}</div>
                           {g.isPrivate && (
-                            <div className="text-[10px] sm:text-xs text-gray-500 font-medium">{t('privateGroupBadge')}</div>
+                            <div className="text-[10px] sm:text-xs text-[var(--text-muted)] font-medium">{t('privateGroupBadge')}</div>
                           )}
                         </div>
                       </div>
