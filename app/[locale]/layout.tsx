@@ -1,6 +1,7 @@
 import SessionProvider from "@/components/SessionProvider";
 import SWRProvider from "@/components/SWRProvider";
 import { NavigationProvider } from "@/contexts/NavigationContext";
+import { AppearanceProvider } from "@/contexts/AppearanceContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import EmailVerificationBanner from "@/components/EmailVerificationBanner";
@@ -64,22 +65,24 @@ export default async function LocaleLayout({
       />
       {/* Background elements - fixed to viewport for all pages */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 dark:bg-yellow-400/[0.04] rounded-full blur-3xl"></div>
+        <div className="absolute top-40 right-20 w-96 h-96 bg-pink-400/20 dark:bg-pink-400/[0.04] rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 dark:bg-orange-400/[0.04] rounded-full blur-3xl"></div>
       </div>
       <NextIntlClientProvider messages={messages} locale={locale}>
         <SessionProvider>
           <SWRProvider>
           <NavigationProvider>
-            <div className="flex flex-col min-h-screen">
-              <Navbar />
-              <EmailVerificationBanner />
-              <div className="flex-grow">
-                {children}
+            <AppearanceProvider>
+              <div className="flex flex-col min-h-screen">
+                <Navbar />
+                <EmailVerificationBanner />
+                <div className="flex-grow">
+                  {children}
+                </div>
+                <Footer />
               </div>
-              <Footer />
-            </div>
+            </AppearanceProvider>
           </NavigationProvider>
           </SWRProvider>
         </SessionProvider>
