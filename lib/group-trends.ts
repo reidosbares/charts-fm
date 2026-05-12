@@ -953,8 +953,10 @@ export async function calculateGroupTrends(
  * Get cached trends for a group
  */
 /**
- * Calculate consecutive streak in top 10 for chart entries
- * Returns entries with their current consecutive streak (minimum 2 weeks)
+ * Calculate consecutive chart-appearance streak for entries currently in the top 10.
+ * Streak counts every consecutive week the entry appeared on the chart (any position),
+ * not just weeks in the top 10 — chart size is group-configurable and the UI labels
+ * the value as a plain "weeks streak".
  */
 export async function calculateConsecutiveStreaks(
   groupId: string,
@@ -1020,9 +1022,6 @@ export async function calculateConsecutiveStreaks(
         entryKey: {
           in: Array.from(keys),
         },
-        position: {
-          lte: 10, // Only fetch entries that were in top 10
-        },
       },
       select: {
         weekStart: true,
@@ -1068,9 +1067,9 @@ export async function calculateConsecutiveStreaks(
       }
       
       const position = historicalByWeek.get(weekTime)
-      
-      // If entry exists in this week and was in top 10, continue streak
-      if (position !== undefined && position <= 10) {
+
+      // If entry appeared in the chart this week (any position), continue streak
+      if (position !== undefined) {
         streak++
       } else {
         // Streak broken
