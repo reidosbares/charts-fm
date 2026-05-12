@@ -89,11 +89,11 @@ export default async function ArtistImagesPage({
   const t = await getTranslations('artistImages')
 
   return (
-    <main className="flex min-h-screen flex-col pt-4 sm:pt-8 pb-24 px-3 sm:px-4 md:px-6 lg:px-12 xl:px-24 bg-gradient-to-b from-gray-50 to-white">
+    <main className="flex min-h-screen flex-col pt-4 sm:pt-8 pb-24 px-3 sm:px-4 md:px-6 lg:px-12 xl:px-24 bg-gradient-to-b from-gray-50 to-white dark:from-[var(--surface-base)] dark:to-[var(--surface-base)]">
       <div className="max-w-7xl w-full mx-auto">
         <div className="mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1 sm:mb-2">{artistInfo.name}</h1>
-          <p className="text-sm sm:text-base text-gray-600">{t('title')}</p>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-1 sm:mb-2">{artistInfo.name}</h1>
+          <p className="text-sm sm:text-base text-[var(--text-secondary)]">{t('title')}</p>
         </div>
         <ArtistImageCarousel
           artistName={artistInfo.name}
