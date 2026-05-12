@@ -1476,14 +1476,14 @@ async function calculatePhase6Records(
     taste_maker_count: bigint
   }>>`
     WITH first_appearances AS (
-      SELECT 
+      SELECT
         "entryKey",
         "chartType",
         MIN("weekStart") as first_week
       FROM "group_chart_entries"
       WHERE "groupId" = ${groupId}::text
-        AND "weekStart" >= ${tenWeekCutoff}::timestamp
       GROUP BY "entryKey", "chartType"
+      HAVING MIN("weekStart") >= ${tenWeekCutoff}::timestamp
     ),
     number_ones AS (
       SELECT DISTINCT "entryKey", "chartType"
@@ -1492,7 +1492,7 @@ async function calculatePhase6Records(
         AND position = 1
         AND "weekStart" >= ${tenWeekCutoff}::timestamp
     )
-    SELECT 
+    SELECT
       ucvs."userId",
       COUNT(DISTINCT ucvs."entryKey")::bigint as taste_maker_count
     FROM "user_chart_entry_vs" ucvs
@@ -1529,8 +1529,8 @@ async function calculatePhase6Records(
       SELECT "entryKey", "chartType", MIN("weekStart") as first_week
       FROM "group_chart_entries"
       WHERE "groupId" = ${groupId}::text
-        AND "weekStart" >= ${tenWeekCutoff}::timestamp
       GROUP BY "entryKey", "chartType"
+      HAVING MIN("weekStart") >= ${tenWeekCutoff}::timestamp
     ),
     number_ones AS (
       SELECT DISTINCT "entryKey", "chartType"
