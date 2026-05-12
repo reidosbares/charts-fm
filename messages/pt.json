@@ -1145,7 +1145,11 @@
       "title": "Desempenho histórico",
       "noHistory": "Nenhum histórico disponível",
       "outFor": "Fora por {count} semana",
-      "outForPlural": "Fora por {count} semanas"
+      "outForPlural": "Fora por {count} semanas",
+      "position": "Posição",
+      "plays": "Plays",
+      "vs": "VS",
+      "viewWeekCharts": "Ver charts da semana"
     },
     "quickStats": {
       "title": "Estatísticas principais",

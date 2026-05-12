@@ -155,6 +155,8 @@ function ChartHistoryTimeline({
                     weekStart={item.entry?.weekStart || item.gapWeekStart!}
                     groupId={groupId}
                     chartType={chartType}
+                    playcount={item.entry?.playcount}
+                    vibeScore={item.entry?.vibeScore}
                     isOut={item.isOut}
                   />
                   {item.isFirst && firstAppearanceDate && (

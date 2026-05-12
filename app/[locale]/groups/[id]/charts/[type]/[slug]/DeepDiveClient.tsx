@@ -320,16 +320,13 @@ export default function DeepDiveClient({
           
           {/* Entry Name and Artist - right side */}
           <div className="flex-1 min-w-0">
-            <h1 
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold break-words"
-              style={{ 
-                lineHeight: '1.2', 
-                paddingBottom: '0.1em', 
+            <h1
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold break-words bg-clip-text text-transparent bg-gradient-to-r from-[var(--theme-primary-darker)] via-[var(--theme-primary)] to-[var(--theme-primary-light)] dark:from-[var(--theme-primary)] dark:via-[var(--theme-primary-light)] dark:to-[var(--theme-primary-dark)]"
+              style={{
+                lineHeight: '1.2',
+                paddingBottom: '0.1em',
                 overflow: 'visible',
-                backgroundImage: 'linear-gradient(to right, var(--theme-primary-darker), var(--theme-primary), var(--theme-primary-light))',
-                WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text'
               }}
             >
               {entryName}
@@ -354,15 +351,12 @@ export default function DeepDiveClient({
       ) : (
         <div className="text-center mb-2 sm:mb-3 md:mb-4 py-1 sm:py-2 overflow-visible">
           <h1
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold break-words"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold break-words bg-clip-text text-transparent bg-gradient-to-r from-[var(--theme-primary-darker)] via-[var(--theme-primary)] to-[var(--theme-primary-light)] dark:from-[var(--theme-primary)] dark:via-[var(--theme-primary-light)] dark:to-[var(--theme-primary-dark)]"
             style={{
               lineHeight: '1.2',
               paddingBottom: '0.1em',
               overflow: 'visible',
-              backgroundImage: 'linear-gradient(to right, var(--theme-primary-darker), var(--theme-primary), var(--theme-primary-light))',
-              WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
             }}
           >
             {entryName}

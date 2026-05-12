@@ -1145,7 +1145,11 @@
       "title": "Chart History",
       "noHistory": "No chart history available",
       "outFor": "Out for {count} week",
-      "outForPlural": "Out for {count} weeks"
+      "outForPlural": "Out for {count} weeks",
+      "position": "Position",
+      "plays": "Plays",
+      "vs": "VS",
+      "viewWeekCharts": "View week's charts"
     },
     "quickStats": {
       "title": "Quick Stats",
