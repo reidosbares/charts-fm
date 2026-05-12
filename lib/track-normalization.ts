@@ -41,7 +41,7 @@ export function mergeRedundantTracks(tracks: TopItem[]): TopItem[] {
 
     if (!existing) {
       buckets.set(key, {
-        name: normalizeTrackName(rawName),
+        name: normalized,
         artist,
         playcount: track.playcount,
         topVariantPlays: track.playcount,
