@@ -31,11 +31,19 @@
   --theme-button-text: black;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  /* Semantic surface/text/border — dark values */
+  --surface-base: rgb(15 15 17);
+  --surface-card: rgb(28 28 32);
+  --surface-elevated: rgb(38 38 44);
+  --text-primary: rgb(237 237 240);
+  --text-secondary: rgb(170 170 180);
+  --text-muted: rgb(125 125 135);
+  --border-subtle: rgb(50 50 56);
+  --border-strong: rgb(70 70 78);
 }
 
 body {
