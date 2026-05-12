@@ -324,8 +324,8 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
         <div className="mb-4 text-[var(--theme-primary)]">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl md:text-5xl" />
         </div>
-        <p className="text-gray-700 text-base md:text-lg mb-2 font-medium">{tStatus('calculating')}</p>
-        <p className="text-gray-500 text-xs md:text-sm mb-6">{tStatus('calculatingDescription')}</p>
+        <p className="text-[var(--text-secondary)] text-base md:text-lg mb-2 font-medium">{tStatus('calculating')}</p>
+        <p className="text-[var(--text-muted)] text-xs md:text-sm mb-6">{tStatus('calculatingDescription')}</p>
       </div>
     )
   }
@@ -336,8 +336,8 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
 
     return (
       <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 md:p-12 text-center border border-theme">
-        <p className="text-gray-700 text-base md:text-lg mb-2 font-medium">{tStatus('failed')}</p>
-        <p className="text-gray-500 text-xs md:text-sm mb-6">
+        <p className="text-[var(--text-secondary)] text-base md:text-lg mb-2 font-medium">{tStatus('failed')}</p>
+        <p className="text-[var(--text-muted)] text-xs md:text-sm mb-6">
           {canRetry 
             ? tStatus('canRetry')
             : tStatus('waitToRetry')}
@@ -367,8 +367,8 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
   if (records.status !== 'completed' || !recordsData) {
     return (
       <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 md:p-12 text-center border border-theme">
-        <p className="text-gray-700 text-base md:text-lg mb-2 font-medium">{tStatus('noRecords')}</p>
-        <p className="text-gray-500 text-xs md:text-sm mb-6">{tStatus('generateCharts')}</p>
+        <p className="text-[var(--text-secondary)] text-base md:text-lg mb-2 font-medium">{tStatus('noRecords')}</p>
+        <p className="text-[var(--text-muted)] text-xs md:text-sm mb-6">{tStatus('generateCharts')}</p>
       </div>
     )
   }
@@ -377,14 +377,14 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
   const renderPreviewCards = () => {
     return (
       <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-4 md:p-6 border border-theme mb-4 md:mb-6">
-        <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-gray-900 flex items-center gap-2">
+        <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-[var(--text-primary)] flex items-center gap-2">
           <FontAwesomeIcon icon={faTrophy} className="text-[var(--theme-primary)] text-lg md:text-xl" />
           {tPreview('mostWeeksOnChart')}
         </h3>
         {isLoadingPreview ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm">
+              <div key={i} className="bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm">
                 <div className="flex items-center justify-center h-20 md:h-24">
                   <FontAwesomeIcon icon={faSpinner} className="animate-spin text-xl md:text-2xl text-[var(--theme-primary)]" />
                 </div>
@@ -394,11 +394,11 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
         ) : previewData && (previewData.artist || previewData.track || previewData.album) ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
             {previewData.artist && (
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm relative overflow-hidden">
+              <div className="bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm relative overflow-hidden">
                 {(previewImagesLoading.artist || previewImages.artist !== null) && (
                   <div className="absolute top-0 right-0 bottom-0 w-1/3 h-full pointer-events-none overflow-hidden" style={{ borderRadius: '0 0.75rem 0.75rem 0' }}>
                     {previewImagesLoading.artist ? (
-                      <div className="w-full h-full bg-gray-200 animate-pulse" />
+                      <div className="w-full h-full bg-[var(--surface-base)] animate-pulse" />
                     ) : previewImages.artist ? (
                       <SafeImage
                         src={previewImages.artist}
@@ -407,7 +407,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
                         fill
                       />
                     ) : (
-                      <div className="w-full h-full bg-gray-200" />
+                      <div className="w-full h-full bg-[var(--surface-base)]" />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/40 to-transparent z-10" />
                   </div>
@@ -415,26 +415,26 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-2">
                     <FontAwesomeIcon icon={faMicrophone} className="text-[var(--theme-primary)] text-sm md:text-base" />
-                    <span className="text-xs md:text-sm font-semibold text-gray-600">{tPreview('artist')}</span>
+                    <span className="text-xs md:text-sm font-semibold text-[var(--text-secondary)]">{tPreview('artist')}</span>
                   </div>
                   <Link
                     href={`/groups/${groupId}/charts/artist/${previewData.artist.slug}`}
-                    className="font-bold text-base md:text-lg text-gray-900 hover:text-[var(--theme-primary)] transition-colors block mb-1 break-words"
+                    className="font-bold text-base md:text-lg text-[var(--text-primary)] hover:text-[var(--theme-primary)] transition-colors block mb-1 break-words"
                   >
                     {previewData.artist.name}
                   </Link>
-                  <p className="text-xs md:text-sm text-gray-600">
+                  <p className="text-xs md:text-sm text-[var(--text-secondary)]">
                     {previewData.artist.value} {previewData.artist.value === 1 ? tPreview('week') : tPreview('weeks')}
                   </p>
                 </div>
               </div>
             )}
             {previewData.track && (
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm relative overflow-hidden">
+              <div className="bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm relative overflow-hidden">
                 {(previewImagesLoading.track || previewImages.track !== null) && (
                   <div className="absolute top-0 right-0 bottom-0 w-1/3 h-full pointer-events-none overflow-hidden" style={{ borderRadius: '0 0.75rem 0.75rem 0' }}>
                     {previewImagesLoading.track ? (
-                      <div className="w-full h-full bg-gray-200 animate-pulse" />
+                      <div className="w-full h-full bg-[var(--surface-base)] animate-pulse" />
                     ) : previewImages.track ? (
                       <SafeImage
                         src={previewImages.track}
@@ -443,7 +443,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
                         fill
                       />
                     ) : (
-                      <div className="w-full h-full bg-gray-200" />
+                      <div className="w-full h-full bg-[var(--surface-base)]" />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/40 to-transparent z-10" />
                   </div>
@@ -451,29 +451,29 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-2">
                     <FontAwesomeIcon icon={faMusic} className="text-[var(--theme-primary)] text-sm md:text-base" />
-                    <span className="text-xs md:text-sm font-semibold text-gray-600">{tPreview('track')}</span>
+                    <span className="text-xs md:text-sm font-semibold text-[var(--text-secondary)]">{tPreview('track')}</span>
                   </div>
                   <Link
                     href={`/groups/${groupId}/charts/track/${previewData.track.slug}`}
-                    className="font-bold text-base md:text-lg text-gray-900 hover:text-[var(--theme-primary)] transition-colors block mb-1 break-words"
+                    className="font-bold text-base md:text-lg text-[var(--text-primary)] hover:text-[var(--theme-primary)] transition-colors block mb-1 break-words"
                   >
                     {previewData.track.name}
                   </Link>
                   {previewData.track.artist && (
-                    <p className="text-xs text-gray-600 mb-1 break-words">{tPreview('by', { artist: previewData.track.artist })}</p>
+                    <p className="text-xs text-[var(--text-secondary)] mb-1 break-words">{tPreview('by', { artist: previewData.track.artist })}</p>
                   )}
-                  <p className="text-xs md:text-sm text-gray-600">
+                  <p className="text-xs md:text-sm text-[var(--text-secondary)]">
                     {previewData.track.value} {previewData.track.value === 1 ? tPreview('week') : tPreview('weeks')}
                   </p>
                 </div>
               </div>
             )}
             {previewData.album && (
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm relative overflow-hidden">
+              <div className="bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm relative overflow-hidden">
                 {(previewImagesLoading.album || previewImages.album !== null) && (
                   <div className="absolute top-0 right-0 bottom-0 w-1/3 h-full pointer-events-none overflow-hidden" style={{ borderRadius: '0 0.75rem 0.75rem 0' }}>
                     {previewImagesLoading.album ? (
-                      <div className="w-full h-full bg-gray-200 animate-pulse" />
+                      <div className="w-full h-full bg-[var(--surface-base)] animate-pulse" />
                     ) : previewImages.album ? (
                       <SafeImage
                         src={previewImages.album}
@@ -482,7 +482,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
                         fill
                       />
                     ) : (
-                      <div className="w-full h-full bg-gray-200" />
+                      <div className="w-full h-full bg-[var(--surface-base)]" />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/40 to-transparent z-10" />
                   </div>
@@ -490,18 +490,18 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-2">
                     <FontAwesomeIcon icon={faCompactDisc} className="text-[var(--theme-primary)] text-sm md:text-base" />
-                    <span className="text-xs md:text-sm font-semibold text-gray-600">{tPreview('album')}</span>
+                    <span className="text-xs md:text-sm font-semibold text-[var(--text-secondary)]">{tPreview('album')}</span>
                   </div>
                   <Link
                     href={`/groups/${groupId}/charts/album/${previewData.album.slug}`}
-                    className="font-bold text-base md:text-lg text-gray-900 hover:text-[var(--theme-primary)] transition-colors block mb-1 break-words"
+                    className="font-bold text-base md:text-lg text-[var(--text-primary)] hover:text-[var(--theme-primary)] transition-colors block mb-1 break-words"
                   >
                     {previewData.album.name}
                   </Link>
                   {previewData.album.artist && (
-                    <p className="text-xs text-gray-600 mb-1 break-words">{tPreview('by', { artist: previewData.album.artist })}</p>
+                    <p className="text-xs text-[var(--text-secondary)] mb-1 break-words">{tPreview('by', { artist: previewData.album.artist })}</p>
                   )}
-                  <p className="text-xs md:text-sm text-gray-600">
+                  <p className="text-xs md:text-sm text-[var(--text-secondary)]">
                     {previewData.album.value} {previewData.album.value === 1 ? tPreview('week') : tPreview('weeks')}
                   </p>
                 </div>
@@ -790,26 +790,26 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
             {/* Background content to blur */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="bg-white/80 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm h-24 md:h-32">
-                  <div className="h-3 md:h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                  <div className="h-2 md:h-3 bg-gray-200 rounded w-1/2"></div>
+                <div key={i} className="bg-white/80 dark:bg-[var(--surface-card)] backdrop-blur-sm rounded-xl p-3 md:p-4 border border-theme shadow-sm h-24 md:h-32">
+                  <div className="h-3 md:h-4 bg-[var(--surface-base)] rounded w-3/4 mb-2"></div>
+                  <div className="h-2 md:h-3 bg-[var(--surface-base)] rounded w-1/2"></div>
                 </div>
               ))}
             </div>
             {/* Frosted overlay */}
-            <div className="absolute inset-0 bg-white/30 backdrop-blur-md rounded-xl z-50 flex items-center justify-center border border-white/20 shadow-xl">
+            <div className="absolute inset-0 bg-white/30 dark:bg-[var(--surface-card)]/70 backdrop-blur-md rounded-xl z-50 flex items-center justify-center border border-white/20 dark:border-white/10 shadow-xl">
               <div className="text-center p-4 md:p-6 max-w-md">
-                <p className="text-base md:text-lg font-semibold text-gray-800 mb-2 md:mb-3">
+                <p className="text-base md:text-lg font-semibold text-[var(--text-primary)] mb-2 md:mb-3">
                   {tUserRecords('comingSoon')}
                 </p>
-                <p className="text-xs md:text-sm text-gray-500 mb-2">
+                <p className="text-xs md:text-sm text-[var(--text-muted)] mb-2">
                   {tUserRecords('unlockMessage', {
                     count: memberCount,
                     memberOrMembers: memberCount === 1 ? tChartRecords('member') : tChartRecords('members'),
                     inviteCount: memberCount === 1 ? tUserRecords('inviteCountTwo') : memberCount === 2 ? tUserRecords('inviteCountOne') : ''
                   })}
                 </p>
-                <p className="text-xs md:text-sm text-gray-500 mb-2">
+                <p className="text-xs md:text-sm text-[var(--text-muted)] mb-2">
                   {tUserRecords('unlockDescription')}
                 </p>
               </div>
@@ -817,15 +817,15 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
           </div>
         ) : currentRecords.length === 0 ? (
           <div className="text-center py-8 md:py-12">
-            <p className="text-sm md:text-base text-gray-600">{tStatus('noRecordsForCategory')}</p>
+            <p className="text-sm md:text-base text-[var(--text-secondary)]">{tStatus('noRecordsForCategory')}</p>
           </div>
         ) : (
           <>
             {activeTab === 'users' && (
               <div className="mb-4 flex items-start justify-between">
                 <div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900">{tUserRecords('sectionTitle')}</h3>
-                  <p className="text-sm text-gray-500">{tUserRecords('sectionSubtitle')}</p>
+                  <h3 className="text-lg md:text-xl font-bold text-[var(--text-primary)]">{tUserRecords('sectionTitle')}</h3>
+                  <p className="text-sm text-[var(--text-muted)]">{tUserRecords('sectionSubtitle')}</p>
                 </div>
                 <LiquidGlassLink
                   href={`/groups/${groupId}/records/awards`}
@@ -851,7 +851,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
               ))}
             </div>
             {activeTab === 'users' && (
-              <p className="text-xs md:text-sm text-gray-500 mt-4 md:mt-6">
+              <p className="text-xs md:text-sm text-[var(--text-muted)] mt-4 md:mt-6">
                 {tUserRecordsRich.rich('memberAwardsFAQLink', {
                   link: (chunks) => (
                     <Link
@@ -871,12 +871,12 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
                   <FontAwesomeIcon icon={faTrophy} className="text-2xl md:text-3xl text-[var(--theme-primary)] flex-shrink-0" />
                   <h3 className="text-lg md:text-xl font-bold text-[var(--theme-primary)]">{tUserRecords('mostWeeksAsMVP')}</h3>
                 </div>
-                <p className="text-xs md:text-sm text-gray-600 mb-4">{tUserRecords('mostWeeksAsMVPTagline')}</p>
+                <p className="text-xs md:text-sm text-[var(--text-secondary)] mb-4">{tUserRecords('mostWeeksAsMVPTagline')}</p>
                 <Link
                   href={`/u/${encodeURIComponent(records.mostWeeksAsMVP.lastfmUsername || records.mostWeeksAsMVP.name)}`}
-                  className="flex items-center gap-4 md:gap-5 p-4 rounded-xl bg-white/80 border border-theme hover:border-[var(--theme-primary)]/50 transition-all"
+                  className="flex items-center gap-4 md:gap-5 p-4 rounded-xl bg-white/80 dark:bg-[var(--surface-card)] border border-theme hover:border-[rgb(var(--theme-primary-rgb)/0.5)] transition-all"
                 >
-                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/10 bg-[var(--theme-primary)]/10 shadow-sm">
+                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/10 dark:ring-white/10 bg-[rgb(var(--theme-primary-rgb)/0.1)] shadow-sm">
                     <SafeImage
                       src={records.mostWeeksAsMVP.image || ''}
                       alt={records.mostWeeksAsMVP.name}
@@ -884,7 +884,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
                     />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <span className="text-xl md:text-2xl font-bold text-gray-900 block truncate">{records.mostWeeksAsMVP.name}</span>
+                    <span className="text-xl md:text-2xl font-bold text-[var(--text-primary)] block truncate">{records.mostWeeksAsMVP.name}</span>
                     <span className="text-base md:text-lg text-[var(--theme-primary)] font-semibold">
                       {records.mostWeeksAsMVP.value === 1
                         ? tUserRecords('weeksAsMVPCount', { count: records.mostWeeksAsMVP.value })

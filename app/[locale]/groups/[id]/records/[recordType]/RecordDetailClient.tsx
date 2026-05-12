@@ -215,19 +215,18 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-2xl md:text-3xl lg:text-4xl text-[var(--theme-primary)]" />
         </div>
       ) : error ? (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 md:p-6 text-center mx-2 md:mx-0">
-          <p className="text-red-700 text-sm md:text-base">{error}</p>
+        <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-xl p-4 md:p-6 text-center mx-2 md:mx-0">
+          <p className="text-red-700 dark:text-red-300 text-sm md:text-base">{error}</p>
         </div>
       ) : entries.length === 0 ? (
         <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 md:p-12 text-center border border-theme mx-2 md:mx-0">
-          <p className="text-gray-600 text-sm md:text-base">{t('noEntries')}</p>
+          <p className="text-[var(--text-secondary)] text-sm md:text-base">{t('noEntries')}</p>
         </div>
       ) : (
         <div 
-          className="bg-white rounded-lg shadow-lg overflow-hidden mx-2 md:mx-0"
-          style={{ 
-            backgroundColor: '#ffffff', 
-            backdropFilter: 'none', 
+          className="bg-[var(--surface-card)] rounded-lg shadow-lg overflow-hidden mx-2 md:mx-0"
+          style={{
+            backdropFilter: 'none',
             WebkitBackdropFilter: 'none',
             isolation: 'isolate',
             position: 'relative',
@@ -236,48 +235,48 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
         >
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 sticky top-0 z-10">
+              <thead className="bg-[var(--surface-base)] sticky top-0 z-10">
                 <tr>
-                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-12 sm:w-24 md:w-32">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider w-12 sm:w-24 md:w-32">
                     {t('rank')}
                   </th>
-                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
                     {t('entry')}
                   </th>
-                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider w-16 sm:w-24 md:w-32">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider w-16 sm:w-24 md:w-32">
                     {t('value')}
                   </th>
                   {isPeakWeeklyRecord && (
-                    <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider w-24 sm:w-32 md:w-40">
+                    <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider w-24 sm:w-32 md:w-40">
                       {t('week')}
                     </th>
                   )}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-[var(--border-subtle)]">
                 {entries.map((entry) => (
-                  <tr key={entry.entryKey} className="hover:bg-gray-50 transition-colors">
+                  <tr key={entry.entryKey} className="hover:bg-[var(--surface-base)] transition-colors">
                     <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm">
-                      <span className="font-bold text-gray-900">#{entry.rank}</span>
+                      <span className="font-bold text-[var(--text-primary)]">#{entry.rank}</span>
                     </td>
                     <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm">
                       <div className="min-w-0 max-w-[100px] sm:max-w-none">
                         <Link
                           href={getEntryLink(entry)}
-                          className="font-medium text-gray-900 hover:text-[var(--theme-primary-dark)] transition-colors block truncate"
+                          className="font-medium text-[var(--text-primary)] hover:text-[var(--theme-primary-dark)] transition-colors block truncate"
                           title={entry.name}
                         >
                           {entry.name}
                         </Link>
                         {entry.artist && (
-                          <div className="text-gray-500 text-xs mt-0.5 sm:mt-1 truncate" title={`${t('by')} ${entry.artist}`}>
+                          <div className="text-[var(--text-muted)] text-xs mt-0.5 sm:mt-1 truncate" title={`${t('by')} ${entry.artist}`}>
                             {t('by')} {entry.artist}
                           </div>
                         )}
                       </div>
                     </td>
                     <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-right whitespace-nowrap">
-                      <span className="text-gray-900 font-medium">{formatValue(entry.value)}</span>
+                      <span className="text-[var(--text-primary)] font-medium">{formatValue(entry.value)}</span>
                     </td>
                     {isPeakWeeklyRecord && (
                       <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-right whitespace-nowrap">
@@ -289,7 +288,7 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
                             {formatChartWeekLabel(new Date(entry.weekStart))}
                           </Link>
                         ) : (
-                          <span className="text-gray-400 text-xs">—</span>
+                          <span className="text-[var(--text-muted)] text-xs">—</span>
                         )}
                       </td>
                     )}

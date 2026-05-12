@@ -270,7 +270,7 @@ export default function RecordBlock({ title, record, value, groupId, isUser, act
     : {
         bgGradient: 'from-white/80 to-white/80',
         borderColor: 'border-theme',
-        titleColor: 'text-gray-600',
+        titleColor: 'text-[var(--text-secondary)]',
         accentColor: 'text-[var(--theme-primary)]',
         ribbonColor: '',
       }
@@ -349,7 +349,7 @@ export default function RecordBlock({ title, record, value, groupId, isUser, act
             <Tooltip content={description} position="top">
               <button
                 type="button"
-                className="absolute bottom-2 right-2 flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-600 hover:text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 focus:ring-offset-1 z-10"
+                className="absolute bottom-2 right-2 flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full bg-[var(--surface-base)] hover:bg-[var(--surface-elevated)] active:bg-[var(--surface-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 focus:ring-offset-1 z-10"
                 aria-label="What does this award mean?"
               >
                 <FontAwesomeIcon 
