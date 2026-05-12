@@ -147,19 +147,24 @@ export default function StylingTab({
                     className="sr-only"
                   />
 
-                  <div className="relative z-10 space-y-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <h3 className="font-bold text-base md:text-lg text-[var(--theme-primary-dark)]">
-                        {THEME_DISPLAY_NAMES[themeName]}
+                  <div className="relative z-10 space-y-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <h3
+                          className="text-2xl md:text-3xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-[var(--theme-primary-darker)] via-[var(--theme-primary)] to-[var(--theme-primary-light)] dark:from-[var(--theme-primary)] dark:via-[var(--theme-primary-light)] dark:to-[var(--theme-primary-dark)]"
+                          style={{ WebkitTextFillColor: 'transparent', paddingBottom: '0.1em' }}
+                        >
+                          {THEME_DISPLAY_NAMES[themeName]}
+                        </h3>
                         {themeName === 'white' && (
-                          <span className="ml-2 text-xs font-normal text-[var(--theme-text)] opacity-70">
+                          <span className="text-xs font-medium" style={{ color: 'var(--theme-text)', opacity: 0.75 }}>
                             {t('default')}
                           </span>
                         )}
-                      </h3>
+                      </div>
                       {isSelected && (
                         <div
-                          className="w-5 h-5 rounded-full shrink-0"
+                          className="w-5 h-5 rounded-full shrink-0 mt-1"
                           style={{
                             backgroundColor: 'var(--theme-primary)',
                             boxShadow: '0 0 0 2px var(--theme-background-from)',
@@ -168,29 +173,27 @@ export default function StylingTab({
                       )}
                     </div>
 
-                    <div className="flex items-end justify-between gap-3">
-                      <div>
-                        <div
-                          className="text-3xl font-bold leading-none tabular-nums"
-                          style={{ color: 'var(--theme-text)' }}
-                        >
-                          42
-                        </div>
-                        <div
-                          className="text-xs mt-1.5 font-medium"
-                          style={{ color: 'var(--theme-text)', opacity: 0.75 }}
-                        >
-                          {t('plays')}
-                        </div>
-                      </div>
+                    <div className="flex items-center justify-between gap-3">
                       <div
-                        className="px-4 py-2 rounded-full text-xs font-semibold shadow-sm"
+                        className="px-4 py-1.5 rounded-full text-xs font-semibold shadow-sm"
                         style={{
                           backgroundColor: 'var(--theme-primary)',
                           color: 'var(--theme-button-text)',
                         }}
                       >
                         {t('viewSample')}
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className="w-4 h-4 rounded-full ring-1 ring-black/10 dark:ring-white/10"
+                          style={{ backgroundColor: 'var(--theme-primary-light)' }}
+                          title="Secondary accent"
+                        />
+                        <span
+                          className="w-4 h-4 rounded-full ring-1 ring-black/10 dark:ring-white/10"
+                          style={{ backgroundColor: 'var(--theme-text)' }}
+                          title="Data accent"
+                        />
                       </div>
                     </div>
                   </div>
