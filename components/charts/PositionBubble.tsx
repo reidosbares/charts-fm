@@ -2,8 +2,9 @@
 
 import { memo, useMemo } from 'react'
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
+import { useLocale } from 'next-intl'
 import { Link } from '@/i18n/routing'
-import { formatWeekDate, formatWeekLabel, getChartWeekReferenceDate } from '@/lib/weekly-utils'
+import { formatWeekDate, getChartWeekReferenceDate } from '@/lib/weekly-utils'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 interface PositionBubbleProps {
@@ -28,14 +29,20 @@ function PositionBubble({
   isOut = false,
 }: PositionBubbleProps) {
   const t = useSafeTranslations('deepDive.timeline')
+  const locale = useLocale()
 
   const { href, formattedDate } = useMemo(() => {
     const ref = getChartWeekReferenceDate(weekStart)
     return {
       href: `/groups/${groupId}/charts?week=${formatWeekDate(ref)}&type=${chartType}`,
-      formattedDate: formatWeekLabel(ref),
+      formattedDate: new Intl.DateTimeFormat(locale, {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        timeZone: 'UTC',
+      }).format(ref),
     }
-  }, [weekStart, groupId, chartType])
+  }, [weekStart, groupId, chartType, locale])
 
   let colorClass: string
   if (isOut) {
@@ -77,9 +84,9 @@ function PositionBubble({
         className="z-50 w-60 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border-strong)] shadow-2xl p-4 focus:outline-none origin-bottom transition data-[closed]:scale-95 data-[closed]:opacity-0 duration-150 ease-out"
       >
         <div className="text-xs text-[var(--text-muted)] mb-2">{formattedDate}</div>
-        <div className="flex items-baseline gap-2 mb-3">
-          <span className="text-3xl font-bold text-[var(--theme-text)] tabular-nums leading-none">#{position}</span>
-          <span className="text-xs text-[var(--text-muted)]">{t('position')}</span>
+        <div className="mb-3">
+          <div className="text-xs text-[var(--text-muted)] mb-0.5">{t('position')}</div>
+          <div className="text-3xl font-bold text-[var(--theme-text)] tabular-nums leading-none">#{position}</div>
         </div>
         <div className="space-y-1 mb-3">
           {typeof playcount === 'number' && (
