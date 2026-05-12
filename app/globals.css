@@ -11,6 +11,7 @@
   --surface-base: rgb(255 254 250);
   --surface-card: rgb(255 255 255);
   --surface-elevated: rgb(255 255 255);
+  --surface-card-rgb: 255 255 255;
   --text-primary: rgb(17 24 39);
   --text-secondary: rgb(75 85 99);
   --text-muted: rgb(107 114 128);
@@ -42,6 +43,7 @@
   --surface-base: rgb(15 15 17);
   --surface-card: rgb(20 20 24);
   --surface-elevated: rgb(32 32 38);
+  --surface-card-rgb: 20 20 24;
   --text-primary: rgb(237 237 240);
   --text-secondary: rgb(170 170 180);
   --text-muted: rgb(125 125 135);

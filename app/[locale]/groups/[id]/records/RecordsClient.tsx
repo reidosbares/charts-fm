@@ -409,7 +409,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
                     ) : (
                       <div className="w-full h-full bg-[var(--surface-base)]" />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/40 to-transparent z-10" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/40 to-transparent dark:from-[rgb(var(--surface-card-rgb)/0.85)] dark:via-[rgb(var(--surface-card-rgb)/0.5)] z-10" />
                   </div>
                 )}
                 <div className="relative z-10">
@@ -445,7 +445,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
                     ) : (
                       <div className="w-full h-full bg-[var(--surface-base)]" />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/40 to-transparent z-10" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/40 to-transparent dark:from-[rgb(var(--surface-card-rgb)/0.85)] dark:via-[rgb(var(--surface-card-rgb)/0.5)] z-10" />
                   </div>
                 )}
                 <div className="relative z-10">
@@ -484,7 +484,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
                     ) : (
                       <div className="w-full h-full bg-[var(--surface-base)]" />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/40 to-transparent z-10" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/40 to-transparent dark:from-[rgb(var(--surface-card-rgb)/0.85)] dark:via-[rgb(var(--surface-card-rgb)/0.5)] z-10" />
                   </div>
                 )}
                 <div className="relative z-10">

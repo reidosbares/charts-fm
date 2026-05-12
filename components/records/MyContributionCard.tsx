@@ -305,7 +305,7 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
                                       href={href}
                                       className={`flex items-center gap-2 px-3 py-2 transition-colors ${
                                         isGold
-                                          ? 'bg-amber-50/80 hover:bg-amber-100/80 border-l-2 border-amber-500'
+                                          ? 'bg-amber-50/80 dark:bg-amber-950/40 hover:bg-amber-100/80 dark:hover:bg-amber-900/40 border-l-2 border-amber-500'
                                           : 'hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.2)]'
                                       }`}
                                     >

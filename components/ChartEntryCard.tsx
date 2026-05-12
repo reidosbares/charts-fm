@@ -60,7 +60,7 @@ export default function ChartEntryCard({
   const entryImageShapeClass = imageShape === 'roundedSquare' ? 'rounded-lg' : 'rounded-full'
 
   const iconContent = chartType === 'user' ? (
-    <div className="relative w-12 h-12 rounded-full ring-1 ring-black/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden">
+    <div className="relative w-12 h-12 rounded-full ring-1 ring-black/10 dark:ring-white/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden">
       <SafeImage
         src={userImage}
         alt={name}
@@ -68,7 +68,7 @@ export default function ChartEntryCard({
       />
     </div>
   ) : showEntryImage ? (
-    <div className={`relative w-12 h-12 ring-1 ring-black/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden flex items-center justify-center ${entryImageShapeClass}`}>
+    <div className={`relative w-12 h-12 ring-1 ring-black/10 dark:ring-white/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden flex items-center justify-center ${entryImageShapeClass}`}>
       {entryImage ? (
         <SafeImage
           src={entryImage}
@@ -100,8 +100,8 @@ export default function ChartEntryCard({
 
   const baseClasses = 'flex items-center gap-3 p-3 rounded-lg transition-all'
   const variantClasses = variant === 'nested'
-    ? 'bg-white/60 hover:bg-[var(--theme-primary-lighter)]/40 border border-[var(--theme-border)]/50'
-    : 'bg-white/80 hover:bg-[var(--theme-primary-lighter)]/50 border border-[var(--theme-border)]'
+    ? 'bg-white/60 dark:bg-[var(--surface-elevated)] hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.4)] border border-[rgb(var(--theme-border-rgb)/0.5)]'
+    : 'bg-white/80 dark:bg-[var(--surface-elevated)] hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.5)] border border-[var(--theme-border)]'
 
   const content = (
     <div
@@ -115,18 +115,18 @@ export default function ChartEntryCard({
             href={href}
             target={openInNewTab ? "_blank" : undefined}
             rel={openInNewTab ? "noopener noreferrer" : undefined}
-            className="font-semibold text-gray-900 break-words hover:text-[var(--theme-primary)] transition-colors"
+            className="font-semibold text-[var(--text-primary)] break-words hover:text-[var(--theme-primary)] transition-colors"
           >
             {name}
             {artist && (
-              <span className="text-sm font-normal text-gray-600"> by {artist}</span>
+              <span className="text-sm font-normal text-[var(--text-secondary)]"> by {artist}</span>
             )}
           </Link>
         ) : (
-          <div className="font-semibold text-gray-900 break-words">
+          <div className="font-semibold text-[var(--text-primary)] break-words">
             {name}
             {artist && (
-              <span className="text-sm font-normal text-gray-600"> by {artist}</span>
+              <span className="text-sm font-normal text-[var(--text-secondary)]"> by {artist}</span>
             )}
           </div>
         )}
