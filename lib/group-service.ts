@@ -12,6 +12,7 @@ import { getArtistImage, getAlbumImage } from './lastfm'
 import { calculateGroupTrends } from './group-trends'
 import { mergeRedundantTracks } from './track-normalization'
 import { mergeRedundantAlbums } from './album-normalization'
+import { resolveArtistsBatch, mergeRedundantArtists } from './artist-normalization'
 
 const API_KEY = process.env.LASTFM_API_KEY!
 const API_SECRET = process.env.LASTFM_API_SECRET!
@@ -249,7 +250,24 @@ export async function fetchOrGetUserWeeklyStats(
           undefined
         )
         const apiTime = ((Date.now() - apiStart) / 1000).toFixed(1)
-        const mergedTracks = mergeRedundantTracks(result.topTracks)
+
+        // Resolve compound artist credits (Apple Music "X & Y" → "X" when
+        // listener counts confirm). Applies to track.artist and topArtists[].name;
+        // album credits are intentionally left alone.
+        const artistStrings = new Set<string>()
+        for (const t of result.topTracks) if (t.artist) artistStrings.add(t.artist)
+        for (const a of result.topArtists) if (a.name) artistStrings.add(a.name)
+        const resolution = await resolveArtistsBatch(Array.from(artistStrings))
+        const tracksResolved = result.topTracks.map((t) => ({
+          ...t,
+          artist: t.artist ? resolution.get(t.artist) ?? t.artist : t.artist,
+        }))
+        const artistsResolved = result.topArtists.map((a) => ({
+          ...a,
+          name: resolution.get(a.name) ?? a.name,
+        }))
+
+        const mergedTracks = mergeRedundantTracks(tracksResolved)
         if (mergedTracks.length !== result.topTracks.length) {
           console.log(`[User Stats] 🔗 Merged ${result.topTracks.length - mergedTracks.length} redundant track variants for ${lastfmUsername}`)
         }
@@ -257,10 +275,14 @@ export async function fetchOrGetUserWeeklyStats(
         if (mergedAlbums.length !== result.topAlbums.length) {
           console.log(`[User Stats] 🔗 Merged ${result.topAlbums.length - mergedAlbums.length} redundant album variants for ${lastfmUsername}`)
         }
-        console.log(`[User Stats] ✅ Fetched data for ${lastfmUsername} in ${apiTime}s (tracks: ${mergedTracks.length}, artists: ${result.topArtists.length}, albums: ${mergedAlbums.length})`)
+        const mergedArtists = mergeRedundantArtists(artistsResolved)
+        if (mergedArtists.length !== result.topArtists.length) {
+          console.log(`[User Stats] 🔗 Merged ${result.topArtists.length - mergedArtists.length} redundant artist variants for ${lastfmUsername}`)
+        }
+        console.log(`[User Stats] ✅ Fetched data for ${lastfmUsername} in ${apiTime}s (tracks: ${mergedTracks.length}, artists: ${mergedArtists.length}, albums: ${mergedAlbums.length})`)
         return {
           topTracks: mergedTracks,
-          topArtists: result.topArtists,
+          topArtists: mergedArtists,
           topAlbums: mergedAlbums,
         }
       })()
