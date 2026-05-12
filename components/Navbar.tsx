@@ -365,6 +365,9 @@ export default function Navbar() {
               
               {/* Desktop Quick Access and User Menu - hidden on mobile */}
               <div className="hidden md:flex items-center space-x-3">
+              {/* Appearance Toggle */}
+              <AppearanceToggle />
+
               {/* Quick Access Group or + Button */}
               {isQuickAccessLoading ? null : (quickAccessGroup ? (() => {
                 const theme = GROUP_THEMES[quickAccessGroup.colorTheme as keyof typeof GROUP_THEMES]
@@ -488,9 +491,6 @@ export default function Navbar() {
                   <FontAwesomeIcon icon={faPlus} className="w-4 h-4" />
                 </button>
               ))}
-
-              {/* Appearance Toggle */}
-              <AppearanceToggle />
 
               {/* User Button */}
               <div className="relative">
