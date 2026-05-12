@@ -434,8 +434,8 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
                         (bt.albums?.entriesHelpedDebut ?? 0)
                       if (totalDebuts === 0) return null
                       return (
-                        <div className="p-3 rounded-xl bg-white/80 border border-[var(--theme-border)]">
-                          <div className="text-xs text-gray-600 mb-0.5">{tImpact('entriesHelpedDebut')}</div>
+                        <div className="p-3 rounded-xl bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.5)] border border-[var(--theme-border)]">
+                          <div className="text-xs text-[var(--text-secondary)] mb-0.5">{tImpact('entriesHelpedDebut')}</div>
                           <div className="text-lg font-bold text-[var(--theme-text)]">{totalDebuts.toLocaleString()}</div>
                         </div>
                       )
