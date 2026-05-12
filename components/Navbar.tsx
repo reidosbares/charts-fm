@@ -179,7 +179,7 @@ export default function Navbar() {
         }}
       >
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-gray-300 border-t-[var(--theme-primary)] rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-4 border-[var(--border-strong)] border-t-[var(--theme-primary)] rounded-full animate-spin"></div>
           <p className="text-white text-lg font-semibold">{t('signingOut')}</p>
         </div>
       </div>
@@ -189,7 +189,7 @@ export default function Navbar() {
   return (
     <>
       {isSigningOut && (
-        <div 
+        <div
           className="fixed inset-0 z-[9999] flex items-center justify-center"
           style={{
             background: 'rgba(0, 0, 0, 0.8)',
@@ -198,7 +198,7 @@ export default function Navbar() {
           }}
         >
           <div className="flex flex-col items-center gap-4">
-            <div className="w-12 h-12 border-4 border-gray-300 border-t-[var(--theme-primary)] rounded-full animate-spin"></div>
+            <div className="w-12 h-12 border-4 border-[var(--border-strong)] border-t-[var(--theme-primary)] rounded-full animate-spin"></div>
             <p className="text-white text-lg font-semibold">{t('signingOut')}</p>
           </div>
         </div>
@@ -349,7 +349,7 @@ export default function Navbar() {
 
           {isSessionLoading || (isAuthenticated && isUserDataLoading) ? (
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 border-2 border-gray-300 border-t-[var(--theme-primary)] rounded-full animate-spin"></div>
+              <div className="w-8 h-8 border-2 border-[var(--border-strong)] border-t-[var(--theme-primary)] rounded-full animate-spin"></div>
             </div>
           ) : isAuthenticated && !isUserDataLoading ? (
             <div className="flex items-center space-x-2 md:space-x-3">
@@ -563,7 +563,7 @@ export default function Navbar() {
                           {userData?.name || session?.user?.name || t('user')}
                         </p>
                         {userData?.lastfmUsername && (
-                          <p className="text-xs font-bold text-gray-400 truncate">
+                          <p className="text-xs font-bold text-[var(--text-muted)] truncate">
                             @{userData.lastfmUsername}
                           </p>
                         )}
@@ -760,7 +760,7 @@ export default function Navbar() {
                         <div className="min-w-0 flex-1">
                           <p className="text-white font-semibold truncate">{userData.name || session?.user?.name || t('user')}</p>
                           {userData.lastfmUsername && (
-                            <p className="text-gray-400 text-sm truncate">@{userData.lastfmUsername}</p>
+                            <p className="text-[var(--text-muted)] text-sm truncate">@{userData.lastfmUsername}</p>
                           )}
                         </div>
                       </div>
