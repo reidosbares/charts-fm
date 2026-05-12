@@ -962,7 +962,8 @@ export async function calculateConsecutiveStreaks(
   groupId: string,
   weekStart: Date,
   chartType?: 'artists' | 'tracks' | 'albums',
-  minStreak: number = 2
+  minStreak: number = 2,
+  currentMaxPosition?: number
 ): Promise<Array<{
   chartType: string
   entryKey: string
@@ -973,36 +974,38 @@ export async function calculateConsecutiveStreaks(
 }>> {
   const normalizedWeekStart = new Date(weekStart)
   normalizedWeekStart.setUTCHours(0, 0, 0, 0)
-  
+
   // Limit historical lookback to 52 weeks (1 year) for performance
   const maxLookbackWeeks = 52
   const lookbackDate = new Date(normalizedWeekStart)
   lookbackDate.setUTCDate(lookbackDate.getUTCDate() - (maxLookbackWeeks * 7))
-  
-  // Get current week's top 10 entries
+
+  // Get current week's chart entries; callers can restrict to the top-N via
+  // currentMaxPosition (e.g. obsession only considers the current top 10).
   const whereClause: any = {
     groupId,
     weekStart: normalizedWeekStart,
-    position: {
-      lte: 10,
-    },
   }
-  
+
   if (chartType) {
     whereClause.chartType = chartType
   }
-  
-  const currentTop10 = await prisma.groupChartEntry.findMany({
+
+  if (currentMaxPosition !== undefined) {
+    whereClause.position = { lte: currentMaxPosition }
+  }
+
+  const currentEntries = await prisma.groupChartEntry.findMany({
     where: whereClause,
   })
-  
-  if (currentTop10.length === 0) {
+
+  if (currentEntries.length === 0) {
     return []
   }
-  
+
   // Get entry keys grouped by chart type
   const entryKeysByType = new Map<string, Set<string>>()
-  for (const entry of currentTop10) {
+  for (const entry of currentEntries) {
     if (!entryKeysByType.has(entry.chartType)) {
       entryKeysByType.set(entry.chartType, new Set())
     }
@@ -1049,8 +1052,8 @@ export async function calculateConsecutiveStreaks(
     historicalByEntry.get(key)!.set(weekTime, histEntry.position)
   }
   
-  // Calculate consecutive streaks for each current top 10 entry
-  const streakCalculations = currentTop10.map((entry) => {
+  // Calculate consecutive streaks for each current chart entry
+  const streakCalculations = currentEntries.map((entry) => {
     let streak = 1 // Start with current week
     const key = `${entry.chartType}|${entry.entryKey}`
     const historicalByWeek = historicalByEntry.get(key) || new Map()
@@ -1083,10 +1086,18 @@ export async function calculateConsecutiveStreaks(
     }
   })
   
-  // Filter to only entries with streak >= minStreak and sort by streak length
+  // Keep the 10 longest streaks per chartType (matches the per-category UI)
+  const perTypeLimit = 10
+  const remainingPerType = new Map<string, number>()
   return streakCalculations
     .filter(({ streak }) => streak >= minStreak)
     .sort((a, b) => b.streak - a.streak)
+    .filter(({ entry }) => {
+      const left = remainingPerType.get(entry.chartType) ?? perTypeLimit
+      if (left <= 0) return false
+      remainingPerType.set(entry.chartType, left - 1)
+      return true
+    })
     .map(({ entry, streak }) => ({
       chartType: entry.chartType,
       entryKey: entry.entryKey,

@@ -34,12 +34,14 @@ export async function GET(
       const normalizedWeekStart = new Date(latestWeekStart)
       normalizedWeekStart.setUTCHours(0, 0, 0, 0)
       
-      // Calculate streaks for artists only, using shared function
+      // Calculate streaks for artists only, restricted to the current top 10
+      // (obsession should be a current heavy-hitter, not just a long-hanger)
       const artistStreaks = await calculateConsecutiveStreaks(
         group.id,
         normalizedWeekStart,
         'artists',
-        2 // Minimum 2 weeks
+        2, // Minimum 2 weeks
+        10 // Only consider artists currently in the top 10
       )
       
       if (artistStreaks.length > 0) {
