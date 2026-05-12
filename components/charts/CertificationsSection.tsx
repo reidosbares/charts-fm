@@ -273,8 +273,8 @@ export default function CertificationsSection({
   }
 
   return (
-    <div className="bg-white/40 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/30 overflow-visible">
-      <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-3 md:mb-4">
+    <div className="bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/30 dark:border-white/10 overflow-visible">
+      <h2 className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-3 md:mb-4">
         {t('title')}
       </h2>
 
@@ -473,7 +473,7 @@ export default function CertificationsSection({
       </div>
 
       {error && (
-        <div className="mt-2 text-xs text-red-500">{error}</div>
+        <div className="mt-2 text-xs text-red-500 dark:text-red-400">{error}</div>
       )}
 
       {/* Pulse and shimmer animations */}

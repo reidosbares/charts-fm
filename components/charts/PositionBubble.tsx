@@ -43,7 +43,7 @@ function PositionBubble({
     // Color based on position
     let colorClass: string
     if (isOut) {
-      colorClass = 'text-gray-600'
+      colorClass = 'text-[var(--text-secondary)]'
     } else if (position === 1) {
       colorClass = 'text-yellow-600'
     } else if (position === 2) {
@@ -51,7 +51,7 @@ function PositionBubble({
     } else if (position === 3) {
       colorClass = 'text-amber-600'
     } else {
-      colorClass = 'text-gray-700'
+      colorClass = 'text-[var(--text-secondary)]'
     }
 
     const formattedDate = formatWeekLabel(ref)

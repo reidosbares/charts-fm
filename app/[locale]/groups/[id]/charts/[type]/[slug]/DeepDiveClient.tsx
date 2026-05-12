@@ -267,7 +267,7 @@ export default function DeepDiveClient({
           {/* Image - left side */}
           {imageLinkUrl ? (
             <Link href={imageLinkUrl} className="flex-shrink-0 group touch-manipulation">
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-40 xl:h-40 rounded-lg sm:rounded-xl overflow-hidden shadow-md sm:shadow-lg hover:shadow-xl active:shadow-xl transition-all cursor-pointer ring-1 ring-black/10 bg-gray-100">
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-40 xl:h-40 rounded-lg sm:rounded-xl overflow-hidden shadow-md sm:shadow-lg hover:shadow-xl active:shadow-xl transition-all cursor-pointer ring-1 ring-black/10 dark:ring-white/10 bg-[var(--surface-base)]">
                 {imageUrl ? (
                   <SafeImage
                     src={imageUrl}
@@ -296,7 +296,7 @@ export default function DeepDiveClient({
             </Link>
           ) : (
             <div className="flex-shrink-0">
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-40 xl:h-40 rounded-lg sm:rounded-xl overflow-hidden shadow-md sm:shadow-lg ring-1 ring-black/10 bg-gray-100">
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-40 xl:h-40 rounded-lg sm:rounded-xl overflow-hidden shadow-md sm:shadow-lg ring-1 ring-black/10 dark:ring-white/10 bg-[var(--surface-base)]">
                 {imageUrl ? (
                   <SafeImage
                     src={imageUrl}
@@ -335,7 +335,7 @@ export default function DeepDiveClient({
               {entryName}
             </h1>
             {entryArtist && chartType !== 'artists' && (
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-600 mt-1 sm:mt-2 break-words">
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-[var(--text-secondary)] mt-1 sm:mt-2 break-words">
                 {chartType === 'tracks' ? t('track') : chartType === 'albums' ? t('album') : ''} {t('by')}{' '}
                 {artistSlug ? (
                   <Link
@@ -353,11 +353,11 @@ export default function DeepDiveClient({
         </div>
       ) : (
         <div className="text-center mb-2 sm:mb-3 md:mb-4 py-1 sm:py-2 overflow-visible">
-          <h1 
+          <h1
             className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold break-words"
-            style={{ 
-              lineHeight: '1.2', 
-              paddingBottom: '0.1em', 
+            style={{
+              lineHeight: '1.2',
+              paddingBottom: '0.1em',
               overflow: 'visible',
               backgroundImage: 'linear-gradient(to right, var(--theme-primary-darker), var(--theme-primary), var(--theme-primary-light))',
               WebkitBackgroundClip: 'text',
@@ -368,7 +368,7 @@ export default function DeepDiveClient({
             {entryName}
           </h1>
           {entryArtist && (
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-600 mt-1 sm:mt-2 break-words">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-[var(--text-secondary)] mt-1 sm:mt-2 break-words">
               {chartType === 'tracks' ? t('track') : chartType === 'albums' ? t('album') : ''} {t('by')}{' '}
               {artistSlug ? (
                 <Link
@@ -394,13 +394,13 @@ export default function DeepDiveClient({
 
       {/* Quick Stats - loaded asynchronously */}
       {loading ? (
-        <div className="bg-white/40 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
+        <div className="bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/30 dark:border-white/10" style={{ contain: 'layout style paint' }}>
           <div className="animate-pulse">
-            <div className="h-4 sm:h-5 md:h-6 bg-gray-200 rounded w-24 sm:w-32 md:w-48 mb-2 sm:mb-3 md:mb-4"></div>
+            <div className="h-4 sm:h-5 md:h-6 bg-gray-200 dark:bg-gray-700 rounded w-24 sm:w-32 md:w-48 mb-2 sm:mb-3 md:mb-4"></div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
-              <div className="h-12 sm:h-14 md:h-16 bg-gray-200 rounded"></div>
-              <div className="h-12 sm:h-14 md:h-16 bg-gray-200 rounded"></div>
-              <div className="h-12 sm:h-14 md:h-16 bg-gray-200 rounded sm:col-span-2 md:col-span-1"></div>
+              <div className="h-12 sm:h-14 md:h-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-12 sm:h-14 md:h-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-12 sm:h-14 md:h-16 bg-gray-200 dark:bg-gray-700 rounded sm:col-span-2 md:col-span-1"></div>
             </div>
           </div>
         </div>
@@ -418,12 +418,12 @@ export default function DeepDiveClient({
 
       {/* Stats Table - loaded asynchronously */}
       {loading ? (
-        <div className="bg-white/40 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
+        <div className="bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/30 dark:border-white/10" style={{ contain: 'layout style paint' }}>
           <div className="animate-pulse">
-            <div className="h-4 sm:h-5 md:h-6 bg-gray-200 rounded w-20 sm:w-24 md:w-32 mb-2 sm:mb-3 md:mb-4"></div>
+            <div className="h-4 sm:h-5 md:h-6 bg-gray-200 dark:bg-gray-700 rounded w-20 sm:w-24 md:w-32 mb-2 sm:mb-3 md:mb-4"></div>
             <div className="space-y-1.5 sm:space-y-2 md:space-y-3">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="h-8 sm:h-10 md:h-12 bg-gray-200 rounded"></div>
+                <div key={i} className="h-8 sm:h-10 md:h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
               ))}
             </div>
           </div>
@@ -477,13 +477,13 @@ export default function DeepDiveClient({
       {/* Artist Entries Table - only for artists, loaded asynchronously */}
       {isArtist && (
         loading ? (
-          <div className="bg-white/40 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
+          <div className="bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/30 dark:border-white/10" style={{ contain: 'layout style paint' }}>
             <div className="animate-pulse">
-              <div className="h-4 sm:h-5 md:h-6 bg-gray-200 rounded w-24 sm:w-32 md:w-48 mb-2 sm:mb-3 md:mb-4"></div>
-              <div className="h-6 sm:h-8 md:h-10 bg-gray-200 rounded mb-2 sm:mb-3 md:mb-4"></div>
+              <div className="h-4 sm:h-5 md:h-6 bg-gray-200 dark:bg-gray-700 rounded w-24 sm:w-32 md:w-48 mb-2 sm:mb-3 md:mb-4"></div>
+              <div className="h-6 sm:h-8 md:h-10 bg-gray-200 dark:bg-gray-700 rounded mb-2 sm:mb-3 md:mb-4"></div>
               <div className="space-y-1.5 sm:space-y-2 md:space-y-3">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-8 sm:h-10 md:h-12 bg-gray-200 rounded"></div>
+                  <div key={i} className="h-8 sm:h-10 md:h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
                 ))}
               </div>
             </div>
@@ -508,21 +508,21 @@ export default function DeepDiveClient({
           role="status"
           aria-live="polite"
         >
-          <div className="flex items-center gap-3 bg-white/95 backdrop-blur-md rounded-xl px-4 py-3 shadow-lg border border-[var(--theme-primary)]/20 max-w-xs">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--theme-primary)]/15 flex items-center justify-center">
+          <div className="flex items-center gap-3 bg-white/95 dark:bg-[var(--surface-card)] backdrop-blur-md rounded-xl px-4 py-3 shadow-lg border border-[rgb(var(--theme-primary-rgb)/0.2)] max-w-xs">
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[rgb(var(--theme-primary-rgb)/0.15)] flex items-center justify-center">
               <FontAwesomeIcon icon={faStar} className="text-[var(--theme-primary)] text-sm" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
+              <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                 {t('majorDriverClaimed', { name: newDriverNotification.name })}
               </p>
             </div>
             <button
               onClick={() => setNewDriverNotification(null)}
-              className="flex-shrink-0 p-1 rounded-full hover:bg-gray-100 transition-colors"
+              className="flex-shrink-0 p-1 rounded-full hover:bg-[var(--surface-base)] transition-colors"
               aria-label="Dismiss notification"
             >
-              <FontAwesomeIcon icon={faTimes} className="text-gray-400 text-xs" />
+              <FontAwesomeIcon icon={faTimes} className="text-[var(--text-muted)] text-xs" />
             </button>
           </div>
         </div>

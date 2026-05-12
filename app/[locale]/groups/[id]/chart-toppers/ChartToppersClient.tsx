@@ -85,9 +85,9 @@ function ChartTopperEntryImage({
   }, [chartType, name, artist, shouldLoad])
 
   return (
-    <div className="h-8 w-8 flex-shrink-0 overflow-hidden rounded-full bg-[var(--theme-primary)]/10 ring-1 ring-[var(--theme-border)]">
+    <div className="h-8 w-8 flex-shrink-0 overflow-hidden rounded-full bg-[rgb(var(--theme-primary-rgb)/0.1)] ring-1 ring-[var(--theme-border)]">
       {loading ? (
-        <div className="w-full h-full bg-gray-200 animate-pulse" />
+        <div className="w-full h-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
       ) : imageUrl ? (
         <SafeImage
           src={imageUrl}
@@ -95,7 +95,7 @@ function ChartTopperEntryImage({
           className="object-cover w-full h-full"
         />
       ) : (
-        <div className="w-full h-full bg-gray-200" />
+        <div className="w-full h-full bg-gray-200 dark:bg-gray-700" />
       )}
     </div>
   )
@@ -231,19 +231,18 @@ export default function ChartToppersClient({ groupId }: ChartToppersClientProps)
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-2xl md:text-3xl lg:text-4xl text-[var(--theme-primary)]" />
         </div>
       ) : error ? (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 md:p-6 text-center mx-2 md:mx-0">
-          <p className="text-red-700 text-sm md:text-base">{error}</p>
+        <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-xl p-4 md:p-6 text-center mx-2 md:mx-0">
+          <p className="text-red-700 dark:text-red-400 text-sm md:text-base">{error}</p>
         </div>
       ) : entries.length === 0 ? (
         <div className="bg-[var(--theme-background-from)] rounded-xl shadow-sm p-6 md:p-12 text-center border border-theme mx-2 md:mx-0">
-          <p className="text-gray-600 text-sm md:text-base">{t('noEntries')}</p>
+          <p className="text-[var(--text-secondary)] text-sm md:text-base">{t('noEntries')}</p>
         </div>
       ) : (
-        <div 
-          className="bg-white rounded-lg shadow-lg overflow-hidden mx-2 md:mx-0"
-          style={{ 
-            backgroundColor: '#ffffff', 
-            backdropFilter: 'none', 
+        <div
+          className="bg-[var(--surface-card)] rounded-lg shadow-lg overflow-hidden mx-2 md:mx-0"
+          style={{
+            backdropFilter: 'none',
             WebkitBackdropFilter: 'none',
             isolation: 'isolate',
             position: 'relative',
@@ -252,35 +251,35 @@ export default function ChartToppersClient({ groupId }: ChartToppersClientProps)
         >
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 sticky top-0 z-10">
+              <thead className="bg-[var(--surface-base)] sticky top-0 z-10">
                 <tr>
-                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-12 sm:w-16 md:w-20">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider w-12 sm:w-16 md:w-20">
                     <span className="md:hidden">{locale === 'pt' ? 'sem.' : t('week')}</span>
                     <span className="hidden md:inline">{t('week')}</span>
                   </th>
-                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-24 sm:w-28 md:w-36">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider w-24 sm:w-28 md:w-36">
                     {t('weekOf')}
                   </th>
-                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
                     {t('entry')}
                   </th>
-                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider w-14 sm:w-20 md:w-32">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider w-14 sm:w-20 md:w-32">
                     {t('plays')}
                   </th>
-                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider w-14 sm:w-20 md:w-32">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider w-14 sm:w-20 md:w-32">
                     {t('value')}
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-[var(--border-subtle)]">
                 {entries.slice(0, visibleImageCount).map((entry, index) => (
-                  <tr key={`${entry.weekStart}-${entry.entryKey}`} className="hover:bg-gray-50 transition-colors">
+                  <tr key={`${entry.weekStart}-${entry.entryKey}`} className="hover:bg-[var(--surface-base)] transition-colors">
                     <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm">
-                      <span className="text-gray-900 font-medium" title={entry.weekStartFormatted}>
+                      <span className="text-[var(--text-primary)] font-medium" title={entry.weekStartFormatted}>
                         {entries.length - index}
                       </span>
                     </td>
-                    <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-gray-700 whitespace-nowrap">
+                    <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-[var(--text-secondary)] whitespace-nowrap">
                       {entry.weekStartFormatted}
                     </td>
                     <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm">
@@ -294,13 +293,13 @@ export default function ChartToppersClient({ groupId }: ChartToppersClientProps)
                         <div className="min-w-0 max-w-[100px] sm:max-w-none">
                           <Link
                             href={getEntryLink(entry)}
-                            className="font-medium text-gray-900 hover:text-[var(--theme-primary-dark)] transition-colors block truncate"
+                            className="font-medium text-[var(--text-primary)] hover:text-[var(--theme-primary-dark)] transition-colors block truncate"
                             title={entry.name}
                           >
                             {entry.name}
                           </Link>
                           {entry.artist && (
-                            <div className="text-gray-500 text-xs mt-0.5 sm:mt-1 truncate" title={`by ${entry.artist}`}>
+                            <div className="text-[var(--text-muted)] text-xs mt-0.5 sm:mt-1 truncate" title={`by ${entry.artist}`}>
                               by {entry.artist}
                             </div>
                           )}
@@ -308,10 +307,10 @@ export default function ChartToppersClient({ groupId }: ChartToppersClientProps)
                       </div>
                     </td>
                     <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-right whitespace-nowrap">
-                      <span className="text-gray-900 font-medium">{entry.playcount.toLocaleString()}</span>
+                      <span className="text-[var(--text-primary)] font-medium">{entry.playcount.toLocaleString()}</span>
                     </td>
                     <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-right whitespace-nowrap">
-                      <span className="text-gray-900 font-medium">{formatValue(entry.value, entry.isVS)}</span>
+                      <span className="text-[var(--text-primary)] font-medium">{formatValue(entry.value, entry.isVS)}</span>
                     </td>
                   </tr>
                 ))}
@@ -323,13 +322,13 @@ export default function ChartToppersClient({ groupId }: ChartToppersClientProps)
                 {entries.slice(visibleImageCount).map((entry, index) => {
                   const globalIndex = visibleImageCount + index
                   return (
-                    <tr key={`${entry.weekStart}-${entry.entryKey}`} className="hover:bg-gray-50 transition-colors">
+                    <tr key={`${entry.weekStart}-${entry.entryKey}`} className="hover:bg-[var(--surface-base)] transition-colors">
                       <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm">
-                        <span className="text-gray-900 font-medium" title={entry.weekStartFormatted}>
+                        <span className="text-[var(--text-primary)] font-medium" title={entry.weekStartFormatted}>
                           {entries.length - globalIndex}
                         </span>
                       </td>
-                      <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-gray-700 whitespace-nowrap">
+                      <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-[var(--text-secondary)] whitespace-nowrap">
                         {entry.weekStartFormatted}
                       </td>
                       <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm">
@@ -343,13 +342,13 @@ export default function ChartToppersClient({ groupId }: ChartToppersClientProps)
                           <div className="min-w-0 max-w-[100px] sm:max-w-none">
                             <Link
                               href={getEntryLink(entry)}
-                              className="font-medium text-gray-900 hover:text-[var(--theme-primary-dark)] transition-colors block truncate"
+                              className="font-medium text-[var(--text-primary)] hover:text-[var(--theme-primary-dark)] transition-colors block truncate"
                               title={entry.name}
                             >
                               {entry.name}
                             </Link>
                             {entry.artist && (
-                              <div className="text-gray-500 text-xs mt-0.5 sm:mt-1 truncate" title={`by ${entry.artist}`}>
+                              <div className="text-[var(--text-muted)] text-xs mt-0.5 sm:mt-1 truncate" title={`by ${entry.artist}`}>
                                 by {entry.artist}
                               </div>
                             )}
@@ -357,10 +356,10 @@ export default function ChartToppersClient({ groupId }: ChartToppersClientProps)
                         </div>
                       </td>
                       <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-right whitespace-nowrap">
-                        <span className="text-gray-900 font-medium">{entry.playcount.toLocaleString()}</span>
+                        <span className="text-[var(--text-primary)] font-medium">{entry.playcount.toLocaleString()}</span>
                       </td>
                       <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-right whitespace-nowrap">
-                        <span className="text-gray-900 font-medium">{formatValue(entry.value, entry.isVS)}</span>
+                        <span className="text-[var(--text-primary)] font-medium">{formatValue(entry.value, entry.isVS)}</span>
                       </td>
                     </tr>
                   )

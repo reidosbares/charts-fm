@@ -122,15 +122,15 @@ function ChartHistoryTimeline({
 
   if (history.length === 0) {
     return (
-      <div className="bg-white/40 backdrop-blur-xl rounded-xl p-6 md:p-8 text-center border border-white/30">
-        <p className="text-sm md:text-base text-gray-600">{t('noHistory')}</p>
+      <div className="bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] backdrop-blur-xl rounded-xl p-6 md:p-8 text-center border border-white/30 dark:border-white/10">
+        <p className="text-sm md:text-base text-[var(--text-secondary)]">{t('noHistory')}</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/30" style={{ overflow: 'visible', contain: 'layout style paint' }}>
-      <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-4 md:mb-6">{t('title')}</h2>
+    <div className="bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/30 dark:border-white/10" style={{ overflow: 'visible', contain: 'layout style paint' }}>
+      <h2 className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-4 md:mb-6">{t('title')}</h2>
       <div className="relative" style={{ overflow: 'visible' }}>
         {/* Timeline items container with repeating lines on all rows */}
         {/* Mobile: line at 20-22px (center of 40-48px bubbles), repeat every 60px */}
@@ -158,7 +158,7 @@ function ChartHistoryTimeline({
                     isOut={item.isOut}
                   />
                   {item.isFirst && firstAppearanceDate && (
-                    <span className="absolute bottom-full mb-1 md:mb-2 left-1/2 -translate-x-1/2 text-[10px] md:text-xs text-gray-600 font-medium whitespace-nowrap">
+                    <span className="absolute bottom-full mb-1 md:mb-2 left-1/2 -translate-x-1/2 text-[10px] md:text-xs text-[var(--text-secondary)] font-medium whitespace-nowrap">
                       {formatChartWeekLabel(firstAppearanceDate)}
                     </span>
                   )}
@@ -171,8 +171,8 @@ function ChartHistoryTimeline({
                   content={item.gapWeeks === 1 ? t('outFor', { count: item.gapWeeks }) : t('outForPlural', { count: item.gapWeeks })}
                   position="top"
                 >
-                  <div 
-                    className="px-1 md:px-2 text-[10px] md:text-xs text-gray-500 cursor-help"
+                  <div
+                    className="px-1 md:px-2 text-[10px] md:text-xs text-[var(--text-muted)] cursor-help"
                     style={{ contain: 'layout style' }}
                   >
                     ⏸ {item.gapWeeks}

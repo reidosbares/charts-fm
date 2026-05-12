@@ -125,8 +125,8 @@ export default async function ChartsPage({
             ]}
             subheader={t('title')}
           />
-          <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-            <p className="text-gray-600 mb-4">{t('noChartsAvailable')}</p>
+          <div className="bg-[var(--surface-card)] rounded-lg shadow-sm p-8 text-center">
+            <p className="text-[var(--text-secondary)] mb-4">{t('noChartsAvailable')}</p>
           </div>
         </div>
       </main>
@@ -173,7 +173,7 @@ export default async function ChartsPage({
           subheader={
             <>
               {t('weekOf', { date: chartWeekFormatted })}
-              <span className="text-xs italic text-gray-500 ml-1">
+              <span className="text-xs italic text-[var(--text-muted)] ml-1">
                 {t('fromTo', { start: weekStartFormatted, end: weekEndFormatted })}
               </span>
             </>

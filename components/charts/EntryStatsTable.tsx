@@ -62,7 +62,7 @@ function EntryStatsTable({ stats, certificationCounts }: EntryStatsTableProps) {
     return (
       <>
         {formattedDate}
-        <span className="text-gray-500 font-normal">
+        <span className="text-[var(--text-muted)] font-normal">
           {' '}({weeksAgo === 1 ? t('weeksAgo', { count: weeksAgo }) : t('weeksAgoPlural', { count: weeksAgo })})
         </span>
       </>
@@ -110,7 +110,7 @@ function EntryStatsTable({ stats, certificationCounts }: EntryStatsTableProps) {
         <>
           {`${stats.longestStreak} ${stats.longestStreak !== 1 ? t('weeks') : t('week')}${stats.isStreakOngoing ? ' 🔥' : ''}`}
           {formatStreakDates(stats.longestStreakStartDate, stats.longestStreakEndDate) && (
-            <span className="text-gray-500 font-normal">
+            <span className="text-[var(--text-muted)] font-normal">
               {' '}({formatStreakDates(stats.longestStreakStartDate, stats.longestStreakEndDate)})
             </span>
           )}
@@ -128,26 +128,26 @@ function EntryStatsTable({ stats, certificationCounts }: EntryStatsTableProps) {
   ], [stats, t, formatDaysAgo, formatDebutDate])
 
   return (
-    <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/30" style={{ contain: 'layout style paint' }}>
-      <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-4">{t('title')}</h2>
+    <div className="bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/30 dark:border-white/10" style={{ contain: 'layout style paint' }}>
+      <h2 className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-4">{t('title')}</h2>
       <table className="w-full">
-        <tbody className="divide-y divide-gray-200/50">
+        <tbody className="divide-y divide-[var(--border-subtle)]">
           {tableData.map((row, index) => (
-            <tr key={index} className="hover:bg-white/20 transition-colors">
-              <td className="py-2 md:py-3 px-2 md:px-4 text-sm font-medium text-gray-700 w-1/2">
+            <tr key={index} className="hover:bg-white/20 dark:hover:bg-white/5 transition-colors">
+              <td className="py-2 md:py-3 px-2 md:px-4 text-sm font-medium text-[var(--text-secondary)] w-1/2">
                 {row.label}
               </td>
-              <td className="py-2 md:py-3 px-2 md:px-4 text-sm text-gray-900 font-semibold">
+              <td className="py-2 md:py-3 px-2 md:px-4 text-sm text-[var(--text-primary)] font-semibold">
                 {row.value}
               </td>
             </tr>
           ))}
           {certificationCounts && (
-            <tr className="hover:bg-white/20 transition-colors">
-              <td className="py-2 md:py-3 px-2 md:px-4 text-sm font-medium text-gray-700 w-1/2">
+            <tr className="hover:bg-white/20 dark:hover:bg-white/5 transition-colors">
+              <td className="py-2 md:py-3 px-2 md:px-4 text-sm font-medium text-[var(--text-secondary)] w-1/2">
                 {t('certifications')}
               </td>
-              <td className="py-2 md:py-3 px-2 md:px-4 text-sm text-gray-900 font-semibold">
+              <td className="py-2 md:py-3 px-2 md:px-4 text-sm text-[var(--text-primary)] font-semibold">
                 <span className="inline-flex items-center gap-3">
                   {(['diamond', 'platinum', 'gold'] as const).map(tier => (
                     <span key={tier} className="inline-flex items-center gap-1">

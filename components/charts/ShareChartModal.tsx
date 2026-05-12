@@ -346,7 +346,7 @@ export default function ShareChartModal({
       {/* Modal */}
       <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 md:p-4 pointer-events-none">
         <div 
-          className="bg-white rounded-lg shadow-2xl w-full max-h-[90vh] overflow-y-auto pointer-events-auto max-w-[calc(100vw-1.5rem)] md:max-w-md"
+          className="bg-[var(--surface-card)] rounded-lg shadow-2xl w-full max-h-[90vh] overflow-y-auto pointer-events-auto max-w-[calc(100vw-1.5rem)] md:max-w-md"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="p-4 md:p-6">
@@ -355,7 +355,7 @@ export default function ShareChartModal({
               <h2 className="text-lg md:text-2xl font-bold pr-2">{t('shareChart')}</h2>
               <button
                 onClick={onClose}
-                className="text-gray-500 hover:text-gray-700 active:text-gray-900 text-xl md:text-2xl leading-none w-8 h-8 md:w-8 md:h-8 flex items-center justify-center flex-shrink-0 touch-manipulation"
+                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] active:text-[var(--text-primary)] text-xl md:text-2xl leading-none w-8 h-8 md:w-8 md:h-8 flex items-center justify-center flex-shrink-0 touch-manipulation"
                 aria-label="Close"
               >
                 <FontAwesomeIcon icon={faXmark} />
@@ -364,7 +364,7 @@ export default function ShareChartModal({
 
             {/* Chart Type Selection */}
             <div className="mb-4 md:mb-6">
-              <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2 md:mb-3">
+              <label className="block text-xs md:text-sm font-medium text-[var(--text-secondary)] mb-2 md:mb-3">
                 {t('selectChartType')}
               </label>
               <div className="grid grid-cols-3 gap-1.5 md:gap-2">
@@ -375,8 +375,8 @@ export default function ShareChartModal({
                     disabled={isLoading}
                     className={`p-2 md:p-3 rounded-lg border-2 transition-all touch-manipulation ${
                       selectedChartType === type
-                        ? 'border-[var(--theme-primary)] bg-[var(--theme-primary-lighter)]/20'
-                        : 'border-gray-300 active:border-gray-400'
+                        ? 'border-[var(--theme-primary)] bg-[rgb(var(--theme-primary-lighter-rgb)/0.2)]'
+                        : 'border-[var(--border-strong)] active:border-[var(--border-strong)]'
                     } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <FontAwesomeIcon
@@ -384,13 +384,13 @@ export default function ShareChartModal({
                       className={`text-base md:text-lg mb-1 md:mb-2 ${
                         selectedChartType === type
                           ? 'text-[var(--theme-primary)]'
-                          : 'text-gray-500'
+                          : 'text-[var(--text-muted)]'
                       }`}
                     />
                     <div className={`text-[10px] md:text-xs font-medium ${
                       selectedChartType === type
                         ? 'text-[var(--theme-primary-dark)]'
-                        : 'text-gray-600'
+                        : 'text-[var(--text-secondary)]'
                     }`}>
                       {chartTypeLabels[type]}
                     </div>
@@ -401,7 +401,7 @@ export default function ShareChartModal({
 
             {/* Format Selection */}
             <div className="mb-4 md:mb-6">
-              <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2 md:mb-3">
+              <label className="block text-xs md:text-sm font-medium text-[var(--text-secondary)] mb-2 md:mb-3">
                 {t('selectFormat')}
               </label>
               <div className="grid grid-cols-2 gap-1.5 md:gap-2">
@@ -410,14 +410,14 @@ export default function ShareChartModal({
                   disabled={isLoading}
                   className={`p-2 md:p-3 rounded-lg border-2 transition-all touch-manipulation ${
                     imageFormat === 'vertical'
-                      ? 'border-[var(--theme-primary)] bg-[var(--theme-primary-lighter)]/20'
-                      : 'border-gray-300 active:border-gray-400'
+                      ? 'border-[var(--theme-primary)] bg-[rgb(var(--theme-primary-lighter-rgb)/0.2)]'
+                      : 'border-[var(--border-strong)] active:border-[var(--border-strong)]'
                   } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <div className={`text-xs md:text-sm font-medium ${
                     imageFormat === 'vertical'
                       ? 'text-[var(--theme-primary-dark)]'
-                      : 'text-gray-600'
+                      : 'text-[var(--text-secondary)]'
                   }`}>
                     {t('formatVertical')}
                   </div>
@@ -427,14 +427,14 @@ export default function ShareChartModal({
                   disabled={isLoading}
                   className={`p-2 md:p-3 rounded-lg border-2 transition-all touch-manipulation ${
                     imageFormat === 'square'
-                      ? 'border-[var(--theme-primary)] bg-[var(--theme-primary-lighter)]/20'
-                      : 'border-gray-300 active:border-gray-400'
+                      ? 'border-[var(--theme-primary)] bg-[rgb(var(--theme-primary-lighter-rgb)/0.2)]'
+                      : 'border-[var(--border-strong)] active:border-[var(--border-strong)]'
                   } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <div className={`text-xs md:text-sm font-medium ${
                     imageFormat === 'square'
                       ? 'text-[var(--theme-primary-dark)]'
-                      : 'text-gray-600'
+                      : 'text-[var(--text-secondary)]'
                   }`}>
                     {t('formatSquare')}
                   </div>
@@ -448,7 +448,7 @@ export default function ShareChartModal({
                 <button
                   onClick={() => setShowMoreOptions(!showMoreOptions)}
                   disabled={isLoading}
-                  className="w-full flex items-center justify-end gap-1.5 text-xs md:text-sm text-gray-600 hover:text-gray-800 underline transition-colors touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-end gap-1.5 text-xs md:text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline transition-colors touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <FontAwesomeIcon
                     icon={showMoreOptions ? faChevronUp : faChevronDown}
@@ -463,7 +463,7 @@ export default function ShareChartModal({
                   <div className="mt-3 space-y-4 md:space-y-6">
                     {/* Overlay Type Selection */}
                     <div>
-                      <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2 md:mb-3">
+                      <label className="block text-xs md:text-sm font-medium text-[var(--text-secondary)] mb-2 md:mb-3">
                         {t('selectOverlay')}
                       </label>
                       <div className="grid grid-cols-4 gap-1.5 md:gap-2">
@@ -472,14 +472,14 @@ export default function ShareChartModal({
                           disabled={isLoading}
                           className={`p-2 md:p-3 rounded-lg border-2 transition-all touch-manipulation ${
                             overlayType === 'position'
-                              ? 'border-[var(--theme-primary)] bg-[var(--theme-primary-lighter)]/20'
-                              : 'border-gray-300 active:border-gray-400'
+                              ? 'border-[var(--theme-primary)] bg-[rgb(var(--theme-primary-lighter-rgb)/0.2)]'
+                              : 'border-[var(--border-strong)] active:border-[var(--border-strong)]'
                           } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                           <div className={`text-xs md:text-sm font-medium ${
                             overlayType === 'position'
                               ? 'text-[var(--theme-primary-dark)]'
-                              : 'text-gray-600'
+                              : 'text-[var(--text-secondary)]'
                           }`}>
                             {t('overlayPosition')}
                           </div>
@@ -489,14 +489,14 @@ export default function ShareChartModal({
                           disabled={isLoading}
                           className={`p-2 md:p-3 rounded-lg border-2 transition-all touch-manipulation ${
                             overlayType === 'plays'
-                              ? 'border-[var(--theme-primary)] bg-[var(--theme-primary-lighter)]/20'
-                              : 'border-gray-300 active:border-gray-400'
+                              ? 'border-[var(--theme-primary)] bg-[rgb(var(--theme-primary-lighter-rgb)/0.2)]'
+                              : 'border-[var(--border-strong)] active:border-[var(--border-strong)]'
                           } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                           <div className={`text-xs md:text-sm font-medium ${
                             overlayType === 'plays'
                               ? 'text-[var(--theme-primary-dark)]'
-                              : 'text-gray-600'
+                              : 'text-[var(--text-secondary)]'
                           }`}>
                             {t('overlayPlays')}
                           </div>
@@ -506,14 +506,14 @@ export default function ShareChartModal({
                           disabled={isLoading}
                           className={`p-2 md:p-3 rounded-lg border-2 transition-all touch-manipulation ${
                             overlayType === 'vs'
-                              ? 'border-[var(--theme-primary)] bg-[var(--theme-primary-lighter)]/20'
-                              : 'border-gray-300 active:border-gray-400'
+                              ? 'border-[var(--theme-primary)] bg-[rgb(var(--theme-primary-lighter-rgb)/0.2)]'
+                              : 'border-[var(--border-strong)] active:border-[var(--border-strong)]'
                           } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                           <div className={`text-xs md:text-sm font-medium ${
                             overlayType === 'vs'
                               ? 'text-[var(--theme-primary-dark)]'
-                              : 'text-gray-600'
+                              : 'text-[var(--text-secondary)]'
                           }`}>
                             {t('overlayVS')}
                           </div>
@@ -523,14 +523,14 @@ export default function ShareChartModal({
                           disabled={isLoading}
                           className={`p-2 md:p-3 rounded-lg border-2 transition-all touch-manipulation ${
                             overlayType === 'none'
-                              ? 'border-[var(--theme-primary)] bg-[var(--theme-primary-lighter)]/20'
-                              : 'border-gray-300 active:border-gray-400'
+                              ? 'border-[var(--theme-primary)] bg-[rgb(var(--theme-primary-lighter-rgb)/0.2)]'
+                              : 'border-[var(--border-strong)] active:border-[var(--border-strong)]'
                           } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                           <div className={`text-xs md:text-sm font-medium ${
                             overlayType === 'none'
                               ? 'text-[var(--theme-primary-dark)]'
-                              : 'text-gray-600'
+                              : 'text-[var(--text-secondary)]'
                           }`}>
                             {t('overlayNone')}
                           </div>
@@ -551,7 +551,7 @@ export default function ShareChartModal({
 
                     {/* Grid Size Selection */}
                     <div>
-                      <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2 md:mb-3">
+                      <label className="block text-xs md:text-sm font-medium text-[var(--text-secondary)] mb-2 md:mb-3">
                         {t('gridSize')}
                       </label>
                       <div className="grid grid-cols-3 gap-1.5 md:gap-2">
@@ -564,15 +564,15 @@ export default function ShareChartModal({
                               disabled={isLoading || isDisabled}
                               className={`p-2 md:p-3 rounded-lg border-2 transition-all touch-manipulation ${
                                 gridSize === size
-                                  ? 'border-[var(--theme-primary)] bg-[var(--theme-primary-lighter)]/20'
-                                  : 'border-gray-300 active:border-gray-400'
+                                  ? 'border-[var(--theme-primary)] bg-[rgb(var(--theme-primary-lighter-rgb)/0.2)]'
+                                  : 'border-[var(--border-strong)] active:border-[var(--border-strong)]'
                               } ${isLoading || isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                               title={isDisabled ? t('gridSizeRestricted') : ''}
                             >
                               <div className={`text-xs md:text-sm font-medium ${
                                 gridSize === size
                                   ? 'text-[var(--theme-primary-dark)]'
-                                  : 'text-gray-600'
+                                  : 'text-[var(--text-secondary)]'
                               }`}>
                                 {size}
                               </div>
@@ -588,18 +588,18 @@ export default function ShareChartModal({
 
             {/* Preview Area */}
             <div className="mb-4 md:mb-6">
-              <div className="relative w-full max-h-48 md:max-h-64 bg-gray-100 rounded-lg border-2 border-gray-300 flex items-center justify-center overflow-hidden" style={{ aspectRatio: imageFormat === 'square' ? '1/1' : '9/16' }}>
+              <div className="relative w-full max-h-48 md:max-h-64 bg-[var(--surface-base)] rounded-lg border-2 border-[var(--border-strong)] flex items-center justify-center overflow-hidden" style={{ aspectRatio: imageFormat === 'square' ? '1/1' : '9/16' }}>
                 {/* Refresh Button - only show when image is cached */}
                 {previewUrl && !isLoading && (
                   <button
                     onClick={handleRefresh}
-                    className="absolute top-1.5 right-1.5 md:top-2 md:right-2 p-1.5 md:p-2 bg-white/90 active:bg-white rounded-full shadow-md transition-colors z-10 touch-manipulation"
+                    className="absolute top-1.5 right-1.5 md:top-2 md:right-2 p-1.5 md:p-2 bg-white/90 dark:bg-[var(--surface-elevated)] active:bg-white rounded-full shadow-md transition-colors z-10 touch-manipulation"
                     title={t('refreshImage') || 'Refresh image'}
                     aria-label={t('refreshImage') || 'Refresh image'}
                   >
                     <FontAwesomeIcon
                       icon={faRotateRight}
-                      className="text-gray-700 text-xs md:text-sm"
+                      className="text-[var(--text-secondary)] text-xs md:text-sm"
                     />
                   </button>
                 )}
@@ -609,7 +609,7 @@ export default function ShareChartModal({
                       icon={faSpinner}
                       className="text-3xl md:text-4xl text-[var(--theme-primary)] animate-spin"
                     />
-                    <p className="text-xs md:text-sm text-gray-600">{t('generatingImage')}</p>
+                    <p className="text-xs md:text-sm text-[var(--text-secondary)]">{t('generatingImage')}</p>
                   </div>
                 ) : previewUrl ? (
                   <Image
@@ -621,7 +621,7 @@ export default function ShareChartModal({
                   />
                 ) : (
                   <div className="flex flex-col items-center justify-center gap-2 md:gap-3 p-4 md:p-6">
-                    <p className="text-xs md:text-sm text-gray-600 text-center mb-1 md:mb-2">
+                    <p className="text-xs md:text-sm text-[var(--text-secondary)] text-center mb-1 md:mb-2">
                       {t('previewPlaceholder')}
                     </p>
                     <LiquidGlassButton
@@ -639,7 +639,7 @@ export default function ShareChartModal({
 
             {/* Action Buttons */}
             <div className="space-y-2 md:space-y-3">
-              <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1.5 md:mb-2">
+              <label className="block text-xs md:text-sm font-medium text-[var(--text-secondary)] mb-1.5 md:mb-2">
                 {t('shareOptions')}
               </label>
               

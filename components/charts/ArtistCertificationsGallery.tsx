@@ -239,7 +239,7 @@ function GalleryPlaque({ cert, entry, groupId }: {
       </div>
 
       {/* Entry name below plaque */}
-      <div className="mt-1.5 text-xs text-center text-gray-700 group-hover:text-[var(--theme-primary-dark)] transition-colors line-clamp-2 w-full">
+      <div className="mt-1.5 text-xs text-center text-[var(--text-secondary)] group-hover:text-[var(--theme-primary-dark)] transition-colors line-clamp-2 w-full">
         {entry.name}
       </div>
     </Link>
@@ -283,8 +283,8 @@ const ArtistCertificationsGallery = memo(function ArtistCertificationsGallery({
   if (plaques.length === 0) return null
 
   return (
-    <div className="bg-white/40 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/30 overflow-visible">
-      <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-3 md:mb-4">
+    <div className="bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/30 dark:border-white/10 overflow-visible">
+      <h2 className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-3 md:mb-4">
         {t('title')}
       </h2>
 
