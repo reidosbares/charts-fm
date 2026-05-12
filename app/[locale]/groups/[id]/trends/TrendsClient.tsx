@@ -941,13 +941,13 @@ export default function TrendsClient({ trends, groupId, userId }: TrendsClientPr
 
       {/* Call to Action - View Detailed Charts */}
       {trends.weekStart && (
-        <div className="bg-gradient-to-r from-[var(--theme-primary-light)] to-[var(--theme-primary-lighter)] rounded-xl shadow-sm p-4 md:p-6 border border-theme">
+        <div className="bg-gradient-to-r from-[var(--theme-primary-light)] to-[var(--theme-primary-lighter)] dark:from-[var(--theme-primary-lighter)] dark:to-[var(--surface-card)] rounded-xl shadow-sm p-4 md:p-6 border border-theme dark:border-transparent">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
             <div className="flex-1">
               <h3 className="text-lg md:text-xl font-bold text-[var(--theme-primary-dark)] mb-1 md:mb-2">
                 {t('seeHowWeekPlayedOut')}
               </h3>
-              <p className="text-[var(--text-secondary)] text-xs md:text-sm">
+              <p className="text-[var(--text-secondary)] dark:text-[var(--text-primary)] text-xs md:text-sm">
                 {t('exploreCompleteCharts')}
               </p>
             </div>
