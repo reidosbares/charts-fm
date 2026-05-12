@@ -41,7 +41,7 @@ export default function GroupPageHero({ group, breadcrumbs, subheader, actionBut
         </nav>
         <div className="flex items-center gap-2 md:gap-3">
           <div className={`relative flex-shrink-0 ${narrow ? 'w-8 h-8 md:w-10 md:h-10' : 'w-10 h-10 md:w-12 md:h-12'}`}>
-            <div className={`${narrow ? 'w-8 h-8 md:w-10 md:h-10' : 'w-10 h-10 md:w-12 md:h-12'} rounded-lg overflow-hidden shadow-md ring-2 ring-[var(--theme-ring)]/30 bg-[var(--theme-primary-lighter)]`}>
+            <div className={`${narrow ? 'w-8 h-8 md:w-10 md:h-10' : 'w-10 h-10 md:w-12 md:h-12'} rounded-lg overflow-hidden shadow-sm ring-1 ring-black/10 bg-[var(--theme-primary-lighter)]`}>
               <SafeImage
                 src={group.image}
                 alt={group.name}

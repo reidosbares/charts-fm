@@ -510,7 +510,7 @@ export default function Navbar() {
                     e.currentTarget.style.filter = ''
                   }}
                 >
-                  <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border-2 border-yellow-500">
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-white/15 shadow-sm">
                     <SafeImage
                       src={userData?.image}
                       alt={userData?.name || t('user')}
@@ -750,7 +750,7 @@ export default function Navbar() {
                       aria-label={t('publicProfile')}
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border-2 border-yellow-500">
+                        <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-white/15 shadow-sm">
                           <SafeImage
                             src={userData.image}
                             alt={userData.name || t('user')}

@@ -876,7 +876,7 @@ export default function RecordsClient({ groupId, initialRecords, memberCount, is
                   href={`/u/${encodeURIComponent(records.mostWeeksAsMVP.lastfmUsername || records.mostWeeksAsMVP.name)}`}
                   className="flex items-center gap-4 md:gap-5 p-4 rounded-xl bg-white/80 border border-theme hover:border-[var(--theme-primary)]/50 transition-all"
                 >
-                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[var(--theme-primary)]/50 bg-[var(--theme-primary)]/10">
+                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/10 bg-[var(--theme-primary)]/10 shadow-sm">
                     <SafeImage
                       src={records.mostWeeksAsMVP.image || ''}
                       alt={records.mostWeeksAsMVP.name}

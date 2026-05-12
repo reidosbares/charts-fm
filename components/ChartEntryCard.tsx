@@ -54,24 +54,13 @@ export default function ChartEntryCard({
 
   // Use accent color if provided, otherwise use theme primary
   const iconColorClass = accentColor || 'text-[var(--theme-primary)]'
-  
-  // Extract color name from accentColor for ring (e.g., "text-purple-600" -> "ring-purple-300")
-  const getRingColor = () => {
-    if (!accentColor) return 'ring-[var(--theme-primary)]/30'
-    // Extract color from classes like "text-purple-600" -> "purple"
-    const match = accentColor.match(/text-(\w+)-/)
-    if (match) {
-      return `ring-${match[1]}-300/30`
-    }
-    return 'ring-[var(--theme-primary)]/30'
-  }
-  
+
   // Render icon, user image, or artist/track/album image
   const showEntryImage = entryImage !== undefined && (chartType === 'artists' || chartType === 'tracks' || chartType === 'albums')
   const entryImageShapeClass = imageShape === 'roundedSquare' ? 'rounded-lg' : 'rounded-full'
 
   const iconContent = chartType === 'user' ? (
-    <div className={`relative w-10 h-10 rounded-full ring-2 ${getRingColor()} bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden`}>
+    <div className="relative w-12 h-12 rounded-full ring-1 ring-black/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden">
       <SafeImage
         src={userImage}
         alt={name}
@@ -79,7 +68,7 @@ export default function ChartEntryCard({
       />
     </div>
   ) : showEntryImage ? (
-    <div className={`relative w-10 h-10 ring-2 ${getRingColor()} bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden flex items-center justify-center ${entryImageShapeClass}`}>
+    <div className={`relative w-12 h-12 ring-1 ring-black/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden flex items-center justify-center ${entryImageShapeClass}`}>
       {entryImage ? (
         <SafeImage
           src={entryImage}

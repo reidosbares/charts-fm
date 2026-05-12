@@ -285,7 +285,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
                   href={`/u/${encodeURIComponent(memberSpotlight.lastfmUsername)}`}
                   className="flex items-center gap-3 md:gap-4 hover:opacity-90 transition-opacity min-w-0"
                 >
-                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)]">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/10 shadow-sm bg-[var(--theme-primary-lighter)]">
                     <SafeImage
                       src={memberSpotlight.image}
                       alt={memberSpotlight.name}
@@ -296,7 +296,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
                 </Link>
               ) : (
                 <>
-                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)]">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/10 shadow-sm bg-[var(--theme-primary-lighter)]">
                     <SafeImage
                       src={memberSpotlight.image}
                       alt={memberSpotlight.name}
@@ -371,7 +371,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
               </div>
               <div className="flex items-center gap-2 md:gap-4">
                 {biggestClimberImage ? (
-                  <div className="w-14 h-14 md:w-20 md:h-20 rounded-lg overflow-hidden flex-shrink-0 bg-[var(--theme-primary-lighter)] ring-2 ring-[var(--theme-border)]">
+                  <div className="w-14 h-14 md:w-20 md:h-20 rounded-lg overflow-hidden flex-shrink-0 bg-[var(--theme-primary-lighter)] ring-1 ring-black/10 shadow-sm">
                     <SafeImage src={biggestClimberImage} alt={biggestClimbers[0].name} className="object-cover w-full h-full" />
                   </div>
                 ) : (

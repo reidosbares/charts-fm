@@ -86,7 +86,7 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
               {member.user.lastfmUsername ? (
                 <Link
                   href={`/u/${encodeURIComponent(member.user.lastfmUsername)}`}
-                  className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden block hover:opacity-90 transition-opacity"
+                  className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-1 ring-black/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden block hover:opacity-90 transition-opacity"
                 >
                   <SafeImage
                     src={member.user.image}
@@ -95,7 +95,7 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
                   />
                 </Link>
               ) : (
-                <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden">
+                <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-1 ring-black/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden">
                   <SafeImage
                     src={member.user.image}
                     alt={member.user.name || member.user.lastfmUsername}
@@ -152,7 +152,7 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
               {invite.user.lastfmUsername ? (
                 <Link
                   href={`/u/${encodeURIComponent(invite.user.lastfmUsername)}`}
-                  className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden block hover:opacity-90 transition-opacity"
+                  className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-1 ring-black/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden block hover:opacity-90 transition-opacity"
                 >
                   <SafeImage
                     src={invite.user.image}
@@ -161,7 +161,7 @@ export default function GroupMembersTab({ groupId }: GroupMembersTabProps) {
                   />
                 </Link>
               ) : (
-                <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden">
+                <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-1 ring-black/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden">
                   <SafeImage
                     src={invite.user.image}
                     alt={invite.user.name || invite.user.lastfmUsername}

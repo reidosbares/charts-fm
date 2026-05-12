@@ -41,7 +41,7 @@ const GroupCard = memo(({ group, t }: { group: GroupQuickView; t: any }) => {
       className={`block bg-gradient-to-br from-[var(--theme-background-from)] to-[var(--theme-background-to)] rounded-xl p-3 md:p-4 border border-[var(--theme-border)] hover:shadow-md transition-all ${themeClass}`}
     >
       <div className="flex items-start gap-2 md:gap-3 mb-2 md:mb-3">
-        <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg overflow-hidden ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)]">
+        <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg overflow-hidden ring-1 ring-black/10 shadow-sm bg-[var(--theme-primary-lighter)]">
           <SafeImage
             src={groupImage}
             alt={group.name}

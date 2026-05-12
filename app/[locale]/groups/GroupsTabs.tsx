@@ -113,7 +113,7 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
         )}
         <div className="flex items-start gap-3 md:gap-4 mb-3 md:mb-4">
           <div className="relative w-16 h-16 md:w-20 md:h-20 flex-shrink-0">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] transition-all">
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden ring-1 ring-black/10 shadow-sm bg-[var(--theme-primary-lighter)] transition-all">
               <SafeImage
                 src={groupImage}
                 alt={group.name}

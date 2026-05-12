@@ -319,7 +319,7 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
                     className="flex flex-col items-center gap-1.5 group min-w-0"
                     title={holder.name}
                   >
-                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[var(--theme-border)] group-hover:ring-[var(--theme-primary)] transition-all bg-[var(--theme-primary-lighter)]">
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/10 shadow-sm group-hover:shadow-md transition-shadow bg-[var(--theme-primary-lighter)]">
                       <SafeImage
                         src={holder.image || ''}
                         alt={holder.name}
@@ -460,7 +460,7 @@ export default function GroupAllTimeTab({ groupId, isOwner, userId, memberCount 
                 href={`/u/${encodeURIComponent(recordsData.mostWeeksAsMVP.lastfmUsername || recordsData.mostWeeksAsMVP.name)}`}
                 className="flex items-center gap-4 md:gap-5 p-4 rounded-xl bg-white/80 border border-[var(--theme-border)] hover:border-[var(--theme-primary)]/50 transition-all"
               >
-                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[var(--theme-primary)]/50 bg-[var(--theme-primary-lighter)]">
+                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/10 shadow-sm bg-[var(--theme-primary-lighter)]">
                   <SafeImage
                     src={recordsData.mostWeeksAsMVP.image || ''}
                     alt={recordsData.mostWeeksAsMVP.name}

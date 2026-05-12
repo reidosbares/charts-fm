@@ -138,7 +138,7 @@ export default function OtherGroupsSection({
                 slideDirection === 'right' ? 'animate-slide-in-from-right' : 'animate-slide-in-from-left'
               }`}
             >
-              <div className="relative flex-shrink-0 w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-xl sm:rounded-2xl overflow-hidden border-2 border-white/50 bg-gray-100 shadow-inner ring-1 ring-black/5">
+              <div className="relative flex-shrink-0 w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-xl sm:rounded-2xl overflow-hidden ring-1 ring-black/10 bg-gray-100 shadow-sm">
                 {currentGroup.image ? (
                   <SafeImage
                     src={currentGroup.image}

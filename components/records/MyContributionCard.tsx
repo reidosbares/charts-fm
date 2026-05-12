@@ -118,7 +118,7 @@ export default function MyContributionCard({ groupId, userId }: MyContributionCa
               {selectedMember && (
                 <Link
                   href={`/u/${encodeURIComponent(selectedMember.user.lastfmUsername)}`}
-                  className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] flex-shrink-0 overflow-hidden hover:opacity-90 transition-opacity"
+                  className="relative w-10 h-10 md:w-12 md:h-12 rounded-full ring-1 ring-black/10 bg-[var(--theme-primary-lighter)] shadow-sm flex-shrink-0 overflow-hidden hover:opacity-90 transition-opacity"
                 >
                   <SafeImage
                     src={selectedMember.user.image}

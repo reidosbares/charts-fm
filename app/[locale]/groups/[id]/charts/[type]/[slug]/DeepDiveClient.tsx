@@ -267,7 +267,7 @@ export default function DeepDiveClient({
           {/* Image - left side */}
           {imageLinkUrl ? (
             <Link href={imageLinkUrl} className="flex-shrink-0 group touch-manipulation">
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-40 xl:h-40 rounded-lg sm:rounded-xl overflow-hidden shadow-md sm:shadow-lg hover:shadow-xl active:shadow-xl transition-all cursor-pointer border-2 border-white/20 bg-gray-100">
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-40 xl:h-40 rounded-lg sm:rounded-xl overflow-hidden shadow-md sm:shadow-lg hover:shadow-xl active:shadow-xl transition-all cursor-pointer ring-1 ring-black/10 bg-gray-100">
                 {imageUrl ? (
                   <SafeImage
                     src={imageUrl}
@@ -296,7 +296,7 @@ export default function DeepDiveClient({
             </Link>
           ) : (
             <div className="flex-shrink-0">
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-40 xl:h-40 rounded-lg sm:rounded-xl overflow-hidden shadow-md sm:shadow-lg border-2 border-white/20 bg-gray-100">
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-40 xl:h-40 rounded-lg sm:rounded-xl overflow-hidden shadow-md sm:shadow-lg ring-1 ring-black/10 bg-gray-100">
                 {imageUrl ? (
                   <SafeImage
                     src={imageUrl}

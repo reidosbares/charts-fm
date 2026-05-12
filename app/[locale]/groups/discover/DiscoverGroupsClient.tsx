@@ -236,7 +236,7 @@ export default function DiscoverGroupsClient({
         >
           <div className="flex items-center gap-3 md:gap-4">
             <div className="relative w-12 h-12 md:w-16 md:h-16 flex-shrink-0">
-              <div className="w-12 h-12 md:w-16 md:h-16 rounded-lg md:rounded-xl overflow-hidden ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)]">
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-lg md:rounded-xl overflow-hidden ring-1 ring-black/10 shadow-sm bg-[var(--theme-primary-lighter)]">
                 <SafeImage
                   src={groupImage}
                   alt={group.name}
@@ -305,7 +305,7 @@ export default function DiscoverGroupsClient({
       >
         <div className="flex items-start gap-3 md:gap-4 mb-3 md:mb-4">
           <div className="relative w-16 h-16 md:w-20 md:h-20 flex-shrink-0">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-lg md:rounded-xl overflow-hidden ring-2 ring-[var(--theme-ring)] bg-[var(--theme-primary-lighter)] transition-all">
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-lg md:rounded-xl overflow-hidden ring-1 ring-black/10 shadow-sm bg-[var(--theme-primary-lighter)] transition-all">
               <SafeImage
                 src={groupImage}
                 alt={group.name}
