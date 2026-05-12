@@ -11,11 +11,13 @@ import CustomSelect from '@/components/CustomSelect'
 import Toast from '@/components/Toast'
 import { useTranslations } from 'next-intl'
 import { routing } from '@/i18n/routing'
+import { useAppearance, type Appearance } from '@/contexts/AppearanceContext'
 
 export default function SettingsPage() {
   const router = useRouter()
   const t = useTranslations('settings')
   const tCommon = useTranslations('common')
+  const { appearance, setAppearance } = useAppearance()
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -241,6 +243,40 @@ export default function SettingsPage() {
                   />
                   <p className="text-xs text-[var(--text-secondary)] mt-2">
                     {t('selectLanguage')}
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-xs md:text-sm font-semibold text-[var(--text-primary)] mb-2">
+                    {t('appearance')}
+                  </label>
+                  <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label={t('appearance')}>
+                    {(['light', 'dark', 'system'] as Appearance[]).map((value) => {
+                      const isActive = appearance === value
+                      const label =
+                        value === 'light' ? t('appearanceLight') :
+                        value === 'dark' ? t('appearanceDark') :
+                        t('appearanceSystem')
+                      return (
+                        <button
+                          key={value}
+                          type="button"
+                          role="radio"
+                          aria-checked={isActive}
+                          onClick={() => setAppearance(value)}
+                          className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-colors border ${
+                            isActive
+                              ? 'bg-[rgb(var(--theme-primary-rgb)/0.15)] border-[rgb(var(--theme-primary-rgb)/0.5)] text-[var(--theme-text)]'
+                              : 'bg-[var(--surface-card)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                  <p className="text-xs text-[var(--text-secondary)] mt-2">
+                    {t('appearanceDescription')}
                   </p>
                 </div>
 
