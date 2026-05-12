@@ -1,8 +1,9 @@
 'use client'
 
 import { memo, useMemo, useCallback } from 'react'
+import { useLocale } from 'next-intl'
 import { EntryStats } from '@/lib/chart-deep-dive'
-import { formatChartWeekLabel, formatWeekLabel, getChartWeekReferenceDate } from '@/lib/weekly-utils'
+import { getChartWeekReferenceDate } from '@/lib/weekly-utils'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 interface CertificationCounts {
@@ -35,6 +36,12 @@ function Disc({ tier }: { tier: string }) {
 
 function EntryStatsTable({ stats, certificationCounts }: EntryStatsTableProps) {
   const t = useSafeTranslations('deepDive.entryStats')
+  const locale = useLocale()
+  const dateFormatter = useMemo(
+    () => new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }),
+    [locale]
+  )
+  const formatChartWeek = useCallback((d: Date) => dateFormatter.format(getChartWeekReferenceDate(d)), [dateFormatter])
   const formatDaysAgo = useCallback((date: Date | null): string => {
     if (!date) return t('never')
     
@@ -56,9 +63,9 @@ function EntryStatsTable({ stats, certificationCounts }: EntryStatsTableProps) {
   const formatDebutDate = useCallback((date: Date | null) => {
     if (!date) return t('notAvailable')
     const ref = getChartWeekReferenceDate(date)
-    const formattedDate = formatWeekLabel(ref)
+    const formattedDate = dateFormatter.format(ref)
     const weeksAgo = calculateWeeksAgo(ref)
-    
+
     return (
       <>
         {formattedDate}
@@ -67,13 +74,13 @@ function EntryStatsTable({ stats, certificationCounts }: EntryStatsTableProps) {
         </span>
       </>
     )
-  }, [t])
+  }, [t, dateFormatter])
 
   const formatStreakDates = (startDate: Date | null, endDate: Date | null): string | null => {
     if (!startDate || !endDate) return null
 
-    const startFormatted = formatChartWeekLabel(startDate)
-    const endFormatted = formatChartWeekLabel(endDate)
+    const startFormatted = formatChartWeek(startDate)
+    const endFormatted = formatChartWeek(endDate)
 
     if (startDate.getTime() === endDate.getTime()) {
       return startFormatted

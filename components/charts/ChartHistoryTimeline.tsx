@@ -1,9 +1,10 @@
 'use client'
 
 import { memo, useMemo } from 'react'
+import { useLocale } from 'next-intl'
 import { ChartHistoryEntry } from '@/lib/chart-deep-dive'
 import PositionBubble from './PositionBubble'
-import { formatChartWeekLabel } from '@/lib/weekly-utils'
+import { getChartWeekReferenceDate } from '@/lib/weekly-utils'
 import Tooltip from '@/components/Tooltip'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
@@ -29,6 +30,11 @@ function ChartHistoryTimeline({
   isCurrentlyCharting = true,
 }: ChartHistoryTimelineProps) {
   const t = useSafeTranslations('deepDive.timeline')
+  const locale = useLocale()
+  const dateFormatter = useMemo(
+    () => new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }),
+    [locale]
+  )
   // Memoize expensive timeline processing
   const { timelineItems, firstAppearanceDate } = useMemo(() => {
     if (history.length === 0) {
@@ -161,7 +167,7 @@ function ChartHistoryTimeline({
                   />
                   {item.isFirst && firstAppearanceDate && (
                     <span className="absolute bottom-full mb-1 md:mb-2 left-1/2 -translate-x-1/2 text-[10px] md:text-xs text-[var(--text-secondary)] font-medium whitespace-nowrap">
-                      {formatChartWeekLabel(firstAppearanceDate)}
+                      {dateFormatter.format(getChartWeekReferenceDate(firstAppearanceDate))}
                     </span>
                   )}
                 </div>
