@@ -415,3 +415,42 @@ export async function getAlbumImage(
   }
 }
 
+/**
+ * Fetch the listener count for an artist via Last.fm `artist.getInfo`.
+ * Returns 0 if the artist is not found (error code 6). Throws on other errors.
+ * Used for compound-artist resolution to compare listener counts of a
+ * compound credit string vs the candidate primary artist.
+ */
+export async function fetchLastFMArtistListeners(
+  artistName: string,
+  apiKey: string
+): Promise<number> {
+  await acquireLastFMRateLimit(1)
+
+  return retryWithBackoff(async () => {
+    const params = new URLSearchParams({
+      method: 'artist.getInfo',
+      artist: artistName,
+      api_key: apiKey,
+      format: 'json',
+    })
+    const response = await fetch(`${LASTFM_API_BASE}?${params}`)
+
+    if (response.status === 429) {
+      const error: any = new Error(`Last.fm rate limit exceeded`)
+      error.status = 429
+      throw error
+    }
+
+    const data = await response.json()
+
+    // Artist not found — treat as 0 listeners, the comparison falls through to "keep compound".
+    if (data.error === 6 || data.error === '6') return 0
+    if (data.error) {
+      throw new Error(`Last.fm artist.getInfo error: ${data.message || data.error}`)
+    }
+
+    return parseInt(data.artist?.stats?.listeners || '0', 10)
+  })
+}
+
