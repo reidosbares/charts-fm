@@ -682,6 +682,40 @@ svg.rdp-chevron {
   --theme-border-rgb: 110 40 150;
 }
 
+.theme-sunset {
+  --theme-primary: rgb(249 115 22);
+  --theme-primary-light: rgb(250 204 21);
+  --theme-primary-dark: rgb(120 30 30);
+  --theme-primary-lighter: rgb(254 215 170);
+  --theme-primary-darker: rgb(194 65 12);
+  --theme-background-from: rgb(255 237 213);
+  --theme-background-to: rgb(255 251 235);
+  --theme-border: rgb(253 186 116);
+  --theme-text: rgb(180 83 9);
+  --theme-ring: rgb(249 115 22);
+  --theme-button-text: white;
+  --theme-primary-rgb: 249 115 22;
+  --theme-primary-lighter-rgb: 254 215 170;
+  --theme-border-rgb: 253 186 116;
+}
+
+.dark .theme-sunset {
+  --theme-primary: rgb(251 146 60);
+  --theme-primary-light: rgb(250 204 21);
+  --theme-primary-dark: rgb(254 240 138);
+  --theme-primary-lighter: rgb(50 18 14);
+  --theme-primary-darker: rgb(194 65 12);
+  --theme-background-from: rgb(38 12 20);
+  --theme-background-to: rgb(20 8 24);
+  --theme-border: rgb(140 60 30);
+  --theme-text: rgb(252 211 77);
+  --theme-ring: rgb(251 146 60);
+  --theme-button-text: white;
+  --theme-primary-rgb: 251 146 60;
+  --theme-primary-lighter-rgb: 50 18 14;
+  --theme-border-rgb: 140 60 30;
+}
+
 /* All themes: Make main page gradients diagonal and fixed to viewport */
 main.bg-gradient-to-b {
   background-attachment: fixed !important;
