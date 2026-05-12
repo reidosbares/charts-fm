@@ -1,11 +1,30 @@
 'use client'
 
 import { useEffect, useMemo, memo, useCallback } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCaretUp, faCaretDown } from '@fortawesome/free-solid-svg-icons'
 import { Link } from '@/i18n/routing'
 import { EnrichedChartItem } from '@/lib/group-chart-metrics'
 import { useNavigation } from '@/contexts/NavigationContext'
 import { generateSlug } from '@/lib/chart-slugs'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
+
+type BadgeDirection = 'up' | 'down'
+
+function ChangeBadge({ direction, value }: { direction: BadgeDirection; value: string | number }) {
+  const isUp = direction === 'up'
+  const classes = isUp
+    ? 'bg-green-500/15 text-green-600 dark:text-green-400'
+    : 'bg-red-500/15 text-red-600 dark:text-red-400'
+  return (
+    <span
+      className={`ml-2 inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-xs font-semibold ${classes}`}
+    >
+      <FontAwesomeIcon icon={isUp ? faCaretUp : faCaretDown} className="text-[0.7rem]" />
+      {value}
+    </span>
+  )
+}
 
 interface ChartTableProps {
   items: EnrichedChartItem[]
@@ -36,64 +55,24 @@ export default function ChartTable({ items, chartType, groupId }: ChartTableProp
     return generateSlug(item.entryKey, chartType)
   }, [chartType])
 
-  const formatPositionChange = useCallback((change: number | null, entryType?: string | null): string => {
-    if (change === null) {
-      if (entryType === 'new') return t('new')
-      if (entryType === 're-entry') return t('reEntry')
-      return t('new') // fallback for legacy data
-    }
-    if (change === 0) return ''
-    if (change < 0) return `(↑${Math.abs(change)})`
-    return `(↓${change})`
+  const getEntryTypeLabel = useCallback((entryType?: string | null): string => {
+    if (entryType === 're-entry') return t('reEntry')
+    return t('new')
   }, [t])
-
-  const formatPlaysChange = useCallback((change: number | null): string => {
-    if (change === null) return ''
-    if (change === 0) return ''
-    if (change > 0) return `(↑${change})`
-    return `(↓${Math.abs(change)})`
-  }, [])
-
-  const formatVSChange = useCallback((change: number | null): string => {
-    if (change === null) return ''
-    if (change === 0) return ''
-    if (change > 0) return `(↑${change.toFixed(2)})`
-    return `(↓${Math.abs(change).toFixed(2)})`
-  }, [])
-
-  const getPositionChangeColor = useCallback((change: number | null, entryType?: string | null): string => {
-    if (change === null) {
-      if (entryType === 're-entry') return 'text-blue-400 dark:text-blue-300 font-semibold'
-      return 'text-blue-600 dark:text-blue-300 font-semibold'
-    }
-    if (change < 0) return 'text-green-600 dark:text-green-400'
-    if (change > 0) return 'text-red-600 dark:text-red-400'
-    return 'text-[var(--text-secondary)]'
-  }, [])
-
-  const getPlaysChangeColor = useCallback((change: number | null): string => {
-    if (change === null) return 'text-[var(--text-muted)]'
-    if (change > 0) return 'text-green-600 dark:text-green-400'
-    if (change < 0) return 'text-red-600 dark:text-red-400'
-    return 'text-[var(--text-secondary)]'
-  }, [])
-
-  const getVSChangeColor = useCallback((change: number | null): string => {
-    if (change === null) return 'text-[var(--text-muted)]'
-    if (change > 0) return 'text-green-600 dark:text-green-400'
-    if (change < 0) return 'text-red-600 dark:text-red-400'
-    return 'text-[var(--text-secondary)]'
-  }, [])
 
   // Memoized table row component
   const TableRow = memo(({ item }: { item: EnrichedChartItem }) => (
     <tr className="hover:bg-[var(--surface-base)] transition-colors">
       <td className="px-2 md:px-6 py-3 md:py-5 text-sm">
         <span className="font-bold text-[var(--text-primary)]">{item.position}</span>
-        {(item.positionChange !== null && item.positionChange !== 0) || item.positionChange === null ? (
-          <span className={`ml-2 ${getPositionChangeColor(item.positionChange, item.entryType)}`}>
-            {formatPositionChange(item.positionChange, item.entryType)}
+        {item.positionChange === null ? (
+          <span className="ml-2 inline-flex items-center rounded-full bg-blue-500/15 px-1.5 py-0.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
+            {getEntryTypeLabel(item.entryType)}
           </span>
+        ) : item.positionChange < 0 ? (
+          <ChangeBadge direction="up" value={Math.abs(item.positionChange)} />
+        ) : item.positionChange > 0 ? (
+          <ChangeBadge direction="down" value={item.positionChange} />
         ) : null}
       </td>
       <td className="px-2 md:px-6 py-3 md:py-5 text-sm">
@@ -111,20 +90,22 @@ export default function ChartTable({ items, chartType, groupId }: ChartTableProp
       </td>
       <td className="px-2 md:px-6 py-3 md:py-5 text-sm text-right">
         <span className="text-[var(--text-primary)] font-medium">{item.playcount}</span>
-        {item.playsChange !== null && item.playsChange !== 0 && (
-          <span className={`ml-2 ${getPlaysChangeColor(item.playsChange)}`}>
-            {formatPlaysChange(item.playsChange)}
-          </span>
+        {item.playsChange !== null && item.playsChange > 0 && (
+          <ChangeBadge direction="up" value={item.playsChange} />
+        )}
+        {item.playsChange !== null && item.playsChange < 0 && (
+          <ChangeBadge direction="down" value={Math.abs(item.playsChange)} />
         )}
       </td>
       <td className="px-2 md:px-6 py-3 md:py-5 text-sm text-right">
         {item.vibeScore !== null && item.vibeScore !== undefined ? (
           <>
             <span className="text-[var(--text-primary)] font-medium">{item.vibeScore.toFixed(2)}</span>
-            {item.vibeScoreChange !== null && item.vibeScoreChange !== 0 && (
-              <span className={`ml-2 ${getVSChangeColor(item.vibeScoreChange)}`}>
-                {formatVSChange(item.vibeScoreChange)}
-              </span>
+            {item.vibeScoreChange !== null && item.vibeScoreChange > 0 && (
+              <ChangeBadge direction="up" value={item.vibeScoreChange.toFixed(2)} />
+            )}
+            {item.vibeScoreChange !== null && item.vibeScoreChange < 0 && (
+              <ChangeBadge direction="down" value={Math.abs(item.vibeScoreChange).toFixed(2)} />
             )}
           </>
         ) : (
