@@ -198,3 +198,52 @@ export async function resolveArtistsBatch(
 
   return result
 }
+
+/**
+ * Group artists whose names match (case-insensitive), sum their playcounts,
+ * and return the merged list sorted by descending playcount.
+ *
+ * Used after `resolveArtistsBatch` rewrites compound credits to their
+ * primary — previously distinct entries (e.g. `"ROSALÍA"` from solo plays
+ * and `"ROSALÍA & The Weeknd"` rewritten to `"ROSALÍA"`) collapse into one.
+ *
+ * Display name = highest-playcount variant's name (preserves whichever
+ * casing the user listens to most).
+ */
+export function mergeRedundantArtists(artists: TopItem[]): TopItem[] {
+  type Bucket = {
+    name: string
+    playcount: number
+    topVariantPlays: number
+  }
+  const buckets = new Map<string, Bucket>()
+
+  for (const artist of artists) {
+    const rawName = artist.name || ''
+    if (!rawName) continue
+    const key = rawName.toLowerCase()
+    const existing = buckets.get(key)
+
+    if (!existing) {
+      buckets.set(key, {
+        name: rawName,
+        playcount: artist.playcount,
+        topVariantPlays: artist.playcount,
+      })
+      continue
+    }
+
+    existing.playcount += artist.playcount
+    if (artist.playcount > existing.topVariantPlays) {
+      existing.topVariantPlays = artist.playcount
+      existing.name = rawName
+    }
+  }
+
+  return Array.from(buckets.values())
+    .sort((a, b) => {
+      if (b.playcount !== a.playcount) return b.playcount - a.playcount
+      return a.name.localeCompare(b.name)
+    })
+    .map(({ name, playcount }) => ({ name, playcount }))
+}
