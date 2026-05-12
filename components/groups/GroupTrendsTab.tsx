@@ -331,10 +331,10 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
         )}
 
         {/* Explore full trends - prominent CTA card under MVP */}
-        <div className="md:col-span-2 rounded-2xl p-4 md:p-6 backdrop-blur-md border border-[var(--theme-primary)]/30 dark:border-transparent shadow-lg bg-gradient-to-br from-[var(--theme-primary-lighter)]/40 via-white/70 to-white/80 dark:from-[var(--theme-primary-lighter)] dark:via-[var(--surface-card)] dark:to-[var(--surface-card)]">
+        <div className="md:col-span-2 rounded-2xl p-4 md:p-6 backdrop-blur-md border border-[rgb(var(--theme-primary-rgb)/0.3)] dark:border-transparent shadow-lg bg-gradient-to-br from-[rgb(var(--theme-primary-lighter-rgb)/0.4)] via-white/70 to-white/80 dark:from-[var(--theme-primary-lighter)] dark:via-[var(--surface-card)] dark:to-[var(--surface-card)]">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-start gap-3 md:gap-4">
-              <div className="w-11 h-11 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[var(--theme-primary)]/20 dark:bg-[var(--theme-primary-lighter)] text-[var(--theme-primary)] flex-shrink-0">
+              <div className="w-11 h-11 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[rgb(var(--theme-primary-rgb)/0.2)] dark:bg-[var(--theme-primary-lighter)] text-[var(--theme-primary)] flex-shrink-0">
                 <FontAwesomeIcon icon={faChartLine} className="text-xl md:text-2xl" />
               </div>
               <div>
@@ -417,7 +417,7 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
                     className={`relative flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg transition-all border overflow-hidden ${
                       isNumberOne
                         ? 'bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-950/40 dark:to-amber-950/40 hover:from-yellow-100 hover:to-amber-100 dark:hover:from-yellow-900/40 dark:hover:to-amber-900/40 border-yellow-300 dark:border-yellow-700'
-                        : 'bg-white/80 dark:bg-[var(--surface-card)] hover:bg-[var(--theme-primary-lighter)]/50 border-[var(--theme-border)]'
+                        : 'bg-white/80 dark:bg-[var(--surface-card)] hover:bg-[rgb(var(--theme-primary-lighter-rgb)/0.5)] border-[var(--theme-border)]'
                     }`}
                   >
                     {isNumberOne && (

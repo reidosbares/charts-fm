@@ -29,6 +29,9 @@
   --theme-text: rgb(202 138 4);
   --theme-ring: rgb(234 179 8);
   --theme-button-text: black;
+  --theme-primary-rgb: 234 179 8;
+  --theme-primary-lighter-rgb: 254 240 138;
+  --theme-border-rgb: 229 231 235;
 }
 
 .dark {
@@ -44,6 +47,9 @@
   --text-muted: rgb(125 125 135);
   --border-subtle: rgb(50 50 56);
   --border-strong: rgb(70 70 78);
+  --theme-primary-rgb: 234 179 8;
+  --theme-primary-lighter-rgb: 50 44 22;
+  --theme-border-rgb: 55 55 62;
 }
 
 body {
@@ -287,6 +293,9 @@ svg.rdp-chevron {
   --theme-text: rgb(202 138 4);
   --theme-ring: rgb(234 179 8);
   --theme-button-text: black;
+  --theme-primary-rgb: 234 179 8;
+  --theme-primary-lighter-rgb: 254 240 138;
+  --theme-border-rgb: 254 240 138;
 }
 
 .dark .theme-yellow {
@@ -301,6 +310,9 @@ svg.rdp-chevron {
   --theme-text: rgb(253 224 71);
   --theme-ring: rgb(234 179 8);
   --theme-button-text: black;
+  --theme-primary-rgb: 234 179 8;
+  --theme-primary-lighter-rgb: 50 44 22;
+  --theme-border-rgb: 80 65 20;
 }
 
 .theme-royal-blue {
@@ -315,6 +327,9 @@ svg.rdp-chevron {
   --theme-text: rgb(29 78 216);
   --theme-ring: rgb(29 78 216);
   --theme-button-text: white;
+  --theme-primary-rgb: 29 78 216;
+  --theme-primary-lighter-rgb: 147 197 253;
+  --theme-border-rgb: 147 197 253;
 }
 
 .dark .theme-royal-blue {
@@ -329,6 +344,9 @@ svg.rdp-chevron {
   --theme-text: rgb(147 197 253);
   --theme-ring: rgb(59 130 246);
   --theme-button-text: white;
+  --theme-primary-rgb: 59 130 246;
+  --theme-primary-lighter-rgb: 20 30 60;
+  --theme-border-rgb: 40 60 110;
 }
 
 .theme-cyan {
@@ -343,6 +361,9 @@ svg.rdp-chevron {
   --theme-text: rgb(8 145 178);
   --theme-ring: rgb(6 182 212);
   --theme-button-text: white;
+  --theme-primary-rgb: 6 182 212;
+  --theme-primary-lighter-rgb: 103 232 249;
+  --theme-border-rgb: 103 232 249;
 }
 
 .dark .theme-cyan {
@@ -357,6 +378,9 @@ svg.rdp-chevron {
   --theme-text: rgb(103 232 249);
   --theme-ring: rgb(34 211 238);
   --theme-button-text: black;
+  --theme-primary-rgb: 34 211 238;
+  --theme-primary-lighter-rgb: 14 36 44;
+  --theme-border-rgb: 30 70 90;
 }
 
 .theme-bright-red {
@@ -371,6 +395,9 @@ svg.rdp-chevron {
   --theme-text: rgb(185 28 28);
   --theme-ring: rgb(185 28 28);
   --theme-button-text: white;
+  --theme-primary-rgb: 185 28 28;
+  --theme-primary-lighter-rgb: 252 165 165;
+  --theme-border-rgb: 252 165 165;
 }
 
 .dark .theme-bright-red {
@@ -385,6 +412,9 @@ svg.rdp-chevron {
   --theme-text: rgb(252 165 165);
   --theme-ring: rgb(239 68 68);
   --theme-button-text: white;
+  --theme-primary-rgb: 239 68 68;
+  --theme-primary-lighter-rgb: 50 16 18;
+  --theme-border-rgb: 95 30 35;
 }
 
 .theme-maroon {
@@ -399,6 +429,9 @@ svg.rdp-chevron {
   --theme-text: rgb(100 0 0);
   --theme-ring: rgb(128 0 0);
   --theme-button-text: white;
+  --theme-primary-rgb: 128 0 0;
+  --theme-primary-lighter-rgb: 160 82 45;
+  --theme-border-rgb: 205 133 63;
 }
 
 .dark .theme-maroon {
@@ -413,6 +446,9 @@ svg.rdp-chevron {
   --theme-text: rgb(229 165 130);
   --theme-ring: rgb(180 50 50);
   --theme-button-text: white;
+  --theme-primary-rgb: 180 50 50;
+  --theme-primary-lighter-rgb: 46 18 14;
+  --theme-border-rgb: 90 40 30;
 }
 
 .theme-graphite {
@@ -427,6 +463,9 @@ svg.rdp-chevron {
   --theme-text: rgb(55 65 81);
   --theme-ring: rgb(75 85 99);
   --theme-button-text: white;
+  --theme-primary-rgb: 75 85 99;
+  --theme-primary-lighter-rgb: 156 163 175;
+  --theme-border-rgb: 209 213 219;
 }
 
 .dark .theme-graphite {
@@ -441,6 +480,9 @@ svg.rdp-chevron {
   --theme-text: rgb(209 213 219);
   --theme-ring: rgb(156 163 175);
   --theme-button-text: black;
+  --theme-primary-rgb: 156 163 175;
+  --theme-primary-lighter-rgb: 38 42 50;
+  --theme-border-rgb: 60 65 75;
 }
 
 .theme-hot-pink {
@@ -455,6 +497,9 @@ svg.rdp-chevron {
   --theme-text: rgb(219 39 119);
   --theme-ring: rgb(255 105 180);
   --theme-button-text: white;
+  --theme-primary-rgb: 255 105 180;
+  --theme-primary-lighter-rgb: 251 182 206;
+  --theme-border-rgb: 251 182 206;
 }
 
 .dark .theme-hot-pink {
@@ -469,6 +514,9 @@ svg.rdp-chevron {
   --theme-text: rgb(251 182 206);
   --theme-ring: rgb(244 114 182);
   --theme-button-text: white;
+  --theme-primary-rgb: 244 114 182;
+  --theme-primary-lighter-rgb: 48 18 38;
+  --theme-border-rgb: 96 40 78;
 }
 
 .theme-neon-green {
@@ -483,6 +531,9 @@ svg.rdp-chevron {
   --theme-text: rgb(21 128 61);
   --theme-ring: rgb(22 163 74);
   --theme-button-text: white;
+  --theme-primary-rgb: 21 128 61;
+  --theme-primary-lighter-rgb: 134 239 172;
+  --theme-border-rgb: 134 239 172;
 }
 
 .dark .theme-neon-green {
@@ -497,6 +548,9 @@ svg.rdp-chevron {
   --theme-text: rgb(134 239 172);
   --theme-ring: rgb(74 222 128);
   --theme-button-text: black;
+  --theme-primary-rgb: 74 222 128;
+  --theme-primary-lighter-rgb: 18 38 26;
+  --theme-border-rgb: 30 78 50;
 }
 
 .theme-white {
@@ -511,6 +565,9 @@ svg.rdp-chevron {
   --theme-text: rgb(202 138 4);
   --theme-ring: rgb(234 179 8);
   --theme-button-text: black;
+  --theme-primary-rgb: 234 179 8;
+  --theme-primary-lighter-rgb: 254 240 138;
+  --theme-border-rgb: 229 231 235;
 }
 
 .dark .theme-white {
@@ -525,6 +582,9 @@ svg.rdp-chevron {
   --theme-text: rgb(253 224 71);
   --theme-ring: rgb(234 179 8);
   --theme-button-text: black;
+  --theme-primary-rgb: 234 179 8;
+  --theme-primary-lighter-rgb: 50 44 22;
+  --theme-border-rgb: 55 55 62;
 }
 
 .theme-rainbow {
@@ -539,6 +599,9 @@ svg.rdp-chevron {
   --theme-text: rgb(17 24 39);
   --theme-ring: rgb(147 51 234);
   --theme-button-text: white;
+  --theme-primary-rgb: 147 51 234;
+  --theme-primary-lighter-rgb: 196 181 253;
+  --theme-border-rgb: 196 181 253;
 }
 
 .dark .theme-rainbow {
@@ -553,6 +616,9 @@ svg.rdp-chevron {
   --theme-text: rgb(216 180 254);
   --theme-ring: rgb(168 85 247);
   --theme-button-text: white;
+  --theme-primary-rgb: 168 85 247;
+  --theme-primary-lighter-rgb: 40 20 60;
+  --theme-border-rgb: 80 50 130;
 }
 
 /* All themes: Make main page gradients diagonal and fixed to viewport */
