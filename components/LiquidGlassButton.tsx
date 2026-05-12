@@ -40,14 +40,14 @@ const LiquidGlassButton = forwardRef<HTMLButtonElement, LiquidGlassButtonProps>(
           color: 'black',
         },
     secondary: {
-      color: useTheme ? 'var(--theme-primary-dark)' : 'rgb(17 24 39)',
+      color: useTheme ? 'var(--theme-primary-dark)' : 'var(--text-primary)',
     },
     danger: {
       background: 'rgba(239, 68, 68, 0.8)',
       color: 'white',
     },
     neutral: {
-      color: 'rgb(55 65 81)',
+      color: 'var(--text-primary)',
     },
   }
 
@@ -150,14 +150,14 @@ export function LiquidGlassLink({
           color: 'black',
         },
     secondary: {
-      color: useTheme ? 'var(--theme-primary-dark)' : 'rgb(17 24 39)',
+      color: useTheme ? 'var(--theme-primary-dark)' : 'var(--text-primary)',
     },
     danger: {
       background: 'rgba(239, 68, 68, 0.8)',
       color: 'white',
     },
     neutral: {
-      color: 'rgb(55 65 81)',
+      color: 'var(--text-primary)',
     },
   }
 
