@@ -118,7 +118,7 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden flex items-center justify-center px-4">
+      <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden flex items-center justify-center px-4">
         <div className="relative z-10 text-center">
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-3xl md:text-4xl text-yellow-500 mb-4" />
           <p className="text-sm md:text-base text-[var(--text-secondary)]">{tCommon('loading')}</p>
@@ -255,7 +255,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 relative overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-[var(--surface-base)] dark:via-[var(--surface-base)] dark:to-[var(--surface-base)] relative overflow-hidden">
       {/* Toast notifications */}
       <Toast
         message={t('profileUpdated')}
@@ -272,9 +272,9 @@ export default function ProfilePage() {
 
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 dark:bg-yellow-400/[0.04] rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-96 h-96 bg-pink-400/20 dark:bg-pink-400/[0.04] rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-orange-400/20 dark:bg-orange-400/[0.04] rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 md:px-6 lg:px-12 xl:px-24 py-8 md:py-16 lg:py-24">
@@ -297,7 +297,7 @@ export default function ProfilePage() {
               boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
             }}
           >
-            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-pink-400/30 to-purple-400/30 rounded-full blur-2xl"></div>
+            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-pink-400/30 to-purple-400/30 dark:from-pink-400/[0.06] dark:to-purple-400/[0.06] rounded-full blur-2xl"></div>
             <div className="relative z-10">
               <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
                 <div className="flex flex-col items-center mb-4 md:mb-6">
@@ -305,7 +305,7 @@ export default function ProfilePage() {
                     <img
                       src={displayImage}
                       alt="Profile picture"
-                      className="rounded-full object-cover w-24 h-24 md:w-32 md:h-32 border-4 border-white/50 shadow-lg"
+                      className="rounded-full object-cover w-24 h-24 md:w-32 md:h-32 border-4 border-white/50 dark:border-white/10 shadow-lg"
                       onError={(e) => {
                         e.currentTarget.src = getDefaultGroupImage()
                       }}
