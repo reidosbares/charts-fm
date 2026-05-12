@@ -39,6 +39,7 @@ interface RankedEntry {
   slug: string
   value: number
   weekStart?: string | null
+  position?: number | null
 }
 
 interface RecordDetailClientProps {
@@ -247,6 +248,11 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
                     {t('value')}
                   </th>
                   {isPeakWeeklyRecord && (
+                    <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider w-16 sm:w-20 md:w-24">
+                      {t('position')}
+                    </th>
+                  )}
+                  {isPeakWeeklyRecord && (
                     <th className="px-2 sm:px-4 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider w-24 sm:w-32 md:w-40">
                       {t('week')}
                     </th>
@@ -278,6 +284,15 @@ export default function RecordDetailClient({ groupId, recordType }: RecordDetail
                     <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-right whitespace-nowrap">
                       <span className="text-[var(--text-primary)] font-medium">{formatValue(entry.value)}</span>
                     </td>
+                    {isPeakWeeklyRecord && (
+                      <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-right whitespace-nowrap">
+                        {entry.position != null ? (
+                          <span className="text-[var(--text-primary)] font-medium">#{entry.position}</span>
+                        ) : (
+                          <span className="text-[var(--text-muted)] text-xs">—</span>
+                        )}
+                      </td>
+                    )}
                     {isPeakWeeklyRecord && (
                       <td className="px-2 sm:px-4 md:px-6 py-3 md:py-5 text-sm text-right whitespace-nowrap">
                         {entry.weekStart ? (

@@ -90,6 +90,9 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid entry type' }, { status: 400 })
     }
 
+    // Peak weekly records: each entry+week combo is its own row
+    const isPeakWeeklyRecord = params.recordType === 'most-vs-in-single-week' || params.recordType === 'most-plays-in-single-week'
+
     // Check cache first
     const cached = await prisma.groupRecordDetailCache.findUnique({
       where: {
@@ -102,15 +105,21 @@ export async function GET(
     })
 
     if (cached) {
-      return NextResponse.json({
-        recordType: params.recordType,
-        entryType,
-        entries: cached.entries as any,
-      })
-    }
+      // Peak weekly records gained a `position` field — treat legacy cache entries without it as stale.
+      const cachedEntries = cached.entries as any
+      const isStalePeakCache = isPeakWeeklyRecord
+        && Array.isArray(cachedEntries)
+        && cachedEntries.length > 0
+        && cachedEntries[0]?.position === undefined
 
-    // Peak weekly records: each entry+week combo is its own row
-    const isPeakWeeklyRecord = params.recordType === 'most-vs-in-single-week' || params.recordType === 'most-plays-in-single-week'
+      if (!isStalePeakCache) {
+        return NextResponse.json({
+          recordType: params.recordType,
+          entryType,
+          entries: cachedEntries,
+        })
+      }
+    }
 
     let rankedEntries: Array<{
       rank: number
@@ -120,6 +129,7 @@ export async function GET(
       slug: string
       value: number
       weekStart?: string
+      position?: number
     }>
 
     if (isPeakWeeklyRecord) {
@@ -144,6 +154,7 @@ export async function GET(
           weekStart: true,
           vibeScore: true,
           playcount: true,
+          position: true,
         },
       })
 
@@ -155,6 +166,7 @@ export async function GET(
         slug: row.slug || '',
         value: orderField === 'vibeScore' ? Math.round((row.vibeScore as number) * 100) / 100 : row.playcount,
         weekStart: row.weekStart.toISOString(),
+        position: row.position,
       }))
     } else {
       // Standard records: use ChartEntryStats for per-entry aggregation

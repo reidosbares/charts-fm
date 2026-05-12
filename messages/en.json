@@ -1417,6 +1417,7 @@
       "entry": "Entry",
       "value": "Value",
       "week": "Week",
+      "position": "Position",
       "noEntries": "No entries found for this record type.",
       "error": "Failed to load entries. Please try again later.",
       "by": "by"
