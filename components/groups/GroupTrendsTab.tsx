@@ -331,10 +331,10 @@ export default function GroupTrendsTab({ groupId }: GroupTrendsTabProps) {
         )}
 
         {/* Explore full trends - prominent CTA card under MVP */}
-        <div className="md:col-span-2 rounded-2xl p-4 md:p-6 backdrop-blur-md border border-[var(--theme-primary)]/30 shadow-lg bg-gradient-to-br from-[var(--theme-primary-lighter)]/40 via-white/70 to-white/80 dark:via-[var(--surface-card)] dark:to-[var(--surface-card)]">
+        <div className="md:col-span-2 rounded-2xl p-4 md:p-6 backdrop-blur-md border border-[var(--theme-primary)]/30 dark:border-transparent shadow-lg bg-gradient-to-br from-[var(--theme-primary-lighter)]/40 via-white/70 to-white/80 dark:from-[var(--theme-primary-lighter)] dark:via-[var(--surface-card)] dark:to-[var(--surface-card)]">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-start gap-3 md:gap-4">
-              <div className="w-11 h-11 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[var(--theme-primary)]/20 text-[var(--theme-primary)] flex-shrink-0">
+              <div className="w-11 h-11 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[var(--theme-primary)]/20 dark:bg-[var(--theme-primary-lighter)] text-[var(--theme-primary)] flex-shrink-0">
                 <FontAwesomeIcon icon={faChartLine} className="text-xl md:text-2xl" />
               </div>
               <div>
