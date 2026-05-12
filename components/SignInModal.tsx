@@ -175,7 +175,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
       >
         <div
           ref={modalRef}
-          className="relative rounded-xl shadow-2xl max-w-md w-full p-5 md:p-8 max-h-[calc(100dvh-2rem)] overflow-y-auto pointer-events-auto"
+          className="relative rounded-xl shadow-2xl max-w-md w-full p-5 md:p-8 max-h-[calc(100dvh-2rem)] overflow-y-auto pointer-events-auto dark:bg-[var(--surface-elevated)]"
           style={{
             animation: 'fadeIn 0.2s ease-in-out',
             background: 'rgba(255, 255, 255, 0.95)',
@@ -192,7 +192,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
 
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 active:text-gray-900 transition-colors w-10 h-10 md:w-8 md:h-8 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 flex-shrink-0 z-10 touch-manipulation"
+            className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-[var(--text-secondary)] active:text-[var(--text-primary)] transition-colors w-10 h-10 md:w-8 md:h-8 flex items-center justify-center rounded-full hover:bg-[var(--surface-base)] active:bg-[var(--surface-base)] flex-shrink-0 z-10 touch-manipulation"
             aria-label="Close"
           >
             <svg
@@ -210,15 +210,15 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
             </svg>
           </button>
 
-          <h1 id="signin-modal-title" className="text-2xl md:text-3xl font-bold text-center mb-2 md:mb-2 text-gray-900 pr-8 md:pr-0">
+          <h1 id="signin-modal-title" className="text-2xl md:text-3xl font-bold text-center mb-2 md:mb-2 text-[var(--text-primary)] pr-8 md:pr-0">
             {t('title')}
           </h1>
-          <p className="text-center text-gray-600 mb-5 md:mb-6 text-sm md:text-base">
+          <p className="text-center text-[var(--text-secondary)] mb-5 md:mb-6 text-sm md:text-base">
             {t('subtitle')}
           </p>
 
           {showSuccessMessage && (
-            <div className="mb-4 p-3 md:p-4 bg-green-100 border border-green-400 text-green-700 rounded text-sm md:text-base">
+            <div className="mb-4 p-3 md:p-4 bg-green-50 dark:bg-green-950/40 border border-green-400 dark:border-green-800 text-green-600 dark:text-green-400 rounded text-sm md:text-base">
               {searchParams?.get('verified') === 'true' 
                 ? t('emailVerified')
                 : t('accountCreated')}
@@ -226,7 +226,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
           )}
 
           {error && (
-            <div className="mb-4 p-3 md:p-4 bg-red-100 border border-red-400 text-red-700 rounded text-sm md:text-base">
+            <div className="mb-4 p-3 md:p-4 bg-red-50 dark:bg-red-950/40 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 rounded text-sm md:text-base">
               {error}
               {showResendVerification && (
                 <div className="mt-3">
@@ -239,7 +239,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
                     {isResending ? t('sending') : t('resendVerification')}
                   </button>
                   {resendSuccess && (
-                    <p className="text-sm text-green-700 mt-2">
+                    <p className="text-sm text-green-600 dark:text-green-400 mt-2">
                       {t('verificationSent')}
                     </p>
                   )}
@@ -250,7 +250,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
 
           <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 {t('emailLabel')}
               </label>
               <input
@@ -259,7 +259,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors text-base md:text-sm text-gray-900 touch-manipulation"
+                className="w-full px-4 py-3 md:py-2 border border-[var(--border-strong)] rounded-lg bg-[var(--surface-card)] focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors text-base md:text-sm text-[var(--text-primary)] touch-manipulation"
                 placeholder={t('emailPlaceholder')}
                 disabled={isLoading}
                 autoFocus
@@ -270,7 +270,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="password" className="block text-sm font-medium text-[var(--text-secondary)]">
                   {t('passwordLabel')}
                 </label>
                 <a
@@ -291,7 +291,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
                 required
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors text-base md:text-sm text-gray-900 touch-manipulation"
+                className="w-full px-4 py-3 md:py-2 border border-[var(--border-strong)] rounded-lg bg-[var(--surface-card)] focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors text-base md:text-sm text-[var(--text-primary)] touch-manipulation"
                 placeholder={t('passwordPlaceholder')}
                 disabled={isLoading}
                 autoComplete="current-password"
@@ -313,10 +313,10 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
 
           <div className="relative my-5 md:my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
+              <div className="w-full border-t border-[var(--border-strong)]"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 text-gray-500 bg-transparent">
+              <span className="px-2 text-[var(--text-muted)] bg-transparent">
                 {t('or')}
               </span>
             </div>
@@ -352,7 +352,7 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
           </LiquidGlassButton>
 
           <div className="text-center mt-5 md:mt-6 pb-2">
-            <p className="text-gray-600 text-sm md:text-base">
+            <p className="text-[var(--text-secondary)] text-sm md:text-base">
               {t('noAccount')}{' '}
               <a 
                 href="/auth/signup" 

@@ -212,7 +212,7 @@ export default function InviteMemberModal({
       {/* Modal content centered */}
       <div className="fixed inset-0 flex items-center justify-center z-[9999] pointer-events-none p-4">
         <div 
-          className="bg-white rounded-lg shadow-xl p-4 md:p-6 pointer-events-auto max-h-[90vh] overflow-y-auto"
+          className="bg-[var(--surface-elevated)] rounded-lg shadow-xl p-4 md:p-6 pointer-events-auto max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
           style={{
             maxWidth: 'min(480px, calc(100vw - 2rem))',
@@ -224,7 +224,7 @@ export default function InviteMemberModal({
             <h2 className="text-lg md:text-2xl font-bold">{t('title')}</h2>
             <button
               onClick={handleClose}
-              className="text-gray-500 hover:text-gray-700 text-xl md:text-2xl leading-none w-8 h-8 flex items-center justify-center"
+              className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-xl md:text-2xl leading-none w-8 h-8 flex items-center justify-center"
               aria-label={t('close')}
               disabled={isLoading}
             >
@@ -233,26 +233,26 @@ export default function InviteMemberModal({
           </div>
 
           {success && successMessage && (
-            <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded text-xs md:text-sm transition-opacity duration-300">
+            <div className="mb-4 p-3 bg-green-50 dark:bg-green-950/40 border border-green-400 dark:border-green-800 text-green-600 dark:text-green-400 rounded text-xs md:text-sm transition-opacity duration-300">
               ✓ {successMessage}
             </div>
           )}
 
           {isAtLimit && (
-            <div className="mb-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded text-xs md:text-sm">
+            <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-950/40 border border-yellow-400 dark:border-yellow-800 text-yellow-600 dark:text-yellow-300 rounded text-xs md:text-sm">
               {t('atLimit', { max: MAX_GROUP_MEMBERS })}
             </div>
           )}
 
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-xs md:text-sm">
+            <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/40 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 rounded text-xs md:text-sm">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
             <div>
-              <label htmlFor="lastfmUsername" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="lastfmUsername" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 {t('lastfmUsername')} *
               </label>
               <div className="relative">
@@ -262,7 +262,7 @@ export default function InviteMemberModal({
                   required
                   value={validatedUsername || lastfmUsername}
                   onChange={(e) => setLastfmUsername(e.target.value)}
-                  className="w-full px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--theme-primary)] focus:border-transparent"
+                  className="w-full px-3 md:px-4 py-2 text-sm md:text-base border border-[var(--border-strong)] rounded-lg bg-[var(--surface-card)] text-[var(--text-primary)] focus:ring-2 focus:ring-[var(--theme-primary)] focus:border-transparent"
                   placeholder={t('usernamePlaceholder')}
                   disabled={isLoading}
                 />
@@ -272,7 +272,7 @@ export default function InviteMemberModal({
                   </div>
                 )}
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-[var(--text-muted)] mt-1">
                 {t('usernameDescription')}
                 {validatedUsername && validatedUsername !== lastfmUsername && (
                   <span className="text-green-600 ml-1">{t('valid')}</span>

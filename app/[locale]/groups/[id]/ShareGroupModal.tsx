@@ -188,15 +188,15 @@ export default function ShareGroupModal({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="bg-white rounded-lg shadow-2xl p-4 md:p-6 relative">
+        <div className="bg-[var(--surface-elevated)] rounded-lg shadow-2xl p-4 md:p-6 relative">
           {/* Speech bubble tail pointing up to share button - hidden on mobile */}
-          <div className="hidden md:block absolute -top-3 right-4 w-6 h-6 bg-white transform rotate-45 shadow-lg"></div>
+          <div className="hidden md:block absolute -top-3 right-4 w-6 h-6 bg-[var(--surface-elevated)] transform rotate-45 shadow-lg"></div>
           
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg md:text-xl font-bold">{t('title')}</h2>
             <button
               onClick={handleClose}
-              className="text-gray-500 hover:text-gray-700 text-xl leading-none w-8 h-8 flex items-center justify-center"
+              className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-xl leading-none w-8 h-8 flex items-center justify-center"
               aria-label={t('close')}
             >
               ×
@@ -206,14 +206,14 @@ export default function ShareGroupModal({
           <div className="space-y-6">
             {/* Invitation Text */}
             <div>
-              <p className="text-sm text-gray-700 text-center">
+              <p className="text-sm text-[var(--text-secondary)] text-center">
                 {t('description')}
               </p>
             </div>
 
             {/* Link Field with Copy Button */}
             <div>
-              <label htmlFor="publicUrl" className="block text-xs font-medium text-gray-700 mb-2">
+              <label htmlFor="publicUrl" className="block text-xs font-medium text-[var(--text-secondary)] mb-2">
                 {t('groupLink')}
               </label>
               <div className="flex gap-2">
@@ -222,7 +222,7 @@ export default function ShareGroupModal({
                   id="publicUrl"
                   readOnly
                   value={publicUrl}
-                  className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 text-gray-700"
+                  className="flex-1 px-4 py-2 text-sm border border-[var(--border-strong)] rounded-lg bg-[var(--surface-base)] text-[var(--text-secondary)]"
                 />
                 <LiquidGlassButton
                   onClick={handleCopyLink}
@@ -238,7 +238,7 @@ export default function ShareGroupModal({
 
             {/* Social Share Buttons */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-2">
+              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-2">
                 {t('shareOnSocialMedia')}
               </label>
               <div className="flex gap-2">
@@ -274,7 +274,7 @@ export default function ShareGroupModal({
               >
                 {invitationCopied ? t('invitationCopied') : t('copyInvitation')}
               </LiquidGlassButton>
-              <p className="text-xs text-gray-500 mt-2 text-center">
+              <p className="text-xs text-[var(--text-muted)] mt-2 text-center">
                 {t('copyInvitationDescription')}
               </p>
             </div>

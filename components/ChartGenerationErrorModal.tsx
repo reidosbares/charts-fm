@@ -29,28 +29,28 @@ export default function ChartGenerationErrorModal({
 
   const modalContent = (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50 p-4 sm:p-6">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-[var(--surface-elevated)] rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-4 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-900">
+          <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-[var(--text-primary)]">
             {aborted ? t('abortedTitle') : t('partialSuccessTitle')}
           </h2>
 
           <div className="mb-4">
-            <p className="text-sm sm:text-base text-gray-700 mb-3">
+            <p className="text-sm sm:text-base text-[var(--text-secondary)] mb-3">
               {aborted ? t('abortedMessage') : t('partialSuccessMessage')}
             </p>
 
             {failedUsers.length > 0 && (
               <div className="mb-4">
-                <p className="font-semibold text-sm sm:text-base text-gray-800 mb-2">
+                <p className="font-semibold text-sm sm:text-base text-[var(--text-primary)] mb-2">
                   {t('failedUsers')}
                 </p>
-                <div className="bg-gray-50 p-3 sm:p-4 rounded border border-gray-200">
+                <div className="bg-[var(--surface-base)] p-3 sm:p-4 rounded border border-[var(--border-subtle)]">
                   <div className="flex flex-wrap gap-2">
                     {failedUsers.map((username, index) => (
                       <span
                         key={index}
-                        className="inline-block px-3 py-1 text-xs sm:text-sm bg-red-100 text-red-800 rounded-full border border-red-200"
+                        className="inline-block px-3 py-1 text-xs sm:text-sm bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400 rounded-full border border-red-200 dark:border-red-800"
                       >
                         {username}
                       </span>
@@ -61,15 +61,15 @@ export default function ChartGenerationErrorModal({
             )}
 
             {!aborted && failedUsers.length > 0 && (
-              <div className="bg-amber-50 border border-amber-200 rounded p-3 sm:p-4 mt-4">
-                <p className="text-xs sm:text-sm text-amber-800">
+              <div className="bg-yellow-50 dark:bg-yellow-950/40 border border-yellow-200 dark:border-yellow-800 rounded p-3 sm:p-4 mt-4">
+                <p className="text-xs sm:text-sm text-yellow-600 dark:text-yellow-300">
                   {t('contributionsMissed')}
                 </p>
               </div>
             )}
 
-            <div className="bg-blue-50 border border-blue-200 rounded p-3 sm:p-4 mt-4">
-              <p className="text-xs sm:text-sm text-blue-800">
+            <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 rounded p-3 sm:p-4 mt-4">
+              <p className="text-xs sm:text-sm text-blue-600 dark:text-blue-300">
                 {t('lastfmOutageTip')}
               </p>
             </div>

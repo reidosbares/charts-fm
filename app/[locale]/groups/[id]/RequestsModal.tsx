@@ -127,7 +127,7 @@ export default function RequestsModal({
       {/* Modal content centered */}
       <div className="fixed inset-0 flex items-center justify-center z-[9999] pointer-events-none p-4">
         <div 
-          className="bg-white rounded-lg shadow-xl p-4 md:p-6 max-w-2xl w-full max-h-[90vh] flex flex-col pointer-events-auto"
+          className="bg-[var(--surface-elevated)] rounded-lg shadow-xl p-4 md:p-6 max-w-2xl w-full max-h-[90vh] flex flex-col pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
           style={{
             maxWidth: 'calc(100vw - 2rem)',
@@ -137,7 +137,7 @@ export default function RequestsModal({
             <h2 className="text-lg md:text-2xl font-bold">{t('title')}</h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-xl md:text-2xl leading-none w-8 h-8 flex items-center justify-center"
+              className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-xl md:text-2xl leading-none w-8 h-8 flex items-center justify-center"
               aria-label={t('close')}
             >
               ×
@@ -145,18 +145,18 @@ export default function RequestsModal({
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-xs md:text-sm">
+            <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/40 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 rounded text-xs md:text-sm">
               {error}
             </div>
           )}
 
           {isLoading ? (
             <div className="flex-1 flex items-center justify-center">
-              <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-gray-500" />
+              <FontAwesomeIcon icon={faSpinner} className="animate-spin text-4xl text-[var(--text-muted)]" />
             </div>
           ) : requests.length === 0 ? (
             <div className="flex-1 flex items-center justify-center">
-              <p className="text-gray-600">{t('noPendingRequests')}</p>
+              <p className="text-[var(--text-secondary)]">{t('noPendingRequests')}</p>
             </div>
           ) : (
             <div className="flex-1 overflow-y-auto">
@@ -164,14 +164,14 @@ export default function RequestsModal({
                 {requests.map((request) => (
                   <div
                     key={request.id}
-                    className="flex items-center justify-between p-4 bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all hover:bg-gradient-to-br hover:from-gray-100 hover:to-gray-200/50"
+                    className="flex items-center justify-between p-4 bg-gradient-to-br from-[var(--surface-base)] to-[var(--surface-card)] rounded-xl border border-[var(--border-subtle)] shadow-sm hover:shadow-md transition-all"
                   >
                     <Link
                       href={`/u/${encodeURIComponent(request.user.lastfmUsername)}`}
                       className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-90 transition-opacity"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <div className="relative w-12 h-12 rounded-full ring-2 ring-gray-300 bg-gray-200 flex-shrink-0 overflow-hidden">
+                      <div className="relative w-12 h-12 rounded-full ring-2 ring-[var(--border-strong)] bg-[var(--surface-base)] flex-shrink-0 overflow-hidden">
                         <SafeImage
                           src={request.user.image}
                           alt={request.user.name || request.user.lastfmUsername}
@@ -180,11 +180,11 @@ export default function RequestsModal({
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="font-semibold text-gray-900 truncate">
+                          <p className="font-semibold text-[var(--text-primary)] truncate">
                             {request.user.name || request.user.lastfmUsername}
                           </p>
                         </div>
-                        <p className="text-sm text-gray-600 truncate">@{request.user.lastfmUsername}</p>
+                        <p className="text-sm text-[var(--text-secondary)] truncate">@{request.user.lastfmUsername}</p>
                       </div>
                     </Link>
                     <div className="flex items-center gap-2 ml-2 md:ml-4 flex-shrink-0">

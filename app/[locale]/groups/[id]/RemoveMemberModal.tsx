@@ -72,7 +72,7 @@ export default function RemoveMemberModal({
       {/* Modal content centered */}
       <div className="fixed inset-0 flex items-center justify-center z-[9999] pointer-events-none p-4">
         <div 
-          className="bg-white rounded-lg shadow-xl p-4 md:p-6 pointer-events-auto max-h-[90vh] overflow-y-auto"
+          className="bg-[var(--surface-elevated)] rounded-lg shadow-xl p-4 md:p-6 pointer-events-auto max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
           style={{
             maxWidth: 'min(480px, calc(100vw - 2rem))',
@@ -84,7 +84,7 @@ export default function RemoveMemberModal({
             <h2 className="text-lg md:text-2xl font-bold">{t('title')}</h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-xl md:text-2xl leading-none w-8 h-8 flex items-center justify-center"
+              className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-xl md:text-2xl leading-none w-8 h-8 flex items-center justify-center"
               aria-label={t('close')}
               disabled={isLoading}
             >
@@ -93,13 +93,13 @@ export default function RemoveMemberModal({
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-xs md:text-sm">
+            <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/40 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 rounded text-xs md:text-sm">
               {error}
             </div>
           )}
 
           <div className="mb-4 md:mb-6">
-            <p className="text-sm md:text-base text-gray-700">
+            <p className="text-sm md:text-base text-[var(--text-secondary)]">
               {(() => {
                 const message = t('confirmMessage', { memberName })
                 const parts = message.split(memberName)
@@ -111,7 +111,7 @@ export default function RemoveMemberModal({
                 ))
               })()}
             </p>
-            <p className="text-xs md:text-sm text-gray-500 mt-2">
+            <p className="text-xs md:text-sm text-[var(--text-muted)] mt-2">
               {t('cannotBeUndone')}
             </p>
           </div>
@@ -120,7 +120,7 @@ export default function RemoveMemberModal({
             <button
               onClick={onClose}
               disabled={isLoading}
-              className="w-full sm:w-auto px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
+              className="w-full sm:w-auto px-4 py-2 bg-[var(--surface-base)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--surface-base)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base border border-[var(--border-subtle)]"
             >
               {t('cancel')}
             </button>
