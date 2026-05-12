@@ -190,6 +190,6 @@ export const THEME_DISPLAY_NAMES: Record<ThemeName, string> = {
   white: 'Ink & Butter',
   rainbow: 'Pride',
   synthwave: 'Synthwave',
-  sunset: 'Sunset',
+  sunset: 'Sex on the Beach',
 }
 
