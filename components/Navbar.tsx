@@ -10,8 +10,9 @@ import Image from 'next/image'
 import SafeImage from '@/components/SafeImage'
 import { useNavigation } from '@/contexts/NavigationContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faBars, faTimes, faSun, faMoon, faCircleHalfStroke } from '@fortawesome/free-solid-svg-icons'
 import AppearanceToggle from '@/components/AppearanceToggle'
+import { useAppearance } from '@/contexts/AppearanceContext'
 import { GROUP_THEMES } from '@/lib/group-themes'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
@@ -33,6 +34,12 @@ export default function Navbar() {
   const pathname = usePathname()
   const { isLoading } = useNavigation()
   const t = useSafeTranslations('navbar')
+  const { appearance, setAppearance } = useAppearance()
+  const appearanceIcon = appearance === 'light' ? faSun : appearance === 'dark' ? faMoon : faCircleHalfStroke
+  const appearanceLabel = appearance === 'light' ? t('appearanceLight') : appearance === 'dark' ? t('appearanceDark') : t('appearanceSystem')
+  const cycleAppearance = () => {
+    setAppearance(appearance === 'light' ? 'dark' : appearance === 'dark' ? 'system' : 'light')
+  }
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 })
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -844,7 +851,17 @@ export default function Navbar() {
                   >
                     {t('settings')}
                   </Link>
-                  
+
+                  {/* Appearance Toggle */}
+                  <button
+                    type="button"
+                    onClick={cycleAppearance}
+                    className="flex w-full items-center px-4 py-3 rounded-lg text-base font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-all"
+                  >
+                    <FontAwesomeIcon icon={appearanceIcon} className="w-5 h-5 mr-3 flex-shrink-0" />
+                    <span>{appearanceLabel}</span>
+                  </button>
+
                   {/* Admin Links */}
                   {userData?.isSuperuser && (
                     <Link
@@ -897,6 +914,16 @@ export default function Navbar() {
                   >
                     {t('signUp')}
                   </Link>
+
+                  {/* Appearance Toggle */}
+                  <button
+                    type="button"
+                    onClick={cycleAppearance}
+                    className="flex w-full items-center px-4 py-3 rounded-lg text-base font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-all"
+                  >
+                    <FontAwesomeIcon icon={appearanceIcon} className="w-5 h-5 mr-3 flex-shrink-0" />
+                    <span>{appearanceLabel}</span>
+                  </button>
                 </>
               )}
             </div>
