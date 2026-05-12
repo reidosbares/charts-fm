@@ -126,12 +126,10 @@ function ResetPasswordPageContent() {
         <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="max-w-2xl w-full">
             <div
-              className="rounded-3xl p-8 sm:p-10 relative overflow-hidden"
+              className="rounded-3xl p-8 sm:p-10 relative overflow-hidden bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10"
               style={{
-                background: 'rgba(255, 255, 255, 0.6)',
                 backdropFilter: 'blur(16px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-                border: '1px solid rgba(255, 255, 255, 0.4)',
                 boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
               }}
             >
@@ -222,12 +220,10 @@ function ResetPasswordPageContent() {
           )}
 
           <div
-            className="rounded-3xl p-8 sm:p-10 relative overflow-hidden"
+            className="rounded-3xl p-8 sm:p-10 relative overflow-hidden bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10"
             style={{
-              background: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(16px) saturate(180%)',
               WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.4)',
               boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
             }}
           >
@@ -244,9 +240,8 @@ function ResetPasswordPageContent() {
                     required
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all text-[var(--text-primary)]"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all text-[var(--text-primary)] bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                     placeholder="At least 8 characters with 1 special character"
@@ -268,9 +263,8 @@ function ResetPasswordPageContent() {
                     required
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all text-[var(--text-primary)]"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all text-[var(--text-primary)] bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                     placeholder="Re-enter your new password"

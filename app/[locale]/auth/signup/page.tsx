@@ -233,12 +233,10 @@ function SignUpPageContent() {
         )}
 
         <div
-          className="rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-10 relative overflow-hidden"
+          className="rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-10 relative overflow-hidden bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.6)',
             backdropFilter: 'blur(16px) saturate(180%)',
             WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-            border: '1px solid rgba(255, 255, 255, 0.4)',
             boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
           }}
         >
@@ -259,12 +257,11 @@ function SignUpPageContent() {
               disabled={isLoading}
               size="lg"
               fullWidth
-              className="text-base md:text-lg"
+              className="text-base md:text-lg border border-white/20 dark:border-white/10"
               useTheme={false}
               style={{
                 background: '#d51007',
                 color: 'white',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
               }}
               icon={
                 isLoading ? (

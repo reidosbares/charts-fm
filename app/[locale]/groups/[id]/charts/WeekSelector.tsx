@@ -41,13 +41,11 @@ export default function WeekSelector({ weeks, currentWeek, trackingDayOfWeek, on
     : defaultWeeks
 
   return (
-    <div 
-      className="rounded-lg shadow-lg p-4 overflow-hidden"
+    <div
+      className="rounded-lg shadow-lg p-4 overflow-hidden bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border border-white/30 dark:border-white/10"
       style={{
-        background: 'rgba(255, 255, 255, 0.4)',
         backdropFilter: 'blur(12px) saturate(180%)',
         WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-        border: '1px solid rgba(255, 255, 255, 0.3)',
         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
       }}
     >
@@ -59,24 +57,10 @@ export default function WeekSelector({ weeks, currentWeek, trackingDayOfWeek, on
             <button
               key={week.weekStart.toISOString()}
               onClick={() => handleWeekChange(week.weekStart)}
-              className={`
-                w-full text-left px-4 py-3 rounded-lg transition-all duration-200
-                ${
-                  isSelected
-                    ? 'font-semibold shadow-lg'
-                    : 'hover:shadow-md'
-                }
-              `}
+              className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 border border-white/30 dark:border-white/10 ${isSelected ? 'font-semibold shadow-lg' : 'hover:shadow-md bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)]'}`}
               style={{
-                background: isSelected
-                  ? 'var(--theme-primary)'
-                  : 'rgba(255, 255, 255, 0.4)',
-                color: isSelected
-                  ? 'var(--theme-button-text)'
-                  : 'var(--theme-text)',
-                border: isSelected
-                  ? '1px solid rgba(255, 255, 255, 0.3)'
-                  : '1px solid rgba(255, 255, 255, 0.3)',
+                background: isSelected ? 'var(--theme-primary)' : undefined,
+                color: isSelected ? 'var(--theme-button-text)' : 'var(--theme-text)',
                 backdropFilter: 'blur(8px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(8px) saturate(180%)',
                 boxShadow: isSelected

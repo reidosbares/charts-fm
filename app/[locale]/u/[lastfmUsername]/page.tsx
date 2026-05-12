@@ -191,11 +191,11 @@ export default async function PublicUserProfilePage({
 
   const lastfmUrl = `https://www.last.fm/user/${encodeURIComponent(user.lastfmUsername)}`
 
-  const glassStyle = {
-    background: 'rgba(255, 255, 255, 0.6)',
+  const glassFilter = {
     backdropFilter: 'blur(12px) saturate(180%)',
     WebkitBackdropFilter: 'blur(12px) saturate(180%)',
   } as const
+  const glassStyle = glassFilter
 
   const themeClass = highlightedGroup
     ? `theme-${(highlightedGroup.colorTheme || 'white').toString().replace(/_/g, '-')}`
@@ -211,7 +211,7 @@ export default async function PublicUserProfilePage({
         {/* Sidebar: profile identity */}
         <aside className="lg:w-72 xl:w-80 flex-shrink-0">
           <div
-            className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-[var(--border-subtle)] shadow-lg lg:sticky lg:top-8"
+            className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-[var(--border-subtle)] shadow-lg lg:sticky lg:top-8 bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
             style={glassStyle}
           >
             <div className="flex flex-row sm:flex-col items-center sm:items-center lg:items-start gap-4 sm:gap-0 text-left sm:text-center lg:text-left">
@@ -354,9 +354,8 @@ export default async function PublicUserProfilePage({
                         <div className={`pt-2.5 sm:pt-3 ${userAwardKeys.length > 0 ? 'mb-2.5 sm:mb-3' : ''}`}>
                           <div className="grid grid-cols-3 gap-1.5 sm:flex sm:flex-wrap sm:gap-2">
                             <div
-                              className="flex flex-col sm:flex-row items-center sm:items-center gap-1 sm:gap-2.5 px-2 py-2 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl min-w-0 sm:flex-initial"
+                              className="flex flex-col sm:flex-row items-center sm:items-center gap-1 sm:gap-2.5 px-2 py-2 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl min-w-0 sm:flex-initial bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)]"
                               style={{
-                                background: 'rgba(255, 255, 255, 0.5)',
                                 backdropFilter: 'blur(8px)',
                                 boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.04)',
                               }}
@@ -378,9 +377,8 @@ export default async function PublicUserProfilePage({
                               </div>
                             </div>
                             <div
-                              className="flex flex-col sm:flex-row items-center sm:items-center gap-1 sm:gap-2.5 px-2 py-2 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl min-w-0 sm:flex-initial"
+                              className="flex flex-col sm:flex-row items-center sm:items-center gap-1 sm:gap-2.5 px-2 py-2 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl min-w-0 sm:flex-initial bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)]"
                               style={{
-                                background: 'rgba(255, 255, 255, 0.5)',
                                 backdropFilter: 'blur(8px)',
                                 boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.04)',
                               }}
@@ -400,9 +398,8 @@ export default async function PublicUserProfilePage({
                               </div>
                             </div>
                             <div
-                              className="flex flex-col sm:flex-row items-center sm:items-center gap-1 sm:gap-2.5 px-2 py-2 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl min-w-0 sm:flex-initial"
+                              className="flex flex-col sm:flex-row items-center sm:items-center gap-1 sm:gap-2.5 px-2 py-2 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl min-w-0 sm:flex-initial bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)]"
                               style={{
-                                background: 'rgba(255, 255, 255, 0.5)',
                                 backdropFilter: 'blur(8px)',
                                 boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.04)',
                               }}
@@ -429,9 +426,8 @@ export default async function PublicUserProfilePage({
                           {/* Featured artist - always below stats */}
                           {driverArtists.length > 0 && (featuredEntry || isSelf) && (
                             <div
-                              className="mt-2 sm:mt-2.5 px-2.5 sm:px-3 py-2 rounded-lg sm:rounded-xl"
+                              className="mt-2 sm:mt-2.5 px-2.5 sm:px-3 py-2 rounded-lg sm:rounded-xl bg-white/[0.35] dark:bg-[rgb(var(--surface-card-rgb)/0.35)]"
                               style={{
-                                background: 'rgba(255, 255, 255, 0.35)',
                                 backdropFilter: 'blur(8px)',
                                 boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.3)',
                               }}
@@ -475,7 +471,7 @@ export default async function PublicUserProfilePage({
                     <Link
                       key={g.id}
                       href={`/groups/${g.id}`}
-                      className="rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-[var(--border-subtle)] shadow-sm hover:shadow-md transition-shadow"
+                      className="rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-[var(--border-subtle)] shadow-sm hover:shadow-md transition-shadow bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
                       style={glassStyle}
                     >
                       <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">

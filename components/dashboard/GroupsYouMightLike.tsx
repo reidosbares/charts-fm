@@ -173,9 +173,8 @@ export default function GroupsYouMightLike() {
 
   return (
     <div
-        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)] relative"
+      className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)] relative bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
       style={{
-        background: 'rgba(255, 255, 255, 0.6)',
         backdropFilter: 'blur(12px) saturate(180%)',
         WebkitBackdropFilter: 'blur(12px) saturate(180%)',
       }}

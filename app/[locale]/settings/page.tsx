@@ -161,12 +161,10 @@ export default function SettingsPage() {
           </div>
 
           <div
-            className="rounded-3xl p-4 md:p-6 lg:p-8 xl:p-10 relative"
+            className="rounded-3xl p-4 md:p-6 lg:p-8 xl:p-10 relative bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10"
             style={{
-              background: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(16px) saturate(180%)',
               WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.4)',
               boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
             }}
           >
@@ -207,9 +205,8 @@ export default function SettingsPage() {
                         setEmailVerified(false)
                       }
                     }}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                     placeholder="your.email@example.com"
@@ -274,9 +271,8 @@ export default function SettingsPage() {
 
           {/* Danger Zone */}
           <div
-            className="rounded-3xl p-4 md:p-6 lg:p-8 xl:p-10 relative mt-6 md:mt-8"
+            className="rounded-3xl p-4 md:p-6 lg:p-8 xl:p-10 relative mt-6 md:mt-8 bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
             style={{
-              background: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(16px) saturate(180%)',
               WebkitBackdropFilter: 'blur(16px) saturate(180%)',
               border: '1px solid rgba(239, 68, 68, 0.3)',

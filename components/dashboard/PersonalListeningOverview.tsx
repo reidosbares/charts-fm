@@ -108,8 +108,7 @@ export default function PersonalListeningOverview({
     return currentWeek.topAlbums.slice(0, 5)
   }, [currentWeek?.topAlbums])
 
-  const glassStyle = {
-    background: 'rgba(255, 255, 255, 0.6)',
+  const glassFilter = {
     backdropFilter: 'blur(12px) saturate(180%)',
     WebkitBackdropFilter: 'blur(12px) saturate(180%)',
   }
@@ -118,16 +117,15 @@ export default function PersonalListeningOverview({
   if (isLoading) {
     return (
       <div
-        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)]"
-        style={glassStyle}
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)] bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+        style={glassFilter}
       >
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-3">
           <h2 className="text-xl md:text-2xl font-bold text-[var(--text-primary)]">
             {username ? t('titleForUser', { username }) : t('title')}
           </h2>
           <div
-            className="flex items-center rounded-lg border border-[var(--border-subtle)] p-0.5 opacity-60"
-            style={{ background: 'rgba(255,255,255,0.5)' }}
+            className="flex items-center rounded-lg border border-[var(--border-subtle)] p-0.5 opacity-60 bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)]"
           >
             {RANGES.map((r) => (
               <button
@@ -152,8 +150,8 @@ export default function PersonalListeningOverview({
   if (error || !stats || !currentWeek) {
     return (
       <div
-        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)]"
-        style={glassStyle}
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)] bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+        style={glassFilter}
       >
         <h2 className="text-xl md:text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">
           {username ? t('titleForUser', { username }) : t('title')}
@@ -167,13 +165,9 @@ export default function PersonalListeningOverview({
   }
 
   return (
-    <div 
-      className="rounded-xl shadow-lg p-4 md:p-6 border border-theme"
-      style={{
-        background: 'rgba(255, 255, 255, 0.6)',
-        backdropFilter: 'blur(12px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-      }}
+    <div
+      className="rounded-xl shadow-lg p-4 md:p-6 border border-theme bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+      style={glassFilter}
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 md:mb-6 gap-3">
         <h2 className="text-xl md:text-2xl font-bold text-[var(--text-primary)]">
@@ -182,8 +176,7 @@ export default function PersonalListeningOverview({
         <div className="flex flex-col items-start sm:items-end gap-1.5">
           {/* Range selector */}
           <div
-            className="flex items-center rounded-lg border border-[var(--border-subtle)] p-0.5"
-            style={{ background: 'rgba(255,255,255,0.5)' }}
+            className="flex items-center rounded-lg border border-[var(--border-subtle)] p-0.5 bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)]"
           >
             {RANGES.map((r) => (
               <button
@@ -210,12 +203,10 @@ export default function PersonalListeningOverview({
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-6">
         <div 
-          className="rounded-lg p-3 md:p-4 border"
+          className="rounded-lg p-3 md:p-4 border bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border-white/30 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
             WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
           <div className="text-xs md:text-sm text-[var(--text-secondary)] font-medium mb-1">{t('totalPlays')}</div>
@@ -245,12 +236,10 @@ export default function PersonalListeningOverview({
         </div>
 
         <div 
-          className="rounded-lg p-3 md:p-4 border"
+          className="rounded-lg p-3 md:p-4 border bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border-white/30 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
             WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
           <div className="text-xs md:text-sm text-[var(--text-secondary)] font-medium mb-1">{t('uniqueArtists')}</div>
@@ -258,12 +247,10 @@ export default function PersonalListeningOverview({
         </div>
 
         <div 
-          className="rounded-lg p-3 md:p-4 border"
+          className="rounded-lg p-3 md:p-4 border bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border-white/30 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
             WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
           <div className="text-xs md:text-sm text-[var(--text-secondary)] font-medium mb-1">{t('uniqueTracks')}</div>
@@ -271,12 +258,10 @@ export default function PersonalListeningOverview({
         </div>
 
         <div 
-          className="rounded-lg p-3 md:p-4 border"
+          className="rounded-lg p-3 md:p-4 border bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border-white/30 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
             WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
           <div className="text-xs md:text-sm text-[var(--text-secondary)] font-medium mb-1">{t('topItems')}</div>
@@ -290,12 +275,10 @@ export default function PersonalListeningOverview({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
         {/* Top Artists */}
         <div 
-          className="rounded-lg p-3 md:p-4 border"
+          className="rounded-lg p-3 md:p-4 border bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border-white/30 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
             WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
           <div className="flex items-center gap-2 mb-3">
@@ -317,12 +300,10 @@ export default function PersonalListeningOverview({
 
         {/* Top Tracks */}
         <div 
-          className="rounded-lg p-3 md:p-4 border"
+          className="rounded-lg p-3 md:p-4 border bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border-white/30 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
             WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
           <div className="flex items-center gap-2 mb-3">
@@ -347,12 +328,10 @@ export default function PersonalListeningOverview({
 
         {/* Top Albums */}
         <div 
-          className="rounded-lg p-3 md:p-4 border"
+          className="rounded-lg p-3 md:p-4 border bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border-white/30 dark:border-white/10"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(8px) saturate(180%)',
             WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
           }}
         >
           <div className="flex items-center gap-2 mb-3">

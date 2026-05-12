@@ -47,16 +47,15 @@ export default function EmptyStateCTA() {
     return null
   }
 
-  const glassStyle = {
-    background: 'rgba(255, 255, 255, 0.6)',
+  const glassFilter = {
     backdropFilter: 'blur(12px) saturate(180%)',
     WebkitBackdropFilter: 'blur(12px) saturate(180%)',
   }
 
   return (
-    <div 
-      className="rounded-xl shadow-lg p-4 sm:p-6 md:p-8 border border-[var(--border-subtle)] mb-6 sm:mb-8"
-      style={glassStyle}
+    <div
+      className="rounded-xl shadow-lg p-4 sm:p-6 md:p-8 border border-[var(--border-subtle)] mb-6 sm:mb-8 bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+      style={glassFilter}
     >
       <div className="text-center">
         <h2 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] mb-2 sm:mb-3">

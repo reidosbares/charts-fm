@@ -47,8 +47,7 @@ export default function ActivityFeed() {
     return t(diffMonths === 1 ? 'monthAgo' : 'monthsAgo', { count: diffMonths })
   }
 
-  const glassStyle = {
-    background: 'rgba(255, 255, 255, 0.6)',
+  const glassFilter = {
     backdropFilter: 'blur(12px) saturate(180%)',
     WebkitBackdropFilter: 'blur(12px) saturate(180%)',
   }
@@ -56,8 +55,8 @@ export default function ActivityFeed() {
   if (isLoading) {
     return (
       <div
-        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)]"
-        style={glassStyle}
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)] bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+        style={glassFilter}
       >
         <h2 className="text-xl md:text-2xl font-bold mb-4 text-[var(--text-primary)]">{t('title')}</h2>
         <div className="flex items-center justify-center py-12">
@@ -70,8 +69,8 @@ export default function ActivityFeed() {
   if (error || !activities || activities.length === 0) {
     return (
       <div
-        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)]"
-        style={glassStyle}
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)] bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+        style={glassFilter}
       >
         <h2 className="text-xl md:text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">{t('title')}</h2>
         <div className="text-center py-8 text-[var(--text-muted)]">
@@ -116,13 +115,9 @@ export default function ActivityFeed() {
   }
 
   return (
-    <div 
-      className="rounded-xl shadow-lg p-4 md:p-6 border border-theme"
-      style={{
-        background: 'rgba(255, 255, 255, 0.6)',
-        backdropFilter: 'blur(12px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-      }}
+    <div
+      className="rounded-xl shadow-lg p-4 md:p-6 border border-theme bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+      style={glassFilter}
     >
       <h2 className="text-xl md:text-2xl font-bold mb-4 text-[var(--theme-primary-dark)]">{t('title')}</h2>
       <div className="space-y-2 md:space-y-3">
@@ -130,12 +125,10 @@ export default function ActivityFeed() {
           <Link
             key={idx}
             href={`/groups/${activity.groupId}`}
-            className="flex items-start gap-2 md:gap-3 p-2 md:p-3 rounded-lg transition-all hover:shadow-sm"
+            className="flex items-start gap-2 md:gap-3 p-2 md:p-3 rounded-lg transition-all hover:shadow-sm border border-white/30 dark:border-white/10 bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)]"
             style={{
-              background: 'rgba(255, 255, 255, 0.4)',
               backdropFilter: 'blur(8px) saturate(180%)',
               WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
             }}
           >
             <div

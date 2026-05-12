@@ -66,9 +66,8 @@ const GroupCard = memo(({ group, t }: { group: GroupQuickView; t: any }) => {
         <div className="space-y-2 mb-3">
           {group.latestWeek.topArtist && (
             <div 
-              className="flex items-center gap-2 text-sm rounded-lg p-2"
+              className="flex items-center gap-2 text-sm rounded-lg p-2 bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)]"
               style={{
-                background: 'rgba(255, 255, 255, 0.5)',
                 backdropFilter: 'blur(8px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(8px) saturate(180%)',
               }}
@@ -82,9 +81,8 @@ const GroupCard = memo(({ group, t }: { group: GroupQuickView; t: any }) => {
           )}
           {group.latestWeek.topTrack && (
             <div 
-              className="flex items-center gap-2 text-sm rounded-lg p-2"
+              className="flex items-center gap-2 text-sm rounded-lg p-2 bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)]"
               style={{
-                background: 'rgba(255, 255, 255, 0.5)',
                 backdropFilter: 'blur(8px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(8px) saturate(180%)',
               }}
@@ -140,8 +138,7 @@ export default function GroupQuickViewCards() {
   const { data: groups, error, isLoading } = useSWR<GroupQuickView[]>('/api/dashboard/groups')
   const { data: quickActions } = useSWR<QuickActionsData>('/api/dashboard/quick-actions')
 
-  const glassStyle = {
-    background: 'rgba(255, 255, 255, 0.6)',
+  const glassFilter = {
     backdropFilter: 'blur(12px) saturate(180%)',
     WebkitBackdropFilter: 'blur(12px) saturate(180%)',
   }
@@ -149,8 +146,8 @@ export default function GroupQuickViewCards() {
   if (isLoading) {
     return (
       <div
-        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)]"
-        style={glassStyle}
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)] bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+        style={glassFilter}
       >
         <h2 className="text-xl md:text-2xl font-bold mb-4 text-[var(--text-primary)]">{t('title')}</h2>
         <div className="flex items-center justify-center py-12">
@@ -167,8 +164,8 @@ export default function GroupQuickViewCards() {
 
     return (
       <div
-        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)]"
-        style={glassStyle}
+        className="rounded-xl shadow-lg p-4 md:p-6 border border-[var(--border-subtle)] bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+        style={glassFilter}
       >
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
           <h2 className="text-xl md:text-2xl font-bold text-[var(--theme-primary-dark)]">{t('title')}</h2>
@@ -186,12 +183,10 @@ export default function GroupQuickViewCards() {
             {pendingInvites > 0 && (
               <Link
                 href="/groups"
-                className="flex items-center gap-3 p-3 rounded-lg transition-all hover:shadow-sm"
+                className="flex items-center gap-3 p-3 rounded-lg transition-all hover:shadow-sm border bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)] border-white/30 dark:border-white/10"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.5)',
                   backdropFilter: 'blur(8px) saturate(180%)',
                   WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
                 }}
               >
                 <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-yellow-100 dark:bg-yellow-950/40 text-yellow-700 dark:text-yellow-300 flex-shrink-0">
@@ -211,12 +206,10 @@ export default function GroupQuickViewCards() {
             {pendingRequests > 0 && (
               <Link
                 href="/groups"
-                className="flex items-center gap-3 p-3 rounded-lg transition-all hover:shadow-sm"
+                className="flex items-center gap-3 p-3 rounded-lg transition-all hover:shadow-sm border bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)] border-white/30 dark:border-white/10"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.5)',
                   backdropFilter: 'blur(8px) saturate(180%)',
                   WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
                 }}
               >
                 <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 flex-shrink-0">
@@ -255,9 +248,9 @@ export default function GroupQuickViewCards() {
   const hasNotificationBanners = pendingInvites > 0 || pendingRequests > 0
 
   return (
-    <div 
-      className="rounded-xl shadow-lg p-4 md:p-6 border border-theme"
-      style={glassStyle}
+    <div
+      className="rounded-xl shadow-lg p-4 md:p-6 border border-theme bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
+      style={glassFilter}
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 md:mb-6">
         <div>
@@ -288,12 +281,10 @@ export default function GroupQuickViewCards() {
           {pendingInvites > 0 && (
             <Link
               href="/groups"
-              className="flex items-center gap-3 p-3 rounded-lg transition-all hover:shadow-sm"
+              className="flex items-center gap-3 p-3 rounded-lg transition-all hover:shadow-sm border bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)] border-white/30 dark:border-white/10"
               style={{
-                background: 'rgba(255, 255, 255, 0.5)',
                 backdropFilter: 'blur(8px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
               }}
             >
               <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-yellow-100 dark:bg-yellow-950/40 text-yellow-700 dark:text-yellow-300 flex-shrink-0">
@@ -313,12 +304,10 @@ export default function GroupQuickViewCards() {
           {pendingRequests > 0 && (
             <Link
               href="/groups"
-              className="flex items-center gap-3 p-3 rounded-lg transition-all hover:shadow-sm"
+              className="flex items-center gap-3 p-3 rounded-lg transition-all hover:shadow-sm border bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)] border-white/30 dark:border-white/10"
               style={{
-                background: 'rgba(255, 255, 255, 0.5)',
                 backdropFilter: 'blur(8px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
               }}
             >
               <div className="w-10 h-10 rounded-full flex items-center justify-center relative bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 flex-shrink-0">

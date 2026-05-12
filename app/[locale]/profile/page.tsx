@@ -290,12 +290,10 @@ export default function ProfilePage() {
 
 
           <div
-            className="rounded-3xl p-4 md:p-6 lg:p-8 xl:p-10 relative"
+            className="rounded-3xl p-4 md:p-6 lg:p-8 xl:p-10 relative bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10"
             style={{
-              background: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(16px) saturate(180%)',
               WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.4)',
               boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
             }}
           >
@@ -338,9 +336,8 @@ export default function ProfilePage() {
                     id="name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                     placeholder="Your name"
@@ -357,9 +354,8 @@ export default function ProfilePage() {
                   <div className="mb-4">
                     <label
                       htmlFor="file-upload"
-                      className="flex items-center justify-center w-full px-4 py-3 text-sm md:text-base rounded-xl border-2 border-dashed border-gray-300 cursor-pointer hover:border-yellow-500 transition-colors"
+                      className="flex items-center justify-center w-full px-4 py-3 text-sm md:text-base rounded-xl border-2 border-dashed border-gray-300 cursor-pointer hover:border-yellow-500 transition-colors bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                       style={{
-                        background: 'rgba(255, 255, 255, 0.8)',
                         backdropFilter: 'blur(8px)',
                       }}
                     >
@@ -376,8 +372,7 @@ export default function ProfilePage() {
                     </label>
                     
                     {selectedFile && (
-                      <div className="mt-3 p-3 rounded-xl border border-gray-200" style={{
-                        background: 'rgba(255, 255, 255, 0.8)',
+                      <div className="mt-3 p-3 rounded-xl border border-gray-200 bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]" style={{
                         backdropFilter: 'blur(8px)',
                       }}>
                         <div className="flex items-center justify-between">
@@ -446,9 +441,8 @@ export default function ProfilePage() {
                       id="image"
                       value={isUploadedImage ? '' : formData.image}
                       onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                      className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                       style={{
-                        background: 'rgba(255, 255, 255, 0.8)',
                         backdropFilter: 'blur(8px)',
                       }}
                       placeholder={isUploadedImage ? t('upload.urlDisabledPlaceholder') : "https://example.com/profile.jpg"}
@@ -486,9 +480,8 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <div
-                    className="px-3 md:px-4 py-2.5 md:py-3 rounded-xl"
+                    className="px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                       border: '1px solid rgba(0, 0, 0, 0.1)',
                     }}
@@ -506,9 +499,8 @@ export default function ProfilePage() {
                     id="bio"
                     value={formData.bio}
                     onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                     placeholder={t('bioPlaceholder')}
@@ -525,9 +517,8 @@ export default function ProfilePage() {
                 <div>
                   <h3 className="text-xs md:text-sm font-semibold text-gray-800 mb-2">{t('publicProfile.title')}</h3>
                   <div
-                    className="rounded-xl border border-gray-200 p-3 md:p-4 space-y-3"
+                    className="rounded-xl border border-gray-200 p-3 md:p-4 space-y-3 bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                   >

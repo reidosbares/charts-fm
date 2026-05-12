@@ -172,12 +172,10 @@ function CompleteSignUpPageContent() {
           )}
 
           <div
-            className="rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-10 relative overflow-hidden"
+            className="rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-10 relative overflow-hidden bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10"
             style={{
-              background: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(16px) saturate(180%)',
               WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.4)',
               boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
             }}
           >
@@ -194,9 +192,8 @@ function CompleteSignUpPageContent() {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                     placeholder={t('emailPlaceholder')}
@@ -213,9 +210,8 @@ function CompleteSignUpPageContent() {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                     placeholder={t('namePlaceholder')}
@@ -232,9 +228,8 @@ function CompleteSignUpPageContent() {
                     required
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                     placeholder={t('passwordPlaceholder')}
@@ -255,9 +250,8 @@ function CompleteSignUpPageContent() {
                     required
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl border border-[var(--border-strong)] focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all bg-white/80 dark:bg-[rgb(var(--surface-card-rgb)/0.8)]"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.8)',
                       backdropFilter: 'blur(8px)',
                     }}
                     placeholder={t('confirmPasswordPlaceholder')}

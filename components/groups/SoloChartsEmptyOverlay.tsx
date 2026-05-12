@@ -89,9 +89,8 @@ export default function SoloChartsEmptyOverlay({ groupId, enabled }: SoloChartsE
 
       {/* Bubble */}
       <div
-        className="relative w-full max-w-md rounded-2xl border border-white/20 shadow-xl p-5 sm:p-6"
+        className="relative w-full max-w-md rounded-2xl border border-white/20 shadow-xl p-5 sm:p-6 bg-white/[0.85] dark:bg-[rgb(var(--surface-card-rgb)/0.85)]"
         style={{
-          background: 'rgba(255, 255, 255, 0.85)',
           backdropFilter: 'blur(16px) saturate(180%)',
           WebkitBackdropFilter: 'blur(16px) saturate(180%)',
         }}

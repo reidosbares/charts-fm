@@ -24,10 +24,8 @@ const LiquidGlassButton = forwardRef<HTMLButtonElement, LiquidGlassButtonProps>(
   ...props
 }, ref) => {
   const baseStyles = {
-    background: 'rgba(255, 255, 255, 0.4)',
     backdropFilter: 'blur(12px) saturate(180%)',
     WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-    border: '1px solid rgba(255, 255, 255, 0.3)',
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
   }
 
@@ -36,28 +34,29 @@ const LiquidGlassButton = forwardRef<HTMLButtonElement, LiquidGlassButtonProps>(
       ? {
           background: 'var(--theme-primary)',
           color: 'var(--theme-button-text)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
         }
       : {
           background: 'rgb(234 179 8)',
           color: 'black',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
         },
     secondary: {
-      background: 'rgba(255, 255, 255, 0.5)',
       color: useTheme ? 'var(--theme-primary-dark)' : 'rgb(17 24 39)',
-      border: '1px solid rgba(255, 255, 255, 0.4)',
     },
     danger: {
       background: 'rgba(239, 68, 68, 0.8)',
       color: 'white',
-      border: '1px solid rgba(255, 255, 255, 0.2)',
     },
     neutral: {
-      background: 'rgba(255, 255, 255, 0.4)',
       color: 'rgb(55 65 81)',
-      border: '1px solid rgba(255, 255, 255, 0.3)',
     },
+  }
+
+  // Background + border Tailwind classes per variant
+  const variantClassName: Record<string, string> = {
+    primary: 'border border-white/20 dark:border-white/10',
+    secondary: 'bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)] border border-white/40 dark:border-white/10',
+    danger: 'border border-white/20 dark:border-white/10',
+    neutral: 'bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border border-white/30 dark:border-white/10',
   }
 
   const sizeStyles = {
@@ -78,6 +77,7 @@ const LiquidGlassButton = forwardRef<HTMLButtonElement, LiquidGlassButtonProps>(
         ${fullWidth ? 'w-full' : ''}
         ${isIconOnly ? 'aspect-square' : ''}
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg active:scale-95'}
+        ${variantClassName[variant]}
         ${className}
       `}
       style={{
@@ -134,10 +134,8 @@ export function LiquidGlassLink({
   ...props
 }: LiquidGlassLinkProps) {
   const baseStyles = {
-    background: 'rgba(255, 255, 255, 0.4)',
     backdropFilter: 'blur(12px) saturate(180%)',
     WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-    border: '1px solid rgba(255, 255, 255, 0.3)',
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
   }
 
@@ -146,28 +144,29 @@ export function LiquidGlassLink({
       ? {
           background: 'var(--theme-primary)',
           color: 'var(--theme-button-text)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
         }
       : {
           background: 'rgb(234 179 8)',
           color: 'black',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
         },
     secondary: {
-      background: 'rgba(255, 255, 255, 0.5)',
       color: useTheme ? 'var(--theme-primary-dark)' : 'rgb(17 24 39)',
-      border: '1px solid rgba(255, 255, 255, 0.4)',
     },
     danger: {
       background: 'rgba(239, 68, 68, 0.8)',
       color: 'white',
-      border: '1px solid rgba(255, 255, 255, 0.2)',
     },
     neutral: {
-      background: 'rgba(255, 255, 255, 0.4)',
       color: 'rgb(55 65 81)',
-      border: '1px solid rgba(255, 255, 255, 0.3)',
     },
+  }
+
+  // Background + border Tailwind classes per variant
+  const variantClassName: Record<string, string> = {
+    primary: 'border border-white/20 dark:border-white/10',
+    secondary: 'bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)] border border-white/40 dark:border-white/10',
+    danger: 'border border-white/20 dark:border-white/10',
+    neutral: 'bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)] border border-white/30 dark:border-white/10',
   }
 
   const sizeStyles = {
@@ -188,6 +187,7 @@ export function LiquidGlassLink({
         ${fullWidth ? 'w-full' : ''}
         ${isIconOnly ? 'aspect-square' : ''}
         hover:shadow-lg active:scale-95
+        ${variantClassName[variant]}
         ${className}
       `}
       style={{
@@ -207,4 +207,3 @@ export function LiquidGlassLink({
     </Link>
   )
 }
-

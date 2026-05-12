@@ -175,13 +175,11 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
       >
         <div
           ref={modalRef}
-          className="relative rounded-xl shadow-2xl max-w-md w-full p-5 md:p-8 max-h-[calc(100dvh-2rem)] overflow-y-auto pointer-events-auto dark:bg-[var(--surface-elevated)]"
+          className="relative rounded-xl shadow-2xl max-w-md w-full p-5 md:p-8 max-h-[calc(100dvh-2rem)] overflow-y-auto pointer-events-auto dark:bg-[var(--surface-elevated)] bg-white/95 dark:bg-[rgb(var(--surface-card-rgb)/0.95)] border border-white/30 dark:border-white/10"
           style={{
             animation: 'fadeIn 0.2s ease-in-out',
-            background: 'rgba(255, 255, 255, 0.95)',
             backdropFilter: 'blur(20px) saturate(180%)',
             WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
             boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
           }}
           onClick={(e) => e.stopPropagation()}
@@ -329,11 +327,10 @@ export default function SignInModal({ isOpen, onClose, showSuccessMessage = fals
             size="lg"
             fullWidth
             useTheme={false}
-            className="text-base md:text-lg touch-manipulation min-h-[48px] md:min-h-[44px]"
+            className="text-base md:text-lg touch-manipulation min-h-[48px] md:min-h-[44px] border border-white/20 dark:border-white/10"
             style={{
               background: '#d51007',
               color: 'white',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
             }}
             icon={
               isLoadingLastFM ? (

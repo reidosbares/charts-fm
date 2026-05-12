@@ -135,13 +135,12 @@ export default function GroupHero({ groupId }: GroupHeroProps) {
                   <UpdateChartsButton groupId={groupId} initialInProgress={chartGenerationInProgress} onUpdateComplete={handleUpdateComplete} />
                 ) : (
                   <div 
-                    className="inline-flex items-center gap-1 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full font-semibold text-xs md:text-sm"
+                    className="inline-flex items-center gap-1 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full font-semibold text-xs md:text-sm border border-white/20 dark:border-white/10"
                     style={{
                       background: 'var(--theme-primary)',
                       color: 'var(--theme-button-text)',
                       backdropFilter: 'blur(12px) saturate(180%)',
                       WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
                       boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
                     }}
                   >
@@ -159,7 +158,7 @@ export default function GroupHero({ groupId }: GroupHeroProps) {
               <UpdateChartsButton groupId={groupId} initialInProgress={chartGenerationInProgress} onUpdateComplete={handleUpdateComplete} />
             ) : (
               <div 
-                className="flex items-center justify-center gap-1 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full font-semibold text-xs md:text-sm w-full"
+                className="flex items-center justify-center gap-1 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full font-semibold text-xs md:text-sm w-full border border-white/20 dark:border-white/10"
                 style={{
                   background: 'var(--theme-primary)',
                   color: 'var(--theme-button-text)',

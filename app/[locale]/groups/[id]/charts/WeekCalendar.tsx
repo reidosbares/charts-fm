@@ -150,11 +150,9 @@ export default function WeekCalendar({ availableWeeks, currentWeek, trackingDayO
         <button
           ref={triggerRef}
           onClick={() => setIsOpen((v) => !v)}
-          className="w-full px-4 py-3 rounded-lg transition-all duration-200 text-left hover:shadow-sm"
+          className="w-full px-4 py-3 rounded-lg transition-all duration-200 text-left hover:shadow-sm border border-white/30 dark:border-white/10 bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)]"
           style={{
-            background: 'rgba(255, 255, 255, 0.4)',
             color: 'var(--theme-text)',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
           }}
         >
           {t('openCalendar')}
@@ -164,12 +162,11 @@ export default function WeekCalendar({ availableWeeks, currentWeek, trackingDayO
       {mounted && isOpen && createPortal(
         <div
           ref={popoverRef}
-          className="fixed z-50 rounded-lg shadow-2xl p-4 sm:p-6 w-auto max-w-[calc(100vw-1rem)] border border-theme"
+          className="fixed z-50 rounded-lg shadow-2xl p-4 sm:p-6 w-auto max-w-[calc(100vw-1rem)] border border-theme bg-white/[0.98] dark:bg-[rgb(var(--surface-card-rgb)/0.98)]"
           style={{
             top: coords?.top ?? 0,
             left: coords?.left ?? 0,
             visibility: coords ? 'visible' : 'hidden',
-            background: 'rgba(255, 255, 255, 0.98)',
             backdropFilter: 'blur(20px) saturate(180%)',
             WebkitBackdropFilter: 'blur(20px) saturate(180%)',
           }}

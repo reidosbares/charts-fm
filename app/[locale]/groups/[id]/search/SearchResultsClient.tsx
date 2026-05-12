@@ -90,12 +90,10 @@ export default function SearchResultsClient({
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Search for artists, tracks, or albums..."
-                className="w-full px-4 py-3 pr-12 rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 transition-all"
+                className="w-full px-4 py-3 pr-12 rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:ring-opacity-50 transition-all border border-white/30 dark:border-white/10 bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)]"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.4)',
                   backdropFilter: 'blur(12px) saturate(180%)',
                   WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
                 }}
               />
@@ -107,13 +105,12 @@ export default function SearchResultsClient({
             <button
               onClick={handleSearch}
               disabled={isLoading || !searchTerm.trim()}
-              className="px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg active:scale-95"
+              className="px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg active:scale-95 border border-white/20 dark:border-white/10"
               style={{
                 background: 'var(--theme-primary)',
                 color: 'var(--theme-button-text)',
                 backdropFilter: 'blur(12px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
               }}
               onMouseEnter={(e) => {

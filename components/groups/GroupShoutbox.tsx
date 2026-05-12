@@ -216,10 +216,9 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
 
   return (
     <div className="mt-6 md:mt-10">
-      <div 
-        className="bg-white/60 backdrop-blur-md rounded-xl p-4 md:p-6 border border-theme shadow-sm"
+      <div
+        className="bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] backdrop-blur-md rounded-xl p-4 md:p-6 border border-theme shadow-sm"
         style={{
-          background: 'rgba(255, 255, 255, 0.6)',
           backdropFilter: 'blur(12px) saturate(180%)',
           WebkitBackdropFilter: 'blur(12px) saturate(180%)',
         }}
@@ -285,7 +284,7 @@ export default function GroupShoutbox({ groupId, userId, isOwner, shoutboxEnable
               {comments.map((comment) => (
                 <div
                   key={comment.id}
-                  className="p-3 md:p-4 rounded-lg border border-gray-200 bg-white/40"
+                  className="p-3 md:p-4 rounded-lg border border-gray-200 dark:border-white/10 bg-white/40 dark:bg-[rgb(var(--surface-card-rgb)/0.4)]"
                 >
                   <div className="flex items-start gap-2 md:gap-3">
                     <Link

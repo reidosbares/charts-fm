@@ -117,12 +117,10 @@ export default function LandingPageClient() {
           <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-12 md:mb-16">
             {/* Feature 1: Groups */}
             <div
-              className="rounded-2xl md:rounded-3xl p-5 md:p-6 lg:p-8 relative overflow-hidden"
+              className="rounded-2xl md:rounded-3xl p-5 md:p-6 lg:p-8 relative overflow-hidden bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10"
               style={{
-                background: 'rgba(255, 255, 255, 0.6)',
                 backdropFilter: 'blur(16px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-                border: '1px solid rgba(255, 255, 255, 0.4)',
                 boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
               }}
             >
@@ -138,12 +136,10 @@ export default function LandingPageClient() {
 
             {/* Feature 2: Stats & Trends */}
             <div
-              className="rounded-2xl md:rounded-3xl p-5 md:p-6 lg:p-8 relative overflow-hidden"
+              className="rounded-2xl md:rounded-3xl p-5 md:p-6 lg:p-8 relative overflow-hidden bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10"
               style={{
-                background: 'rgba(255, 255, 255, 0.6)',
                 backdropFilter: 'blur(16px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-                border: '1px solid rgba(255, 255, 255, 0.4)',
                 boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
               }}
             >
@@ -159,12 +155,10 @@ export default function LandingPageClient() {
 
             {/* Feature 3: Share Taste */}
             <div
-              className="rounded-2xl md:rounded-3xl p-5 md:p-6 lg:p-8 relative overflow-hidden"
+              className="rounded-2xl md:rounded-3xl p-5 md:p-6 lg:p-8 relative overflow-hidden bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10"
               style={{
-                background: 'rgba(255, 255, 255, 0.6)',
                 backdropFilter: 'blur(16px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-                border: '1px solid rgba(255, 255, 255, 0.4)',
                 boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
               }}
             >
@@ -181,12 +175,10 @@ export default function LandingPageClient() {
 
           {/* CTA Section */}
           <div
-            className="rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-12 text-center relative overflow-hidden"
+            className="rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-12 text-center relative overflow-hidden bg-white/50 dark:bg-[rgb(var(--surface-card-rgb)/0.5)] border border-white/50 dark:border-white/10"
             style={{
-              background: 'rgba(255, 255, 255, 0.5)',
               backdropFilter: 'blur(20px) saturate(180%)',
               WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.5)',
               boxShadow: '0 12px 40px 0 rgba(0, 0, 0, 0.15)',
             }}
           >

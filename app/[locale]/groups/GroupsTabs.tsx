@@ -247,9 +247,8 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
       {/* Tab Content */}
       {activeTab === 'groups' && (
         <div 
-          className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
+          className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200 bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
           style={{
-            background: 'rgba(255, 255, 255, 0.6)',
             backdropFilter: 'blur(12px) saturate(180%)',
             WebkitBackdropFilter: 'blur(12px) saturate(180%)',
           }}
@@ -272,9 +271,8 @@ export default function GroupsTabs({ ownedGroups, memberGroups, invites, userId,
 
       {activeTab === 'invites' && (
         <div 
-          className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200"
+          className="rounded-xl shadow-lg p-4 md:p-6 border border-gray-200 bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)]"
           style={{
-            background: 'rgba(255, 255, 255, 0.6)',
             backdropFilter: 'blur(12px) saturate(180%)',
             WebkitBackdropFilter: 'blur(12px) saturate(180%)',
           }}
