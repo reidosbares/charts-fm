@@ -176,6 +176,7 @@
   },
   "navbar": {
     "home": "Home",
+    "news": "News",
     "dashboard": "Dashboard",
     "profile": "Profile",
     "editProfile": "Edit Profile",
@@ -1580,6 +1581,7 @@
   "footer": {
     "about": "About",
     "faq": "FAQ",
+    "news": "News",
     "copyright": "⊘ {year} ChartsFM. No rights reserved."
   },
   "chartToppers": {
@@ -1606,6 +1608,14 @@
   "about": {
     "title": "About",
     "viewOnGitHub": "View on GitHub"
+  },
+  "news": {
+    "title": "News",
+    "subtitle": "Product updates, new features, and behind-the-scenes notes from ChartsFM.",
+    "empty": "No posts yet — check back soon.",
+    "backToList": "Back to all posts",
+    "latestTitle": "Latest from ChartsFM",
+    "seeAll": "See all updates"
   },
   "site": {
     "description": "Create and share music charts with friends. Generate weekly charts from Last.fm listening data, join groups with friends and discover music trends together.",

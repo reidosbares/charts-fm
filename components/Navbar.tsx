@@ -351,6 +351,43 @@ export default function Navbar() {
                 >
                   {t('discover')}
                 </Link>
+                <Link
+                  href="/news"
+                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 leading-tight ${
+                    pathnameWithoutLocale?.startsWith('/news')
+                      ? 'text-black'
+                      : 'text-gray-200 hover:text-white'
+                  }`}
+                  style={
+                    pathnameWithoutLocale?.startsWith('/news')
+                      ? {
+                          background: 'var(--theme-primary)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        }
+                      : {
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          backdropFilter: 'blur(12px) saturate(180%)',
+                          WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        }
+                  }
+                  onMouseEnter={(e) => {
+                    if (!pathnameWithoutLocale?.startsWith('/news')) {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
+                      e.currentTarget.style.filter = 'brightness(1.1)'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!pathnameWithoutLocale?.startsWith('/news')) {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                      e.currentTarget.style.filter = ''
+                    }
+                  }}
+                >
+                  {t('news')}
+                </Link>
               </div>
             )}
           </div>
@@ -813,7 +850,18 @@ export default function Navbar() {
                   >
                     {t('discover')}
                   </Link>
-                  
+                  <Link
+                    href="/news"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`block px-4 py-3 rounded-lg text-base font-semibold transition-all ${
+                      pathnameWithoutLocale?.startsWith('/news')
+                        ? 'bg-yellow-500 text-black'
+                        : 'text-gray-200 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t('news')}
+                  </Link>
+
                   {/* Quick Access Group */}
                   {quickAccessGroup && (
                     <Link
@@ -913,6 +961,17 @@ export default function Navbar() {
                     className="block px-4 py-3 rounded-lg text-base font-semibold bg-yellow-500 text-black text-center hover:bg-yellow-600 transition-all"
                   >
                     {t('signUp')}
+                  </Link>
+                  <Link
+                    href="/news"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`block px-4 py-3 rounded-lg text-base font-semibold transition-all ${
+                      pathnameWithoutLocale?.startsWith('/news')
+                        ? 'bg-yellow-500 text-black'
+                        : 'text-gray-200 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t('news')}
                   </Link>
 
                   {/* Appearance Toggle */}

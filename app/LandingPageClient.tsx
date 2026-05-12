@@ -3,7 +3,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
+import { useLocale } from 'next-intl'
 import LiquidGlassButton, { LiquidGlassLink } from '@/components/LiquidGlassButton'
+import { Link } from '@/i18n/routing'
 import { useSafeTranslations } from '@/hooks/useSafeTranslations'
 
 // Lazy load SignInModal to reduce initial bundle size
@@ -12,9 +15,35 @@ const SignInModal = dynamic(() => import('@/components/SignInModal'), {
   loading: () => null,
 })
 
-export default function LandingPageClient() {
+export interface LandingNewsPost {
+  slug: string
+  title: string
+  date: string
+  excerpt?: string
+  cover?: string
+}
+
+interface LandingPageClientProps {
+  latestPosts?: LandingNewsPost[]
+}
+
+export default function LandingPageClient({ latestPosts = [] }: LandingPageClientProps) {
   const searchParams = useSearchParams()
+  const locale = useLocale()
   const t = useSafeTranslations('landing')
+  const tNews = useSafeTranslations('news')
+
+  const formatDate = (date: string) => {
+    try {
+      return new Date(date).toLocaleDateString(locale === 'pt' ? 'pt-BR' : 'en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    } catch {
+      return date
+    }
+  }
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false)
   const [animationPhase, setAnimationPhase] = useState<'fade-in' | 'together-apart'>('fade-in')
   const musicRef = useRef<HTMLSpanElement>(null)
@@ -172,6 +201,65 @@ export default function LandingPageClient() {
               </div>
             </div>
           </div>
+
+          {/* Latest News Section */}
+          {latestPosts.length > 0 && (
+            <section className="mb-12 md:mb-16">
+              <div className="flex items-baseline justify-between mb-4 md:mb-6">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--text-primary)]">
+                  {tNews('latestTitle')}
+                </h2>
+                <Link
+                  href="/news"
+                  className="text-sm md:text-base text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline transition-colors"
+                >
+                  {tNews('seeAll')} →
+                </Link>
+              </div>
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                {latestPosts.map((post) => (
+                  <Link
+                    key={post.slug}
+                    href={`/news/${post.slug}`}
+                    className="rounded-2xl relative overflow-hidden bg-white/60 dark:bg-[rgb(var(--surface-card-rgb)/0.6)] border border-white/40 dark:border-white/10 hover:border-[var(--theme-primary)] transition-colors"
+                    style={{
+                      backdropFilter: 'blur(16px) saturate(180%)',
+                      WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+                      boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
+                    }}
+                  >
+                    {post.cover && (
+                      <div className="relative w-full aspect-[16/9] bg-[var(--surface-base)]">
+                        <Image
+                          src={post.cover}
+                          alt=""
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                    <div className="p-5 md:p-6">
+                      <time
+                        dateTime={post.date}
+                        className="text-xs text-[var(--text-muted)] block mb-1.5"
+                      >
+                        {formatDate(post.date)}
+                      </time>
+                      <h3 className="text-base md:text-lg font-bold text-[var(--text-primary)] mb-2 leading-snug">
+                        {post.title}
+                      </h3>
+                      {post.excerpt && (
+                        <p className="text-sm text-[var(--text-secondary)] leading-relaxed line-clamp-3">
+                          {post.excerpt}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* CTA Section */}
           <div

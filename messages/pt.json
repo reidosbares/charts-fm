@@ -176,6 +176,7 @@
   },
   "navbar": {
     "home": "Início",
+    "news": "Novidades",
     "dashboard": "Painel",
     "profile": "Perfil",
     "editProfile": "Editar perfil",
@@ -1580,6 +1581,7 @@
   "footer": {
     "about": "Sobre",
     "faq": "Perguntas Frequentes",
+    "news": "Novidades",
     "copyright": "⊘ {year} ChartsFM. Nenhum direito reservado."
   },
   "chartToppers": {
@@ -1606,6 +1608,14 @@
   "about": {
     "title": "Sobre",
     "viewOnGitHub": "Ver no GitHub"
+  },
+  "news": {
+    "title": "Novidades",
+    "subtitle": "Atualizações do produto, novas funcionalidades e notas dos bastidores do ChartsFM.",
+    "empty": "Nenhum post ainda — volte em breve.",
+    "backToList": "Voltar para todos os posts",
+    "latestTitle": "Últimas do ChartsFM",
+    "seeAll": "Ver todas as novidades"
   },
   "site": {
     "description": "Crie e compartilhe charts musicais. Gere charts semanais a partir do Last.fm, crie comunidades e acompanhe as tendências musicais entre você e seus amigos.",

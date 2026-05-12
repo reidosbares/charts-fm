@@ -39,6 +39,13 @@ export default function Footer() {
               </Link>
               <span className="text-white/50 hidden sm:inline">|</span>
               <Link
+                href="/news"
+                className="text-xs sm:text-sm text-white hover:text-gray-200 transition-colors duration-200 font-semibold py-1 px-2 sm:px-0"
+              >
+                {t('news')}
+              </Link>
+              <span className="text-white/50 hidden sm:inline">|</span>
+              <Link
                 href="/faq"
                 className="text-xs sm:text-sm text-white hover:text-gray-200 transition-colors duration-200 font-semibold py-1 px-2 sm:px-0"
               >

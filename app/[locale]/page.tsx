@@ -4,6 +4,7 @@ import LandingPageClient from '@/app/LandingPageClient'
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { withDefaultOgImage, getDefaultOgImage, defaultOgImage } from '@/lib/metadata'
+import { getAllPosts } from '@/lib/news'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -56,6 +57,14 @@ export default async function Home({
     // If user doesn't exist, don't redirect - let them see the home page
   }
 
-  return <LandingPageClient />
+  const latestPosts = (await getAllPosts(locale)).slice(0, 3).map((post) => ({
+    slug: post.slug,
+    title: post.title,
+    date: post.date,
+    excerpt: post.excerpt,
+    cover: post.cover,
+  }))
+
+  return <LandingPageClient latestPosts={latestPosts} />
 }
 
