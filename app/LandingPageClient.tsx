@@ -39,6 +39,7 @@ export default function LandingPageClient({ latestPosts = [] }: LandingPageClien
         year: 'numeric',
         month: 'long',
         day: 'numeric',
+        timeZone: 'UTC',
       })
     } catch {
       return date
