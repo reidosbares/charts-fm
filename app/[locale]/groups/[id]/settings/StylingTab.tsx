@@ -149,19 +149,11 @@ export default function StylingTab({
 
                   <div className="relative z-10 space-y-4">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <h3
-                          className="text-2xl md:text-3xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-[var(--theme-primary-darker)] via-[var(--theme-primary)] to-[var(--theme-primary-light)] dark:from-[var(--theme-primary)] dark:via-[var(--theme-primary-light)] dark:to-[var(--theme-primary-dark)]"
-                          style={{ WebkitTextFillColor: 'transparent', paddingBottom: '0.1em' }}
-                        >
-                          {THEME_DISPLAY_NAMES[themeName]}
-                        </h3>
-                        {themeName === 'white' && (
-                          <span className="text-xs font-medium" style={{ color: 'var(--theme-text)', opacity: 0.75 }}>
-                            {t('default')}
-                          </span>
-                        )}
-                      </div>
+                      <h3
+                        className="text-2xl md:text-3xl font-bold leading-tight text-[var(--theme-primary-dark)]"
+                      >
+                        {THEME_DISPLAY_NAMES[themeName]}
+                      </h3>
                       {isSelected && (
                         <div
                           className="w-5 h-5 rounded-full shrink-0 mt-1"
@@ -183,14 +175,14 @@ export default function StylingTab({
                       >
                         {t('viewSample')}
                       </div>
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-2">
                         <span
-                          className="w-4 h-4 rounded-full ring-1 ring-black/10 dark:ring-white/10"
+                          className="w-7 h-7 rounded-md ring-1 ring-black/10 dark:ring-white/10"
                           style={{ backgroundColor: 'var(--theme-primary-light)' }}
                           title="Secondary accent"
                         />
                         <span
-                          className="w-4 h-4 rounded-full ring-1 ring-black/10 dark:ring-white/10"
+                          className="w-7 h-7 rounded-md ring-1 ring-black/10 dark:ring-white/10"
                           style={{ backgroundColor: 'var(--theme-text)' }}
                           title="Data accent"
                         />
