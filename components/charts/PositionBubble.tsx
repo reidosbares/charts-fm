@@ -85,7 +85,7 @@ function PositionBubble({
 
   return (
     <Popover className="relative inline-block">
-      <PopoverButton className={`${bubbleClasses} focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-primary)]`}>
+      <PopoverButton className={`${bubbleClasses} focus:outline-none data-[open]:ring-2 data-[open]:ring-[var(--theme-primary)]`}>
         #{position}
       </PopoverButton>
       <PopoverPanel
