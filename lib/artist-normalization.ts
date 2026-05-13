@@ -39,9 +39,17 @@ const COMPOUND_ARTIST_SAFELIST: ReadonlySet<string> = new Set(
     'Method Man & Redman',
     'Big & Rich',
     'Above & Beyond',
+    'Loggins & Messina',
+    'Seals & Crofts',
+    'Maddie & Tae',
 
     // Anglophone "lead & the backing band" formats
     'Bob Marley & The Wailers',
+    'Selena Gomez & The Scene',
+    'Adam & The Ants',
+    'Paul Revere & The Raiders',
+    'Mitch Ryder & The Detroit Wheels',
+    'Toots & The Maytals',
     'Tom Petty & The Heartbreakers',
     'Bruce Springsteen & The E Street Band',
     'Frankie Valli & The Four Seasons',
@@ -67,6 +75,10 @@ const COMPOUND_ARTIST_SAFELIST: ReadonlySet<string> = new Set(
     'Iggy & The Stooges',
     'DJ Jazzy Jeff & The Fresh Prince',
     "Sérgio Mendes & Brasil '66",
+
+    // Latin pop / reggaeton duos
+    'Wisin & Yandel',
+    'Jesse & Joy',
 
     // Comma forms
     'Now, Now',
